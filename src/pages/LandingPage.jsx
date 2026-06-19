@@ -1,3 +1,4 @@
+import "./LandingPage.css";
 import React from "react";
 import { Link } from "react-router-dom";
 import {
@@ -13,6 +14,7 @@ import {
   GraduationCap,
   Trophy,
 } from "lucide-react";
+import "./landingPage.css";
 
 const plans = [
   {
