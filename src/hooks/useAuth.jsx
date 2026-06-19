@@ -1,0 +1,97 @@
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+
+const AuthContext = createContext(null);
+
+const OWNER_EMAILS = ["michaelvalerio@thetrulies.com"];
+
+const TIER_FEATURES = {
+  free:    ["basic_flow"],
+  starter: ["basic_flow", "filters", "alerts", "ai_chat"],
+  pro:     ["basic_flow", "filters", "alerts", "ai_chat", "dark_pool", "golden", "sector_heat", "reports", "flow_score"],
+  elite:   ["basic_flow", "filters", "alerts", "ai_chat", "dark_pool", "golden", "sector_heat", "reports", "flow_score", "webhooks", "api_access", "smart_money", "flow_replay"],
+};
+
+export function AuthProvider({ children }) {
+  const [user, setUser]       = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("[auth] session on load:", session?.user?.email, "token:", session?.access_token?.slice(0,20));
+      setUser(session?.user ?? null);
+      setAccessToken(session?.access_token ?? null);
+      if (session?.user) fetchProfile(session.user.id);
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      console.log("[auth] state change:", session?.user?.email, "token:", session?.access_token?.slice(0,20));
+      setUser(session?.user ?? null);
+      setAccessToken(session?.access_token ?? null);
+      if (session?.user) fetchProfile(session.user.id);
+      else { setProfile(null); setAccessToken(null); }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function fetchProfile(uid) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("tier, stripe_customer_id")
+      .eq("id", uid)
+      .single();
+    setProfile(data);
+  }
+
+  async function signIn(email, password) {
+    return supabase.auth.signInWithPassword({ email, password });
+  }
+
+  async function signUp(email, password) {
+    return supabase.auth.signUp({ email, password });
+  }
+
+  async function signOut() {
+    await supabase.auth.signOut();
+  }
+
+  async function getToken() {
+    if (accessToken) return accessToken;
+    // Try reading directly from Supabase localStorage key
+    try {
+      const key = `sb-${import.meta.env.VITE_SUPABASE_URL?.split("//")[1]?.split(".")[0]}-auth-token`;
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return parsed?.access_token ?? null;
+      }
+    } catch {}
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token ?? null;
+  }
+
+  // Owner always gets elite regardless of Supabase profile
+  const isOwner = OWNER_EMAILS.includes(user?.email);
+  const tier = isOwner ? "elite" : (profile?.tier ?? "free");
+  const token = null; // populated via getToken()
+
+  const canAccess = (feature) => {
+    return TIER_FEATURES[tier]?.includes(feature) ?? false;
+  };
+
+  return (
+    <AuthContext.Provider value={{
+      user, profile, tier, loading,
+      signIn, signUp, signOut, getToken, canAccess,
+      token: accessToken,
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export const useAuth = () => useContext(AuthContext);
