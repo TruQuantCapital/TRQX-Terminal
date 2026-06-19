@@ -1,76 +1,112 @@
-import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
+import Sidebar from "./components/Sidebar";
+import TopRibbon from "./components/TopRibbon";
+import FuturesBar from "./components/FuturesBar";
+import Dashboard from "./pages/Dashboard";
 import Scanner from "./pages/Scanner";
+import GammaPage from "./pages/GammaPage";
+import NewsPage from "./pages/NewsPage";
+import OptionsPage from "./pages/OptionsPage";
+import TradePlanPage from "./pages/TradePlanPage";
+import EconomicCalendarPage from "./pages/EconomicCalendarPage";
+import AcademyPage from "./pages/AcademyPage";
+import PlaceholderPage from "./pages/PlaceholderPage";
+import Auth from "./pages/Auth";
 import Pricing from "./pages/Pricing";
-import Auth    from "./pages/Auth";
-import Alerts  from "./pages/Alerts";
+import Alerts from "./pages/Alerts";
 import Reports from "./pages/Reports";
 import Welcome from "./pages/Welcome";
+import "./styles.css";
 import "./app.css";
+
+const routeByKey = {
+  dashboard: "/dashboard",
+  scanner: "/scanner",
+  options: "/options-flow",
+  tradeplan: "/trade-plan",
+  gamma: "/gamma-ex",
+  calendar: "/economic-calendar",
+  alerts: "/alerts",
+  academy: "/academy",
+  discord: "/discord",
+  news: "/news",
+  settings: "/settings",
+};
+
+const keyByPath = {
+  "/": "dashboard",
+  "/dashboard": "dashboard",
+  "/scanner": "scanner",
+  "/options-flow": "options",
+  "/trade-plan": "tradeplan",
+  "/gamma-ex": "gamma",
+  "/economic-calendar": "calendar",
+  "/alerts": "alerts",
+  "/academy": "academy",
+  "/discord": "discord",
+  "/news": "news",
+  "/settings": "settings",
+  "/pricing": "settings",
+  "/reports": "news",
+};
+
+function LoadingScreen() {
+  return (
+    <div className="loading-screen">
+      <div className="loading-logo">⚡</div>
+      <div className="loading-text">TRQX UNIFIED TERMINAL</div>
+    </div>
+  );
+}
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return (
-    <div className="loading-screen">
-      <div className="loading-logo">⚡</div>
-      <div className="loading-text">TRQX FLOW SCANNER</div>
-    </div>
-  );
+  if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/auth" replace />;
   return children;
 }
 
-function Nav() {
+function TerminalLayout({ children }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { user, tier, signOut } = useAuth();
-  const loc = useLocation();
-  if (loc.pathname === "/auth" || loc.pathname === "/welcome") return null;
-  const tierColors = {
-    free: "#666",
-    starter: "#C9A84C",
-    pro: "#00d4ff",
-    elite: "#FFD700",
+  const active = keyByPath[location.pathname] || "dashboard";
+
+  const setActive = (key) => {
+    const next = routeByKey[key] || "/dashboard";
+    navigate(next);
   };
+
   return (
-    <nav className="nav">
-      <Link to="/scanner" className="nav-brand">
-        <img
-          src="https://thetrulies.com/wp-content/uploads/2026/06/ChatGPT-Image-Jun-7-2026-09_11_29-PM.png"
-          alt="TRQX"
-          style={{ height: '32px', width: 'auto', objectFit: 'contain' }}
-        />
-        <div>
-          <div className="nav-brand-text">TRQX</div>
-          <div className="nav-brand-sub">FLOW SCANNER</div>
-        </div>
-      </Link>
-      <div className="nav-links">
-        <Link to="/scanner"  className={loc.pathname === "/scanner"  ? "active" : ""}>Scanner</Link>
-        <Link to="/alerts"   className={loc.pathname === "/alerts"   ? "active" : ""}>Alerts</Link>
-        <Link to="/reports"  className={loc.pathname === "/reports"  ? "active" : ""}>Reports</Link>
-        <Link to="/pricing"  className={loc.pathname === "/pricing"  ? "active" : ""}>Pricing</Link>
-      </div>
-      <div className="nav-right">
+    <div className="app">
+      <Sidebar active={active} setActive={setActive} />
+
+      <section className="content">
+        <TopRibbon />
+        <FuturesBar />
+
         {user && (
-          <span className="nav-tier" style={{ color: tierColors[tier] || "#C9A84C", borderColor: tierColors[tier] || "#C9A84C" }}>
-            {tier.toUpperCase()}
-          </span>
+          <div className="terminal-userbar">
+            <span>{user.email}</span>
+            <b>{tier?.toUpperCase?.() || "FREE"}</b>
+            <button onClick={() => navigate("/pricing")}>Plans</button>
+            <button onClick={signOut}>Sign out</button>
+          </div>
         )}
-        {user && (
-          <a
-            href="https://whop.com/tqpx-tru-quant-enterprise"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="nav-btn"
-          >
-            Manage Plan
-          </a>
-        )}
-        {user
-          ? <button className="nav-btn" onClick={signOut}>Sign out</button>
-          : <Link to="/auth" className="nav-btn">Sign in</Link>
-        }
-      </div>
-    </nav>
+
+        {children}
+      </section>
+    </div>
+  );
+}
+
+function ProtectedTerminal({ children }) {
+  return (
+    <ProtectedRoute>
+      <TerminalLayout>{children}</TerminalLayout>
+    </ProtectedRoute>
   );
 }
 
@@ -78,15 +114,28 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Nav />
         <Routes>
-          <Route path="/auth"    element={<Auth />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
-          <Route path="/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
-          <Route path="/scanner" element={<ProtectedRoute><Scanner /></ProtectedRoute>} />
-          <Route path="/alerts"  element={<ProtectedRoute><Alerts /></ProtectedRoute>} />
-          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-          <Route path="*"        element={<Navigate to="/scanner" replace />} />
+
+          <Route path="/" element={<ProtectedTerminal><Dashboard /></ProtectedTerminal>} />
+          <Route path="/dashboard" element={<ProtectedTerminal><Dashboard /></ProtectedTerminal>} />
+          <Route path="/scanner" element={<ProtectedTerminal><Scanner /></ProtectedTerminal>} />
+          <Route path="/options-flow" element={<ProtectedTerminal><OptionsPage /></ProtectedTerminal>} />
+          <Route path="/trade-plan" element={<ProtectedTerminal><TradePlanPage /></ProtectedTerminal>} />
+          <Route path="/gamma-ex" element={<ProtectedTerminal><GammaPage /></ProtectedTerminal>} />
+          <Route path="/economic-calendar" element={<ProtectedTerminal><EconomicCalendarPage /></ProtectedTerminal>} />
+          <Route path="/news" element={<ProtectedTerminal><NewsPage /></ProtectedTerminal>} />
+          <Route path="/academy" element={<ProtectedTerminal><AcademyPage /></ProtectedTerminal>} />
+
+          <Route path="/pricing" element={<ProtectedTerminal><Pricing /></ProtectedTerminal>} />
+          <Route path="/alerts" element={<ProtectedTerminal><Alerts /></ProtectedTerminal>} />
+          <Route path="/reports" element={<ProtectedTerminal><Reports /></ProtectedTerminal>} />
+
+          <Route path="/discord" element={<ProtectedTerminal><PlaceholderPage active="discord" /></ProtectedTerminal>} />
+          <Route path="/settings" element={<ProtectedTerminal><PlaceholderPage active="settings" /></ProtectedTerminal>} />
+
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
