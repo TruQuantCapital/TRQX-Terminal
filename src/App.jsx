@@ -6,6 +6,7 @@ import TopRibbon from "./components/TopRibbon";
 import Dashboard from "./pages/Dashboard";
 import Scanner from "./pages/Scanner";
 import GammaPage from "./pages/GammaPage";
+import LandingPage from "./pages/LandingPage";
 import NewsPage from "./pages/NewsPage";
 import OptionsPage from "./pages/OptionsPage";
 import TradePlanPage from "./pages/TradePlanPage";
@@ -115,7 +116,7 @@ export default function App() {
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
-
+          <Route path="/home" element={<LandingPage />} />
           <Route path="/" element={<ProtectedTerminal><Dashboard /></ProtectedTerminal>} />
           <Route path="/dashboard" element={<ProtectedTerminal><Dashboard /></ProtectedTerminal>} />
           <Route path="/scanner" element={<ProtectedTerminal><Scanner /></ProtectedTerminal>} />
