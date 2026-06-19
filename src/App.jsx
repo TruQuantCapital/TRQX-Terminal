@@ -84,7 +84,6 @@ function TerminalLayout({ children }) {
 
       <section className="content">
         <TopRibbon />
-        <FuturesBar />
 
         {user && (
           <div className="terminal-userbar">
