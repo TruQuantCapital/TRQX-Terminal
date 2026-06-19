@@ -14,7 +14,6 @@ import {
   GraduationCap,
   Trophy,
 } from "lucide-react";
-import "./landingPage.css";
 
 const plans = [
   {
