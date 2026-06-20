@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+﻿import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 const AuthContext = createContext(null);
@@ -39,11 +39,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function fetchProfile(uid) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("profiles")
-      .select("tier, stripe_customer_id")
+      .select("tier, stripe_customer_id, non_professional, attested_at")
       .eq("id", uid)
-      .single();
+      .maybeSingle();
+
+    if (error) {
+      console.error("[auth] fetchProfile error:", error.message);
+    }
     setProfile(data);
   }
 
@@ -61,7 +65,6 @@ export function AuthProvider({ children }) {
 
   async function getToken() {
     if (accessToken) return accessToken;
-    // Try reading directly from Supabase localStorage key
     try {
       const key = `sb-${import.meta.env.VITE_SUPABASE_URL?.split("//")[1]?.split(".")[0]}-auth-token`;
       const stored = localStorage.getItem(key);
@@ -74,10 +77,9 @@ export function AuthProvider({ children }) {
     return session?.access_token ?? null;
   }
 
-  // Owner always gets elite regardless of Supabase profile
   const isOwner = OWNER_EMAILS.includes(user?.email);
   const tier = isOwner ? "elite" : (profile?.tier ?? "free");
-  const token = null; // populated via getToken()
+  const token = null;
 
   const canAccess = (feature) => {
     return TIER_FEATURES[tier]?.includes(feature) ?? false;
