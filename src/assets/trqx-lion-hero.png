@@ -1,1 +1,7 @@
 import trqxLionHero from "../assets/trqx-lion-hero.png";
+.lionHeroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
