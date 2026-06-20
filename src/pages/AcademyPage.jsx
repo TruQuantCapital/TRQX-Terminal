@@ -1,53 +1,35 @@
-import React from "react";
-
-const levels = [
-  {
-    title: "Beginner Trader",
-    tag: "Level 1",
-    progress: 0,
-    status: "Start Here",
-    lessons: [
-      "Market Basics",
-      "Stocks & ETFs",
-      "Options Basics",
-      "Candlesticks",
-      "Support & Resistance",
-      "Volume",
-      "Risk Management",
-      "Trading Psychology",
-    ],
-  },
-  {
-    title: "Intermediate Trader",
-    tag: "Level 2",
-    progress: 0,
-    status: "Locked",
-    lessons: [
-      "Options Flow",
-      "Sweeps vs Blocks",
-      "Gamma Basics",
-      "ORB Strategy",
-      "Trade Planning",
-      "Position Sizing",
-    ],
-  },
-  {
-    title: "Advanced Trader",
-    tag: "Level 3",
-    progress: 0,
-    status: "Locked",
-    lessons: [
-      "Smart Money Analysis",
-      "Gamma Exposure",
-      "Market Regime",
-      "Catalyst Trading",
-      "Advanced Risk",
-      "Execution Models",
-    ],
-  },
-];
+﻿import React, { useState } from "react";
+import { Lock } from "lucide-react";
+import { courseLevels } from "../data/courseLevels";
+import { useAcademyProgress } from "../hooks/useAcademyProgress";
+import LessonReader from "./LessonReader";
+import "./academyInteractive.css";
 
 export default function AcademyPage() {
+  const { completed, loading, markComplete, levelProgress, isLevelUnlocked } =
+    useAcademyProgress();
+
+  const [openLesson, setOpenLesson] = useState(null);
+
+  const totalLessons = courseLevels.reduce((sum, lvl) => sum + lvl.lessons.length, 0);
+  const totalCompleted = Object.values(completed).reduce((sum, set) => sum + set.size, 0);
+  const overallProgress = totalLessons ? Math.round((totalCompleted / totalLessons) * 100) : 0;
+
+  const beginnerLevel = courseLevels[0];
+  const beginnerProgress = levelProgress(beginnerLevel.key, beginnerLevel.lessons.length);
+
+  function openLessonAt(levelKey, lessonIndex) {
+    setOpenLesson({ levelKey, lessonIndex });
+  }
+
+  function closeLessonReader() {
+    setOpenLesson(null);
+  }
+
+  const activeLevel = openLesson
+    ? courseLevels.find((l) => l.key === openLesson.levelKey)
+    : null;
+
   return (
     <main className="pageStack">
       <section className="pageHeader">
@@ -68,61 +50,82 @@ export default function AcademyPage() {
       <section className="flowQuickStats">
         <div className="flowMiniCard gold">
           <small>BEGINNER</small>
-          <b>0%</b>
+          <b>{loading ? "..." : `${beginnerProgress}%`}</b>
           <span>Progress</span>
         </div>
 
         <div className="flowMiniCard">
           <small>LESSONS</small>
-          <b>20+</b>
-          <span>Planned modules</span>
+          <b>{totalLessons}</b>
+          <span>Total modules</span>
         </div>
 
         <div className="flowMiniCard bullish">
-          <small>CERTIFICATION</small>
-          <b>LOCKED</b>
-          <span>Complete exams</span>
+          <small>OVERALL</small>
+          <b>{loading ? "..." : `${overallProgress}%`}</b>
+          <span>Course complete</span>
         </div>
       </section>
 
       <section className="academyGrid">
-        {levels.map((level) => (
-          <div key={level.title} className="academyLevelCard">
-            <div className="academyLevelTop">
-              <div>
-                <small>{level.tag}</small>
-                <h3>{level.title}</h3>
+        {courseLevels.map((level, levelIndex) => {
+          const unlocked = isLevelUnlocked(levelIndex, courseLevels);
+          const progress = levelProgress(level.key, level.lessons.length);
+          const completedSet = completed[level.key] || new Set();
+
+          return (
+            <div key={level.key} className="academyLevelCard">
+              <div className="academyLevelTop">
+                <div>
+                  <small>{level.tag}</small>
+                  <h3>{level.title}</h3>
+                </div>
+
+                <span>
+                  {!unlocked ? "Locked" : progress === 100 ? "Complete" : "In Progress"}
+                </span>
               </div>
 
-              <span>{level.status}</span>
+              <div className="academyProgress">
+                <div style={{ width: `${progress}%` }}></div>
+              </div>
+
+              <p>{progress}% Complete</p>
+
+              <div className="academyLessonList">
+                {level.lessons.map((lesson, i) => {
+                  const isDone = completedSet.has(i);
+                  return (
+                    <button
+                      key={lesson.title}
+                      className={`academyLessonRow ${isDone ? "lessonDone" : ""} ${!unlocked ? "lessonLocked" : ""}`}
+                      onClick={() => unlocked && openLessonAt(level.key, i)}
+                      disabled={!unlocked}
+                    >
+                      <span>{!unlocked ? <Lock size={12} /> : i + 1}</span>
+                      <b>{lesson.title}</b>
+                      {isDone && <span className="lessonCheckIcon">OK</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                className="tradePlanBtn"
+                disabled={!unlocked}
+                onClick={() => unlocked && openLessonAt(level.key, 0)}
+              >
+                {!unlocked ? "Locked" : progress === 100 ? "Review Lessons" : "Continue Learning"}
+              </button>
             </div>
-
-            <div className="academyProgress">
-              <div style={{ width: `${level.progress}%` }}></div>
-            </div>
-
-            <p>{level.progress}% Complete</p>
-
-            <div className="academyLessonList">
-              {level.lessons.map((lesson, i) => (
-                <div key={lesson}>
-                  <span>{i + 1}</span>
-                  <b>{lesson}</b>
-                </div>
-              ))}
-            </div>
-
-            <button className="tradePlanBtn">
-              {level.status === "Locked" ? "Locked" : "Continue Learning"}
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </section>
 
       <section className="smartMoneySummary">
         <div>
           <small>TRQX STUDY PATH</small>
-          <h3>Learn → Practice → Quiz → Apply → Certify</h3>
+          <h3>Learn -&gt; Practice -&gt; Quiz -&gt; Apply -&gt; Certify</h3>
         </div>
 
         <div className="smartMoneyGrid">
@@ -152,6 +155,19 @@ export default function AcademyPage() {
           </div>
         </div>
       </section>
+
+      {openLesson && activeLevel && (
+        <LessonReader
+          level={activeLevel}
+          lessonIndex={openLesson.lessonIndex}
+          isCompleted={(completed[openLesson.levelKey] || new Set()).has(openLesson.lessonIndex)}
+          onClose={closeLessonReader}
+          onComplete={(idx) => markComplete(openLesson.levelKey, idx)}
+          onNavigate={(newIndex) =>
+            setOpenLesson({ levelKey: openLesson.levelKey, lessonIndex: newIndex })
+          }
+        />
+      )}
     </main>
   );
 }
