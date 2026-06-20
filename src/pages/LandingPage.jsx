@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {
   Zap,
@@ -15,6 +15,7 @@ import {
   CandlestickChart,
 } from "lucide-react";
 import "./LandingPage.css";
+import trqxLionHero from "../assets/trqx-lion-hero.png";
 
 const marketRows = [
   ["SPY", "$534.21", "+0.72%"],
@@ -91,7 +92,7 @@ export default function LandingPage() {
       <section className="heroShell">
         <div className="lionPanel" aria-hidden="true">
           <div className="lionCircle">
-            <Crown size={92} />
+            <img src={trqxLionHero} alt="" className="lionHeroImage" />
           </div>
         </div>
 
