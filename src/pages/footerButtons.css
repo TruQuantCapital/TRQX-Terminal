@@ -1,0 +1,61 @@
+﻿.lessonReaderFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 26px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.lessonReaderFooter button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.lessonCompleteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #d4af37;
+  border: 1px solid #d4af37;
+  color: #0a0a0b;
+  border-radius: 9px;
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.lessonCompleteBtn.done {
+  background: #22c55e;
+  border-color: #22c55e;
+  color: #0a0a0b;
+}
+
+.outlineBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #d4af37;
+  border: 1px solid #d4af37;
+  color: #0a0a0b;
+  border-radius: 9px;
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.goldBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #d4af37;
+  border: 1px solid #d4af37;
+  color: #0a0a0b;
+  border-radius: 9px;
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}

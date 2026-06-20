@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from "react";
-import { X, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
+import "./footerButtons.css";import { X, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
 import LessonQuiz from "./LessonQuiz";
 import { useQuizAttempt } from "../hooks/useQuizAttempt";
 import "./quiz.css";
