@@ -600,3 +600,22 @@ body {
     font-size: 38px;
   }
 }
+.trqxNav,
+.trqxNav a,
+.heroButtons,
+.heroButtons a,
+.cardTop a,
+.planCard a,
+.bottomCta a {
+  position: relative;
+  z-index: 50;
+  pointer-events: auto;
+}
+
+.heroShell::before {
+  pointer-events: none;
+}
+
+.trqxLanding a {
+  cursor: pointer;
+}
