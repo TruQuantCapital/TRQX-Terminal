@@ -143,6 +143,7 @@ body {
     radial-gradient(circle, rgba(212, 175, 55, 0.30), transparent 36%),
     radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.1), #050505 68%);
   box-shadow: 0 0 100px rgba(212, 175, 55, 0.18);
+  overflow: hidden;
 }
 
 .lionCircle svg {
@@ -150,6 +151,13 @@ body {
   width: 180px;
   height: 180px;
   filter: drop-shadow(0 0 34px rgba(212, 175, 55, 0.55));
+}
+
+.lionHeroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .heroCenter {
