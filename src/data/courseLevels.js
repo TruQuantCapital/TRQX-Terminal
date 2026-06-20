@@ -2,7 +2,7 @@
 // arrays need to be replaced with real lesson text once the course
 // review is complete. Each lesson's `content` is an array of blocks
 // so the reader can render headers, paragraphs, and callouts distinctly.
-
+import { lesson11Quiz } from "./lesson11Quiz";
 export const courseLevels = [
   {
     key: "beginner",
