@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
@@ -43,7 +43,6 @@ export default function Auth() {
         <div className="auth-glow" />
       </div>
 
-      {/* Left side flow tickers */}
       <div className="auth-side-tickers auth-tickers-left">
         <div className="auth-ticker-item bullish">
           <span className="ticker-sym">SPY</span>
@@ -82,7 +81,6 @@ export default function Auth() {
         </div>
       </div>
 
-      {/* Right side flow tickers */}
       <div className="auth-side-tickers auth-tickers-right">
         <div className="auth-ticker-item bullish">
           <span className="ticker-sym">GOOGL</span>
@@ -122,7 +120,6 @@ export default function Auth() {
       </div>
 
       <div className="auth-card">
-        {/* Crown + Brand */}
         <div className="auth-brand-hero">
           <div className="auth-crown-container">
             <img
@@ -147,7 +144,6 @@ export default function Auth() {
             : "Create your account — no card required"}
         </div>
 
-        {/* Stats */}
         <div className="auth-stats">
           <div className="auth-stat">
             <div className="auth-stat-icon">📊</div>
@@ -174,7 +170,6 @@ export default function Auth() {
           </div>
         </div>
 
-        {/* Form */}
         <form className="auth-form" onSubmit={submit}>
           <div className="auth-field">
             <label className="auth-label">EMAIL</label>
@@ -215,7 +210,6 @@ export default function Auth() {
             </div>
           )}
 
-          {/* Non-Professional Subscriber Attestation — signup only */}
           {mode === "signup" && (
             <div style={{
               marginTop: "14px",
@@ -335,7 +329,6 @@ export default function Auth() {
         <div className="auth-footer">Plan It. Trade It. Slay It.</div>
       </div>
 
-      {/* Bottom trust bar */}
       <div className="auth-trust-bar">
         <div className="auth-trust-item">
           <span className="trust-icon">👥</span>
