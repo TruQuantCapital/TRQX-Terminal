@@ -80,8 +80,8 @@ export default function LandingPage() {
         <div className="trqxNavLinks">
           <a href="#features">Features</a>
           <a href="#pricing">Pricing</a>
-          <a href="#academy">Academy</a>
-          <a href="#about">About</a>
+          <a href="#pricing">Academy</a>
+          <a href="#stats">About</a>
           <a href="https://discord.gg/jy3ta9qkfH" target="_blank" rel="noreferrer">Discord</a>
         </div>
 
@@ -128,7 +128,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Live Market Overview</b>
-              <span>View All →</span>
+              <Link to="/dashboard">View All →</Link>
             </div>
             <div className="marketGrid">
               {marketRows.map(([sym, price, change]) => (
@@ -144,7 +144,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Today's Smart Money</b>
-              <span>View Flow →</span>
+              <Link to="/options-flow">View Flow →</Link>
             </div>
             {smartMoney.map(([sym, prem, type]) => (
               <div key={sym} className="flowRow">
@@ -158,7 +158,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Gamma Dashboard</b>
-              <span>View Map →</span>
+              <Link to="/gamma-ex">View Map →</Link>
             </div>
             <div className="gammaLine"><span>Gamma Flip</span><div><i style={{ width: "82%" }} /></div><b>534</b></div>
             <div className="gammaLine"><span>Call Wall</span><div><i style={{ width: "70%" }} /></div><b>560</b></div>
@@ -169,7 +169,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Economic Calendar</b>
-              <span>View Calendar →</span>
+              <Link to="/economic-calendar">View Calendar →</Link>
             </div>
             <div className="eventRow"><span>08:30 AM</span><b>CPI Release</b><em>High</em></div>
             <div className="eventRow"><span>10:00 AM</span><b>FOMC Minutes</b><em>High</em></div>
@@ -217,7 +217,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="statsBar">
+      <section id="stats" className="statsBar">
         <div><CandlestickChart /><b>$500M+</b><span>Flow Analyzed</span></div>
         <div><BarChart3 /><b>50,000+</b><span>Contracts Tracked</span></div>
         <div><Users /><b>2,000+</b><span>Members</span></div>
