@@ -83,7 +83,7 @@
   border: 1px solid rgba(212,175,55,.3);
   border-radius: 18px;
   box-shadow: 0 30px 80px rgba(0,0,0,.6);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .lessonReaderHeader {
