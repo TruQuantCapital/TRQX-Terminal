@@ -1,4 +1,4 @@
-/* ─── Lesson rows (clickable, completion state) ─────────────── */
+﻿/* â”€â”€â”€ Lesson rows (clickable, completion state) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .academyLessonRow {
   width: 100%;
@@ -60,7 +60,7 @@
   background: rgba(255,255,255,.02);
 }
 
-/* ─── Lesson Reader Modal ─────────────────────────────────────── */
+/* â”€â”€â”€ Lesson Reader Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .lessonReaderOverlay {
   position: fixed;
@@ -75,8 +75,8 @@
 }
 
 .lessonReaderCard {
-  width: min(720px, 100%);
-  max-height: 86vh;
+  width: min(1400px, 96vw);
+  max-height: 94vh;
   display: flex;
   flex-direction: column;
   background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(3,7,18,.99));
