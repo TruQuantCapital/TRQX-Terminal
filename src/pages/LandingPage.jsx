@@ -2,261 +2,238 @@
 import { Link } from "react-router-dom";
 import {
   Zap,
-  Shield,
+  ShieldCheck,
   Lock,
   Target,
   BarChart3,
   CalendarDays,
   Newspaper,
-  Layers,
-  Crown,
+  ClipboardList,
   GraduationCap,
-  Trophy,
+  Crown,
+  Users,
+  CandlestickChart,
 } from "lucide-react";
 import "./LandingPage.css";
 
+const marketRows = [
+  ["SPY", "$534.21", "+0.72%"],
+  ["QQQ", "$459.78", "+0.72%"],
+  ["IWM", "$200.45", "+0.72%"],
+  ["VIX", "13.62", "-2.11%"],
+];
+
+const smartMoney = [
+  ["SPY", "$2.4M", "CALL SWEEP"],
+  ["NVDA", "$1.8M", "CALL SWEEP"],
+  ["AAPL", "$1.2M", "CALL SWEEP"],
+  ["TSLA", "$950K", "PUT SWEEP"],
+];
+
+const features = [
+  ["Options Flow Scanner", "Detect institutional activity as it happens.", Target],
+  ["Gamma Exposure", "Know where market makers defend price.", BarChart3],
+  ["Economic Calendar", "Never get surprised by major news.", CalendarDays],
+  ["Market News", "AI-curated market headlines.", Newspaper],
+  ["Trade Planning", "Build complete trade plans.", ClipboardList],
+  ["Academy", "Learn from beginner to advanced.", GraduationCap],
+];
+
 const plans = [
   {
-    name: "TRQX ORB",
+    name: "TRQX ORB Indicator",
     price: "$49.99",
-    icon: Target,
-    features: [
-      "Precision ORB Indicator",
-      "Setup Guide",
-      "ORB Academy Lessons",
-      "Discord ORB Channel",
-    ],
+    features: ["Precision ORB Indicator", "Setup Guide", "ORB Academy Lessons", "Discord ORB Channel"],
   },
   {
-    name: "TRQX Scanner",
+    name: "TRQX Scanner + Gamma",
     price: "$79",
-    icon: BarChart3,
-    features: [
-      "Options Flow Scanner",
-      "Unusual Activity",
-      "Dark Pool Activity",
-      "Momentum Scanner",
-      "Low Float Scanner",
-      "Daily Watchlist",
-    ],
-  },
-  {
-    name: "TRQX Gamma Suite",
-    price: "$79",
-    icon: Zap,
-    features: [
-      "Gamma Dashboard",
-      "Gamma Flip",
-      "Call Wall / Put Wall",
-      "Dealer Positioning",
-      "Market Maker Analysis",
-      "Daily Gamma Levels",
-    ],
-  },
-  {
-    name: "TRQX Market Intelligence",
-    price: "$129",
-    icon: Crown,
-    popular: true,
-    features: [
-      "Everything in Scanner",
-      "Everything in Gamma",
-      "Market News",
-      "Economic Calendar",
-      "Trade Plan Engine",
-    ],
+    features: ["Options Flow Scanner", "Gamma Dashboard", "Unusual Activity", "Dark Pool Activity", "Daily Watchlist"],
   },
   {
     name: "TRQX Academy",
     price: "$99",
-    icon: GraduationCap,
-    features: [
-      "Structured Lessons",
-      "Quizzes & Homework",
-      "Beginner to Intermediate",
-      "Trading Fundamentals",
-      "Community Access",
-    ],
+    features: ["Structured Lessons", "Quizzes & Homework", "Beginner to Advanced", "Trading Fundamentals", "Community Access"],
+  },
+  {
+    name: "TRQX Elite",
+    price: "$149",
+    badge: "Best Value",
+    features: ["Everything in Scanner", "Everything in Academy", "Market News", "Economic Calendar", "Trade Plan Engine", "Multi-Asset Coverage"],
   },
   {
     name: "TRQX Mentorship",
     price: "$299",
-    icon: Trophy,
-    features: [
-      "Everything in Market Intelligence",
-      "Weekly Group Coaching",
-      "Chart & Trade Reviews",
-      "Direct Q&A Access",
-      "Accountability & Support",
-    ],
+    features: ["Everything in Elite", "Weekly Group Coaching", "Chart & Trade Reviews", "Direct Q&A Access", "Accountability & Support"],
   },
 ];
 
 export default function LandingPage() {
   return (
-    <main className="landingPage">
-      <nav className="landingNav">
-        <div className="landingLogo">
+    <main className="trqxLanding">
+      <nav className="trqxNav">
+        <Link to="/home" className="trqxLogo">
           TRQ<span>X</span>
           <small>TERMINAL</small>
-        </div>
+        </Link>
 
-        <div className="landingLinks">
+        <div className="trqxNavLinks">
           <a href="#features">Features</a>
           <a href="#pricing">Pricing</a>
           <a href="#academy">Academy</a>
           <a href="#about">About</a>
+          <a href="https://discord.gg/jy3ta9qkfH" target="_blank" rel="noreferrer">Discord</a>
         </div>
 
-        <div className="landingActions">
-          <a href="https://discord.gg/jy3ta9qkfH" target="_blank" rel="noreferrer">
-            Discord
-          </a>
-          <Link to="/auth" className="outlineBtn">Login</Link>
-          <Link to="/pricing" className="goldBtn">Get Started</Link>
-        </div>
+        <Link to="/auth" className="navCta">Start Free Trial</Link>
       </nav>
 
-      <section className="landingHero">
-        <div className="heroCopy">
-          <div className="heroBadge">
-            <Zap size={15} /> Real-Time Options Flow & Market Intelligence
+      <section className="heroShell">
+        <div className="lionPanel" aria-hidden="true">
+          <div className="lionCircle">
+            <Crown size={92} />
           </div>
+        </div>
+
+        <div className="heroCenter">
+          <div className="brandMark">TRQ<span>X</span></div>
+          <div className="brandSub">TERMINAL</div>
 
           <h1>
-            The Edge <br />
-            Retail Traders <br />
-            <span>Deserve.</span>
+            Institutional <br />
+            <span>Options Flow</span> <br />
+            Intelligence
           </h1>
 
+          <h2>Follow smart money. Understand gamma. Trade with precision.</h2>
+
           <p>
-            TRQX Terminal delivers options flow, gamma exposure, market news,
-            economic events, trade planning, and academy education inside one
-            black-and-gold trading platform.
+            Track options flow, gamma exposure, economic events, market news,
+            and trade planning from one unified platform.
           </p>
 
           <div className="heroButtons">
-            <Link to="/auth" className="goldBtn">Start Your Free Trial</Link>
-            <a href="#pricing" className="outlineBtn">Explore Plans</a>
+            <Link to="/auth" className="goldButton">Start Free Trial</Link>
+            <a href="#pricing" className="darkButton">View Plans</a>
           </div>
 
-          <div className="trustRow">
-            <div><Zap /> Real-Time Data</div>
-            <div><Shield /> Institutional Grade</div>
-            <div><Lock /> Secure & Private</div>
+          <div className="trustGrid">
+            <div><Zap /><b>Real-Time Data</b><span>As it happens</span></div>
+            <div><ShieldCheck /><b>Institutional Grade</b><span>Built for serious traders</span></div>
+            <div><Lock /><b>Secure & Private</b><span>Your data is protected</span></div>
           </div>
         </div>
 
-        <div className="terminalPreview">
-          <div className="previewSidebar">
-            <b>TRQ<span>X</span></b>
-            {["Dashboard", "Scanner", "Options Flow", "Gamma Ex", "Calendar", "News", "Academy"].map((x) => (
-              <div key={x}>{x}</div>
-            ))}
-          </div>
-
-          <div className="previewMain">
-            <div className="marketTiles">
-              {["SPY", "QQQ", "IWM", "VIX"].map((x, i) => (
-                <div key={x}>
-                  <small>{x}</small>
-                  <b>{i === 3 ? "13.62" : i === 0 ? "534.21" : i === 1 ? "459.78" : "200.45"}</b>
-                  <span className={i === 3 ? "red" : "green"}>{i === 3 ? "-2.11%" : "+0.72%"}</span>
+        <aside className="intelRail">
+          <div className="intelCard">
+            <div className="cardTop">
+              <b>Live Market Overview</b>
+              <span>View All →</span>
+            </div>
+            <div className="marketGrid">
+              {marketRows.map(([sym, price, change]) => (
+                <div key={sym} className="marketMini">
+                  <b>{sym}</b>
+                  <strong>{price}</strong>
+                  <span className={change.startsWith("-") ? "loss" : "gain"}>{change}</span>
                 </div>
               ))}
             </div>
-
-            <div className="previewGrid">
-              <div className="previewPanel large">
-                <h4>Options Flow</h4>
-                {["SPY SWEEP CALL $2.4M", "QQQ BLOCK CALL $1.8M", "AAPL SWEEP CALL $1.2M", "TSLA PUT $950K"].map((x) => (
-                  <p key={x}>{x}</p>
-                ))}
-              </div>
-
-              <div className="previewPanel">
-                <h4>Gamma Exposure</h4>
-                <div className="gammaBars">
-                  {[80, 70, 60, 45, 30].map((w) => <span key={w} style={{ width: `${w}%` }} />)}
-                </div>
-              </div>
-
-              <div className="previewPanel large">
-                <h4>Market News</h4>
-                <p>Fed comments shift rate expectations</p>
-                <p>NVDA AI demand remains strong</p>
-                <p>Oil rises on supply concerns</p>
-              </div>
-
-              <div className="previewPanel">
-                <h4>Economic Calendar</h4>
-                <p>CPI Release — High</p>
-                <p>FOMC Minutes — High</p>
-              </div>
-            </div>
           </div>
-        </div>
-      </section>
 
-      <section id="features" className="featureStrip">
-        <div><Target /> <b>Real-Time Options Flow</b><span>See big money as it hits.</span></div>
-        <div><BarChart3 /> <b>Gamma Exposure Maps</b><span>Know key market levels.</span></div>
-        <div><CalendarDays /> <b>Economic Calendar</b><span>Track market-moving events.</span></div>
-        <div><Newspaper /> <b>Breaking News Feed</b><span>Curated. Fast. Relevant.</span></div>
-        <div><Layers /> <b>Multi-Asset Coverage</b><span>Stocks, ETFs, futures and more.</span></div>
-      </section>
-
-      <section id="pricing" className="pricingSection">
-        <div className="sectionHeader">
-          <small>CHOOSE YOUR EDGE</small>
-          <h2>Pick the toolset that fits your trading level.</h2>
-        </div>
-
-        <div className="pricingGrid">
-          {plans.map((plan) => {
-            const Icon = plan.icon;
-            return (
-              <div key={plan.name} className={`pricingCard ${plan.popular ? "popular" : ""}`}>
-                {plan.popular && <div className="popularBadge">Most Popular</div>}
-                <Icon size={34} />
-                <h3>{plan.name}</h3>
-                <div className="price">{plan.price}<span>/month</span></div>
-
-                <ul>
-                  {plan.features.map((f) => (
-                    <li key={f}>✓ {f}</li>
-                  ))}
-                </ul>
-
-                <Link to="/pricing" className="goldBtn">
-                  {plan.name.includes("Mentorship") ? "Apply Now" : "Get Started"}
-                </Link>
+          <div className="intelCard">
+            <div className="cardTop">
+              <b>Today's Smart Money</b>
+              <span>View Flow →</span>
+            </div>
+            {smartMoney.map(([sym, prem, type]) => (
+              <div key={sym} className="flowRow">
+                <b>{sym}</b>
+                <strong className={type.includes("PUT") ? "loss" : "gain"}>{prem}</strong>
+                <span>{type}</span>
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          <div className="intelCard">
+            <div className="cardTop">
+              <b>Gamma Dashboard</b>
+              <span>View Map →</span>
+            </div>
+            <div className="gammaLine"><span>Gamma Flip</span><div><i style={{ width: "82%" }} /></div><b>534</b></div>
+            <div className="gammaLine"><span>Call Wall</span><div><i style={{ width: "70%" }} /></div><b>560</b></div>
+            <div className="gammaLine"><span>Put Wall</span><div><i className="redBar" style={{ width: "48%" }} /></div><b>460</b></div>
+            <div className="dealer">Dealer Positioning <b>Long Gamma</b></div>
+          </div>
+
+          <div className="intelCard">
+            <div className="cardTop">
+              <b>Economic Calendar</b>
+              <span>View Calendar →</span>
+            </div>
+            <div className="eventRow"><span>08:30 AM</span><b>CPI Release</b><em>High</em></div>
+            <div className="eventRow"><span>10:00 AM</span><b>FOMC Minutes</b><em>High</em></div>
+            <div className="eventRow"><span>02:00 PM</span><b>Fed Chair Powell</b><em>Med</em></div>
+          </div>
+        </aside>
+      </section>
+
+      <section id="features" className="whySection">
+        <div className="sectionTitle">
+          <span />
+          <h2>Why Traders Use TRQX</h2>
+          <span />
+        </div>
+
+        <div className="featureGrid">
+          {features.map(([title, text, Icon]) => (
+            <div className="featureCard" key={title}>
+              <Icon size={48} />
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      <footer className="landingFooter">
-        <div>
-          <div className="landingLogo">TRQ<span>X</span><small>TERMINAL</small></div>
-          <p>Options flow, gamma exposure, market intelligence, and trader education.</p>
-        </div>
+      <section id="pricing" className="pricingBlock">
+        <small>Choose Your Edge</small>
+        <h2>Powerful Tools. Simple Pricing.</h2>
 
-        <div>
-          <b>Product</b>
-          <a>Features</a>
-          <a>Pricing</a>
-          <a>Academy</a>
+        <div className="planGrid">
+          {plans.map((plan) => (
+            <div key={plan.name} className={`planCard ${plan.badge ? "featuredPlan" : ""}`}>
+              {plan.badge && <div className="planBadge">{plan.badge}</div>}
+              <h3>{plan.name}</h3>
+              <div className="planPrice">{plan.price}<span>/mo</span></div>
+              <ul>
+                {plan.features.map((item) => <li key={item}>✓ {item}</li>)}
+              </ul>
+              <Link to="/pricing" className={plan.badge ? "goldButton" : "darkButton"}>
+                {plan.name.includes("Mentorship") ? "Apply Now" : "Get Started"}
+              </Link>
+            </div>
+          ))}
         </div>
+      </section>
 
+      <section className="statsBar">
+        <div><CandlestickChart /><b>$500M+</b><span>Flow Analyzed</span></div>
+        <div><BarChart3 /><b>50,000+</b><span>Contracts Tracked</span></div>
+        <div><Users /><b>2,000+</b><span>Members</span></div>
+        <div><ShieldCheck /><b>99.9%</b><span>Uptime</span></div>
+        <div><CalendarDays /><b>2024</b><span>Live Since</span></div>
+      </section>
+
+      <section className="bottomCta">
+        <Crown />
         <div>
-          <b>Community</b>
-          <a href="https://discord.gg/jy3ta9qkfH" target="_blank" rel="noreferrer">Discord</a>
-          <a>Support</a>
-          <a>Contact</a>
+          <h2>Ready To Trade Smarter?</h2>
+          <p>Join TRQX and see what institutions are doing before the crowd.</p>
         </div>
-      </footer>
+        <Link to="/auth" className="goldButton">Start Free Trial</Link>
+        <a href="https://discord.gg/jy3ta9qkfH" target="_blank" rel="noreferrer" className="darkButton">Join Discord</a>
+      </section>
     </main>
   );
 }

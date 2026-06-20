@@ -1,0 +1,145 @@
+/* ─── ACADEMY SECTION ─────────────────────────────────────── */
+
+.academySection {
+  padding: 70px 64px;
+  border-top: 1px solid rgba(212, 175, 55, 0.18);
+}
+
+.academyPreviewGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.academyPreviewCard {
+  position: relative;
+  padding: 28px 24px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.78), rgba(3, 7, 18, 0.96));
+  display: flex;
+  flex-direction: column;
+}
+
+.academyPreviewCard svg {
+  color: #d4af37;
+  margin-bottom: 16px;
+}
+
+.academyPreviewLevel {
+  color: #d4af37;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.academyPreviewCard h3 {
+  margin: 0 0 12px;
+  color: #fff;
+  font-size: 19px;
+}
+
+.academyPreviewCard p {
+  margin: 0 0 20px;
+  color: #9ca3af;
+  font-size: 14px;
+  line-height: 1.55;
+  flex: 1;
+}
+
+.academyPreviewMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+.academyPreviewMeta span {
+  color: #d4af37;
+}
+
+/* ─── ABOUT SECTION ───────────────────────────────────────── */
+
+.aboutSection {
+  padding: 70px 64px;
+  border-top: 1px solid rgba(212, 175, 55, 0.18);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: center;
+}
+
+.aboutCopy small {
+  display: block;
+  color: #d4af37;
+  font-weight: 950;
+  letter-spacing: 0.36em;
+  font-size: 12px;
+  margin-bottom: 18px;
+}
+
+.aboutCopy h2 {
+  margin: 0 0 22px;
+  font-size: 36px;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.aboutCopy p {
+  color: #cbd5e1;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.aboutStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.aboutStatCard {
+  padding: 22px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.78), rgba(3, 7, 18, 0.96));
+}
+
+.aboutStatCard b {
+  display: block;
+  color: #d4af37;
+  font-size: 30px;
+  font-weight: 950;
+  margin-bottom: 6px;
+}
+
+.aboutStatCard span {
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 1100px) {
+  .academyPreviewGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .aboutSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .academySection,
+  .aboutSection {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+}
