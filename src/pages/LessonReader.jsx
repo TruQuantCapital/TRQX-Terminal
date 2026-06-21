@@ -11,6 +11,7 @@ import "./chatWidget.css";
 import "./drills.css";
 import "./timelineDrill.css";
 import "./footerButtons.css";
+import FlashCards from "../components/FlashCards";
 
 export default function LessonReader({
   level,
@@ -85,6 +86,8 @@ export default function LessonReader({
             }
             return <p key={i}>{block.text}</p>;
           })}
+                    <FlashCards lesson={lesson} />
+                    
 
           {hasDrills && lesson.drills.clickIdentify && (
             <>
