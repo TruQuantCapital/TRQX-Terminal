@@ -1574,3 +1574,42 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
     grid-template-columns: 1fr;
   }
 }
+/* ===== TABLET SIDEBAR ICON FIX ===== */
+
+.navIcon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.sidebarCardIcon {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 1300px) {
+  .app { grid-template-columns: 96px 1fr; }
+}
+
+  .navBtn {
+    min-height: 64px;
+    padding: 14px 8px;
+  }
+
+  .navIcon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 850px) {
+
+  .navIcon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .navBtn {
+    min-height: 72px;
+  }
+}

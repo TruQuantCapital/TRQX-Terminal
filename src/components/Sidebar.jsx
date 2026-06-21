@@ -82,7 +82,7 @@ export default function Sidebar({ active, setActive, user, tier }) {
               className={"navBtn " + (active === item.key ? "active" : "")}
               onClick={() => setActive(item.key)}
             >
-              <Icon size={18} />
+              <Icon className="navIcon" />
               <span>{item.label}</span>
             </button>
           );
@@ -90,7 +90,7 @@ export default function Sidebar({ active, setActive, user, tier }) {
       </nav>
 
       <div className="sidebarCard pro">
-        <Crown size={20} />
+        <Crown className="sidebarCardIcon" />
 
         <div>
           <b>TRQX CAPITAL ELITE</b>
@@ -101,7 +101,7 @@ export default function Sidebar({ active, setActive, user, tier }) {
       </div>
 
       <div className="sidebarCard discord">
-        <MessageCircle size={22} />
+        <MessageCircle className="sidebarCardIcon" />
 
         <div>
           <b>TRQX Trading Floor</b>
