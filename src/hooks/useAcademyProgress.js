@@ -13,7 +13,7 @@ import { useAuth } from "./useAuth";
  *   levelProgress(levelKey, totalLessons): 0-100
  */
 export function useAcademyProgress() {
-  const { user } = useAuth();
+  const { user, tier } = useAuth();
   const [completed, setCompleted] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -89,14 +89,27 @@ export function useAcademyProgress() {
     [completed]
   );
 
-  const isLevelUnlocked = useCallback(
+    const isLevelUnlocked = useCallback(
     (levelIndex, allLevels) => {
-      if (levelIndex === 0) return true; // first level always unlocked
+      const level = allLevels[levelIndex];
+
+      const tierAccess = {
+        beginner: ["free", "starter", "pro", "elite"],
+        intermediate: ["pro", "elite"],
+        advanced: ["elite"],
+      };
+
+      const tierAllowed = tierAccess[level.key]?.includes(tier) ?? false;
+      if (!tierAllowed) return false;
+
+      if (levelIndex === 0) return true;
+
       const prevLevel = allLevels[levelIndex - 1];
       const prevSet = completed[prevLevel.key];
+
       return !!prevSet && prevSet.size >= prevLevel.lessons.length;
     },
-    [completed]
+    [completed, tier]
   );
 
   return { completed, loading, markComplete, levelProgress, isLevelUnlocked };

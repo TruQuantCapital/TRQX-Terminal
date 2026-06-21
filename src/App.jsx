@@ -18,6 +18,7 @@ import Pricing from "./pages/Pricing";
 import Alerts from "./pages/Alerts";
 import Reports from "./pages/Reports";
 import Welcome from "./pages/Welcome";
+import ResetPassword from "./pages/ResetPassword";
 import "./styles.css";
 import "./app.css";
 
@@ -115,6 +116,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/auth" element={<Auth />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
           <Route path="/home" element={<LandingPage />} />
           <Route path="/" element={<ProtectedTerminal><Dashboard /></ProtectedTerminal>} />
