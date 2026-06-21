@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { supabase } from "../lib/supabase";
 
-
 export default function Auth() {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
@@ -21,7 +20,7 @@ export default function Auth() {
     setError("");
 
     if (!email) {
-      setError("Please enter your email address first.");
+      setError("Enter your email address first.");
       return;
     }
 
@@ -40,32 +39,15 @@ export default function Auth() {
 
     setError("Password reset email sent. Check your inbox and spam folder.");
   }
-async function resetPassword() {
-  setError("");
 
-  if (!email) {
-    setError("Enter your email first, then click Forgot Password.");
-    return;
-  }
-
-  setLoading(true);
-
-  const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "https://trqx.thetrulies.com/reset-password",
-  });
-
-  setLoading(false);
-
-  if (err) {
-    setError(err.message);
-    return;
-  }
-
-  setError("Password reset email sent. Check your inbox and spam folder.");
-}
   async function submit(e) {
     e.preventDefault();
     setError("");
+
+    if (mode === "reset") {
+      await resetPassword();
+      return;
+    }
 
     if (mode === "signup" && !agreeNonPro) {
       setError("You must certify Non-Professional status and accept the Market Data Terms to create an account.");
@@ -104,13 +86,19 @@ async function resetPassword() {
         <div className="auth-divider" />
 
         <div className="auth-headline">
-          {mode === "login" ? "Welcome Back" : "Get Started"}
+          {mode === "login"
+            ? "Welcome Back"
+            : mode === "reset"
+              ? "Reset Password"
+              : "Get Started"}
         </div>
 
         <div className="auth-tagline">
           {mode === "login"
             ? "Track smart money. Execute with precision."
-            : "Create your account — no card required"}
+            : mode === "reset"
+              ? "Enter your email and we will send a reset link."
+              : "Create your account — no card required"}
         </div>
 
         <form className="auth-form" onSubmit={submit}>
@@ -129,20 +117,22 @@ async function resetPassword() {
             </div>
           </div>
 
-          <div className="auth-field">
-            <label className="auth-label">PASSWORD</label>
-            <div className="auth-input-wrap">
-              <input
-                className="auth-input"
-                type="password"
-                required
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
-                placeholder="••••••••••"
-              />
-              <span className="auth-input-icon">🔒</span>
+          {mode !== "reset" && (
+            <div className="auth-field">
+              <label className="auth-label">PASSWORD</label>
+              <div className="auth-input-wrap">
+                <input
+                  className="auth-input"
+                  type="password"
+                  required
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                  placeholder="••••••••••"
+                />
+                <span className="auth-input-icon">🔒</span>
+              </div>
             </div>
-          </div>
+          )}
 
           {mode === "login" && (
             <div className="auth-form-extras">
@@ -156,13 +146,17 @@ async function resetPassword() {
               </label>
 
               <button
-  type="button"
-  className="auth-forgot"
-  onClick={resetPassword}
-  disabled={loading}
->
-  Forgot Password?
-</button>
+                type="button"
+                className="auth-forgot"
+                onClick={() => {
+                  setError("");
+                  setPass("");
+                  setMode("reset");
+                }}
+                disabled={loading}
+              >
+                Forgot Password?
+              </button>
             </div>
           )}
 
@@ -260,23 +254,37 @@ async function resetPassword() {
 
           <button className="auth-submit" type="submit" disabled={loading}>
             {loading
-              ? "Authenticating..."
-              : mode === "login"
-                ? "Enter The Scanner →"
-                : "Create Account →"}
+              ? mode === "reset"
+                ? "Sending..."
+                : "Authenticating..."
+              : mode === "reset"
+                ? "Send Reset Link →"
+                : mode === "login"
+                  ? "Enter The Scanner →"
+                  : "Create Account →"}
           </button>
         </form>
 
         <div className="auth-toggle">
-          {mode === "login" ? "New to TRQX?" : "Already have an account?"}
+          {mode === "reset"
+            ? "Remembered your password?"
+            : mode === "login"
+              ? "New to TRQX?"
+              : "Already have an account?"}
+
           <button
             className="auth-toggle-btn"
             onClick={() => {
-              setMode((m) => (m === "login" ? "signup" : "login"));
+              setMode(mode === "reset" ? "login" : mode === "login" ? "signup" : "login");
               setError("");
+              setPass("");
             }}
           >
-            {mode === "login" ? "Start free" : "Sign in"}
+            {mode === "reset"
+              ? "Back to login"
+              : mode === "login"
+                ? "Start free"
+                : "Sign in"}
           </button>
         </div>
 
