@@ -1,0 +1,39 @@
+﻿.timelineTrack {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.timelineSlot {
+  background: rgba(0,0,0,.2);
+  border: 2px dashed rgba(255,255,255,.15);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color .15s ease;
+}
+
+.timelineSlot.correct {
+  border-style: solid;
+  border-color: rgba(34,197,94,.5);
+}
+
+.timelineSlot.incorrect {
+  border-style: solid;
+  border-color: rgba(239,68,68,.5);
+}
+
+.timelineSlotTime {
+  color: #d4af37;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.timelineSlotSub {
+  color: #9ca3af;
+  font-size: 11px;
+  margin-top: -4px;
+}

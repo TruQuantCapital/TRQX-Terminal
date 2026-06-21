@@ -5,9 +5,11 @@ import { useQuizAttempt } from "../hooks/useQuizAttempt";
 import AcademyChatWidget from "./AcademyChatWidget";
 import ClickIdentifyChart from "./ClickIdentifyChart";
 import DragLabelDrill from "./DragLabelDrill";
+import DragTimelineDrill from "./DragTimelineDrill";
 import "./quiz.css";
 import "./chatWidget.css";
 import "./drills.css";
+import "./timelineDrill.css";
 
 export default function LessonReader({
   level,
@@ -85,7 +87,7 @@ export default function LessonReader({
 
           {hasDrills && lesson.drills.clickIdentify && (
             <>
-              <h3>Practice: Identify the Structure</h3>
+              <h3>Practice: Identify the Pattern</h3>
               {lesson.drills.clickIdentify.map((drill) => (
                 <ClickIdentifyChart
                   key={drill.id}
@@ -105,6 +107,17 @@ export default function LessonReader({
                 prompt={lesson.drills.dragLabel.prompt}
                 labels={lesson.drills.dragLabel.labels}
                 charts={lesson.drills.dragLabel.charts}
+              />
+            </>
+          )}
+
+          {hasDrills && lesson.drills.dragTimeline && (
+            <>
+              <h3>Practice: Build the Sequence</h3>
+              <DragTimelineDrill
+                prompt={lesson.drills.dragTimeline.prompt}
+                chips={lesson.drills.dragTimeline.chips}
+                slots={lesson.drills.dragTimeline.slots}
               />
             </>
           )}

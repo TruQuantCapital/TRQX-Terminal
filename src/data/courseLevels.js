@@ -17,6 +17,15 @@ import { lesson12Quiz } from "./lesson12Quiz";
 import { lesson13Quiz } from "./lesson13Quiz";
 import { lesson14Quiz } from "./lesson14Quiz";
 import { lesson7Drills } from "./lesson7Drills";
+import { lesson4Drills } from "./lesson4Drills";
+import { lesson5Drills } from "./lesson5Drills";
+import { lesson6Drills } from "./lesson6Drills";
+import { lesson8Drills } from "./lesson8Drills";
+import { lesson9Drills } from "./lesson9Drills";
+import { lesson10Drills } from "./lesson10Drills";
+import { lesson12Drills } from "./lesson12Drills";
+import { lesson13Drills } from "./lesson13Drills";
+import { lesson14Drills } from "./lesson14Drills";
 
 export const courseLevels = [
   {
@@ -593,6 +602,7 @@ export const courseLevels = [
             { type: "p", text: "Student Assignment Notes (Instructor Reference) Since this assignment asks students to find and attach their own charts, there's no single correct answer — grade based on whether the student correctly identifies: - Bullish chart: higher highs and higher lows present - Bearish chart: lower highs and lower lows present - Bonus (sideways) chart: price oscillating in a range with no clear directional trend" },
           ],
           quiz: lesson4Quiz,
+          drills: lesson4Drills,
         },
         {
           title: "What Is a Trend?",
@@ -803,6 +813,7 @@ export const courseLevels = [
             { type: "p", text: "The \"Trend Cheat Sheet\" section header has no content beneath it in the source document — this was likely a visual graphic/table in the original file that didn't survive text extraction. Needs a real visual built before this lesson is considered final." },
           ],
           quiz: lesson5Quiz,
+          drills: lesson5Drills,
         },
         {
           title: "Support & Resistance",
@@ -964,6 +975,7 @@ export const courseLevels = [
             { type: "p", text: "The line \"✔ Volume\" appears alone under the \"Support & Resistance Are Zones\" header with no surrounding list or context — likely a leftover fragment from a bullet list that didn't survive extraction. Recommend removing it unless the original source clarifies what it was meant to accompany." },
           ],
           quiz: lesson6Quiz,
+          drills: lesson6Drills,
         },
         {
           title: "Market Structure",
@@ -1232,6 +1244,7 @@ export const courseLevels = [
             { type: "p", text: "1. Multiple Time Frame Analysis (MTFA) is the practice of analyzing more than one chart timeframe — typically starting with a higher timeframe for overall direction and moving down to a lower timeframe for trade entries. 2. Professional traders use multiple timeframes because the same stock can look bullish on one timeframe and bearish on another — looking at just one chart can be misleading. Multiple timeframes provide context and increase trade probability. 3. The Daily chart (a higher timeframe) should determine overall bias/direction. 4. Top-down analysis is the process of starting from the largest timeframe (e.g. Daily) to determine bias, then moving to an intermediate timeframe (e.g. 1 Hour) to confirm, and finally to a lower timeframe (e.g. 15 Minute) to find entries. 5. The 1-minute chart is dangerous for beginners because it contains more noise, more fake moves, and encourages emotional decision-making — it's less reliable for determining real market direction than higher timeframes." },
           ],
           quiz: lesson8Quiz,
+          drills: lesson8Drills,
         },
         {
           title: "Supply, Demand & Liquidity",
@@ -1392,6 +1405,7 @@ export const courseLevels = [
             { type: "p", text: "1. Support is a price area where buyers historically step in and prevent price from falling further. 2. Resistance is a price area where sellers historically step in and prevent price from moving higher. 3. A demand zone is an area where aggressive buying previously occurred, often characterized by a strong bullish move and a fast departure from the zone. 4. A supply zone is an area where aggressive selling previously occurred, often characterized by a strong bearish move and a fast departure from the zone. 5. A liquidity sweep occurs when price briefly breaks a level (triggering trader entries or stop orders) before quickly reversing — also called a stop hunt, fake breakout, or false breakdown. 6. Role reversal is when a broken resistance level becomes new support, or a broken support level becomes new resistance." },
           ],
           quiz: lesson9Quiz,
+          drills: lesson9Drills,
         },
         {
           title: "Volume, Momentum & Confirmation",
@@ -1496,6 +1510,7 @@ export const courseLevels = [
             { type: "p", text: "1. Volume measures the number of shares (or contracts) traded during a specific period — it reflects how much participation is behind a price move. 2. Momentum measures the speed and strength of a price movement — strong momentum shows large candles and little resistance, weak momentum shows small candles and frequent reversals. 3. Confirmation means waiting for evidence (a candle close beyond a level, a volume surge, and follow-through) before entering a trade. It matters because it helps separate real, sustainable moves from fake breakouts that quickly reverse. 4. A breakout trap occurs when price briefly moves beyond a support or resistance level without real volume or follow-through, then quickly reverses back — beginners who enter immediately on the break often get caught. 5. An RVOL of 2.0 means today's volume is twice the normal/average volume for that asset — indicating much higher than usual participation." },
           ],
           quiz: lesson10Quiz,
+          drills: lesson10Drills,
         },
     ],
   },
@@ -1810,6 +1825,7 @@ export const courseLevels = [
             { type: "p", text: "1. Premarket (4:00 AM – 9:30 AM), Regular Hours (9:30 AM – 4:00 PM), and After Hours (4:00 PM – 8:00 PM). 2. The Opening Range is often the most volatile period because overnight orders, premarket positions, and the market's first fresh decisions of the day all collide at once within the first 15-30 minutes. 3. The Lunch Session typically sees less reliable moves because volume drops noticeably as many institutional traders step away, meaning price action during this window often lacks real conviction behind it. 4. Power Hour is significant because volume and volatility typically pick back up sharply as day traders close positions, institutions execute closing orders, and new positions get taken heading into the next session — it can either confirm or completely reverse the day's earlier trend. 5. Premarket and after-hours moves should be treated with extra caution because they often happen on very light volume relative to a stock's normal trading activity — a large percentage move with relatively few shares traded may not hold once more participants are active during Regular Hours." },
           ],
           quiz: lesson12Quiz,
+          drills: lesson12Drills,
         },
         {
           title: "Gap Ups & Gap Downs",
@@ -1925,6 +1941,7 @@ export const courseLevels = [
             { type: "p", text: "1. A gap is when a stock opens at a meaningfully different price than where it previously closed, with no trading occurring in between. It happens because new information (news, earnings, economic data) becomes available while the market is closed, shifting what buyers and sellers are willing to pay before trading resumes. 2. A Gap Up occurs when a stock opens higher than its previous close. A Gap Down occurs when a stock opens lower than its previous close. 3. Gap Fill is when price moves back and trades through the price levels that were originally skipped during the gap, effectively \"filling in\" the gap. 4. Gap Continuation is when price keeps moving in the same direction as the gap instead of filling. It usually suggests the news behind the gap represented a genuine, significant shift rather than a temporary imbalance. 5. News Gaps are riskier because they typically come with wider bid-ask spreads and extreme volatility in the first few minutes of trading — price can swing violently in both directions, making the initial reaction one of the least reliable times to enter a trade." },
           ],
           quiz: lesson13Quiz,
+          drills: lesson13Drills,
         },
         {
           title: "Support & Resistance Mastery (Advanced)",
@@ -2029,6 +2046,7 @@ export const courseLevels = [
             { type: "p", text: "1. Timeframe matters most because a level's significance reflects how many traders across how much time genuinely recognize and react to it — a Weekly level represents recognition built over months, while an intraday level may only be visible to traders looking at that specific short timeframe. 2. Any three of: number of clean touches/reactions, volume behind those reactions, recency of the test, and whether it lines up with a round number. 3. A psychological level is a round, \"clean\" number (like $50, $100, $600) where traders and trading algorithms tend to cluster orders, simply because humans gravitate toward round figures when deciding where to buy, sell, or set stops — this can create real support/resistance even without prior chart history at that exact price. 4. Confluence is when multiple separate factors (timeframe, touches, volume, round numbers, supply/demand zones) all point to the same price level. Professional traders look for it because a level supported by several independent reasons is far more reliable than a level supported by only one. 5. A level tested many times with progressively weaker reactions and declining volume can be a warning sign because it suggests the side defending that level (buyers at support, sellers at resistance) is losing strength each time — similar to a door being kicked repeatedly, eventually it gives way, making a break more likely rather than another successful bounce." },
           ],
           quiz: lesson14Quiz,
+          drills: lesson14Drills,
         },
     ],
   },
