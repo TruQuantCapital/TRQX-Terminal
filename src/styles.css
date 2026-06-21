@@ -1639,7 +1639,7 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
     height: 28px;
   }
 }
-/* ===== TABLET SIDEBAR LABEL FIX ===== */
+/* ===== FINAL TABLET SIDEBAR FIX ===== */
 
 @media (max-width: 1300px) and (min-width: 851px) {
   .app {
@@ -1647,29 +1647,58 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
   }
 
   .sidebar {
-    padding: 14px 8px !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    padding: 10px 8px !important;
+  }
+
+  .brandBlock {
+    padding: 8px 4px 10px !important;
+  }
+
+  .brandMain strong,
+  .brandTagline,
+  .brandDivider {
+    display: none !important;
+  }
+
+  .brandMain {
+    justify-content: center !important;
+  }
+
+  .brandMain span {
+    font-size: 26px !important;
+  }
+
+  .nav {
+    gap: 4px !important;
+    margin-bottom: 8px !important;
   }
 
   .navBtn {
+    min-height: 56px !important;
+    padding: 6px 4px !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    gap: 6px !important;
-    min-height: 70px !important;
-    padding: 8px 4px !important;
+    gap: 3px !important;
     font-size: 10px !important;
   }
 
   .navBtn span {
     display: block !important;
     text-align: center !important;
-    line-height: 1.1 !important;
-    max-width: 100px;
+    line-height: 1.05 !important;
   }
 
   .navIcon,
   .navBtn svg {
-    width: 28px !important;
-    height: 28px !important;
+    width: 25px !important;
+    height: 25px !important;
+  }
+
+  .sidebarCard,
+  .userMini {
+    display: none !important;
   }
 }
