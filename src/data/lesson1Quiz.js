@@ -32,21 +32,21 @@
   {
     question: "What is investing?",
     options: [
-      "Short-term buying and selling focused on price movement over minutes to weeks",
-      "Long-term ownership of assets focused on growth over years or decades",
-      "Lending money directly to a friend",
-      "Only buying government bonds",
+      "Holding positions for years or decades, focused on company growth",
+      "Holding positions for minutes or hours, focused on price swings",
+      "Lending money directly to a friend or family member",
+      "Buying only government-issued savings bonds",
     ],
-    correctIndex: 1,
+    correctIndex: 0,
   },
   {
     question: "What is trading?",
     options: [
-      "Long-term ownership of assets focused on growth over years or decades",
-      "Donating assets to charity",
-      "Short-term buying and selling focused on price movement over minutes to weeks",
-      "Opening a savings account",
+      "Holding positions for years or decades, focused on company growth",
+      "Holding positions for minutes to weeks, focused on price movement",
+      "Donating assets to a charitable organization",
+      "Opening a basic checking or savings account",
     ],
-    correctIndex: 2,
+    correctIndex: 1,
   },
 ];

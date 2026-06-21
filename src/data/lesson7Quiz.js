@@ -2,7 +2,7 @@
   {
     question: "What is market structure?",
     options: [
-      "The pattern created by price as it moves, revealing who currently controls the market through the sequence of highs and lows",
+      "The pattern price leaves behind that reveals who controls the market",
       "The legal framework that governs stock exchanges",
       "The physical layout of a trading floor",
       "A list of all companies listed on an exchange",
@@ -34,7 +34,7 @@
     options: [
       "A broker error in executing a trade",
       "When a stock is delisted from an exchange",
-      "When price violates the current trend, signaling the controlling side may be gaining or losing strength",
+      "When price breaks the current trend, hinting at a power shift",
       "A scheduled market holiday",
     ],
     correctIndex: 2,
@@ -43,7 +43,7 @@
     question: "Why is market structure important?",
     options: [
       "It guarantees profits on every trade",
-      "It reveals who controls price and gives traders objective evidence to act on, rather than relying on prediction or emotion",
+      "It shows who controls price, giving traders real evidence to act on",
       "It is only useful for long-term investors, not traders",
       "It replaces the need to understand support and resistance",
     ],
