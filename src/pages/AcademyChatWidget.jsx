@@ -1,6 +1,8 @@
 ﻿import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Lock, Sparkles } from "lucide-react";
 import { useAcademyChat } from "../hooks/useAcademyChat";
+import ChatMarkdown from "./ChatMarkdown";
+import "./chatMarkdown.css";
 
 export default function AcademyChatWidget({ lesson }) {
   const [open, setOpen] = useState(false);
@@ -58,7 +60,7 @@ export default function AcademyChatWidget({ lesson }) {
 
                 {messages.map((m, i) => (
                   <div key={i} className={"chatBubble " + m.role}>
-                    {m.text}
+                    {m.role === "assistant" ? <ChatMarkdown text={m.text} /> : m.text}
                   </div>
                 ))}
 

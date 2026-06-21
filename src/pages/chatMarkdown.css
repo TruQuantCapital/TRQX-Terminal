@@ -1,0 +1,45 @@
+﻿.chatMarkdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chatMdHeading {
+  color: #d4af37;
+  font-size: 14px;
+  font-weight: 800;
+  margin: 6px 0 2px;
+}
+
+.chatMdSubheading {
+  color: #f5d76e;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 4px 0 2px;
+}
+
+.chatMdParagraph {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.chatMdList {
+  margin: 2px 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.chatMdList li {
+  line-height: 1.45;
+}
+
+.chatBubble strong {
+  color: #f5f1e8;
+  font-weight: 700;
+}
+
+.chatBubble em {
+  font-style: italic;
+}
