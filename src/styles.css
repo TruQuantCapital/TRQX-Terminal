@@ -1613,3 +1613,63 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
     min-height: 72px;
   }
 }
+/* ===== FIX TABLET NAV LABELS / ACADEMY BUTTON ===== */
+
+@media (max-width: 1300px) and (min-width: 851px) {
+  .app {
+    grid-template-columns: 110px 1fr !important;
+  }
+
+  .navBtn {
+    flex-direction: column;
+    gap: 6px;
+    min-height: 68px;
+    padding: 10px 6px;
+    font-size: 10px;
+  }
+
+  .navBtn span {
+    display: block !important;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .navIcon {
+    width: 28px;
+    height: 28px;
+  }
+}
+/* ===== TABLET SIDEBAR LABEL FIX ===== */
+
+@media (max-width: 1300px) and (min-width: 851px) {
+  .app {
+    grid-template-columns: 120px 1fr !important;
+  }
+
+  .sidebar {
+    padding: 14px 8px !important;
+  }
+
+  .navBtn {
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 6px !important;
+    min-height: 70px !important;
+    padding: 8px 4px !important;
+    font-size: 10px !important;
+  }
+
+  .navBtn span {
+    display: block !important;
+    text-align: center !important;
+    line-height: 1.1 !important;
+    max-width: 100px;
+  }
+
+  .navIcon,
+  .navBtn svg {
+    width: 28px !important;
+    height: 28px !important;
+  }
+}
