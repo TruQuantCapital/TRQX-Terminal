@@ -20,7 +20,6 @@ import Reports from "./pages/Reports";
 import Welcome from "./pages/Welcome";
 import "./styles.css";
 import "./app.css";
-import "./sidebar-responsive-fix.css";
 
 const routeByKey = {
   dashboard: "/dashboard",

@@ -3,8 +3,11 @@ import { X, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
 import LessonQuiz from "./LessonQuiz";
 import { useQuizAttempt } from "../hooks/useQuizAttempt";
 import AcademyChatWidget from "./AcademyChatWidget";
+import ClickIdentifyChart from "./ClickIdentifyChart";
+import DragLabelDrill from "./DragLabelDrill";
 import "./quiz.css";
 import "./chatWidget.css";
+import "./drills.css";
 
 export default function LessonReader({
   level,
@@ -18,6 +21,7 @@ export default function LessonReader({
   const hasPrev = lessonIndex > 0;
   const hasNext = lessonIndex < level.lessons.length - 1;
   const hasQuiz = Array.isArray(lesson.quiz) && lesson.quiz.length > 0;
+  const hasDrills = !!lesson.drills;
 
   const { getBestAttempt } = useQuizAttempt();
   const [quizPassed, setQuizPassed] = useState(!hasQuiz);
@@ -78,6 +82,32 @@ export default function LessonReader({
             }
             return <p key={i}>{block.text}</p>;
           })}
+
+          {hasDrills && lesson.drills.clickIdentify && (
+            <>
+              <h3>Practice: Identify the Structure</h3>
+              {lesson.drills.clickIdentify.map((drill) => (
+                <ClickIdentifyChart
+                  key={drill.id}
+                  prices={drill.prices}
+                  correctIndex={drill.correctIndex}
+                  prompt={drill.prompt}
+                  explanation={drill.explanation}
+                />
+              ))}
+            </>
+          )}
+
+          {hasDrills && lesson.drills.dragLabel && (
+            <>
+              <h3>Practice: Label the Charts</h3>
+              <DragLabelDrill
+                prompt={lesson.drills.dragLabel.prompt}
+                labels={lesson.drills.dragLabel.labels}
+                charts={lesson.drills.dragLabel.charts}
+              />
+            </>
+          )}
 
           {hasQuiz && !checkingPriorAttempt && (
             <LessonQuiz

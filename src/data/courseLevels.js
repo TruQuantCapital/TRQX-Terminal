@@ -1,4 +1,4 @@
-// TRQX Beginner Trading Course — full lesson content
+﻿// TRQX Beginner Trading Course — full lesson content
 // Beginner = Phase 1 (Lessons 1-10), Intermediate = Phase 2 (Lessons 11-14)
 // Advanced is empty for now, reserved for Phase 3 (Lessons 15+) when written.
 
@@ -16,6 +16,7 @@ import { lesson11Quiz } from "./lesson11Quiz";
 import { lesson12Quiz } from "./lesson12Quiz";
 import { lesson13Quiz } from "./lesson13Quiz";
 import { lesson14Quiz } from "./lesson14Quiz";
+import { lesson7Drills } from "./lesson7Drills";
 
 export const courseLevels = [
   {
@@ -1111,6 +1112,7 @@ export const courseLevels = [
             { type: "p", text: "1. Market structure is the pattern created by price as it moves — it reveals who currently controls the market (buyers or sellers) through the sequence of highs and lows. 2. Bullish structure is defined by a continuing series of Higher Highs (HH) and Higher Lows (HL). 3. Bearish structure is defined by a continuing series of Lower Highs (LH) and Lower Lows (LL). 4. A Break of Structure (BOS) occurs when price violates the current trend — breaking above the previous swing high (bullish BOS) or below the previous swing low (bearish BOS), signaling the controlling side may be gaining or losing strength. 5. Market structure is important because it reveals who controls price and gives traders objective evidence to act on, rather than relying on prediction or emotion." },
           ],
           quiz: lesson7Quiz,
+          drills: lesson7Drills,
         },
         {
           title: "Multiple Time Frame Analysis (MTFA)",
