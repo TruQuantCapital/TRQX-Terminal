@@ -10,6 +10,7 @@ import "./quiz.css";
 import "./chatWidget.css";
 import "./drills.css";
 import "./timelineDrill.css";
+import "./footerButtons.css";
 
 export default function LessonReader({
   level,
