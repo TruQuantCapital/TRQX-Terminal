@@ -1,0 +1,253 @@
+﻿.chatWidgetRoot {
+  position: absolute;
+  bottom: 90px;
+  right: 26px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.chatBubbleToggle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4af37, #f5d76e);
+  color: #0a0a0b;
+  border: none;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.chatBubbleToggle:hover {
+  transform: scale(1.06);
+}
+
+.chatPanel {
+  width: 340px;
+  max-height: 460px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(3, 7, 18, 0.99));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.chatPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chatPanelHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d4af37;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.chatPanelClose {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  padding: 2px;
+}
+
+.chatPanelClose:hover {
+  color: #f5f1e8;
+}
+
+.chatMessages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chatEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  color: #9ca3af;
+  padding: 24px 8px;
+}
+
+.chatEmptyState svg {
+  color: #d4af37;
+}
+
+.chatEmptyState p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.chatEmptyState b {
+  color: #f5f1e8;
+}
+
+.chatBubble {
+  max-width: 85%;
+  padding: 10px 13px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.chatBubble.user {
+  align-self: flex-end;
+  background: rgba(212, 175, 55, 0.16);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #f5f1e8;
+}
+
+.chatBubble.assistant {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d1d5db;
+  white-space: pre-wrap;
+}
+
+.chatTyping {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 12px 14px;
+}
+
+.chatTyping span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9ca3af;
+  animation: chatTypingBounce 1.2s infinite ease-in-out;
+}
+
+.chatTyping span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.chatTyping span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes chatTypingBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.chatErrorBubble {
+  align-self: center;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.chatInputRow {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chatInputRow input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  padding: 10px 12px;
+  color: #f5f1e8;
+  font-size: 13px;
+  outline: none;
+}
+
+.chatInputRow input:focus {
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+.chatInputRow button {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: #d4af37;
+  border: none;
+  color: #0a0a0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.chatInputRow button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.chatLockedState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 30px 20px;
+  color: #9ca3af;
+}
+
+.chatLockedState svg {
+  color: #d4af37;
+}
+
+.chatLockedState b {
+  color: #f5f1e8;
+  font-size: 14px;
+}
+
+.chatLockedState p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 6px;
+}
+
+.chatUpgradeBtn {
+  margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+  .chatWidgetRoot {
+    bottom: 80px;
+    right: 14px;
+  }
+  .chatPanel {
+    width: min(320px, 88vw);
+  }
+}

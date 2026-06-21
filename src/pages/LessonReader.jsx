@@ -1,8 +1,10 @@
 ﻿import React, { useState, useEffect } from "react";
-import "./footerButtons.css";import { X, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react";
 import LessonQuiz from "./LessonQuiz";
 import { useQuizAttempt } from "../hooks/useQuizAttempt";
+import AcademyChatWidget from "./AcademyChatWidget";
 import "./quiz.css";
+import "./chatWidget.css";
 
 export default function LessonReader({
   level,
@@ -114,6 +116,8 @@ export default function LessonReader({
             Next <ChevronRight size={16} />
           </button>
         </div>
+
+        <AcademyChatWidget lesson={lesson} />
       </div>
     </div>
   );

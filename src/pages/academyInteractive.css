@@ -75,6 +75,7 @@
 }
 
 .lessonReaderCard {
+  position: relative;
   width: min(1400px, 96vw);
   max-height: 94vh;
   display: flex;
