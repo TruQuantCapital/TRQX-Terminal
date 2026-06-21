@@ -2049,129 +2049,95 @@ export const courseLevels = [
         },
     ],
   },
-  {
+      {
     key: "advanced",
-    title: "Advanced Trader",
+    title: "Advanced Options Foundation",
     tag: "Level 3",
     lessons: [
-{
-  key: "advanced",
-  title: "Advanced Options Foundation",
-  tag: "Level 3",
-  lessons: [
-    {
-      title: "Options Greeks Masterclass",
-      objective: "Understand Delta, Gamma, Theta, Vega, and how Greeks explain option contract movement.",
-      content: [
-        { type: "heading", text: "📘 LESSON 15 — OPTIONS GREEKS MASTERCLASS" },
-        { type: "heading", text: "🎯 LESSON OBJECTIVE" },
-        { type: "p", text: "Understand the main Greeks and how they help traders measure risk, movement, time decay, and volatility." },
-        { type: "heading", text: "🧠 CORE CONCEPT SUMMARY" },
-        { type: "p", text: "The Greeks are risk measurements. They help traders understand why an option contract moves the way it does." },
-        { type: "heading", text: "DELTA" },
-        { type: "p", text: "Delta measures how much an option may move when the stock moves $1. A 0.50 delta call may gain about $0.50 if the stock rises $1." },
-        { type: "heading", text: "GAMMA" },
-        { type: "p", text: "Gamma measures how fast Delta changes. High Gamma means the contract can move very quickly." },
-        { type: "heading", text: "THETA" },
-        { type: "p", text: "Theta measures time decay. Options lose value as expiration gets closer." },
-        { type: "heading", text: "VEGA" },
-        { type: "p", text: "Vega measures sensitivity to implied volatility. When IV rises, option premiums can increase." },
-        { type: "heading", text: "LESSON SUMMARY" },
-        { type: "p", text: "Greeks help traders understand contract behavior before entering a trade." }
-      ],
-      quiz: []
-    },
-    {
-      title: "Implied Volatility Deep Dive",
-      objective: "Understand implied volatility, IV expansion, IV crush, and why premium changes even when price moves correctly.",
-      content: [
-        { type: "heading", text: "📘 LESSON 16 — IMPLIED VOLATILITY DEEP DIVE" },
-        { type: "p", text: "Implied volatility, or IV, shows how much movement the market expects." },
-        { type: "heading", text: "WHY IV MATTERS" },
-        { type: "p", text: "High IV means option premiums are expensive. Low IV means premiums are cheaper." },
-        { type: "heading", text: "IV EXPANSION" },
-        { type: "p", text: "IV expansion happens when demand for options increases. Premiums can rise quickly." },
-        { type: "heading", text: "IV CRUSH" },
-        { type: "p", text: "IV crush happens when expected movement disappears after an event like earnings." },
-        { type: "heading", text: "LESSON SUMMARY" },
-        { type: "p", text: "A trader can be right on direction and still lose if volatility collapses." }
-      ],
-      quiz: []
-    },
-    {
-      title: "Options Pricing & Premium",
-      objective: "Understand intrinsic value, extrinsic value, time value, and why options contracts are priced differently.",
-      content: [
-        { type: "heading", text: "📘 LESSON 17 — OPTIONS PRICING & PREMIUM" },
-        { type: "p", text: "Option price is called premium. Premium is made of intrinsic value and extrinsic value." },
-        { type: "heading", text: "INTRINSIC VALUE" },
-        { type: "p", text: "Intrinsic value is the real value if the option is already in the money." },
-        { type: "heading", text: "EXTRINSIC VALUE" },
-        { type: "p", text: "Extrinsic value is the extra value from time, volatility, and market demand." },
-        { type: "heading", text: "TIME VALUE" },
-        { type: "p", text: "The more time until expiration, the more opportunity the contract has to move." },
-        { type: "heading", text: "LESSON SUMMARY" },
-        { type: "p", text: "Options are not priced only by stock direction. Time and volatility matter." }
-      ],
-      quiz: []
-    },
-    {
-      title: "Probability & Expected Value",
-      objective: "Understand probability, expectancy, win rate, risk-to-reward, and why professional traders think in numbers.",
-      content: [
-        { type: "heading", text: "📘 LESSON 18 — PROBABILITY & EXPECTED VALUE" },
-        { type: "p", text: "Professional traders do not need to win every trade. They need positive expectancy." },
-        { type: "heading", text: "WIN RATE" },
-        { type: "p", text: "Win rate tells you how often you win, but it does not tell you if your system is profitable." },
-        { type: "heading", text: "RISK TO REWARD" },
-        { type: "p", text: "Risk-to-reward compares how much you risk versus how much you can make." },
-        { type: "heading", text: "EXPECTED VALUE" },
-        { type: "p", text: "Expected value shows whether a strategy should make money over many trades." },
-        { type: "heading", text: "LESSON SUMMARY" },
-        { type: "p", text: "Trading is a probability game. One trade means little. A repeatable process matters." }
-      ],
-      quiz: []
-    },
-    {
-      title: "Gamma Exposure & Dealer Positioning",
-      objective: "Understand gamma exposure, gamma flips, call walls, put walls, and how dealer hedging can affect price movement.",
-      content: [
-        { type: "heading", text: "📘 LESSON 19 — GAMMA EXPOSURE & DEALER POSITIONING" },
-        { type: "p", text: "Gamma exposure helps traders understand how dealer hedging may affect market movement." },
-        { type: "heading", text: "LONG GAMMA" },
-        { type: "p", text: "Long gamma environments can reduce volatility because dealers may buy weakness and sell strength." },
-        { type: "heading", text: "SHORT GAMMA" },
-        { type: "p", text: "Short gamma environments can increase volatility because dealers may chase price movement." },
-        { type: "heading", text: "CALL WALL" },
-        { type: "p", text: "A call wall is a price area with heavy call positioning that may act like resistance." },
-        { type: "heading", text: "PUT WALL" },
-        { type: "p", text: "A put wall is a price area with heavy put positioning that may act like support." },
-        { type: "heading", text: "LESSON SUMMARY" },
-        { type: "p", text: "Gamma helps explain why price may pin, reject, squeeze, or accelerate." }
-      ],
-      quiz: []
-    },
-    {
-      title: "Options Flow Analysis",
-      objective: "Understand sweeps, blocks, unusual activity, premium, open interest, volume, and how to read flow without blindly following it.",
-      content: [
-        { type: "heading", text: "📘 LESSON 20 — OPTIONS FLOW ANALYSIS" },
-        { type: "p", text: "Options flow shows where large option trades are occurring." },
-        { type: "heading", text: "SWEEPS" },
-        { type: "p", text: "A sweep is an aggressive order filled across multiple exchanges. Sweeps can show urgency." },
-        { type: "heading", text: "BLOCKS" },
-        { type: "p", text: "A block is a large order usually negotiated or filled as one large trade." },
-        { type: "heading", text: "VOLUME VS OPEN INTEREST" },
-        { type: "p", text: "Volume shows today's activity. Open interest shows existing contracts still open." },
-        { type: "heading", text: "PREMIUM" },
-        { type: "p", text: "Premium shows the dollar amount committed to the option trade." },
-        { type: "heading", text: "LESSON SUMMARY" },
-        { type: "p", text: "Flow is evidence, not a signal. It should support your trade plan, not replace it." }
-      ],
-      quiz: []
-    }
-  ]
-}
+      {
+        title: "Options Greeks Masterclass",
+        objective: "Understand Delta, Gamma, Theta, Vega, and how Greeks explain option contract movement.",
+        content: [
+          { type: "heading", text: "📘 LESSON 15 — OPTIONS GREEKS MASTERCLASS" },
+          { type: "p", text: "The Greeks are risk measurements. They help traders understand why an option contract moves the way it does." },
+          { type: "heading", text: "DELTA" },
+          { type: "p", text: "Delta measures how much an option may move when the stock moves $1." },
+          { type: "heading", text: "GAMMA" },
+          { type: "p", text: "Gamma measures how fast Delta changes. High Gamma means the contract can move very quickly." },
+          { type: "heading", text: "THETA" },
+          { type: "p", text: "Theta measures time decay." },
+          { type: "heading", text: "VEGA" },
+          { type: "p", text: "Vega measures sensitivity to implied volatility." }
+        ],
+        quiz: []
+      },
+      {
+        title: "Implied Volatility Deep Dive",
+        objective: "Understand implied volatility, IV expansion, IV crush, and why premium changes even when price moves correctly.",
+        content: [
+          { type: "heading", text: "📘 LESSON 16 — IMPLIED VOLATILITY DEEP DIVE" },
+          { type: "p", text: "Implied volatility, or IV, shows how much movement the market expects." },
+          { type: "heading", text: "IV EXPANSION" },
+          { type: "p", text: "IV expansion happens when demand for options increases." },
+          { type: "heading", text: "IV CRUSH" },
+          { type: "p", text: "IV crush happens when expected movement disappears after an event like earnings." }
+        ],
+        quiz: []
+      },
+      {
+        title: "Options Pricing & Premium",
+        objective: "Understand intrinsic value, extrinsic value, time value, and why options contracts are priced differently.",
+        content: [
+          { type: "heading", text: "📘 LESSON 17 — OPTIONS PRICING & PREMIUM" },
+          { type: "p", text: "Option price is called premium. Premium is made of intrinsic value and extrinsic value." },
+          { type: "heading", text: "INTRINSIC VALUE" },
+          { type: "p", text: "Intrinsic value is the real value if the option is already in the money." },
+          { type: "heading", text: "EXTRINSIC VALUE" },
+          { type: "p", text: "Extrinsic value comes from time, volatility, and market demand." }
+        ],
+        quiz: []
+      },
+      {
+        title: "Probability & Expected Value",
+        objective: "Understand probability, expectancy, win rate, risk-to-reward, and why professional traders think in numbers.",
+        content: [
+          { type: "heading", text: "📘 LESSON 18 — PROBABILITY & EXPECTED VALUE" },
+          { type: "p", text: "Professional traders do not need to win every trade. They need positive expectancy." },
+          { type: "heading", text: "WIN RATE" },
+          { type: "p", text: "Win rate tells you how often you win, but not whether your system is profitable." },
+          { type: "heading", text: "EXPECTED VALUE" },
+          { type: "p", text: "Expected value shows whether a strategy should make money over many trades." }
+        ],
+        quiz: []
+      },
+      {
+        title: "Gamma Exposure & Dealer Positioning",
+        objective: "Understand gamma exposure, gamma flips, call walls, put walls, and how dealer hedging can affect price movement.",
+        content: [
+          { type: "heading", text: "📘 LESSON 19 — GAMMA EXPOSURE & DEALER POSITIONING" },
+          { type: "p", text: "Gamma exposure helps traders understand how dealer hedging may affect market movement." },
+          { type: "heading", text: "CALL WALL" },
+          { type: "p", text: "A call wall is a price area with heavy call positioning that may act like resistance." },
+          { type: "heading", text: "PUT WALL" },
+          { type: "p", text: "A put wall is a price area with heavy put positioning that may act like support." }
+        ],
+        quiz: []
+      },
+      {
+        title: "Options Flow Analysis",
+        objective: "Understand sweeps, blocks, unusual activity, premium, open interest, volume, and how to read flow without blindly following it.",
+        content: [
+          { type: "heading", text: "📘 LESSON 20 — OPTIONS FLOW ANALYSIS" },
+          { type: "p", text: "Options flow shows where large option trades are occurring." },
+          { type: "heading", text: "SWEEPS" },
+          { type: "p", text: "A sweep is an aggressive order filled across multiple exchanges." },
+          { type: "heading", text: "BLOCKS" },
+          { type: "p", text: "A block is a large order usually filled as one large trade." },
+          { type: "heading", text: "FLOW RULE" },
+          { type: "p", text: "Flow is evidence, not a signal. It should support your trade plan, not replace it." }
+        ],
+        quiz: []
+      }
     ],
   },
 ];
