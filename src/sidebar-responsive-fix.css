@@ -1,0 +1,113 @@
+﻿@media (max-width: 1300px) {
+  .app {
+    grid-template-columns: 84px 1fr;
+  }
+
+  .sidebar {
+    padding: 16px 8px;
+    overflow: visible;
+  }
+
+  .brandBlock {
+    padding: 12px 4px 16px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .brandMain strong,
+  .brandTagline,
+  .brandDivider {
+    display: none;
+  }
+
+  .brandMain span {
+    font-size: 22px;
+  }
+
+  .navBtn {
+    justify-content: center;
+    padding: 12px 6px;
+  }
+
+  .navBtn span {
+    display: none;
+  }
+
+  .sidebarCard {
+    display: none;
+  }
+
+  .userMini {
+    left: 8px;
+    right: 8px;
+    justify-content: center;
+  }
+
+  .userMini > div:not(.avatar) {
+    display: none;
+  }
+}
+
+@media (max-width: 850px) {
+  .app {
+    display: block;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 14px 12px;
+  }
+
+  .brandBlock {
+    justify-content: flex-start;
+    padding: 4px 4px 14px;
+  }
+
+  .brandMain strong,
+  .brandTagline,
+  .brandDivider {
+    display: block;
+  }
+
+  .brandMain span {
+    font-size: 28px;
+  }
+
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .navBtn {
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 4px;
+    font-size: 11px;
+  }
+
+  .navBtn span {
+    display: block;
+  }
+
+  .sidebarCard {
+    display: none;
+  }
+
+  .userMini {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    justify-content: flex-start;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .userMini > div:not(.avatar) {
+    display: block;
+  }
+}

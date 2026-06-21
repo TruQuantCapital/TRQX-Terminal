@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import {
   LayoutDashboard,
   Search,
@@ -28,7 +28,36 @@ export const nav = [
   { key: "settings", label: "Settings", icon: Settings },
 ];
 
-export default function Sidebar({ active, setActive }) {
+function initialsFromEmail(email) {
+  if (!email) return "?";
+  const namePart = email.split("@")[0];
+  const segments = namePart.split(/[._-]/).filter(Boolean);
+  if (segments.length >= 2) {
+    return (segments[0][0] + segments[1][0]).toUpperCase();
+  }
+  return namePart.slice(0, 2).toUpperCase();
+}
+
+function displayNameFromEmail(email) {
+  if (!email) return "Guest";
+  const namePart = email.split("@")[0];
+  const segments = namePart.split(/[._-]/).filter(Boolean);
+  if (segments.length >= 2) {
+    return capitalize(segments[0]) + " " + segments[1][0].toUpperCase() + ".";
+  }
+  return capitalize(namePart);
+}
+
+function capitalize(s) {
+  return s ? s[0].toUpperCase() + s.slice(1) : s;
+}
+
+export default function Sidebar({ active, setActive, user, tier }) {
+  const email = user && user.email;
+  const initials = initialsFromEmail(email);
+  const displayName = displayNameFromEmail(email);
+  const tierLabel = tier ? (tier.charAt(0).toUpperCase() + tier.slice(1) + " Member") : "Free Member";
+
   return (
     <aside className="sidebar">
       <div className="brandBlock">
@@ -40,8 +69,8 @@ export default function Sidebar({ active, setActive }) {
         <div className="brandDivider"></div>
 
         <div className="brandTagline">
-  DISCIPLINE • EXECUTION • PRECISION
-</div>
+          DISCIPLINE - EXECUTION - PRECISION
+        </div>
       </div>
 
       <nav className="nav">
@@ -50,7 +79,7 @@ export default function Sidebar({ active, setActive }) {
           return (
             <button
               key={item.key}
-              className={`navBtn ${active === item.key ? "active" : ""}`}
+              className={"navBtn " + (active === item.key ? "active" : "")}
               onClick={() => setActive(item.key)}
             >
               <Icon size={18} />
@@ -61,32 +90,32 @@ export default function Sidebar({ active, setActive }) {
       </nav>
 
       <div className="sidebarCard pro">
-  <Crown size={20} />
+        <Crown size={20} />
 
-  <div>
-    <b>TRQX CAPITAL ELITE</b>
-    <p>Elite Member</p>
-  </div>
+        <div>
+          <b>TRQX CAPITAL ELITE</b>
+          <p>Elite Member</p>
+        </div>
 
-  <button>Elite Access</button>
-</div>
+        <button>Elite Access</button>
+      </div>
 
       <div className="sidebarCard discord">
-  <MessageCircle size={22} />
+        <MessageCircle size={22} />
 
-  <div>
-    <b>TRQX Trading Floor</b>
-    <p>Live alerts • Education • Market prep</p>
-  </div>
+        <div>
+          <b>TRQX Trading Floor</b>
+          <p>Live alerts - Education - Market prep</p>
+        </div>
 
-  <button>Join Floor</button>
-</div>
+        <button>Join Floor</button>
+      </div>
 
       <div className="userMini">
-        <div className="avatar">MJ</div>
+        <div className="avatar">{initials}</div>
         <div>
-          <b>Michael J.</b>
-          <p>Premium Member</p>
+          <b>{displayName}</b>
+          <p>{tierLabel}</p>
         </div>
       </div>
     </aside>

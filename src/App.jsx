@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
@@ -20,6 +20,7 @@ import Reports from "./pages/Reports";
 import Welcome from "./pages/Welcome";
 import "./styles.css";
 import "./app.css";
+import "./sidebar-responsive-fix.css";
 
 const routeByKey = {
   dashboard: "/dashboard",
@@ -55,7 +56,7 @@ const keyByPath = {
 function LoadingScreen() {
   return (
     <div className="loading-screen">
-      <div className="loading-logo">⚡</div>
+      <div className="loading-logo">âš¡</div>
       <div className="loading-text">TRQX UNIFIED TERMINAL</div>
     </div>
   );
@@ -81,7 +82,7 @@ function TerminalLayout({ children }) {
 
   return (
     <div className="app">
-      <Sidebar active={active} setActive={setActive} />
+      <Sidebar active={active} setActive={setActive} user={user} tier={tier} />
 
       <section className="content">
         <TopRibbon />
