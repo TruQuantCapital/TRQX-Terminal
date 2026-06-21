@@ -1,6 +1,5 @@
-﻿// TRQX Beginner Trading Course — full lesson content
-// Beginner = Phase 1 (Lessons 1-10), Intermediate = Phase 2 (Lessons 11-14)
-// Advanced is empty for now, reserved for Phase 3 (Lessons 15+) when written.
+﻿// TRQX Beginner Trading Course
+// Beginner = Phase 1, Intermediate = Phase 2, Advanced = Phase 3 Options Foundation.
 
 import { lesson1Quiz } from "./lesson1Quiz";
 import { lesson2Quiz } from "./lesson2Quiz";
@@ -2051,6 +2050,11 @@ export const courseLevels = [
     ],
   },
   {
+    key: "advanced",
+    title: "Advanced Trader",
+    tag: "Level 3",
+    lessons: [
+{
   key: "advanced",
   title: "Advanced Options Foundation",
   tag: "Level 3",
@@ -2168,3 +2172,6 @@ export const courseLevels = [
     }
   ]
 }
+    ],
+  },
+];
