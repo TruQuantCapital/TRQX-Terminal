@@ -80,16 +80,17 @@ function formatChange(value) {
 
 export default function TopRibbon() {
   const [tiles, setTiles] = useState(DEFAULT_TILES);
-  const [futures, setFutures] = useState([]);
+  const [futures, setFutures] = useState(
+    FUTURES_LIST.map((f) => ({ label: f.label, price: "—", changePct: "—", trend: "flat" }))
+  );
   const [lastUpdate, setLastUpdate] = useState(null);
   const [countdown, setCountdown] = useState("—");
-  const [cpiLabel, setCpiLabel] = useState("Next CPI");
+  const [cpiLabel, setCpiLabel] = useState("CPI Release");
 
-  // ── CPI countdown ──────────────────────────────────────────────────────
   useEffect(() => {
     function tick() {
       const next = getNextCPI();
-      if (!next) { setCpiLabel("CPI"); setCountdown("—"); return; }
+      if (!next) { setCpiLabel("CPI Release"); setCountdown("—"); return; }
       const diff = next - new Date();
       setCpiLabel(`CPI ${next.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`);
       setCountdown(formatCountdown(diff));
@@ -99,7 +100,6 @@ export default function TopRibbon() {
     return () => clearInterval(id);
   }, []);
 
-  // ── Futures fetch ──────────────────────────────────────────────────────
   async function fetchFutures() {
     try {
       const res = await fetch(`${API}/api/futures`);
@@ -111,18 +111,16 @@ export default function TopRibbon() {
         return {
           label: f.label,
           price: d?.last ? formatPrice(d.last) : "—",
-          change: d?.change ? formatChange(d.change) : "—",
-          changePct: d?.changePct ? formatChangePct(d.changePct) : "—",
+          changePct: d?.changePct != null ? formatChangePct(d.changePct) : "—",
           trend,
         };
       });
       setFutures(mapped);
     } catch {
-      setFutures(FUTURES_LIST.map((f) => ({ label: f.label, price: "—", change: "—", changePct: "—", trend: "flat" })));
+      setFutures(FUTURES_LIST.map((f) => ({ label: f.label, price: "—", changePct: "—", trend: "flat" })));
     }
   }
 
-  // ── Stock tiles fetch ──────────────────────────────────────────────────
   async function fetchOne(symbol) {
     try {
       const res = await fetch(`${API}/api/quote/${symbol}`);
@@ -154,46 +152,44 @@ export default function TopRibbon() {
 
   return (
     <header className="top">
-      {/* ── Stock tiles ── */}
-      <div className="tickerWrap">
-        {tiles.map((m) => (
-          <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
-            <div>
-              <b>{m.symbol}</b>
-              <span>{m.price}</span>
-              <em className={m.trend === "up" ? "positive" : m.trend === "down" ? "negative" : ""}>
-                {m.change}
-              </em>
-            </div>
-            <Sparkline trend={m.trend} />
+      {/* Stock tiles */}
+      {tiles.map((m) => (
+        <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
+          <div className="tickerInfo">
+            <b>{m.symbol}</b>
+            <span>{m.price}</span>
+            <em className={m.trend === "up" ? "positive" : m.trend === "down" ? "negative" : ""}>
+              {m.change}
+            </em>
           </div>
-        ))}
-      </div>
+          <Sparkline trend={m.trend} />
+        </div>
+      ))}
 
-      {/* ── Futures strip ── */}
-      <div className="futuresStrip">
-        <span className="futuresLabel">FUTURES</span>
-        {futures.map((f, i) => (
-          <div className="futuresTile" key={f.label}>
-            <span className="futuresName">{f.label}</span>
-            <span className="futuresPrice">{f.price}</span>
-            <span className={`futuresPct ${f.trend === "up" ? "positive" : f.trend === "down" ? "negative" : ""}`}>
+      {/* Futures tiles — same style as stocks */}
+      {futures.map((f) => (
+        <div className="ticker" key={f.label} style={{ opacity: f.price === "—" ? 0.45 : 1 }}>
+          <div className="tickerInfo">
+            <b>{f.label}</b>
+            <span>{f.price}</span>
+            <em className={f.trend === "up" ? "positive" : f.trend === "down" ? "negative" : ""}>
               {f.changePct}
-            </span>
-            {i < futures.length - 1 && <div className="futuresDivider" />}
+            </em>
           </div>
-        ))}
-      </div>
+          <Sparkline trend={f.trend} />
+        </div>
+      ))}
 
-      {/* ── Status + Event ── */}
+      {/* Market Status */}
       <div className="statusBox">
         <span className="dot"></span>
         <div>
           <b>Market Status</b>
-          <p>{lastUpdate ? `Updated ${lastUpdate.toLocaleTimeString()}` : "Loading market data..."}</p>
+          <p>{lastUpdate ? `Updated ${lastUpdate.toLocaleTimeString()}` : "Loading..."}</p>
         </div>
       </div>
 
+      {/* Next Event */}
       <div className="eventBox">
         <b>Next Event</b>
         <p>{cpiLabel}</p>
@@ -202,5 +198,3 @@ export default function TopRibbon() {
     </header>
   );
 }
-
-
