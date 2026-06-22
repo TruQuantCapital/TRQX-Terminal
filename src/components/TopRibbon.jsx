@@ -2,27 +2,27 @@
 
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
-const DEFAULT_TILES = [
-  { symbol: "SPY", price: "—", change: "—", trend: "flat" },
-  { symbol: "QQQ", price: "—", change: "—", trend: "flat" },
-  { symbol: "IWM", price: "—", change: "—", trend: "flat" },
-  { symbol: "NVDA", price: "—", change: "—", trend: "flat" },
+const STOCK_TILES = [
+  { label: "SPY", symbol: "SPY" },
+  { label: "QQQ", symbol: "QQQ" },
+  { label: "IWM", symbol: "IWM" },
+  { label: "NVDA", symbol: "NVDA" },
 ];
 
-const FUTURES_LIST = [
-  { key: "ES=F", label: "/ES" },
-  { key: "NQ=F", label: "/NQ" },
-  { key: "RTY=F", label: "/RTY" },
-  { key: "YM=F", label: "/YM" },
+const FUTURES_TILES = [
+  { label: "/ES", symbol: "ES=F" },
+  { label: "/NQ", symbol: "NQ=F" },
+  { label: "/RTY", symbol: "RTY=F" },
+  { label: "/YM", symbol: "YM=F" },
 ];
 
 const CPI_DATES = [
-  new Date("2025-07-15T08:30:00-05:00"),
-  new Date("2025-08-12T08:30:00-05:00"),
-  new Date("2025-09-10T08:30:00-05:00"),
-  new Date("2025-10-14T08:30:00-05:00"),
-  new Date("2025-11-13T08:30:00-05:00"),
-  new Date("2025-12-10T08:30:00-05:00"),
+  new Date("2026-07-15T08:30:00-05:00"),
+  new Date("2026-08-12T08:30:00-05:00"),
+  new Date("2026-09-10T08:30:00-05:00"),
+  new Date("2026-10-14T08:30:00-05:00"),
+  new Date("2026-11-13T08:30:00-05:00"),
+  new Date("2026-12-10T08:30:00-05:00"),
 ];
 
 function getNextCPI() {
@@ -43,153 +43,123 @@ function formatCountdown(ms) {
 
 function Sparkline({ trend }) {
   const points =
-    trend === "up"
-      ? "0,32 20,28 40,22 55,24 72,14 90,18 120,6"
-      : trend === "down"
-      ? "0,10 18,15 36,13 55,22 75,18 94,29 120,32"
-      : "0,22 20,20 40,21 60,20 80,22 100,21 120,20";
+    trend === "up" ? "0,32 20,28 40,22 55,24 72,14 90,18 120,6"
+    : trend === "down" ? "0,10 18,15 36,13 55,22 75,18 94,29 120,32"
+    : "0,22 20,20 40,21 60,20 80,22 100,21 120,20";
   return (
     <svg className="spark" viewBox="0 0 120 38" preserveAspectRatio="none">
-      <polyline
-        points={points}
-        fill="none"
+      <polyline points={points} fill="none"
         stroke={trend === "up" ? "var(--green)" : trend === "down" ? "var(--red)" : "var(--muted)"}
-        strokeWidth="3"
-      />
+        strokeWidth="3" />
     </svg>
   );
 }
 
-function formatPrice(value) {
+function fmt(value) {
   const num = Number(value);
   if (!Number.isFinite(num)) return "—";
   return num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function formatChangePct(value) {
+function fmtPct(value) {
   const num = Number(value);
   if (!Number.isFinite(num)) return "—";
   return `${num >= 0 ? "+" : ""}${num.toFixed(2)}%`;
 }
 
-function formatChange(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return "—";
-  return `${num >= 0 ? "+" : ""}${num.toFixed(2)}`;
-}
-
 export default function TopRibbon() {
-  const [tiles, setTiles] = useState(DEFAULT_TILES);
-  const [futures, setFutures] = useState(
-    FUTURES_LIST.map((f) => ({ label: f.label, price: "—", changePct: "—", trend: "flat" }))
-  );
+  const [stocks, setStocks] = useState(STOCK_TILES.map(t => ({ ...t, price: "—", change: "—", trend: "flat", stale: true })));
+  const [futures, setFutures] = useState(FUTURES_TILES.map(t => ({ ...t, price: "—", change: "—", trend: "flat", stale: true })));
   const [lastUpdate, setLastUpdate] = useState(null);
   const [countdown, setCountdown] = useState("—");
   const [cpiLabel, setCpiLabel] = useState("CPI Release");
 
+  // CPI countdown
   useEffect(() => {
     function tick() {
       const next = getNextCPI();
-      if (!next) { setCpiLabel("CPI Release"); setCountdown("—"); return; }
-      const diff = next - new Date();
+      if (!next) { setCpiLabel("CPI"); setCountdown("—"); return; }
       setCpiLabel(`CPI ${next.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`);
-      setCountdown(formatCountdown(diff));
+      setCountdown(formatCountdown(next - new Date()));
     }
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
 
-  async function fetchFutures() {
-    try {
-      const res = await fetch(`${API}/api/futures`);
-      if (!res.ok) throw new Error("futures failed");
-      const data = await res.json();
-      const mapped = FUTURES_LIST.map((f) => {
-        const d = data[f.key];
-        const trend = d?.changePct > 0 ? "up" : d?.changePct < 0 ? "down" : "flat";
-        return {
-          label: f.label,
-          price: d?.last ? formatPrice(d.last) : "—",
-          changePct: d?.changePct != null ? formatChangePct(d.changePct) : "—",
-          trend,
-        };
-      });
-      setFutures(mapped);
-    } catch {
-      setFutures(FUTURES_LIST.map((f) => ({ label: f.label, price: "—", changePct: "—", trend: "flat" })));
-    }
-  }
-
-  async function fetchOne(symbol) {
-    try {
-      const res = await fetch(`${API}/api/quote/${symbol}`);
-      if (!res.ok) throw new Error(`Quote failed for ${symbol}`);
-      const data = await res.json();
-      const price = data.price ?? data.last ?? data.c ?? data.close ?? null;
-      const changePct = data.changePct ?? data.change_percent ?? data.percentChange ?? data.dp ?? null;
-      if (!price || Number(price) === 0) throw new Error(`Bad price for ${symbol}`);
-      const trend = Number(changePct) > 0 ? "up" : Number(changePct) < 0 ? "down" : "flat";
-      return { symbol, price: formatPrice(price), change: formatChangePct(changePct), trend, stale: false };
-    } catch {
-      return { symbol, price: "—", change: "—", trend: "flat", stale: true };
-    }
-  }
-
-  async function fetchMarketTiles() {
-    const results = await Promise.all(["SPY", "QQQ", "IWM", "NVDA"].map(fetchOne));
-    setTiles(results);
+  // Stock quotes
+  async function fetchStocks() {
+    const results = await Promise.all(STOCK_TILES.map(async (item) => {
+      try {
+        const res = await fetch(`${API}/api/quote/${item.symbol}`);
+        if (!res.ok) throw new Error("failed");
+        const data = await res.json();
+        const price = data.price ?? data.last ?? null;
+        const changePct = data.changePct ?? data.change_percent ?? null;
+        if (!price || Number(price) === 0) throw new Error("no price");
+        const trend = Number(changePct) > 0 ? "up" : Number(changePct) < 0 ? "down" : "flat";
+        return { ...item, price: fmt(price), change: fmtPct(changePct), trend, stale: false };
+      } catch {
+        return { ...item, price: "—", change: "—", trend: "flat", stale: true };
+      }
+    }));
+    setStocks(results);
     setLastUpdate(new Date());
   }
 
+  // Futures quotes
+  async function fetchFutures() {
+    try {
+      const res = await fetch(`${API}/api/futures`);
+      if (!res.ok) throw new Error("failed");
+      const data = await res.json();
+      const results = FUTURES_TILES.map((item) => {
+        const d = data[item.symbol];
+        if (!d?.last) return { ...item, price: "—", change: "—", trend: "flat", stale: true };
+        const trend = d.changePct > 0 ? "up" : d.changePct < 0 ? "down" : "flat";
+        return { ...item, price: fmt(d.last), change: fmtPct(d.changePct), trend, stale: false };
+      });
+      setFutures(results);
+    } catch {
+      setFutures(FUTURES_TILES.map(t => ({ ...t, price: "—", change: "—", trend: "flat", stale: true })));
+    }
+  }
+
   useEffect(() => {
-    fetchMarketTiles();
+    fetchStocks();
     fetchFutures();
-    const t1 = setInterval(fetchMarketTiles, 30000);
+    const t1 = setInterval(fetchStocks, 30000);
     const t2 = setInterval(fetchFutures, 15000);
     return () => { clearInterval(t1); clearInterval(t2); };
   }, []);
 
+  const allTiles = [...stocks, ...futures];
+
   return (
     <header className="top">
-      {/* Stock tiles */}
-      {tiles.map((m) => (
-        <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
-          <div className="tickerInfo">
-            <b>{m.symbol}</b>
-            <span>{m.price}</span>
-            <em className={m.trend === "up" ? "positive" : m.trend === "down" ? "negative" : ""}>
-              {m.change}
-            </em>
+      <div className="tickerWrap">
+        {allTiles.map((m) => (
+          <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
+            <div className="tickerText">
+              <b>{m.label}</b>
+              <span>{m.price}</span>
+              <em className={m.trend === "up" ? "positive" : m.trend === "down" ? "negative" : ""}>
+                {m.change}
+              </em>
+            </div>
+            <Sparkline trend={m.trend} />
           </div>
-          <Sparkline trend={m.trend} />
-        </div>
-      ))}
+        ))}
+      </div>
 
-      {/* Futures tiles — same style as stocks */}
-      {futures.map((f) => (
-        <div className="ticker" key={f.label} style={{ opacity: f.price === "—" ? 0.45 : 1 }}>
-          <div className="tickerInfo">
-            <b>{f.label}</b>
-            <span>{f.price}</span>
-            <em className={f.trend === "up" ? "positive" : f.trend === "down" ? "negative" : ""}>
-              {f.changePct}
-            </em>
-          </div>
-          <Sparkline trend={f.trend} />
-        </div>
-      ))}
-
-      {/* Market Status */}
       <div className="statusBox">
-        <span className="dot"></span>
+        <span className="dot" />
         <div>
           <b>Market Status</b>
           <p>{lastUpdate ? `Updated ${lastUpdate.toLocaleTimeString()}` : "Loading..."}</p>
         </div>
       </div>
 
-      {/* Next Event */}
       <div className="eventBox">
         <b>Next Event</b>
         <p>{cpiLabel}</p>

@@ -1716,9 +1716,7 @@ input, select { outline: none; }
 }
 
 
-/* ══════════════════════════════════════════════════════════════════
-   TOP RIBBON — single source of truth, do not duplicate
-   ══════════════════════════════════════════════════════════════════ */
+/* ══ TOP RIBBON — final version, do not append more rules below ══ */
 header.top {
   display: flex;
   align-items: stretch;
@@ -1730,6 +1728,14 @@ header.top {
   width: 100%;
 }
 
+.tickerWrap {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
 .ticker {
   display: flex;
   align-items: center;
@@ -1737,17 +1743,17 @@ header.top {
   gap: 12px;
   padding: 0 20px;
   border-right: 1px solid var(--border);
-  min-width: 170px;
   flex-shrink: 0;
+  min-width: 155px;
 }
 
-.tickerInfo {
+.tickerText {
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
 
-.tickerInfo b {
+.tickerText b {
   font-family: var(--font-head);
   font-size: 12px;
   font-weight: 700;
@@ -1755,26 +1761,26 @@ header.top {
   letter-spacing: 1px;
 }
 
-.tickerInfo span {
+.tickerText span {
   font-family: var(--font-mono);
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
   color: var(--text);
   line-height: 1.1;
 }
 
-.tickerInfo em {
+.tickerText em {
   font-style: normal;
   font-family: var(--font-mono);
   font-size: 12px;
 }
 
-.tickerInfo .positive { color: var(--green); }
-.tickerInfo .negative { color: var(--red); }
+.tickerText .positive { color: var(--green); }
+.tickerText .negative { color: var(--red); }
 
 .spark {
-  width: 80px;
-  height: 32px;
+  width: 72px;
+  height: 30px;
   flex-shrink: 0;
 }
 
@@ -1784,9 +1790,8 @@ header.top {
   gap: 10px;
   padding: 0 20px;
   border-left: 1px solid var(--border);
-  margin-left: auto;
   flex-shrink: 0;
-  min-width: 180px;
+  min-width: 190px;
 }
 
 .statusBox .dot {
@@ -1819,7 +1824,7 @@ header.top {
   padding: 0 20px;
   border-left: 1px solid var(--border);
   flex-shrink: 0;
-  min-width: 150px;
+  min-width: 160px;
 }
 
 .eventBox b {
@@ -1841,9 +1846,7 @@ header.top {
 
 .eventBox span {
   font-family: var(--font-mono);
-  font-size: 18px;
+  font-size: 17px;
   color: var(--text);
   font-weight: 700;
 }
-
-/* cache-bust */
