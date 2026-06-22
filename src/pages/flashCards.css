@@ -134,9 +134,10 @@
   background: linear-gradient(160deg, rgba(15,23,42,.98), rgba(3,7,18,.99));
   border: 1px solid rgba(212,175,55,.3);
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
   gap: 12px;
+  padding-top: 36px;
 }
 
 .flashCardBack {
@@ -490,4 +491,24 @@
   font-size: 22px;
   font-weight: 900;
   margin-bottom: 4px;
+}
+
+
+.flashCardFront {
+  justify-content: flex-start !important;
+  padding-top: 32px !important;
+}
+
+.flashCardDiagram {
+  width: 100% !important;
+  max-width: 260px !important;
+  margin: 4px 0 8px !important;
+}
+
+.flashCardDiagram svg {
+  max-height: 160px !important;
+}
+
+.flashDeckControls {
+  margin-top: 16px;
 }
