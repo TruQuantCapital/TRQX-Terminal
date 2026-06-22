@@ -25,7 +25,7 @@ export const nav = [
   { key: "calendar", label: "Economic Calendar", icon: CalendarDays },
   { key: "alerts", label: "Alerts", icon: Bell },
   { key: "academy", label: "Academy", icon: GraduationCap },
-  { key: "patterns", label: "Patterns", icon: BookOpen },
+  { key: "patterns", label: "Flash Cards", icon: BookOpen },
   { key: "discord", label: "Discord", icon: MessageCircle },
   { key: "settings", label: "Settings", icon: Settings },
 ];
@@ -119,3 +119,4 @@ export default function Sidebar({ active, setActive, user, tier }) {
     </aside>
   );
 }
+
