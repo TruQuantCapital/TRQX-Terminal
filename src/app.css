@@ -2203,3 +2203,124 @@ header.top {
   color: var(--text);
   font-weight: 700;
 }
+
+/* ── Top Ribbon Header RESET ─────────────────────────────────────── */
+header.top {
+  display: flex;
+  align-items: stretch;
+  height: 64px;
+  background: var(--black-2);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.ticker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 18px;
+  border-right: 1px solid var(--border);
+  min-width: 170px;
+  flex-shrink: 0;
+}
+
+.tickerInfo b {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  display: block;
+}
+
+.tickerInfo span {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+  line-height: 1.1;
+}
+
+.tickerInfo em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  display: block;
+}
+
+.spark {
+  width: 80px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.statusBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  border-left: 1px solid var(--border);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.statusBox .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+.statusBox b {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+  letter-spacing: 1px;
+}
+
+.statusBox p {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.eventBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 18px;
+  border-left: 1px solid var(--border);
+  flex-shrink: 0;
+  min-width: 130px;
+}
+
+.eventBox b {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  display: block;
+}
+
+.eventBox p {
+  font-size: 11px;
+  color: var(--gold);
+  margin: 2px 0;
+  font-family: var(--font-head);
+  letter-spacing: 1px;
+}
+
+.eventBox span {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 700;
+}
