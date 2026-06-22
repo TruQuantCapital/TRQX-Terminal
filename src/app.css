@@ -1396,3 +1396,213 @@ input, select { outline: none; }
   font-size: 13px !important;
   font-family: 'Rajdhani', sans-serif !important;
 }
+
+/* ── Flow Command Center ─────────────────────────────────────────── */
+.flowCommandCenter {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  background: var(--black-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  margin-bottom: 16px;
+}
+
+.flowCommandCenter small {
+  font-family: var(--font-head);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.flowCommandCenter h2 {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px 0;
+}
+
+.flowCommandCenter p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.flowCommandCenter input {
+  background: var(--black-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 13px;
+  padding: 10px 14px;
+  width: 260px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.flowCommandCenter input:focus {
+  border-color: var(--gold);
+}
+
+.flowCommandCenter input::placeholder {
+  color: var(--muted);
+}
+
+/* ── Spotlight Box ───────────────────────────────────────────────── */
+.spotlightBox {
+  background: var(--black-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spotlightBox small {
+  font-family: var(--font-head);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
+.spotlightBox b {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.spotlightBox span {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.spotlightBox button {
+  margin-top: 8px;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  border-radius: var(--radius);
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-head);
+  letter-spacing: 1px;
+}
+
+.spotlightBox button:hover {
+  opacity: 0.85;
+}
+
+/* ── Flow Command Center ─────────────────────────────────────────── */
+.flowCommandCenter {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  background: var(--black-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  margin-bottom: 16px;
+}
+
+.flowCommandCenter small {
+  font-family: var(--font-head);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.flowCommandCenter h2 {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px 0;
+}
+
+.flowCommandCenter p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.flowCommandCenter input {
+  background: var(--black-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 13px;
+  padding: 10px 14px;
+  width: 260px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.flowCommandCenter input:focus {
+  border-color: var(--gold);
+}
+
+.flowCommandCenter input::placeholder {
+  color: var(--muted);
+}
+
+/* ── Spotlight Box ───────────────────────────────────────────────── */
+.spotlightBox {
+  background: var(--black-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spotlightBox small {
+  font-family: var(--font-head);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
+.spotlightBox b {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.spotlightBox span {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.spotlightBox button {
+  margin-top: 8px;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  border-radius: var(--radius);
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-head);
+  letter-spacing: 1px;
+}
+
+.spotlightBox button:hover {
+  opacity: 0.85;
+}

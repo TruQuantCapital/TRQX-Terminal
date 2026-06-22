@@ -9,12 +9,31 @@ const DEFAULT_TILES = [
   { symbol: "SPX", price: "—", change: "—", trend: "flat" },
 ];
 
-const FALLBACK = {
-  SPY: { price: 740.96, changePct: -1.25 },
-  QQQ: { price: 724.0, changePct: -0.8 },
-  IWM: { price: 290.0, changePct: -0.72 },
-  SPX: { price: 7420.1, changePct: -1.0 },
-};
+// ── CPI dates for 2025 – update this array each quarter ──────────────────
+const CPI_DATES = [
+  new Date("2025-07-15T08:30:00-05:00"),
+  new Date("2025-08-12T08:30:00-05:00"),
+  new Date("2025-09-10T08:30:00-05:00"),
+  new Date("2025-10-14T08:30:00-05:00"),
+  new Date("2025-11-13T08:30:00-05:00"),
+  new Date("2025-12-10T08:30:00-05:00"),
+];
+
+function getNextCPI() {
+  const now = new Date();
+  return CPI_DATES.find((d) => d > now) ?? null;
+}
+
+function formatCountdown(ms) {
+  if (ms <= 0) return "LIVE NOW";
+  const totalSec = Math.floor(ms / 1000);
+  const days = Math.floor(totalSec / 86400);
+  const hrs = Math.floor((totalSec % 86400) / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+  if (days > 0) return `${days}d ${String(hrs).padStart(2, "0")}h ${String(mins).padStart(2, "0")}m`;
+  return `${String(hrs).padStart(2, "0")}h ${String(mins).padStart(2, "0")}m ${String(secs).padStart(2, "0")}s`;
+}
 
 function Sparkline({ trend }) {
   const points =
@@ -60,7 +79,31 @@ function formatChangePct(value) {
 export default function TopRibbon() {
   const [tiles, setTiles] = useState(DEFAULT_TILES);
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [countdown, setCountdown] = useState("—");
+  const [cpiLabel, setCpiLabel] = useState("Next CPI");
 
+  // ── CPI countdown ticker ────────────────────────────────────────────────
+  useEffect(() => {
+    function tick() {
+      const next = getNextCPI();
+      if (!next) {
+        setCpiLabel("CPI");
+        setCountdown("—");
+        return;
+      }
+      const diff = next - new Date();
+      // Show date label like "Jul 15"
+      setCpiLabel(
+        `CPI ${next.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+      );
+      setCountdown(formatCountdown(diff));
+    }
+    tick(); // run immediately
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // ── Market data fetching ────────────────────────────────────────────────
   async function fetchOne(symbol) {
     try {
       const res = await fetch(`${API}/api/quote/${symbol}`);
@@ -76,6 +119,9 @@ export default function TopRibbon() {
         data.dp ??
         null;
 
+      // If we got back zeros or nulls, treat as fetch failure
+      if (!price || Number(price) === 0) throw new Error(`Bad price for ${symbol}`);
+
       const trend =
         Number(changePct) > 0 ? "up" : Number(changePct) < 0 ? "down" : "flat";
 
@@ -84,21 +130,16 @@ export default function TopRibbon() {
         price: formatPrice(price),
         change: formatChangePct(changePct),
         trend,
+        stale: false,
       };
     } catch {
-      const fb = FALLBACK[symbol];
-      const trend =
-        Number(fb?.changePct) > 0
-          ? "up"
-          : Number(fb?.changePct) < 0
-          ? "down"
-          : "flat";
-
+      // Return dashes instead of wrong hardcoded numbers
       return {
         symbol,
-        price: formatPrice(fb?.price),
-        change: formatChangePct(fb?.changePct),
-        trend,
+        price: "—",
+        change: "—",
+        trend: "flat",
+        stale: true,
       };
     }
   }
@@ -120,7 +161,7 @@ export default function TopRibbon() {
     <header className="top">
       <div className="tickerWrap">
         {tiles.map((m) => (
-          <div className="ticker" key={m.symbol}>
+          <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
             <div>
               <b>{m.symbol}</b>
               <span>{m.price}</span>
@@ -155,8 +196,8 @@ export default function TopRibbon() {
 
       <div className="eventBox">
         <b>Next Event</b>
-        <p>CPI Release</p>
-        <span>02h 45m 12s</span>
+        <p>{cpiLabel}</p>
+        <span>{countdown}</span>
       </div>
     </header>
   );
