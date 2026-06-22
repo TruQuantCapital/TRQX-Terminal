@@ -6,7 +6,7 @@ const DEFAULT_TILES = [
   { symbol: "SPY", price: "—", change: "—", trend: "flat" },
   { symbol: "QQQ", price: "—", change: "—", trend: "flat" },
   { symbol: "IWM", price: "—", change: "—", trend: "flat" },
-  { symbol: "SPX", price: "—", change: "—", trend: "flat" },
+  { symbol: "NVDA", price: "—", change: "—", trend: "flat" },
 ];
 
 const FUTURES_LIST = [
@@ -139,7 +139,7 @@ export default function TopRibbon() {
   }
 
   async function fetchMarketTiles() {
-    const results = await Promise.all(["SPY", "QQQ", "IWM", "SPX"].map(fetchOne));
+    const results = await Promise.all(["SPY", "QQQ", "IWM", "NVDA"].map(fetchOne));
     setTiles(results);
     setLastUpdate(new Date());
   }
@@ -202,3 +202,5 @@ export default function TopRibbon() {
     </header>
   );
 }
+
+
