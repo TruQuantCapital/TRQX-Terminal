@@ -1,6 +1,7 @@
 ﻿import React, { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight, RotateCcw, Star } from "lucide-react";
 import { flashcardCategories, highPriorityPatternIds } from "../data/flashcardLibrary";
+import PatternSVG from "./PatternSVG";
 import "./flashCards.css";
 
 export default function FlashCardDeck() {
@@ -46,7 +47,8 @@ export default function FlashCardDeck() {
     setFlipped((f) => !f);
   }
 
-  function handleMastered() {
+  function handleMastered(e) {
+    e.stopPropagation();
     setMastered((prev) => {
       const next = new Set(prev);
       if (next.has(card.id)) {
@@ -119,8 +121,10 @@ export default function FlashCardDeck() {
                 </div>
               )}
               <div className="flashCardCategory">{card.categoryTitle}</div>
+              <div className="flashCardDiagram">
+                <PatternSVG patternId={card.id} />
+              </div>
               <div className="flashCardPatternName">{card.front}</div>
-              <div className="flashCardHint">{card.frontHint}</div>
               <div className="flashCardFlipHint">Tap to reveal</div>
             </div>
 
@@ -168,7 +172,7 @@ export default function FlashCardDeck() {
       <div className="flashDeckControls">
         <button
           className="flashNavBtn"
-          onClick={handlePrev}
+          onClick={(e) => { e.stopPropagation(); handlePrev(); }}
           disabled={cardIndex === 0}
           aria-label="Previous card"
         >
@@ -179,7 +183,7 @@ export default function FlashCardDeck() {
           <span className="flashDeckPosition">{cardIndex + 1} / {deck.length}</span>
           <button
             className={"flashMasterBtn" + (isMastered ? " done" : "")}
-            onClick={(e) => { e.stopPropagation(); handleMastered(); }}
+            onClick={handleMastered}
           >
             {isMastered ? "Mastered" : "Mark Mastered"}
           </button>
@@ -187,7 +191,7 @@ export default function FlashCardDeck() {
 
         <button
           className="flashNavBtn"
-          onClick={handleNext}
+          onClick={(e) => { e.stopPropagation(); handleNext(); }}
           disabled={cardIndex === deck.length - 1}
           aria-label="Next card"
         >
