@@ -4,6 +4,7 @@ import { courseLevels } from "../data/courseLevels";
 import { useAcademyProgress } from "../hooks/useAcademyProgress";
 import LessonReader from "./LessonReader";
 import "./academyInteractive.css";
+// remove this from AcademyPage.jsx for now
 
 export default function AcademyPage() {
   const { completed, loading, markComplete, levelProgress, isLevelUnlocked } =
@@ -171,3 +172,5 @@ export default function AcademyPage() {
     </main>
   );
 }
+
+

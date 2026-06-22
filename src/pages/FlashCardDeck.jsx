@@ -1,0 +1,205 @@
+﻿import React, { useState, useMemo } from "react";
+import { ChevronLeft, ChevronRight, RotateCcw, Star } from "lucide-react";
+import { flashcardCategories, highPriorityPatternIds } from "../data/flashcardLibrary";
+import "./flashCards.css";
+
+export default function FlashCardDeck() {
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [cardIndex, setCardIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [mastered, setMastered] = useState(new Set());
+
+  const allCards = useMemo(() => {
+    return flashcardCategories.flatMap((cat) =>
+      cat.cards.map((card) => ({ ...card, categoryKey: cat.key, categoryTitle: cat.title }))
+    );
+  }, []);
+
+  const deck = useMemo(() => {
+    if (activeCategory === "starred") {
+      return allCards.filter((c) => highPriorityPatternIds.includes(c.id));
+    }
+    if (activeCategory === "all") return allCards;
+    return allCards.filter((c) => c.categoryKey === activeCategory);
+  }, [activeCategory, allCards]);
+
+  const card = deck[cardIndex];
+  const progress = deck.length > 0 ? Math.round((mastered.size / deck.length) * 100) : 0;
+
+  function handleCategoryChange(key) {
+    setActiveCategory(key);
+    setCardIndex(0);
+    setFlipped(false);
+  }
+
+  function handlePrev() {
+    setCardIndex((i) => Math.max(0, i - 1));
+    setFlipped(false);
+  }
+
+  function handleNext() {
+    setCardIndex((i) => Math.min(deck.length - 1, i + 1));
+    setFlipped(false);
+  }
+
+  function handleFlip() {
+    setFlipped((f) => !f);
+  }
+
+  function handleMastered() {
+    setMastered((prev) => {
+      const next = new Set(prev);
+      if (next.has(card.id)) {
+        next.delete(card.id);
+      } else {
+        next.add(card.id);
+      }
+      return next;
+    });
+  }
+
+  function handleReset() {
+    setMastered(new Set());
+    setCardIndex(0);
+    setFlipped(false);
+  }
+
+  if (!card) {
+    return (
+      <div className="flashDeckEmpty">
+        <p>No cards in this category yet.</p>
+      </div>
+    );
+  }
+
+  const isMastered = mastered.has(card.id);
+  const isHighPriority = highPriorityPatternIds.includes(card.id);
+
+  return (
+    <div className="flashDeckRoot">
+      <div className="flashDeckHeader">
+        <div className="flashDeckTitle">
+          <span>Pattern Flash Cards</span>
+          <span className="flashDeckCount">{deck.length} cards</span>
+        </div>
+        <div className="flashDeckProgress">
+          <div className="flashDeckProgressBar">
+            <div className="flashDeckProgressFill" style={{ width: progress + "%" }} />
+          </div>
+          <span className="flashDeckProgressLabel">{mastered.size} / {deck.length} mastered</span>
+        </div>
+      </div>
+
+      <div className="flashCategoryBar">
+        {[
+          { key: "all", label: "All" },
+          { key: "starred", label: "Priority" },
+          ...flashcardCategories.map((c) => ({ key: c.key, label: c.title })),
+        ].map((cat) => (
+          <button
+            key={cat.key}
+            className={"flashCategoryBtn" + (activeCategory === cat.key ? " active" : "")}
+            onClick={() => handleCategoryChange(cat.key)}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="flashCardArea">
+        <div
+          className={"flashCard" + (flipped ? " flipped" : "") + (isMastered ? " mastered" : "")}
+          onClick={handleFlip}
+        >
+          <div className="flashCardInner">
+            <div className="flashCardFront">
+              {isHighPriority && (
+                <div className="flashCardPriorityBadge">
+                  <Star size={12} /> High Win Rate
+                </div>
+              )}
+              <div className="flashCardCategory">{card.categoryTitle}</div>
+              <div className="flashCardPatternName">{card.front}</div>
+              <div className="flashCardHint">{card.frontHint}</div>
+              <div className="flashCardFlipHint">Tap to reveal</div>
+            </div>
+
+            <div className="flashCardBack">
+              <div className="flashCardBackSection">
+                <div className="flashCardBackLabel">What It Means</div>
+                <div className="flashCardBackValue">{card.meaning}</div>
+              </div>
+
+              {card.howToSpot && card.howToSpot.length > 0 && (
+                <div className="flashCardBackSection">
+                  <div className="flashCardBackLabel">How To Spot It</div>
+                  <ul className="flashCardBackList">
+                    {card.howToSpot.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {card.bestLocation && card.bestLocation.length > 0 && (
+                <div className="flashCardBackSection">
+                  <div className="flashCardBackLabel">Best Location</div>
+                  <div className="flashCardBackTags">
+                    {card.bestLocation.map((loc, i) => (
+                      <span key={i} className="flashCardTag">{loc}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {card.confirmation && (
+                <div className="flashCardBackSection">
+                  <div className="flashCardBackLabel">Confirmation</div>
+                  <div className="flashCardBackValue">{card.confirmation}</div>
+                </div>
+              )}
+
+              <div className="flashCardFlipHint">Tap to flip back</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flashDeckControls">
+        <button
+          className="flashNavBtn"
+          onClick={handlePrev}
+          disabled={cardIndex === 0}
+          aria-label="Previous card"
+        >
+          <ChevronLeft size={20} />
+        </button>
+
+        <div className="flashDeckMiddle">
+          <span className="flashDeckPosition">{cardIndex + 1} / {deck.length}</span>
+          <button
+            className={"flashMasterBtn" + (isMastered ? " done" : "")}
+            onClick={(e) => { e.stopPropagation(); handleMastered(); }}
+          >
+            {isMastered ? "Mastered" : "Mark Mastered"}
+          </button>
+        </div>
+
+        <button
+          className="flashNavBtn"
+          onClick={handleNext}
+          disabled={cardIndex === deck.length - 1}
+          aria-label="Next card"
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
+      {mastered.size > 0 && (
+        <button className="flashResetBtn" onClick={handleReset}>
+          <RotateCcw size={13} /> Reset progress
+        </button>
+      )}
+    </div>
+  );
+}

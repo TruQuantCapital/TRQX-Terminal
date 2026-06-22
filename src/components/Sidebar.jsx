@@ -11,7 +11,8 @@ import {
   MessageCircle,
   Newspaper,
   Settings,
-  Crown
+  Crown,
+  BookOpen
 } from "lucide-react";
 
 export const nav = [
@@ -24,6 +25,7 @@ export const nav = [
   { key: "calendar", label: "Economic Calendar", icon: CalendarDays },
   { key: "alerts", label: "Alerts", icon: Bell },
   { key: "academy", label: "Academy", icon: GraduationCap },
+  { key: "patterns", label: "Patterns", icon: BookOpen },
   { key: "discord", label: "Discord", icon: MessageCircle },
   { key: "settings", label: "Settings", icon: Settings },
 ];
@@ -82,7 +84,7 @@ export default function Sidebar({ active, setActive, user, tier }) {
               className={"navBtn " + (active === item.key ? "active" : "")}
               onClick={() => setActive(item.key)}
             >
-              <Icon className="navIcon" />
+              <Icon size={18} />
               <span>{item.label}</span>
             </button>
           );
@@ -90,24 +92,20 @@ export default function Sidebar({ active, setActive, user, tier }) {
       </nav>
 
       <div className="sidebarCard pro">
-        <Crown className="sidebarCardIcon" />
-
+        <Crown size={20} />
         <div>
           <b>TRQX CAPITAL ELITE</b>
           <p>Elite Member</p>
         </div>
-
         <button>Elite Access</button>
       </div>
 
       <div className="sidebarCard discord">
-        <MessageCircle className="sidebarCardIcon" />
-
+        <MessageCircle size={22} />
         <div>
           <b>TRQX Trading Floor</b>
           <p>Live alerts - Education - Market prep</p>
         </div>
-
         <button>Join Floor</button>
       </div>
 

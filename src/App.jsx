@@ -12,6 +12,7 @@ import OptionsPage from "./pages/OptionsPage";
 import TradePlanPage from "./pages/TradePlanPage";
 import EconomicCalendarPage from "./pages/EconomicCalendarPage";
 import AcademyPage from "./pages/AcademyPage";
+import PatternsPage from "./pages/PatternsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import Auth from "./pages/Auth";
 import Pricing from "./pages/Pricing";
@@ -31,6 +32,7 @@ const routeByKey = {
   calendar: "/economic-calendar",
   alerts: "/alerts",
   academy: "/academy",
+  patterns: "/patterns",
   discord: "/discord",
   news: "/news",
   settings: "/settings",
@@ -46,6 +48,7 @@ const keyByPath = {
   "/economic-calendar": "calendar",
   "/alerts": "alerts",
   "/academy": "academy",
+  "/patterns": "patterns",
   "/discord": "discord",
   "/news": "news",
   "/settings": "settings",
@@ -56,7 +59,7 @@ const keyByPath = {
 function LoadingScreen() {
   return (
     <div className="loading-screen">
-      <div className="loading-logo">âš¡</div>
+      <div className="loading-logo">⚡</div>
       <div className="loading-text">TRQX UNIFIED TERMINAL</div>
     </div>
   );
@@ -127,6 +130,7 @@ export default function App() {
           <Route path="/gamma-ex" element={<ProtectedTerminal><GammaPage /></ProtectedTerminal>} />
           <Route path="/economic-calendar" element={<ProtectedTerminal><EconomicCalendarPage /></ProtectedTerminal>} />
           <Route path="/news" element={<ProtectedTerminal><NewsPage /></ProtectedTerminal>} />
+          <Route path="/patterns" element={<ProtectedTerminal><PatternsPage /></ProtectedTerminal>} />
           <Route path="/academy" element={<ProtectedTerminal><AcademyPage /></ProtectedTerminal>} />
 
           <Route path="/pricing" element={<ProtectedTerminal><Pricing /></ProtectedTerminal>} />
@@ -142,3 +146,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+
