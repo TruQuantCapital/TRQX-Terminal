@@ -1850,3 +1850,18 @@ header.top {
   color: var(--text);
   font-weight: 700;
 }
+
+/* ── Ribbon size boost ───────────────────────────────────────────── */
+header.top { height: 80px !important; }
+.ticker { min-width: 190px !important; padding: 0 24px !important; }
+.tickerText b { font-size: 13px !important; }
+.tickerText span { font-size: 24px !important; }
+.tickerText em { font-size: 13px !important; }
+.spark { width: 90px !important; height: 36px !important; }
+.statusBox { min-width: 200px !important; padding: 0 24px !important; }
+.statusBox b { font-size: 14px !important; }
+.statusBox p { font-size: 12px !important; }
+.eventBox { min-width: 170px !important; padding: 0 24px !important; }
+.eventBox b { font-size: 12px !important; }
+.eventBox p { font-size: 13px !important; }
+.eventBox span { font-size: 20px !important; }
