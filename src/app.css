@@ -1715,9 +1715,10 @@ input, select { outline: none; }
   margin-left: 10px;
 }
 
-/* â”€â”€ Top Ribbon Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
-/* ── Top Ribbon ──────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   TOP RIBBON — single source of truth, do not duplicate
+   ══════════════════════════════════════════════════════════════════ */
 header.top {
   display: flex;
   align-items: stretch;
@@ -1733,11 +1734,17 @@ header.top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 0 18px;
+  gap: 12px;
+  padding: 0 20px;
   border-right: 1px solid var(--border);
-  min-width: 160px;
+  min-width: 170px;
   flex-shrink: 0;
+}
+
+.tickerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .tickerInfo b {
@@ -1746,7 +1753,6 @@ header.top {
   font-weight: 700;
   color: var(--text-dim);
   letter-spacing: 1px;
-  display: block;
 }
 
 .tickerInfo span {
@@ -1754,7 +1760,6 @@ header.top {
   font-size: 20px;
   font-weight: 700;
   color: var(--text);
-  display: block;
   line-height: 1.1;
 }
 
@@ -1762,11 +1767,10 @@ header.top {
   font-style: normal;
   font-family: var(--font-mono);
   font-size: 12px;
-  display: block;
 }
 
-.ticker .positive, .tickerInfo .positive { color: var(--green); }
-.ticker .negative, .tickerInfo .negative { color: var(--red); }
+.tickerInfo .positive { color: var(--green); }
+.tickerInfo .negative { color: var(--red); }
 
 .spark {
   width: 80px;
@@ -1778,10 +1782,11 @@ header.top {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 18px;
+  padding: 0 20px;
   border-left: 1px solid var(--border);
   margin-left: auto;
   flex-shrink: 0;
+  min-width: 180px;
 }
 
 .statusBox .dot {
@@ -1794,7 +1799,7 @@ header.top {
 
 .statusBox b {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text);
   display: block;
@@ -1811,10 +1816,10 @@ header.top {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 18px;
+  padding: 0 20px;
   border-left: 1px solid var(--border);
   flex-shrink: 0;
-  min-width: 130px;
+  min-width: 150px;
 }
 
 .eventBox b {
@@ -1827,7 +1832,7 @@ header.top {
 }
 
 .eventBox p {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--gold);
   margin: 2px 0;
   font-family: var(--font-head);
@@ -1836,52 +1841,7 @@ header.top {
 
 .eventBox span {
   font-family: var(--font-mono);
-  font-size: 16px;
+  font-size: 18px;
   color: var(--text);
   font-weight: 700;
-}
-
-.ticker b {
-  font-family: var(--font-head);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  display: block;
-}
-
-.ticker span {
-  font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  display: block;
-  line-height: 1.1;
-}
-
-.ticker em {
-  font-style: normal;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  display: block;
-}
-
-.statusBox {
-  min-width: 160px !important;
-}
-
-.eventBox {
-  min-width: 150px !important;
-}
-
-.eventBox b, .statusBox b {
-  font-size: 13px !important;
-}
-
-.eventBox p {
-  font-size: 12px !important;
-}
-
-.eventBox span {
-  font-size: 18px !important;
 }
