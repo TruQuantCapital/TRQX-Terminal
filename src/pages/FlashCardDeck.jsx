@@ -14,6 +14,16 @@ function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
+function WinRate({ rating }) {
+  return (
+    <div className="flashWinRate">
+      {[1,2,3,4,5].map((i) => (
+        <span key={i} className={i <= rating ? "flashWinStar" : "flashWinStarEmpty"}>★</span>
+      ))}
+    </div>
+  );
+}
+
 export default function FlashCardDeck() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [cardIndex, setCardIndex] = useState(0);
@@ -94,7 +104,11 @@ export default function FlashCardDeck() {
               <div className="flashCardChoices">
                 {currentChoices.map((choice) => {
                   let cls = "flashCardChoice";
-                  if (answered) { if (choice === card.front) cls += " correct"; else if (choice === selected) cls += " incorrect"; else cls += " dimmed"; }
+                  if (answered) {
+                    if (choice === card.front) cls += " correct";
+                    else if (choice === selected) cls += " incorrect";
+                    else cls += " dimmed";
+                  }
                   return (
                     <button key={choice} className={cls} onClick={(e) => { e.stopPropagation(); handleSelect(choice); }} disabled={answered}>
                       {choice}
@@ -102,35 +116,65 @@ export default function FlashCardDeck() {
                   );
                 })}
               </div>
-              {answered && <button className="flashRevealBtn" onClick={handleFlip}>{flipped ? "Hide detail" : (isCorrect ? "Correct! See full breakdown" : "See full breakdown")}</button>}
-              {!answered && <div className="flashCardFlipHint">Pick the correct pattern name</div>}
+              {answered && (
+                <button className="flashRevealBtn" onClick={handleFlip}>
+                  {flipped ? "Hide detail" : (isCorrect ? "Correct! See full breakdown →" : "See full breakdown →")}
+                </button>
+              )}
+              {!answered && <div className="flashCardFlipHint">Pick the correct pattern name above</div>}
             </div>
 
             <div className="flashCardBack">
               <div className="flashCardBackName">{card.front}</div>
+              {card.winRate && <WinRate rating={card.winRate} />}
+
               <div className="flashCardBackSection">
                 <div className="flashCardBackLabel">What It Means</div>
                 <div className="flashCardBackValue">{card.meaning}</div>
               </div>
+
               {card.howToSpot && card.howToSpot.length > 0 && (
                 <div className="flashCardBackSection">
                   <div className="flashCardBackLabel">How To Spot It</div>
-                  <ul className="flashCardBackList">{card.howToSpot.map((item, i) => <li key={i}>{item}</li>)}</ul>
+                  <ul className="flashCardBackList">
+                    {card.howToSpot.map((item, i) => <li key={i}>{item}</li>)}
+                  </ul>
                 </div>
               )}
+
               {card.bestLocation && card.bestLocation.length > 0 && (
                 <div className="flashCardBackSection">
                   <div className="flashCardBackLabel">Best Location</div>
-                  <div className="flashCardBackTags">{card.bestLocation.map((loc, i) => <span key={i} className="flashCardTag">{loc}</span>)}</div>
+                  <div className="flashCardBackTags">
+                    {card.bestLocation.map((loc, i) => <span key={i} className="flashCardTag">{loc}</span>)}
+                  </div>
                 </div>
               )}
-              {card.confirmation && (
+
+              {card.howToTrade && (
                 <div className="flashCardBackSection">
-                  <div className="flashCardBackLabel">Confirmation</div>
-                  <div className="flashCardBackValue">{card.confirmation}</div>
+                  <div className="flashCardBackLabel">How To Trade</div>
+                  <div className="flashCardTradeGrid">
+                    <span className="flashCardTradeLabel entry">ENTRY</span>
+                    <span className="flashCardTradeValue">{card.howToTrade.entry}</span>
+                    <span className="flashCardTradeLabel stop">STOP</span>
+                    <span className="flashCardTradeValue">{card.howToTrade.stop}</span>
+                    <span className="flashCardTradeLabel target">TARGET</span>
+                    <span className="flashCardTradeValue">{card.howToTrade.target}</span>
+                  </div>
                 </div>
               )}
-              <button className="flashRevealBtn" onClick={handleFlip}>Back to card</button>
+
+              {card.traderTip && (
+                <div className="flashCardBackSection">
+                  <div className="flashCardBackLabel">Trader s Tip</div>
+                  <div className="flashCardTip">{card.traderTip}</div>
+                </div>
+              )}
+
+              <button className="flashRevealBtn" onClick={handleFlip} style={{ marginTop: "8px" }}>
+                Back to card
+              </button>
             </div>
 
           </div>
@@ -148,7 +192,9 @@ export default function FlashCardDeck() {
         <button className="flashNavBtn" onClick={(e) => { e.stopPropagation(); handleNext(); }} disabled={cardIndex === deck.length - 1} aria-label="Next card"><ChevronRight size={20} /></button>
       </div>
 
-      {mastered.size > 0 && <button className="flashResetBtn" onClick={handleReset}><RotateCcw size={13} /> Reset progress</button>}
+      {mastered.size > 0 && (
+        <button className="flashResetBtn" onClick={handleReset}><RotateCcw size={13} /> Reset progress</button>
+      )}
     </div>
   );
 }
