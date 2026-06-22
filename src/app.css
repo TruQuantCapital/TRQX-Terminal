@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
 
-/* ─── CSS Variables ─────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ CSS Variables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
   --gold:       #C9A84C;
   --gold-light: #FFD700;
@@ -27,7 +27,7 @@
   --radius-lg:  12px;
 }
 
-/* ─── Reset ─────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 15px; }
 body {
@@ -42,7 +42,7 @@ a { color: inherit; text-decoration: none; }
 button { cursor: pointer; border: none; background: none; }
 input, select { outline: none; }
 
-/* ─── Loading Screen ─────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Loading Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .loading-screen {
   display: flex;
   flex-direction: column;
@@ -63,7 +63,7 @@ input, select { outline: none; }
 }
 @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
-/* ─── Nav ───────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Nav â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .nav {
   display: flex;
   align-items: center;
@@ -135,7 +135,7 @@ input, select { outline: none; }
 }
 .nav-btn:hover { background: rgba(201,168,76,0.15); }
 
-/* ─── Scanner Page ───────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Scanner Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .scanner-page { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
 
 /* Stats Bar */
@@ -354,7 +354,7 @@ input, select { outline: none; }
 .tag-block   { background: rgba(167,139,250,0.15); color: var(--purple); }
 .tag-unusual { background: rgba(249,115,22,0.15); color: var(--orange); }
 
-/* ─── AI Chat ────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ AI Chat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ai-chat {
   background: var(--black-3);
   border: 1px solid var(--border);
@@ -448,7 +448,7 @@ input, select { outline: none; }
 .locked-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--gold); }
 .locked-sub { color: var(--text-dim); font-size: 14px; }
 
-/* ─── Sector Heatmap ─────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Sector Heatmap â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .heatmap { background: var(--black-3); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
 .heatmap-title { font-family: var(--font-head); font-size: 16px; letter-spacing: 2px; color: var(--gold); margin-bottom: 14px; }
 .heatmap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
@@ -471,7 +471,7 @@ input, select { outline: none; }
 .heatmap-count { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 .heatmap-empty { padding: 40px; text-align: center; color: var(--text-muted); }
 
-/* ─── Smart Money ────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Smart Money â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .smart-money { background: var(--black-3); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
 .smart-title { font-family: var(--font-head); font-size: 16px; letter-spacing: 2px; color: var(--gold); margin-bottom: 14px; }
 .smart-list { display: flex; flex-direction: column; gap: 6px; }
@@ -493,7 +493,7 @@ input, select { outline: none; }
 .smart-last { font-size: 12px; color: var(--text-muted); }
 .smart-empty { padding: 40px; text-align: center; color: var(--text-muted); }
 
-/* ─── Reports Page ───────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Reports Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .reports-page { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; max-width: 1000px; margin: 0 auto; }
 .reports-header { border-bottom: 1px solid var(--border); padding-bottom: 14px; }
 .reports-title { font-family: var(--font-head); font-size: 24px; font-weight: 700; letter-spacing: 2px; color: var(--gold); }
@@ -581,7 +581,7 @@ input, select { outline: none; }
 .reports-features li { font-size: 15px; color: var(--text); }
 .reports-loading, .reports-error { padding: 60px; text-align: center; color: var(--text-dim); }
 
-/* ─── Alerts Page ────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Alerts Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .alerts-page { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; max-width: 900px; margin: 0 auto; }
 .alerts-header { }
 .alerts-header h1 { font-family: var(--font-head); font-size: 28px; font-weight: 700; color: var(--gold); }
@@ -665,7 +665,7 @@ input, select { outline: none; }
 .save-btn:hover { opacity: 0.85; }
 .discord-help { font-size: 13px; color: var(--text-dim); line-height: 1.6; padding: 12px 14px; background: var(--black-4); border-radius: var(--radius); border-left: 3px solid var(--gold); }
 
-/* ─── Upgrade Button ─────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Upgrade Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .upgrade-btn {
   display: inline-block;
   padding: 12px 28px;
@@ -680,7 +680,7 @@ input, select { outline: none; }
 }
 .upgrade-btn:hover { opacity: 0.85; }
 
-/* ─── Auth Page ──────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Auth Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -960,7 +960,7 @@ input, select { outline: none; }
   .auth-trust-bar { padding: 16px 20px; }
 }
 
-/* ─── Pricing Page ───────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Pricing Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pricing-page {
   padding: 40px 24px 60px;
   max-width: 1200px;
@@ -1144,7 +1144,7 @@ input, select { outline: none; }
   color: var(--gold);
 }
 
-/* ─── Flow Replay ────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Flow Replay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .replay-page { display: flex; flex-direction: column; gap: 12px; }
 .replay-locked {
   background: var(--black-3); border: 1px solid var(--border);
@@ -1258,7 +1258,7 @@ input, select { outline: none; }
   color: var(--gold); border-radius: 3px; margin-left: 4px;
 }
 
-/* ─── ORB Dashboard ──────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ ORB Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .orb-page { display: flex; flex-direction: column; gap: 12px; }
 .orb-locked {
   background: var(--black-3); border: 1px solid var(--border);
@@ -1370,7 +1370,7 @@ input, select { outline: none; }
   .orb-chart-wrap { height: 400px; }
 }
 
-/* ─── Stats Filter Label ─────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Stats Filter Label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .stats-filter-label {
   font-family: var(--font-head);
   font-size: 12px;
@@ -1386,7 +1386,7 @@ input, select { outline: none; }
   align-items: center;
 }
 
-/* ─── Force white bold on all table headers ──────────────────────────────────── */
+/* â”€â”€â”€ Force white bold on all table headers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .scanner-page th,
 .table-wrap th,
 .flow-table th,
@@ -1397,7 +1397,7 @@ input, select { outline: none; }
   font-family: 'Rajdhani', sans-serif !important;
 }
 
-/* ── Flow Command Center ─────────────────────────────────────────── */
+/* â”€â”€ Flow Command Center â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .flowCommandCenter {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -1453,7 +1453,7 @@ input, select { outline: none; }
   color: var(--muted);
 }
 
-/* ── Spotlight Box ───────────────────────────────────────────────── */
+/* â”€â”€ Spotlight Box â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .spotlightBox {
   background: var(--black-4);
   border: 1px solid var(--border);
@@ -1502,7 +1502,7 @@ input, select { outline: none; }
   opacity: 0.85;
 }
 
-/* ── Flow Command Center ─────────────────────────────────────────── */
+/* â”€â”€ Flow Command Center â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .flowCommandCenter {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -1558,7 +1558,7 @@ input, select { outline: none; }
   color: var(--muted);
 }
 
-/* ── Spotlight Box ───────────────────────────────────────────────── */
+/* â”€â”€ Spotlight Box â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .spotlightBox {
   background: var(--black-4);
   border: 1px solid var(--border);
@@ -1607,7 +1607,7 @@ input, select { outline: none; }
   opacity: 0.85;
 }
 
-/* ── Futures Strip ───────────────────────────────────────────────── */
+/* â”€â”€ Futures Strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .futuresStrip {
   display: flex;
   align-items: center;
@@ -1661,7 +1661,7 @@ input, select { outline: none; }
   margin-left: 10px;
 }
 
-/* ── Futures Strip ───────────────────────────────────────────────── */
+/* â”€â”€ Futures Strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .futuresStrip {
   display: flex;
   align-items: center;
@@ -1715,375 +1715,9 @@ input, select { outline: none; }
   margin-left: 10px;
 }
 
-/* ── Top Ribbon Header ───────────────────────────────────────────── */
-header.top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  height: 60px;
-  background: var(--black-2);
-  border-bottom: 1px solid var(--border);
-  overflow: hidden;
-  flex-shrink: 0;
-}
+/* â”€â”€ Top Ribbon Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
-.tickerWrap {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  flex: 1;
-  min-width: 0;
-}
-
-.ticker {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 16px;
-  border-right: 1px solid var(--border);
-  min-width: 160px;
-}
-
-.ticker b {
-  font-family: var(--font-head);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  display: block;
-}
-
-.ticker span {
-  font-family: var(--font-mono);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
-  display: block;
-  line-height: 1.1;
-}
-
-.ticker em {
-  font-style: normal;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  display: block;
-}
-
-.ticker .positive { color: var(--green); }
-.ticker .negative { color: var(--red); }
-
-.spark {
-  width: 80px;
-  height: 28px;
-  flex-shrink: 0;
-}
-
-/* ── Futures Strip ───────────────────────────────────────────────── */
-.futuresStrip {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  background: var(--black-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 6px 12px;
-  flex-shrink: 0;
-  height: 44px;
-}
-
-.futuresLabel {
-  font-family: var(--font-head);
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--gold);
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-.futuresTile {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0 8px;
-}
-
-.futuresName {
-  font-family: var(--font-head);
-  font-size: 11px;
-  color: var(--muted);
-  font-weight: 700;
-}
-
-.futuresPrice {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text);
-  font-weight: 600;
-}
-
-.futuresPct {
-  font-family: var(--font-mono);
-  font-size: 11px;
-}
-
-.futuresDivider {
-  width: 1px;
-  height: 20px;
-  background: rgba(201,168,76,0.15);
-  margin-left: 8px;
-}
-
-/* ── Status Box ──────────────────────────────────────────────────── */
-.statusBox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  flex-shrink: 0;
-}
-
-.statusBox .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  flex-shrink: 0;
-}
-
-.statusBox b {
-  font-family: var(--font-head);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
-  display: block;
-}
-
-.statusBox p {
-  font-size: 11px;
-  color: var(--muted);
-  margin: 0;
-}
-
-/* ── Event Box ───────────────────────────────────────────────────── */
-.eventBox {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 14px;
-  border-left: 1px solid var(--border);
-  flex-shrink: 0;
-  min-width: 110px;
-}
-
-.eventBox b {
-  font-family: var(--font-head);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: 1px;
-}
-
-.eventBox p {
-  font-size: 10px;
-  color: var(--gold);
-  margin: 0;
-  font-family: var(--font-head);
-  letter-spacing: 1px;
-}
-
-.eventBox span {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text);
-  font-weight: 700;
-}
-
-/* ── Top Ribbon Header ───────────────────────────────────────────── */
-header.top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  height: 60px;
-  background: var(--black-2);
-  border-bottom: 1px solid var(--border);
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.tickerWrap {
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  flex: 1;
-  min-width: 0;
-}
-
-.ticker {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 16px;
-  border-right: 1px solid var(--border);
-  min-width: 160px;
-}
-
-.ticker b {
-  font-family: var(--font-head);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  display: block;
-}
-
-.ticker span {
-  font-family: var(--font-mono);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
-  display: block;
-  line-height: 1.1;
-}
-
-.ticker em {
-  font-style: normal;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  display: block;
-}
-
-.ticker .positive { color: var(--green); }
-.ticker .negative { color: var(--red); }
-
-.spark {
-  width: 80px;
-  height: 28px;
-  flex-shrink: 0;
-}
-
-/* ── Futures Strip ───────────────────────────────────────────────── */
-.futuresStrip {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  background: var(--black-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 6px 12px;
-  flex-shrink: 0;
-  height: 44px;
-}
-
-.futuresLabel {
-  font-family: var(--font-head);
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--gold);
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-.futuresTile {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0 8px;
-}
-
-.futuresName {
-  font-family: var(--font-head);
-  font-size: 11px;
-  color: var(--muted);
-  font-weight: 700;
-}
-
-.futuresPrice {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text);
-  font-weight: 600;
-}
-
-.futuresPct {
-  font-family: var(--font-mono);
-  font-size: 11px;
-}
-
-.futuresDivider {
-  width: 1px;
-  height: 20px;
-  background: rgba(201,168,76,0.15);
-  margin-left: 8px;
-}
-
-/* ── Status Box ──────────────────────────────────────────────────── */
-.statusBox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  flex-shrink: 0;
-}
-
-.statusBox .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  flex-shrink: 0;
-}
-
-.statusBox b {
-  font-family: var(--font-head);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
-  display: block;
-}
-
-.statusBox p {
-  font-size: 11px;
-  color: var(--muted);
-  margin: 0;
-}
-
-/* ── Event Box ───────────────────────────────────────────────────── */
-.eventBox {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 14px;
-  border-left: 1px solid var(--border);
-  flex-shrink: 0;
-  min-width: 110px;
-}
-
-.eventBox b {
-  font-family: var(--font-head);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: 1px;
-}
-
-.eventBox p {
-  font-size: 10px;
-  color: var(--gold);
-  margin: 0;
-  font-family: var(--font-head);
-  letter-spacing: 1px;
-}
-
-.eventBox span {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text);
-  font-weight: 700;
-}
-
-/* ── Top Ribbon Header RESET ─────────────────────────────────────── */
+/* ── Top Ribbon ──────────────────────────────────────────────────── */
 header.top {
   display: flex;
   align-items: stretch;
@@ -2102,7 +1736,7 @@ header.top {
   gap: 10px;
   padding: 0 18px;
   border-right: 1px solid var(--border);
-  min-width: 170px;
+  min-width: 160px;
   flex-shrink: 0;
 }
 
@@ -2131,126 +1765,8 @@ header.top {
   display: block;
 }
 
-.spark {
-  width: 80px;
-  height: 32px;
-  flex-shrink: 0;
-}
-
-.statusBox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 18px;
-  border-left: 1px solid var(--border);
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-.statusBox .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  flex-shrink: 0;
-}
-
-.statusBox b {
-  font-family: var(--font-head);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
-  display: block;
-  letter-spacing: 1px;
-}
-
-.statusBox p {
-  font-size: 11px;
-  color: var(--muted);
-  margin: 0;
-}
-
-.eventBox {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 18px;
-  border-left: 1px solid var(--border);
-  flex-shrink: 0;
-  min-width: 130px;
-}
-
-.eventBox b {
-  font-family: var(--font-head);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  display: block;
-}
-
-.eventBox p {
-  font-size: 11px;
-  color: var(--gold);
-  margin: 2px 0;
-  font-family: var(--font-head);
-  letter-spacing: 1px;
-}
-
-.eventBox span {
-  font-family: var(--font-mono);
-  font-size: 16px;
-  color: var(--text);
-  font-weight: 700;
-}
-
-/* ── Top Ribbon Header RESET ─────────────────────────────────────── */
-header.top {
-  display: flex;
-  align-items: stretch;
-  height: 64px;
-  background: var(--black-2);
-  border-bottom: 1px solid var(--border);
-  overflow: hidden;
-  flex-shrink: 0;
-  width: 100%;
-}
-
-.ticker {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 0 18px;
-  border-right: 1px solid var(--border);
-  min-width: 170px;
-  flex-shrink: 0;
-}
-
-.tickerInfo b {
-  font-family: var(--font-head);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  display: block;
-}
-
-.tickerInfo span {
-  font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  display: block;
-  line-height: 1.1;
-}
-
-.tickerInfo em {
-  font-style: normal;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  display: block;
-}
+.ticker .positive, .tickerInfo .positive { color: var(--green); }
+.ticker .negative, .tickerInfo .negative { color: var(--red); }
 
 .spark {
   width: 80px;
