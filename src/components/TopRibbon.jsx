@@ -2,20 +2,6 @@
 
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
-const STOCK_TILES = [
-  { label: "SPY", symbol: "SPY" },
-  { label: "QQQ", symbol: "QQQ" },
-  { label: "IWM", symbol: "IWM" },
-  { label: "NVDA", symbol: "NVDA" },
-];
-
-const FUTURES_TILES = [
-  { label: "/ES", symbol: "ES=F" },
-  { label: "/NQ", symbol: "NQ=F" },
-  { label: "/RTY", symbol: "RTY=F" },
-  { label: "/YM", symbol: "YM=F" },
-];
-
 const CPI_DATES = [
   new Date("2026-07-15T08:30:00-05:00"),
   new Date("2026-08-12T08:30:00-05:00"),
@@ -55,26 +41,26 @@ function Sparkline({ trend }) {
   );
 }
 
-function fmt(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return "—";
-  return num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function fmt(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return "—";
+  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function fmtPct(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return "—";
-  return `${num >= 0 ? "+" : ""}${num.toFixed(2)}%`;
+function fmtPct(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return "—";
+  return `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
 }
+
+const SYMBOLS = ["SPY", "QQQ", "IWM", "NVDA"];
 
 export default function TopRibbon() {
-  const [stocks, setStocks] = useState(STOCK_TILES.map(t => ({ ...t, price: "—", change: "—", trend: "flat", stale: true })));
-  const [futures, setFutures] = useState(FUTURES_TILES.map(t => ({ ...t, price: "—", change: "—", trend: "flat", stale: true })));
+  const [tiles, setTiles] = useState(SYMBOLS.map(s => ({ symbol: s, price: "—", change: "—", trend: "flat", stale: true })));
   const [lastUpdate, setLastUpdate] = useState(null);
   const [countdown, setCountdown] = useState("—");
   const [cpiLabel, setCpiLabel] = useState("CPI Release");
 
-  // CPI countdown
   useEffect(() => {
     function tick() {
       const next = getNextCPI();
@@ -87,70 +73,45 @@ export default function TopRibbon() {
     return () => clearInterval(id);
   }, []);
 
-  // Stock quotes
-  async function fetchStocks() {
-    const results = await Promise.all(STOCK_TILES.map(async (item) => {
+  async function fetchTiles() {
+    const results = await Promise.all(SYMBOLS.map(async (symbol) => {
       try {
-        const res = await fetch(`${API}/api/quote/${item.symbol}`);
+        const res = await fetch(`${API}/api/quote/${symbol}`);
         if (!res.ok) throw new Error("failed");
         const data = await res.json();
         const price = data.price ?? data.last ?? null;
         const changePct = data.changePct ?? data.change_percent ?? null;
         if (!price || Number(price) === 0) throw new Error("no price");
         const trend = Number(changePct) > 0 ? "up" : Number(changePct) < 0 ? "down" : "flat";
-        return { ...item, price: fmt(price), change: fmtPct(changePct), trend, stale: false };
+        return { symbol, price: fmt(price), change: fmtPct(changePct), trend, stale: false };
       } catch {
-        return { ...item, price: "—", change: "—", trend: "flat", stale: true };
+        return { symbol, price: "—", change: "—", trend: "flat", stale: true };
       }
     }));
-    setStocks(results);
+    setTiles(results);
     setLastUpdate(new Date());
   }
 
-  // Futures quotes
-  async function fetchFutures() {
-    try {
-      const res = await fetch(`${API}/api/futures`);
-      if (!res.ok) throw new Error("failed");
-      const data = await res.json();
-      const results = FUTURES_TILES.map((item) => {
-        const d = data[item.symbol];
-        if (!d?.last) return { ...item, price: "—", change: "—", trend: "flat", stale: true };
-        const trend = d.changePct > 0 ? "up" : d.changePct < 0 ? "down" : "flat";
-        return { ...item, price: fmt(d.last), change: fmtPct(d.changePct), trend, stale: false };
-      });
-      setFutures(results);
-    } catch {
-      setFutures(FUTURES_TILES.map(t => ({ ...t, price: "—", change: "—", trend: "flat", stale: true })));
-    }
-  }
-
   useEffect(() => {
-    fetchStocks();
-    fetchFutures();
-    const t1 = setInterval(fetchStocks, 30000);
-    const t2 = setInterval(fetchFutures, 15000);
-    return () => { clearInterval(t1); clearInterval(t2); };
+    fetchTiles();
+    const t = setInterval(fetchTiles, 30000);
+    return () => clearInterval(t);
   }, []);
-
-  const allTiles = [...stocks, ...futures];
 
   return (
     <header className="top">
-      <div className="tickerWrap">
-        {allTiles.map((m) => (
-          <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
-            <div className="tickerText">
-              <b>{m.label}</b>
-              <span>{m.price}</span>
-              <em className={m.trend === "up" ? "positive" : m.trend === "down" ? "negative" : ""}>
-                {m.change}
-              </em>
-            </div>
-            <Sparkline trend={m.trend} />
+      {tiles.map((m) => (
+        <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
+          <div className="tickerText">
+            <b>{m.symbol}</b>
+            <span>{m.price}</span>
+            <em className={m.trend === "up" ? "positive" : m.trend === "down" ? "negative" : ""}>
+              {m.change}
+            </em>
           </div>
-        ))}
-      </div>
+          <Sparkline trend={m.trend} />
+        </div>
+      ))}
 
       <div className="statusBox">
         <span className="dot" />
