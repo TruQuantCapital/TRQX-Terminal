@@ -1714,3 +1714,187 @@ input, select { outline: none; }
   background: rgba(201,168,76,0.15);
   margin-left: 10px;
 }
+
+/* ── Top Ribbon Header ───────────────────────────────────────────── */
+header.top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: 60px;
+  background: var(--black-2);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.tickerWrap {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.ticker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  border-right: 1px solid var(--border);
+  min-width: 160px;
+}
+
+.ticker b {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  display: block;
+}
+
+.ticker span {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+  line-height: 1.1;
+}
+
+.ticker em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  display: block;
+}
+
+.ticker .positive { color: var(--green); }
+.ticker .negative { color: var(--red); }
+
+.spark {
+  width: 80px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* ── Futures Strip ───────────────────────────────────────────────── */
+.futuresStrip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--black-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  flex-shrink: 0;
+  height: 44px;
+}
+
+.futuresLabel {
+  font-family: var(--font-head);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.futuresTile {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 8px;
+}
+
+.futuresName {
+  font-family: var(--font-head);
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.futuresPrice {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.futuresPct {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.futuresDivider {
+  width: 1px;
+  height: 20px;
+  background: rgba(201,168,76,0.15);
+  margin-left: 8px;
+}
+
+/* ── Status Box ──────────────────────────────────────────────────── */
+.statusBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+
+.statusBox .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+.statusBox b {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+}
+
+.statusBox p {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ── Event Box ───────────────────────────────────────────────────── */
+.eventBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 14px;
+  border-left: 1px solid var(--border);
+  flex-shrink: 0;
+  min-width: 110px;
+}
+
+.eventBox b {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+.eventBox p {
+  font-size: 10px;
+  color: var(--gold);
+  margin: 0;
+  font-family: var(--font-head);
+  letter-spacing: 1px;
+}
+
+.eventBox span {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 700;
+}
