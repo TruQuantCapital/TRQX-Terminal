@@ -1606,3 +1606,111 @@ input, select { outline: none; }
 .spotlightBox button:hover {
   opacity: 0.85;
 }
+
+/* ── Futures Strip ───────────────────────────────────────────────── */
+.futuresStrip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--black-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 14px;
+  flex-shrink: 0;
+}
+
+.futuresLabel {
+  font-family: var(--font-head);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.futuresTile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.futuresName {
+  font-family: var(--font-head);
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.futuresPrice {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.futuresPct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.futuresDivider {
+  width: 1px;
+  height: 24px;
+  background: rgba(201,168,76,0.15);
+  margin-left: 10px;
+}
+
+/* ── Futures Strip ───────────────────────────────────────────────── */
+.futuresStrip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--black-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 14px;
+  flex-shrink: 0;
+}
+
+.futuresLabel {
+  font-family: var(--font-head);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.futuresTile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.futuresName {
+  font-family: var(--font-head);
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.futuresPrice {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.futuresPct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.futuresDivider {
+  width: 1px;
+  height: 24px;
+  background: rgba(201,168,76,0.15);
+  margin-left: 10px;
+}
