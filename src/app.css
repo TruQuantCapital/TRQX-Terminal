@@ -2103,3 +2103,13 @@ header.top { height: 80px !important; }
   border-radius: var(--radius);
   padding: 6px 12px;
 }
+
+/* ── Econ Widget ─────────────────────────────────────────────────── */
+.econWidgetWrap {
+  width: 100%;
+  height: 80vh;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--black-3);
+}
