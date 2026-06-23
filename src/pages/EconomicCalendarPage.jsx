@@ -1,8 +1,6 @@
 ﻿import React, { useEffect, useMemo, useState } from "react";
 import WEEKLY_CALENDAR from "../data/weeklyCalendar";
 
-const API = "https://trqx-flow-scanner-production.up.railway.app";
-
 function impactClass(impact) {
   const x = String(impact || "").toLowerCase();
   if (x.includes("high")) return "highImpact";
@@ -13,22 +11,14 @@ function impactClass(impact) {
 function trqxRead(event, impact) {
   const name = String(event || "").toLowerCase();
   const level = String(impact || "").toLowerCase();
-
-  if (name.includes("cpi") || name.includes("inflation")) {
-    return "Inflation data can create sharp index movement. Use caution before and after release.";
-  }
-
-  if (name.includes("fomc") || name.includes("fed") || name.includes("powell")) {
-    return "Fed events can shift market direction fast. Avoid oversized positions into the announcement.";
-  }
-
-  if (name.includes("jobs") || name.includes("payroll") || name.includes("unemployment")) {
-    return "Labor data can move yields, dollar strength, and index futures.";
-  }
-
+  if (name.includes("cpi") || name.includes("inflation")) return "Inflation data can create sharp index movement. Use caution before and after release.";
+  if (name.includes("fomc") || name.includes("fed") || name.includes("powell") || name.includes("warsh")) return "Fed events can shift market direction fast. Avoid oversized positions into the announcement.";
+  if (name.includes("jobs") || name.includes("payroll") || name.includes("unemployment") || name.includes("jobless")) return "Labor data can move yields, dollar strength, and index futures.";
+  if (name.includes("pmi")) return "PMI data signals business activity. Above 50 is expansion, below 50 is contraction.";
+  if (name.includes("gdp")) return "GDP data measures overall economic output. Surprises can reprice rate expectations fast.";
+  if (name.includes("pce")) return "PCE is the Fed's preferred inflation gauge. Core PCE surprises move markets significantly.";
   if (level.includes("high")) return "High-impact event. Expect volatility and wider spreads.";
   if (level.includes("med")) return "Moderate-impact event. Watch for sector-specific reaction.";
-
   return "Low-impact event. Usually less market-moving unless surprise data hits.";
 }
 
@@ -36,71 +26,89 @@ function tradeImpact(event, actual, forecast) {
   const name = String(event || "").toLowerCase();
   const a = parseFloat(String(actual).replace(/[^\d.-]/g, ""));
   const f = parseFloat(String(forecast).replace(/[^\d.-]/g, ""));
-
-  if (!Number.isFinite(a) || !Number.isFinite(f)) {
-    return "Pending release â€” wait for actual data.";
-  }
-
+  if (!Number.isFinite(a) || !Number.isFinite(f)) return "Pending release — wait for actual data.";
   const hotter = a > f;
   const cooler = a < f;
-
-  if (name.includes("cpi") || name.includes("inflation")) {
-    if (hotter) return "Hotter inflation: bearish for SPY/QQQ, bullish for yields/dollar.";
-    if (cooler) return "Cooler inflation: bullish for SPY/QQQ, bearish for yields/dollar.";
-    return "Inline inflation: reaction may fade after first move.";
+  if (name.includes("cpi") || name.includes("inflation") || name.includes("pce")) {
+    if (hotter) return "Hotter than expected: bearish for SPY/QQQ, bullish for yields/dollar.";
+    if (cooler) return "Cooler than expected: bullish for SPY/QQQ, bearish for yields/dollar.";
+    return "Inline with forecast: reaction may fade after first move.";
   }
-
-  if (name.includes("jobs") || name.includes("payroll") || name.includes("jolts")) {
+  if (name.includes("jobs") || name.includes("payroll") || name.includes("jolts") || name.includes("jobless")) {
     if (hotter) return "Stronger labor data: may pressure rate-cut expectations.";
     if (cooler) return "Softer labor data: may support rate-cut expectations.";
     return "Inline labor data: watch price action after the first reaction.";
   }
-
+  if (name.includes("pmi") || name.includes("gdp")) {
+    if (hotter) return "Better than expected: bullish for risk assets, SPY/QQQ likely to respond positively.";
+    if (cooler) return "Worse than expected: bearish for risk assets, watch for selling pressure.";
+    return "Inline with forecast: limited market reaction expected.";
+  }
   return "Compare actual vs forecast and wait for market confirmation.";
 }
 
 function surpriseClass(actual, forecast) {
   const a = parseFloat(String(actual).replace(/[^\d.-]/g, ""));
   const f = parseFloat(String(forecast).replace(/[^\d.-]/g, ""));
-
   if (!Number.isFinite(a) || !Number.isFinite(f)) return "neutralSurprise";
   if (a > f) return "hotSurprise";
   if (a < f) return "coolSurprise";
   return "neutralSurprise";
 }
 
+function calcMarketSignal(rows) {
+  let bullishPoints = 0;
+  let bearishPoints = 0;
+  let releasedCount = 0;
+  const reasons = [];
+
+  for (const r of rows) {
+    const [, event, impact, actual, forecast] = r;
+    const a = parseFloat(String(actual).replace(/[^\d.-]/g, ""));
+    const f = parseFloat(String(forecast).replace(/[^\d.-]/g, ""));
+    if (!Number.isFinite(a) || !Number.isFinite(f)) continue;
+
+    releasedCount++;
+    const name = String(event || "").toLowerCase();
+    const weight = impact?.toLowerCase().includes("high") ? 2 : 1;
+    const isInflation = name.includes("cpi") || name.includes("pce") || name.includes("inflation");
+    const isGrowth = name.includes("pmi") || name.includes("gdp") || name.includes("sales") || name.includes("durable");
+    const isLabor = name.includes("jobs") || name.includes("payroll") || name.includes("jobless") || name.includes("jolts");
+
+    if (isInflation) {
+      if (a < f) { bullishPoints += weight; reasons.push(`${event}: cooler inflation ✓`); }
+      else if (a > f) { bearishPoints += weight; reasons.push(`${event}: hotter inflation ✗`); }
+    } else if (isGrowth || isLabor) {
+      if (a > f) { bullishPoints += weight; reasons.push(`${event}: beat forecast ✓`); }
+      else if (a < f) { bearishPoints += weight; reasons.push(`${event}: missed forecast ✗`); }
+    }
+  }
+
+  if (releasedCount === 0) return { signal: "PENDING", color: "var(--muted)", reasons: ["No actuals released yet — check back after data drops."] };
+  if (bullishPoints > bearishPoints) return { signal: "BULLISH", color: "var(--green)", reasons };
+  if (bearishPoints > bullishPoints) return { signal: "BEARISH", color: "var(--red)", reasons };
+  return { signal: "NEUTRAL", color: "var(--gold)", reasons };
+}
+
 function parseTodayEventTime(timeText) {
   const now = new Date();
   const raw = String(timeText || "").trim();
-
   const match = raw.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
   if (!match) return null;
-
   let hour = Number(match[1]);
   const minute = Number(match[2]);
   const ampm = match[3].toUpperCase();
-
   if (ampm === "PM" && hour !== 12) hour += 12;
   if (ampm === "AM" && hour === 12) hour = 0;
-
-  return new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    hour,
-    minute,
-    0
-  );
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, 0);
 }
 
 function formatCountdown(ms) {
   if (!Number.isFinite(ms) || ms <= 0) return "LIVE / PASSED";
-
   const totalSeconds = Math.floor(ms / 1000);
   const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
   const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
   const s = String(totalSeconds % 60).padStart(2, "0");
-
   return `${h}:${m}:${s}`;
 }
 
@@ -112,7 +120,7 @@ export default function EconomicCalendarPage() {
 
   useEffect(() => {
     setRows(WEEKLY_CALENDAR);
-      setLoading(false);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -120,9 +128,7 @@ export default function EconomicCalendarPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const highImpact = rows.filter((r) =>
-    String(r?.[2] || "").toLowerCase().includes("high")
-  );
+  const highImpact = rows.filter((r) => String(r?.[2] || "").toLowerCase().includes("high"));
 
   const nextHighImpact = useMemo(() => {
     return rows
@@ -137,17 +143,16 @@ export default function EconomicCalendarPage() {
     return String(r?.[2] || "").toLowerCase().includes(filter.toLowerCase());
   });
 
+  const marketSignal = useMemo(() => calcMarketSignal(rows), [rows]);
+
   return (
     <main className="pageStack">
       <section className="pageHeader">
         <div>
           <p>TRQX MODULE</p>
           <h1>Economic Calendar & Market Risk</h1>
-          <span>
-            Track high-impact market events, forecasts, actuals, and trader risk.
-          </span>
+          <span>Track high-impact market events, forecasts, actuals, and trader risk.</span>
         </div>
-
         <div className="flowProviderBadge">
           <span className="liveDot"></span>
           MARKET EVENTS
@@ -160,17 +165,29 @@ export default function EconomicCalendarPage() {
           <b>{highImpact.length}</b>
           <span>Events today</span>
         </div>
-
         <div className="flowMiniCard">
           <small>TOTAL EVENTS</small>
           <b>{rows.length}</b>
           <span>Calendar rows</span>
         </div>
-
         <div className="flowMiniCard bearish">
           <small>TRADING RISK</small>
           <b>{highImpact.length ? "ELEVATED" : "NORMAL"}</b>
           <span>Based on scheduled news</span>
+        </div>
+      </section>
+
+      {/* ── TRQX Market Signal Card ── */}
+      <section className="marketSignalCard" style={{ borderColor: marketSignal.color }}>
+        <div className="marketSignalLeft">
+          <small>TRQX MARKET SIGNAL</small>
+          <b style={{ color: marketSignal.color }}>{marketSignal.signal}</b>
+          <span>Based on today's economic releases</span>
+        </div>
+        <div className="marketSignalReasons">
+          {marketSignal.reasons.map((r, i) => (
+            <div key={i} className="marketSignalReason">{r}</div>
+          ))}
         </div>
       </section>
 
@@ -180,84 +197,56 @@ export default function EconomicCalendarPage() {
           <h3>{nextHighImpact?.row?.[1] || "No upcoming high-impact event"}</h3>
           <span>{nextHighImpact?.row?.[0] || "--"}</span>
         </div>
-
         <div>
           <small>STARTS IN</small>
-          <b>
-            {nextHighImpact
-              ? formatCountdown(nextHighImpact.date.getTime() - now)
-              : "--"}
-          </b>
+          <b>{nextHighImpact ? formatCountdown(nextHighImpact.date.getTime() - now) : "--"}</b>
           <span>{nextHighImpact?.row?.[2] || "No event pending"}</span>
         </div>
       </section>
 
       <section className="calendarFilterBar">
         {["All", "High", "Med", "Low"].map((x) => (
-          <button
-            key={x}
-            className={filter === x ? "active" : ""}
-            onClick={() => setFilter(x)}
-          >
-            {x}
-          </button>
+          <button key={x} className={filter === x ? "active" : ""} onClick={() => setFilter(x)}>{x}</button>
         ))}
       </section>
 
       <section className="calendarGrid">
         {loading ? (
-          <div className="calendarCard">
-            <b>Loading calendar...</b>
-          </div>
+          <div className="calendarCard"><b>Loading calendar...</b></div>
         ) : filteredRows.length ? (
           filteredRows.map((r, i) => {
             const [time, event, impact, actual, forecast, previous] = r;
             const surprise = surpriseClass(actual, forecast);
-
             return (
               <div key={i} className={`calendarCard ${impactClass(impact)}`}>
                 <div className="calendarTop">
                   <small>{time}</small>
                   <span>{impact}</span>
                 </div>
-
                 <h3>{event}</h3>
-
                 <div className="calendarMetrics">
                   <div className={surprise}>
                     <small>Actual</small>
                     <b>{actual ?? "--"}</b>
                   </div>
-
                   <div>
                     <small>Forecast</small>
                     <b>{forecast ?? "--"}</b>
                   </div>
-
                   <div>
                     <small>Previous</small>
                     <b>{previous ?? "--"}</b>
                   </div>
                 </div>
-
-                <p>
-                  <strong>TRQX Read:</strong> {trqxRead(event, impact)}
-                </p>
-
-                <p className="tradeImpactText">
-                  <strong>TRQX Trade Impact:</strong>{" "}
-                  {tradeImpact(event, actual, forecast)}
-                </p>
+                <p><strong>TRQX Read:</strong> {trqxRead(event, impact)}</p>
+                <p className="tradeImpactText"><strong>TRQX Trade Impact:</strong> {tradeImpact(event, actual, forecast)}</p>
               </div>
             );
           })
         ) : (
-          <div className="calendarCard">
-            <b>No economic events found.</b>
-          </div>
+          <div className="calendarCard"><b>No economic events found.</b></div>
         )}
       </section>
     </main>
   );
 }
-
