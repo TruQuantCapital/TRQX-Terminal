@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
+import WEEKLY_CALENDAR from "../data/weeklyCalendar";
 
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
@@ -37,7 +38,7 @@ function tradeImpact(event, actual, forecast) {
   const f = parseFloat(String(forecast).replace(/[^\d.-]/g, ""));
 
   if (!Number.isFinite(a) || !Number.isFinite(f)) {
-    return "Pending release — wait for actual data.";
+    return "Pending release â€” wait for actual data.";
   }
 
   const hotter = a > f;
@@ -110,21 +111,8 @@ export default function EconomicCalendarPage() {
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
-    async function fetchCalendar() {
-      try {
-        const res = await fetch(`${API}/api/economic-calendar`);
-        if (res.ok) {
-          const data = await res.json();
-          setRows(Array.isArray(data) ? data : []);
-        }
-      } catch (err) {
-        console.warn("Economic calendar failed:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchCalendar();
+    setRows(WEEKLY_CALENDAR);
+      setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -272,3 +260,4 @@ export default function EconomicCalendarPage() {
     </main>
   );
 }
+
