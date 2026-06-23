@@ -7,7 +7,11 @@ function makeCards(lesson) {
   const cards = [];
 
   headings.forEach((h, i) => {
-    const answer = paragraphs[i]?.text || lesson.objective || "Review this section in the lesson.";
+    const answer =
+      paragraphs[i]?.text ||
+      lesson.objective ||
+      "Review this section in the lesson.";
+
     cards.push({
       front: h.text.replace(/[📘🎯🧠✅📚📝✍️🧪👀🚨]/g, "").trim(),
       back: answer,
@@ -22,6 +26,19 @@ function makeCards(lesson) {
   }
 
   return cards.slice(0, 12);
+}
+
+function MiniCandles() {
+  return (
+    <div className="flash-mini-chart" aria-hidden="true">
+      <span className="flash-grid-line one"></span>
+      <span className="flash-grid-line two"></span>
+      <span className="flash-candle bull tall"></span>
+      <span className="flash-candle bear small"></span>
+      <span className="flash-candle bull mid"></span>
+      <span className="flash-candle bull small2"></span>
+    </div>
+  );
 }
 
 export default function FlashCards({ lesson }) {
@@ -48,11 +65,22 @@ export default function FlashCards({ lesson }) {
           <small>FLASHCARDS</small>
           <h3>{lesson.title}</h3>
         </div>
-        <span>{index + 1} / {cards.length}</span>
+        <span>
+          {index + 1} / {cards.length}
+        </span>
       </div>
 
-      <button className={`flash-card ${flipped ? "flipped" : ""}`} onClick={() => setFlipped((v) => !v)}>
-        <div className="flash-label">{flipped ? "ANSWER" : "QUESTION"}</div>
+      <button
+        className={`flash-card ${flipped ? "flipped" : ""}`}
+        onClick={() => setFlipped((v) => !v)}
+      >
+        <div className="flash-card-top">
+          <div className="flash-label">{flipped ? "ANSWER" : "QUESTION"}</div>
+          <div className="flash-brand">TRQX</div>
+        </div>
+
+        <MiniCandles />
+
         <div className="flash-text">{flipped ? card.back : card.front}</div>
         <div className="flash-hint">Click card to flip</div>
       </button>

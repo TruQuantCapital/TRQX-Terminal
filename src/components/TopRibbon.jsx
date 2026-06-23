@@ -3,18 +3,47 @@ import React, { useEffect, useState } from "react";
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
 const DEFAULT_TILES = [
-  { symbol: "SPY", price: "—", change: "—", trend: "flat" },
-  { symbol: "QQQ", price: "—", change: "—", trend: "flat" },
-  { symbol: "IWM", price: "—", change: "—", trend: "flat" },
-  { symbol: "SPX", price: "—", change: "—", trend: "flat" },
+  { label: "SPY", symbol: "SPY", price: "—", change: "—", trend: "flat" },
+  { label: "QQQ", symbol: "QQQ", price: "—", change: "—", trend: "flat" },
+  { label: "IWM", symbol: "IWM", price: "—", change: "—", trend: "flat" },
+  { label: "NVDA", symbol: "NVDA", price: "—", change: "—", trend: "flat" },
+
+  { label: "/ES", symbol: "ES=F", price: "—", change: "—", trend: "flat" },
+  { label: "/NQ", symbol: "NQ=F", price: "—", change: "—", trend: "flat" },
+  { label: "/RTY", symbol: "RTY=F", price: "—", change: "—", trend: "flat" },
+  { label: "/YM", symbol: "YM=F", price: "—", change: "—", trend: "flat" },
 ];
 
-const FALLBACK = {
-  SPY: { price: 740.96, changePct: -1.25 },
-  QQQ: { price: 724.0, changePct: -0.8 },
-  IWM: { price: 290.0, changePct: -0.72 },
-  SPX: { price: 7420.1, changePct: -1.0 },
-};
+// Update these dates each quarter
+const CPI_DATES = [
+  new Date("2026-07-15T08:30:00-05:00"),
+  new Date("2026-08-12T08:30:00-05:00"),
+  new Date("2026-09-10T08:30:00-05:00"),
+  new Date("2026-10-14T08:30:00-05:00"),
+  new Date("2026-11-13T08:30:00-05:00"),
+  new Date("2026-12-10T08:30:00-05:00"),
+];
+
+function getNextCPI() {
+  const now = new Date();
+  return CPI_DATES.find((d) => d > now) ?? null;
+}
+
+function formatCountdown(ms) {
+  if (ms <= 0) return "LIVE NOW";
+
+  const totalSec = Math.floor(ms / 1000);
+  const days = Math.floor(totalSec / 86400);
+  const hrs = Math.floor((totalSec % 86400) / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+
+  if (days > 0) {
+    return `${days}d ${String(hrs).padStart(2, "0")}h ${String(mins).padStart(2, "0")}m`;
+  }
+
+  return `${String(hrs).padStart(2, "0")}h ${String(mins).padStart(2, "0")}m ${String(secs).padStart(2, "0")}s`;
+}
 
 function Sparkline({ trend }) {
   const points =
@@ -45,6 +74,7 @@ function Sparkline({ trend }) {
 function formatPrice(value) {
   const num = Number(value);
   if (!Number.isFinite(num)) return "—";
+
   return num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -54,21 +84,54 @@ function formatPrice(value) {
 function formatChangePct(value) {
   const num = Number(value);
   if (!Number.isFinite(num)) return "—";
+
   return `${num >= 0 ? "+" : ""}${num.toFixed(2)}%`;
 }
 
 export default function TopRibbon() {
   const [tiles, setTiles] = useState(DEFAULT_TILES);
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [countdown, setCountdown] = useState("—");
+  const [cpiLabel, setCpiLabel] = useState("Next CPI");
 
-  async function fetchOne(symbol) {
+  useEffect(() => {
+    function tick() {
+      const next = getNextCPI();
+
+      if (!next) {
+        setCpiLabel("CPI");
+        setCountdown("No upcoming CPI");
+        return;
+      }
+
+      setCpiLabel(
+        `CPI ${next.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        })}`
+      );
+
+      setCountdown(formatCountdown(next - new Date()));
+    }
+
+    tick();
+    const id = setInterval(tick, 1000);
+
+    return () => clearInterval(id);
+  }, []);
+
+  async function fetchOne(item) {
     try {
-      const res = await fetch(`${API}/api/quote/${symbol}`);
-      if (!res.ok) throw new Error(`Quote failed for ${symbol}`);
+      const res = await fetch(`${API}/api/quote/${encodeURIComponent(item.symbol)}`);
+
+      if (!res.ok) {
+        throw new Error(`Quote failed for ${item.symbol}`);
+      }
 
       const data = await res.json();
 
       const price = data.price ?? data.last ?? data.c ?? data.close ?? null;
+
       const changePct =
         data.changePct ??
         data.change_percent ??
@@ -76,43 +139,42 @@ export default function TopRibbon() {
         data.dp ??
         null;
 
+      if (!price || Number(price) === 0) {
+        throw new Error(`Bad price for ${item.symbol}`);
+      }
+
       const trend =
         Number(changePct) > 0 ? "up" : Number(changePct) < 0 ? "down" : "flat";
 
       return {
-        symbol,
+        ...item,
         price: formatPrice(price),
         change: formatChangePct(changePct),
         trend,
+        stale: false,
       };
     } catch {
-      const fb = FALLBACK[symbol];
-      const trend =
-        Number(fb?.changePct) > 0
-          ? "up"
-          : Number(fb?.changePct) < 0
-          ? "down"
-          : "flat";
-
       return {
-        symbol,
-        price: formatPrice(fb?.price),
-        change: formatChangePct(fb?.changePct),
-        trend,
+        ...item,
+        price: "—",
+        change: "—",
+        trend: "flat",
+        stale: true,
       };
     }
   }
 
   async function fetchMarketTiles() {
-    const symbols = ["SPY", "QQQ", "IWM", "SPX"];
-    const results = await Promise.all(symbols.map(fetchOne));
+    const results = await Promise.all(DEFAULT_TILES.map(fetchOne));
     setTiles(results);
     setLastUpdate(new Date());
   }
 
   useEffect(() => {
     fetchMarketTiles();
+
     const interval = setInterval(fetchMarketTiles, 30000);
+
     return () => clearInterval(interval);
   }, []);
 
@@ -120,9 +182,13 @@ export default function TopRibbon() {
     <header className="top">
       <div className="tickerWrap">
         {tiles.map((m) => (
-          <div className="ticker" key={m.symbol}>
+          <div
+            className="ticker"
+            key={m.symbol}
+            style={m.stale ? { opacity: 0.45 } : {}}
+          >
             <div>
-              <b>{m.symbol}</b>
+              <b>{m.label}</b>
               <span>{m.price}</span>
               <em
                 className={
@@ -136,6 +202,7 @@ export default function TopRibbon() {
                 {m.change}
               </em>
             </div>
+
             <Sparkline trend={m.trend} />
           </div>
         ))}
@@ -155,8 +222,8 @@ export default function TopRibbon() {
 
       <div className="eventBox">
         <b>Next Event</b>
-        <p>CPI Release</p>
-        <span>02h 45m 12s</span>
+        <p>{cpiLabel}</p>
+        <span>{countdown}</span>
       </div>
     </header>
   );

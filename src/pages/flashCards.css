@@ -329,3 +329,21 @@
   text-align: center;
   color: #9ca3af;
 }
+.flashPatternImage {
+  width: 100%;
+  max-width: 320px;
+  margin: 18px auto;
+  display: block;
+  border-radius: 14px;
+  border: 1px solid rgba(212,175,55,.25);
+  box-shadow: 0 10px 25px rgba(0,0,0,.35);
+}
+.flashPatternImage {
+  width: 100%;
+  max-width: 320px;
+  margin: 18px auto;
+  display: block;
+  border-radius: 14px;
+  border: 1px solid rgba(212,175,55,.25);
+  box-shadow: 0 10px 25px rgba(0,0,0,.35);
+}
