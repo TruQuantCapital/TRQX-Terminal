@@ -9,14 +9,24 @@ import "./flashCards.css";
 
 // IMAGE IMPORTS
 import hammer from "../assets/hammer.png";
+import tweezerbottom from "../assets/tweezer bottom.png";
 import bullishEngulfing from "../assets/bearish engulfing .png";
+import bearishEngulfingBear from "../assets/bearish engulfing .png";
 import shootingStar from "../assets/shooting star.png";
 import eveningStar from "../assets/evening star.png";
+import morningStar from "../assets/morning star.png";
 import bullFlag from "../assets/bull flag.png";
+import bearFlag from "../assets/bear flag.png";
+import ascendingTriangle from "../assets/ascending triangle.png";
+import descendingTriangle from "../assets/descending triangle.png";
+import bullPennant from "../assets/pennant.png";
+import bearPennant from "../assets/bear pennant.png";
 import stopHunt from "../assets/stop hunt.png";
 import gravestone from "../assets/gravestone.png";
+import gravestoneDoji from "../assets/gravestone doji.png";
 import dragonflySupport from "../assets/dragon fly support.png";
 import dragonfly from "../assets/dragonfly.png";
+import rickshawManDoji from "../assets/rickshaw man doji.png";
 import uptrend from "../assets/uptrend.png";
 import downtrend from "../assets/downtrend.png";
 import sideways from "../assets/sideways.png";
@@ -29,23 +39,45 @@ import longLegDoji from "../assets/long leg doji.png";
 
 const patternImages = {
   hammer: hammer,
+
   "bullish-engulfing": bullishEngulfing,
+  "bearish-engulfing": bearishEngulfingBear,
+
   "shooting-star": shootingStar,
   "evening-star": eveningStar,
+  "morning-star": morningStar,
+
   "bull-flag": bullFlag,
+  "bear-flag": bearFlag,
+
+  "ascending-triangle": ascendingTriangle,
+  "descending-triangle": descendingTriangle,
+
+  "bull-pennant": bullPennant,
+  "bear-pennant": bearPennant,
+
   "stop-hunt": stopHunt,
+
   "gravestone-at-resistance": gravestone,
+  "gravestone-doji": gravestoneDoji,
+
   "dragonfly-at-support": dragonflySupport,
+  "dragonfly-doji": dragonfly,
+  "rickshaw-man-doji": rickshawManDoji,
+
   uptrend: uptrend,
   downtrend: downtrend,
   "sideways-range": sideways,
+
   "bear-trap": bearTrap,
   "bull-trap": bullTrap,
+
+  "tweezer-bottom": tweezerbottom,
   "tweezer-top": tweezerTop,
+
   "standard-doji": doji,
   "four-price-doji": fourPriceDoji,
   "long-legged-doji": longLegDoji,
-  "dragonfly-doji": dragonfly,
 };
 
 export default function FlashCardDeck() {
