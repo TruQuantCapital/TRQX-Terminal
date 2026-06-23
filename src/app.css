@@ -1923,3 +1923,122 @@ header.top { height: 80px !important; }
 
 .tapePos { color: var(--green); }
 .tapeNeg { color: var(--red); }
+
+/* ── Ticker Tape ─────────────────────────────────────────────────── */
+.tickerTape {
+  width: 100%;
+  background: var(--black-4);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.tickerTapeTrack {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  animation: tapescroll 60s linear infinite;
+}
+
+.tickerTapeTrack:hover {
+  animation-play-state: paused;
+}
+
+@keyframes tapescroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.tickerTapeItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 24px;
+  border-right: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.tickerTapeItem b {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  font-size: 11px;
+}
+
+.tickerTapeItem span {
+  font-family: var(--font-mono);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.tickerTapeItem em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.tapePos { color: var(--green); }
+.tapeNeg { color: var(--red); }
+
+/* ── Ticker Tape ─────────────────────────────────────────────────── */
+.tickerTape {
+  width: 100%;
+  background: var(--black-4);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.tickerTapeTrack {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: tapescroll 60s linear infinite;
+}
+
+.tickerTapeTrack:hover { animation-play-state: paused; }
+
+@keyframes tapescroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.tickerTapeItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 24px;
+  border-right: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.tickerTapeItem b {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  font-size: 11px;
+}
+
+.tickerTapeItem span {
+  font-family: var(--font-mono);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.tickerTapeItem em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.tapePos { color: var(--green); }
+.tapeNeg { color: var(--red); }

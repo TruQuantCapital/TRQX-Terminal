@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState, useRef } from "react";
 
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
@@ -10,13 +10,18 @@ const TICKERS = [
 
 export default function TickerTape() {
   const [quotes, setQuotes] = useState([]);
+  const tapeRef = useRef(null);
 
   async function fetchQuotes() {
     const results = await Promise.allSettled(
       TICKERS.map((sym) =>
         fetch(`${API}/api/quote/${sym}`)
           .then((r) => r.json())
-          .then((d) => ({ symbol: sym, price: d.price, changePct: d.changePct }))
+          .then((d) => ({
+            symbol: sym,
+            price: d.price,
+            changePct: d.changePct,
+          }))
       )
     );
     const valid = results
@@ -37,7 +42,7 @@ export default function TickerTape() {
 
   return (
     <div className="tickerTape">
-      <div className="tickerTapeTrack">
+      <div className="tickerTapeTrack" ref={tapeRef}>
         {items.map((q, i) => (
           <span className="tickerTapeItem" key={`${q.symbol}-${i}`}>
             <b>{q.symbol}</b>
