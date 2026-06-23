@@ -17,16 +17,14 @@ export default function EconomicCalendarPage() {
 
       <div className="econWidgetWrap">
         <iframe
-          src="https://sslefp.forexprostools.com/widgets/html5/calendar/?width=100%25&height=100%25&lang=1&submitFilers=false&timeZone=0&timeFilter=time_remaining&countries=5&importance=3&features=datepicker,timezone,filters"
+          src="https://www.investing.com/economic-calendar/"
           style={{
             width: "100%",
             height: "80vh",
             border: "none",
             borderRadius: "12px",
-            background: "var(--black-3)",
           }}
           title="Economic Calendar"
-          allowFullScreen
         />
       </div>
     </main>
