@@ -20,7 +20,7 @@ export const nav = [
   { key: "scanner", label: "Scanner", icon: Search },
   { key: "options", label: "Options Flow", icon: Activity },
   { key: "tradeplan", label: "Trade Plan", icon: Target },
-  { key: "gamma", label: "Gamma Ex", icon: Waves },
+  { key: "gamma", label: "GEMX", icon: Waves },
   { key: "news", label: "News", icon: Newspaper },
   { key: "calendar", label: "Economic Calendar", icon: CalendarDays },
   { key: "alerts", label: "Alerts", icon: Bell },
@@ -119,4 +119,5 @@ export default function Sidebar({ active, setActive, user, tier }) {
     </aside>
   );
 }
+
 
