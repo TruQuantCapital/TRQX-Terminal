@@ -162,7 +162,6 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
 .sector i { display: block; height: 100%; background: #d4af37; border-radius: 6px; }
 .wide { grid-column: span 2; }
 .card.gamma { grid-column: span 3; }
-.card.scanner { grid-column: span 3; }
 .full { grid-column: 1 / -1; }
 .fullPageCard { width: 100%; }
 .gammaTiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 9px; margin-bottom: 18px; }
@@ -1896,4 +1895,5 @@ export default function FlashCards({ lesson }) {
     </div>
   );
 }
+
 

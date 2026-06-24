@@ -302,6 +302,7 @@ export function ScannerCard({ full = false }) {
 }
 
 export function OptionsFlowCard({ full = false }) {
+  const navigate = useNavigate();
   const [rows, setRows] = useState(optionsFlowRows);
   const [query, setQuery] = useState("");
 
@@ -452,6 +453,7 @@ export function WatchlistCard() {
 }
 
 export function NewsCard() {
+  const navigate = useNavigate();
   const rows = [
     ["9:12 AM", "CPI comes in line with expectations"],
     ["9:05 AM", "Fed policy remains well-positioned"],
@@ -473,6 +475,7 @@ export function NewsCard() {
 }
 
 export function AcademyCard() {
+  const navigate = useNavigate();
   return (
     <section className="card academy full">
       <div className="course greenCourse">
@@ -513,6 +516,7 @@ export function AcademyCard() {
     </section>
   );
 }
+
 
 
 
