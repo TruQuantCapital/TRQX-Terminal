@@ -65,17 +65,24 @@ function GammaChart({ strikeChart, callWall, putWall, gammaFlip, price }) {
       <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.15)" }} />
 
       {/* Level markers */}
-      {[{ val: putWall, color: "#ef4444", label: "PUT WALL" }, { val: gammaFlip, color: "#d4af37", label: "GAMMA FLIP" }, { val: callWall, color: "#22c55e", label: "CALL WALL" }, { val: price, color: "#ffffff", label: "PRICE" }].map(({ val, color, label }) => {
-        if (!val) return null;
-        const idx = strikeChart.findIndex(s => s.strike >= val);
-        if (idx < 0) return null;
-        const pct = (idx / strikeChart.length) * 100;
-        return (
-          <div key={label} style={{ position: "absolute", left: `${pct}%`, top: 0, bottom: 0, borderLeft: `1px dashed ${color}`, zIndex: 2 }}>
-            <div style={{ position: "absolute", top: 0, left: 4, color, fontSize: 10, fontWeight: 700, whiteSpace: "nowrap" }}>{label}<br />{val}</div>
-          </div>
-        );
-      })}
+      {[
+  { val: putWall, color: "#ef4444", label: "PUT WALL", offset: 40 },
+  { val: price, color: "#ffffff", label: "PRICE", offset: 0 },
+  { val: gammaFlip, color: "#d4af37", label: "GAMMA FLIP", offset: 20 },
+  { val: callWall, color: "#22c55e", label: "CALL WALL", offset: 60 },
+].map(({ val, color, label, offset }) => {
+  if (!val) return null;
+  const idx = strikeChart.findIndex(s => s.strike >= val);
+  if (idx < 0) return null;
+  const pct = (idx / strikeChart.length) * 100;
+  return (
+    <div key={label} style={{ position: "absolute", left: `${pct}%`, top: 0, bottom: 0, borderLeft: `1px dashed ${color}`, zIndex: 2 }}>
+      <div style={{ position: "absolute", top: offset, left: 4, color, fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", background: "rgba(0,0,0,0.6)", padding: "2px 4px", borderRadius: 4 }}>
+        {label}<br />{val}
+      </div>
+    </div>
+  );
+})}
 
       <div style={{ display: "flex", alignItems: "center", gap: 2, height: chartH + 20 }}>
         {strikeChart.map((bar, i) => {
