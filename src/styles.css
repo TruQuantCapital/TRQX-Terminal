@@ -172,6 +172,7 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
 .metric.red small, .metric.red b { color: var(--red); }
 .metric.purple small, .metric.purple b { color: var(--purple); }
 .metric.gold small, .metric.gold b { color: var(--gold); }
+.gammaBar { width: 12px; border-radius: 3px 3px 0 0; flex-shrink: 0; transition: height 0.3s ease; }
 .gammaChart {
   position: relative; height: 180px; border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line);
   display: flex; align-items: center; gap: 8px; padding: 0 12px;
@@ -1895,5 +1896,6 @@ export default function FlashCards({ lesson }) {
     </div>
   );
 }
+
 
 
