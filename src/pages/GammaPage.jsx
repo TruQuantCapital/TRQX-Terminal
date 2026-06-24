@@ -54,55 +54,74 @@ function SpeedometerGauge({ price, gammaFlip, callWall, putWall }) {
 
 // Gamma Exposure Profile Chart
 function GammaChart({ strikeChart, callWall, putWall, gammaFlip, price }) {
-  if (!strikeChart?.length) return <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "#6b7280" }}>No strike data available</div>;
+  if (!strikeChart?.length) return (
+    <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "#6b7280" }}>
+      No strike data available
+    </div>
+  );
 
   const maxVal = Math.max(...strikeChart.map(s => Math.max(s.calls, s.puts)), 1);
   const chartH = 160;
 
-  return (
-    <div style={{ position: "relative", padding: "20px 0 30px", overflowX: "auto" }}>
-      {/* Zero line */}
-      <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.15)" }} />
+  const levels = [
+    { val: putWall, color: "#ef4444", label: "PUT WALL" },
+    { val: gammaFlip, color: "#d4af37", label: "GAMMA FLIP" },
+    { val: price, color: "#ffffff", label: "PRICE" },
+    { val: callWall, color: "#22c55e", label: "CALL WALL" },
+  ];
 
-      {/* Level markers */}
-      {[
-  { val: putWall, color: "#ef4444", label: "PUT WALL", offset: 40 },
-  { val: price, color: "#ffffff", label: "PRICE", offset: 0 },
-  { val: gammaFlip, color: "#d4af37", label: "GAMMA FLIP", offset: 20 },
-  { val: callWall, color: "#22c55e", label: "CALL WALL", offset: 60 },
-].map(({ val, color, label, offset }) => {
-  if (!val) return null;
-  const idx = strikeChart.findIndex(s => s.strike >= val);
-  if (idx < 0) return null;
-  const pct = (idx / strikeChart.length) * 100;
   return (
-    <div key={label} style={{ position: "absolute", left: `${pct}%`, top: 0, bottom: 0, borderLeft: `1px dashed ${color}`, zIndex: 2 }}>
-      <div style={{ position: "absolute", top: offset, left: 4, color, fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", background: "rgba(0,0,0,0.6)", padding: "2px 4px", borderRadius: 4 }}>
-        {label}<br />{val}
-      </div>
-    </div>
-  );
-})}
-
-      <div style={{ display: "flex", alignItems: "center", gap: 2, height: chartH + 20 }}>
-        {strikeChart.map((bar, i) => {
-          const callH = Math.max(4, (bar.calls / maxVal) * (chartH / 2));
-          const putH = Math.max(4, (bar.puts / maxVal) * (chartH / 2));
-          const isAboveFlip = gammaFlip && bar.strike > gammaFlip;
+    <div>
+      <div style={{ position: "relative", paddingTop: 12, paddingBottom: 30 }}>
+        {/* Level lines - no text labels */}
+        {levels.map(({ val, color, label }) => {
+          if (!val) return null;
+          const idx = strikeChart.findIndex(s => s.strike >= val);
+          if (idx < 0) return null;
+          const pct = (idx / strikeChart.length) * 100;
           return (
-            <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, minWidth: 8 }}>
-              <div style={{ width: "80%", height: callH, background: isAboveFlip ? "#22c55e" : "#ef4444", borderRadius: "3px 3px 0 0", opacity: 0.8 }} />
-              <div style={{ width: 1, height: 1, background: "transparent" }} />
-              <div style={{ width: "80%", height: putH, background: isAboveFlip ? "#22c55e66" : "#ef444466", borderRadius: "0 0 3px 3px", opacity: 0.6 }} />
-            </div>
+            <div key={label} style={{
+              position: "absolute", left: `${pct}%`, top: 0, bottom: 30,
+              borderLeft: `2px dashed ${color}`, zIndex: 2, opacity: 0.8
+            }} />
           );
         })}
+
+        {/* Zero line */}
+        <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.1)" }} />
+
+        {/* Bars */}
+        <div style={{ display: "flex", alignItems: "center", gap: 2, height: chartH }}>
+          {strikeChart.map((bar, i) => {
+            const callH = Math.max(4, (bar.calls / maxVal) * (chartH / 2));
+            const putH = Math.max(4, (bar.puts / maxVal) * (chartH / 2));
+            const isAboveFlip = gammaFlip && bar.strike > gammaFlip;
+            return (
+              <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, minWidth: 6 }}>
+                <div style={{ width: "80%", height: callH, background: isAboveFlip ? "#22c55e" : "#ef4444", borderRadius: "3px 3px 0 0", opacity: 0.8 }} />
+                <div style={{ width: "80%", height: putH, background: isAboveFlip ? "#22c55e44" : "#ef444444", borderRadius: "0 0 3px 3px" }} />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Strike range */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, color: "#6b7280", fontSize: 10 }}>
+          <span>{strikeChart[0]?.strike}</span>
+          <span>Strike Price</span>
+          <span>{strikeChart[strikeChart.length - 1]?.strike}</span>
+        </div>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, color: "#6b7280", fontSize: 10 }}>
-        <span>{strikeChart[0]?.strike}</span>
-        <span>Strike Price</span>
-        <span>{strikeChart[strikeChart.length - 1]?.strike}</span>
+      {/* Legend below chart */}
+      <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginTop: 8, padding: "10px 0", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+        {levels.map(({ val, color, label }) => val ? (
+          <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 20, height: 2, background: color, borderTop: `2px dashed ${color}` }} />
+            <span style={{ color: "#9ca3af", fontSize: 11 }}>{label}:</span>
+            <span style={{ color, fontSize: 12, fontWeight: 700 }}>{val}</span>
+          </div>
+        ) : null)}
       </div>
     </div>
   );
