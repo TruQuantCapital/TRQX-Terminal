@@ -1620,3 +1620,6 @@ header.top { height: 72px !important; }
 .eventBox span { font-size: 19px !important; }
 
 
+
+/* ── Next Event fix ─────────────────────────────────────────────── */
+.eventBox { min-width: 185px !important; }
