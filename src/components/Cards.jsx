@@ -110,30 +110,7 @@ export function GaugeCard() {
 
 export function CalendarCard() {
   const navigate = useNavigate();
-  const [rows, setRows] = useState(WEEKLY_CALENDAR);
-
-  useEffect(() => {
-    async function fetchCalendar() {
-      try {
-        const res = await fetch(`${API}/api/economic-calendar`);
-        if (!res.ok) throw new Error("Calendar fetch failed");
-
-        const data = await res.json();
-
-        if (Array.isArray(data) && data.length) {
-          setRows(data);
-        }
-      } catch (err) {
-        console.warn("Economic calendar fallback loaded:", err);
-      }
-    }
-
-    fetchCalendar();
-
-    const interval = setInterval(fetchCalendar, 1800000); // 30 min
-
-    return () => clearInterval(interval);
-  }, []);
+  const rows = WEEKLY_CALENDAR;
 
   return (
     <section className="card calendar">
@@ -558,6 +535,7 @@ export function AcademyCard() {
     </section>
   );
 }
+
 
 
 
