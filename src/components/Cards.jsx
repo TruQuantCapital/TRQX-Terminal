@@ -1,7 +1,10 @@
 ﻿import React, { useEffect, useState } from "react";
+import WEEKLY_CALENDAR from "../data/weeklyCalendar";
 import { useNavigate } from "react-router-dom";
+import WEEKLY_CALENDAR from "../data/weeklyCalendar";
 import { GraduationCap, Waves, Crown, ExternalLink } from "lucide-react";
 import DataTable from "./DataTable";
+import WEEKLY_CALENDAR from "../data/weeklyCalendar";
 import {
   economicRows,
   gammaMetrics,
@@ -108,7 +111,8 @@ export function GaugeCard() {
 }
 
 export function CalendarCard() {
-  const [rows, setRows] = useState(economicRows);
+  const navigate = useNavigate();
+  const [rows, setRows] = useState(WEEKLY_CALENDAR);
 
   useEffect(() => {
     async function fetchCalendar() {
@@ -167,7 +171,7 @@ export function CalendarCard() {
         </tbody>
       </table>
 
-      <a>View Full Calendar</a>
+      <a onClick={() => navigate("/economic-calendar")} style={{ cursor: "pointer" }}>View Full Calendar →</a>
     </section>
   );
 }
@@ -556,6 +560,9 @@ export function AcademyCard() {
     </section>
   );
 }
+
+
+
 
 
 
