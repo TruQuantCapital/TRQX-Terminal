@@ -1719,3 +1719,7 @@ header.top {
   align-items: center;
   margin: 4px 0;
 }
+
+/* ── Gauge Card tighten ──────────────────────────────────────────── */
+.card.regime { justify-content: space-between; }
+.gaugeWrap { margin: -10px 0; }
