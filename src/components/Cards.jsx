@@ -228,11 +228,37 @@ export function BreadthCard() {
 }
 
 export function GammaCard({ full = false }) {
+  const navigate = useNavigate();
+  const [gamma, setGamma] = useState(null);
+
+  useEffect(() => {
+    async function fetchGamma() {
+      try {
+        const res = await fetch(`${API}/api/gamma`);
+        if (!res.ok) throw new Error("failed");
+        const data = await res.json();
+        setGamma(data);
+      } catch {}
+    }
+    fetchGamma();
+    const t = setInterval(fetchGamma, 30000);
+    return () => clearInterval(t);
+  }, []);
+
+  const metrics = gamma ? [
+    { label: "CALL WALL", value: gamma.callWall, detail: "+Gamma", tone: "" },
+    { label: "PUT WALL", value: gamma.putWall, detail: "-Gamma", tone: "red" },
+    { label: "GAMMA FLIP", value: gamma.gammaFlip, detail: gamma.sentiment ?? "Neutral", tone: "purple" },
+    { label: "MAX PAIN", value: gamma.maxPain, detail: "Pin Risk", tone: "" },
+    { label: "SQUEEZE RISK", value: gamma.squeezeRisk ?? "--", detail: "", tone: gamma.squeezeRisk === "High" ? "red" : "" },
+    { label: "DEALER POSITIONING", value: gamma.dealerPositioning ?? "--", detail: gamma.sentiment ?? "", tone: "" },
+  ] : gammaMetrics;
+
   return (
     <section className={`card gamma ${full ? "fullPageCard" : "wide"}`}>
-      <div className="cardTitle purple">Gamma Exposure (SPY)</div>
+      <div className="cardTitle purple">Gamma Exposure ({gamma?.ticker ?? "SPY"})</div>
       <div className="gammaTiles">
-        {gammaMetrics.map((m) => (
+        {metrics.map((m) => (
           <div className={`metric ${m.tone}`} key={m.label}>
             <small>{m.label}</small>
             <b>{m.value}</b>
@@ -516,6 +542,7 @@ export function AcademyCard() {
     </section>
   );
 }
+
 
 
 
