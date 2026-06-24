@@ -396,40 +396,55 @@ export function OptionsFlowCard({ full = false }) {
         ]}
       />
 
-      <a>
-        {query
-          ? `Showing ${filteredRows.length} result(s) for ${query.toUpperCase()}`
-          : "View All Options Flow"}
-      </a>
+      <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} result(s) for ${query.toUpperCase()}` : "View All Options Flow →"}</a>
     </section>
   );
 }
 
 export function WatchlistCard() {
-  const rows = [
-    { ticker: "SPY", price: "740.96", change: "-1.25%", volume: "--" },
-    { ticker: "QQQ", price: "724.00", change: "-0.80%", volume: "--" },
-    { ticker: "IWM", price: "290.00", change: "-0.72%", volume: "--" },
-    { ticker: "SPX", price: "7,420.10", change: "-1.00%", volume: "--" },
-    { ticker: "NVDA", price: "207.41", change: "-1.79%", volume: "--" },
-  ];
+  const navigate = useNavigate();
+  const [rows, setRows] = useState([
+    { ticker: "SPY", price: "—", change: "—", volume: "—" },
+    { ticker: "QQQ", price: "—", change: "—", volume: "—" },
+    { ticker: "IWM", price: "—", change: "—", volume: "—" },
+    { ticker: "NVDA", price: "—", change: "—", volume: "—" },
+    { ticker: "TSLA", price: "—", change: "—", volume: "—" },
+  ]);
+
+  useEffect(() => {
+    async function fetchPrices() {
+      const symbols = ["SPY", "QQQ", "IWM", "NVDA", "TSLA"];
+      const results = await Promise.all(symbols.map(async (sym) => {
+        try {
+          const res = await fetch(`${API}/api/quote/${sym}`);
+          if (!res.ok) throw new Error("failed");
+          const d = await res.json();
+          const price = d.price ? Number(d.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—";
+          const change = d.changePct != null ? `${d.changePct >= 0 ? "+" : ""}${Number(d.changePct).toFixed(2)}%` : "—";
+          return { ticker: sym, price, change, volume: "—" };
+        } catch {
+          return { ticker: sym, price: "—", change: "—", volume: "—" };
+        }
+      }));
+      setRows(results);
+    }
+    fetchPrices();
+    const t = setInterval(fetchPrices, 30000);
+    return () => clearInterval(t);
+  }, []);
 
   return (
     <section className="card watch">
       <div className="cardTitle purple">
         Watchlists
-        <select>
-          <option>My Main List</option>
-        </select>
+        <select><option>My Main List</option></select>
       </div>
-
       <DataTable
         headers={["Ticker", "Price", "Change %", "Volume"]}
         rows={rows}
         getCells={(r) => [r.ticker, r.price, r.change, r.volume]}
       />
-
-      <a>Manage Watchlists</a>
+      <a onClick={() => navigate("/scanner")} style={{ cursor: "pointer" }}>Manage Watchlists</a>
     </section>
   );
 }
@@ -450,7 +465,7 @@ export function NewsCard() {
           <b>{r[0]}</b> {r[1]}
         </p>
       ))}
-      <a>View All News</a>
+      <a onClick={() => navigate("/news")} style={{ cursor: "pointer" }}>View All News →</a>
     </section>
   );
 }
@@ -491,8 +506,11 @@ export function AcademyCard() {
           <small>Continue Learning</small>
           <b>Understanding Gamma</b>
         </div>
-        <button>Continue</button>
+        <button onClick={() => navigate("/academy")}>Continue →</button>
       </div>
     </section>
   );
 }
+
+
+
