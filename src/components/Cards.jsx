@@ -228,13 +228,14 @@ export function BreadthCard() {
 }
 
 export function GammaCard({ full = false }) {
-  const navigate = useNavigate();
+  const [tickerInput, setTickerInput] = useState("SPY");
+  const [ticker, setTicker] = useState("SPY");
   const [gamma, setGamma] = useState(null);
 
   useEffect(() => {
     async function fetchGamma() {
       try {
-        const res = await fetch(`${API}/api/gamma`);
+        const res = await fetch(`${API}/api/gamma?ticker=${ticker}`);
         if (!res.ok) throw new Error("failed");
         const data = await res.json();
         setGamma(data);
@@ -243,20 +244,39 @@ export function GammaCard({ full = false }) {
     fetchGamma();
     const t = setInterval(fetchGamma, 30000);
     return () => clearInterval(t);
-  }, []);
+  }, [ticker]);
 
   const metrics = gamma ? [
-    { label: "CALL WALL", value: gamma.callWall, detail: "+Gamma", tone: "" },
-    { label: "PUT WALL", value: gamma.putWall, detail: "-Gamma", tone: "red" },
-    { label: "GAMMA FLIP", value: gamma.gammaFlip, detail: gamma.sentiment ?? "Neutral", tone: "purple" },
-    { label: "MAX PAIN", value: gamma.maxPain, detail: "Pin Risk", tone: "" },
+    { label: "CALL WALL", value: gamma.callWall ?? "--", detail: "+Gamma", tone: "" },
+    { label: "PUT WALL", value: gamma.putWall ?? "--", detail: "-Gamma", tone: "red" },
+    { label: "GAMMA FLIP", value: gamma.gammaFlip ?? "--", detail: gamma.sentiment ?? "Neutral", tone: "purple" },
+    { label: "MAX PAIN", value: gamma.maxPain ?? "--", detail: "Pin Risk", tone: "" },
     { label: "SQUEEZE RISK", value: gamma.squeezeRisk ?? "--", detail: "", tone: gamma.squeezeRisk === "High" ? "red" : "" },
     { label: "DEALER POSITIONING", value: gamma.dealerPositioning ?? "--", detail: gamma.sentiment ?? "", tone: "" },
   ] : gammaMetrics;
 
+  const bars = gamma?.strikeChart?.length
+    ? gamma.strikeChart
+    : Array.from({ length: 42 }).map((_, i) => ({ calls: Math.abs(Math.sin(i / 4) * 72) + 10, puts: 0 }));
+
   return (
     <section className={`card gamma ${full ? "fullPageCard" : "wide"}`}>
-      <div className="cardTitle purple">Gamma Exposure ({gamma?.ticker ?? "SPY"})</div>
+      <div className="cardTitle purple" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <span>Gamma Exposure ({gamma?.ticker ?? ticker})</span>
+        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+          <input
+            value={tickerInput}
+            onChange={(e) => setTickerInput(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === "Enter" && setTicker(tickerInput)}
+            placeholder="SPY"
+            style={{ width: "65px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "6px", color: "#fff", padding: "4px 8px", fontSize: "12px", fontWeight: 700, outline: "none" }}
+          />
+          <button onClick={() => setTicker(tickerInput)}
+            style={{ background: "var(--gold)", color: "#000", border: "none", borderRadius: "6px", padding: "4px 10px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>
+            GO
+          </button>
+        </div>
+      </div>
       <div className="gammaTiles">
         {metrics.map((m) => (
           <div className={`metric ${m.tone}`} key={m.label}>
@@ -267,26 +287,17 @@ export function GammaCard({ full = false }) {
         ))}
       </div>
       <div className="gammaChart">
-        {Array.from({ length: 42 }).map((_, i) => {
-          const h = Math.abs(Math.sin(i / 4) * 72) + 10;
-          const isCall = i > 20;
+        {bars.map((bar, i) => {
+          const h = Math.min(150, Math.max(8, gamma?.strikeChart ? (bar.calls + bar.puts) / 500000 * 10 : bar.calls));
+          const isCall = bar.calls >= bar.puts;
           return (
-            <div
-              key={i}
-              className="gammaBar"
-              style={{
-                height: h,
-                background: isCall ? "var(--gold)" : "var(--red)",
-                opacity: 0.7 + Math.random() * 0.3,
-              }}
-            />
+            <div key={i} className="gammaBar" style={{ height: h, background: isCall ? "var(--red)" : "var(--gold)", opacity: 0.75 }} />
           );
         })}
       </div>
     </section>
   );
 }
-
 export function ScannerCard({ full = false }) {
   const navigate = useNavigate();
   return (
