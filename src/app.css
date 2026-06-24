@@ -1711,3 +1711,11 @@ header.top {
 .tickerTapeItem em { font-style: normal; font-family: var(--font-mono); font-size: 11px; }
 .tapePos { color: var(--green); }
 .tapeNeg { color: var(--red); }
+
+/* ── Gauge Card ──────────────────────────────────────────────────── */
+.gaugeWrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px 0;
+}

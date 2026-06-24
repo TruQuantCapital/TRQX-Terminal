@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { GraduationCap, Waves, Crown, ExternalLink } from "lucide-react";
 import DataTable from "./DataTable";
 import {
@@ -11,20 +11,96 @@ import {
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
 export function GaugeCard() {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await fetch(`${API}/api/flow/stats`);
+        if (!res.ok) throw new Error("failed");
+        const data = await res.json();
+        setStats(data);
+      } catch {}
+    }
+    fetchStats();
+    const t = setInterval(fetchStats, 15000);
+    return () => clearInterval(t);
+  }, []);
+
+  const ratio = stats?.ratio ?? 1;
+  const callPrem = stats?.callPremium ?? 0;
+  const putPrem = stats?.putPremium ?? 0;
+  const sweeps = stats?.sweepCount ?? 0;
+  const blocks = stats?.blockCount ?? 0;
+
+  // Score 0-100 based on flow data
+  const rawScore = Math.min(100, Math.max(0, Math.round(
+    (ratio / (ratio + 1)) * 60 +
+    (sweeps > 50 ? 20 : sweeps > 20 ? 10 : 0) +
+    (blocks > 30 ? 20 : blocks > 10 ? 10 : 0)
+  )));
+
+  const regime = ratio > 1.3 ? "RISK ON" : ratio < 0.75 ? "RISK OFF" : "NEUTRAL";
+  const regimeColor = regime === "RISK ON" ? "var(--green)" : regime === "RISK OFF" ? "var(--red)" : "var(--gold)";
+
+  const breadth = ratio > 1 ? `${Math.min(99, Math.round(50 + (ratio - 1) * 30))}%` : `${Math.max(1, Math.round(50 - (1 - ratio) * 30))}%`;
+  const volatility = sweeps > 80 ? "High" : sweeps > 40 ? "Moderate" : "Low";
+  const momentum = ratio > 1.2 ? "Bullish" : ratio < 0.8 ? "Bearish" : "Neutral";
+
+  // SVG arc gauge
+  const size = 120;
+  const cx = size / 2;
+  const cy = size / 2 + 10;
+  const r = 45;
+  const startAngle = -200;
+  const endAngle = 20;
+  const totalAngle = endAngle - startAngle;
+  const scoreAngle = startAngle + (rawScore / 100) * totalAngle;
+
+  function polarToXY(angle, radius) {
+    const rad = (angle * Math.PI) / 180;
+    return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
+  }
+
+  function arcPath(start, end, radius) {
+    const s = polarToXY(start, radius);
+    const e = polarToXY(end, radius);
+    const large = end - start > 180 ? 1 : 0;
+    return `M ${s.x} ${s.y} A ${radius} ${radius} 0 ${large} 1 ${e.x} ${e.y}`;
+  }
+
+  const needleTip = polarToXY(scoreAngle, r - 8);
+  const needleBase1 = polarToXY(scoreAngle + 90, 6);
+  const needleBase2 = polarToXY(scoreAngle - 90, 6);
+
   return (
     <section className="card regime">
       <div className="cardTitle">Market Regime</div>
-      <h1>RISK ON</h1>
-      <div className="gauge">
-        <div className="needle"></div>
-        <div className="score">
-          72 <span>/100</span>
-        </div>
+      <h1 style={{ color: regimeColor }}>{regime}</h1>
+
+      <div className="gaugeWrap">
+        <svg viewBox={`0 0 ${size} ${size}`} width="140" height="140">
+          {/* Background arc */}
+          <path d={arcPath(startAngle, endAngle, r)} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" strokeLinecap="round" />
+          {/* Score arc */}
+          <path d={arcPath(startAngle, scoreAngle, r)} fill="none" stroke={regimeColor} strokeWidth="10" strokeLinecap="round" />
+          {/* Needle */}
+          <polygon
+            points={`${needleTip.x},${needleTip.y} ${needleBase1.x},${needleBase1.y} ${needleBase2.x},${needleBase2.y}`}
+            fill={regimeColor}
+            opacity="0.9"
+          />
+          <circle cx={cx} cy={cy} r="5" fill={regimeColor} />
+          {/* Score text */}
+          <text x={cx} y={cy + 22} textAnchor="middle" fontSize="20" fontWeight="700" fill="white" fontFamily="monospace">{rawScore}</text>
+          <text x={cx} y={cy + 34} textAnchor="middle" fontSize="10" fill="rgba(255,255,255,0.4)" fontFamily="monospace">/100</text>
+        </svg>
       </div>
+
       <div className="metrics3">
-        <div><b>78%</b><span>Breadth</span></div>
-        <div><b>Low</b><span>Volatility</span></div>
-        <div><b>Bullish</b><span>Momentum</span></div>
+        <div><b>{breadth}</b><span>Breadth</span></div>
+        <div><b>{volatility}</b><span>Volatility</span></div>
+        <div><b style={{ color: ratio > 1.2 ? "var(--green)" : ratio < 0.8 ? "var(--red)" : "var(--gold)" }}>{momentum}</b><span>Momentum</span></div>
       </div>
     </section>
   );
@@ -103,7 +179,7 @@ export function AiSummary() {
       </div>
       <p>
         Markets are trading higher as investors digest inflation data and await
-        the Fed’s next move. Tech and growth names are leading while volatility
+        the Fedâ€™s next move. Tech and growth names are leading while volatility
         remains compressed.
       </p>
       <b>Key Takeaways</b>
