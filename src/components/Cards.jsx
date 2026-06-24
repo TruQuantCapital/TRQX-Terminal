@@ -271,14 +271,17 @@ export function GammaCard({ full = false }) {
           const h = Math.abs(Math.sin(i / 4) * 72) + 10;
           const isCall = i > 20;
           return (
-            <span
+            <div
               key={i}
-              className={isCall ? "bar call" : "bar put"}
-              style={{ height: h }}
-            ></span>
+              className="gammaBar"
+              style={{
+                height: h,
+                background: isCall ? "var(--gold)" : "var(--red)",
+                opacity: 0.7 + Math.random() * 0.3,
+              }}
+            />
           );
         })}
-        <div className="zeroLine"></div>
       </div>
     </section>
   );
