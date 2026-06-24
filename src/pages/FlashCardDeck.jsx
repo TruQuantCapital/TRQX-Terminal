@@ -7,10 +7,6 @@ import {
 
 import "./flashCards.css";
 
-<<<<<<< HEAD
-=======
-// IMAGE IMPORTS
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
 import hammer from "../assets/hammer.png";
 import tweezerbottom from "../assets/tweezer bottom.png";
 import bullishEngulfing from "../assets/bearish engulfing .png";
@@ -41,7 +37,6 @@ import fourPriceDoji from "../assets/four price doji.png";
 import longLegDoji from "../assets/long leg doji.png";
 
 const patternImages = {
-<<<<<<< HEAD
   hammer,
   "bullish-engulfing": bullishEngulfing,
   "bearish-engulfing": bearishEngulfingBear,
@@ -67,45 +62,6 @@ const patternImages = {
   "bull-trap": bullTrap,
   "tweezer-bottom": tweezerbottom,
   "tweezer-top": tweezerTop,
-=======
-  hammer: hammer,
-
-  "bullish-engulfing": bullishEngulfing,
-  "bearish-engulfing": bearishEngulfingBear,
-
-  "shooting-star": shootingStar,
-  "evening-star": eveningStar,
-  "morning-star": morningStar,
-
-  "bull-flag": bullFlag,
-  "bear-flag": bearFlag,
-
-  "ascending-triangle": ascendingTriangle,
-  "descending-triangle": descendingTriangle,
-
-  "bull-pennant": bullPennant,
-  "bear-pennant": bearPennant,
-
-  "stop-hunt": stopHunt,
-
-  "gravestone-at-resistance": gravestone,
-  "gravestone-doji": gravestoneDoji,
-
-  "dragonfly-at-support": dragonflySupport,
-  "dragonfly-doji": dragonfly,
-  "rickshaw-man-doji": rickshawManDoji,
-
-  uptrend: uptrend,
-  downtrend: downtrend,
-  "sideways-range": sideways,
-
-  "bear-trap": bearTrap,
-  "bull-trap": bullTrap,
-
-  "tweezer-bottom": tweezerbottom,
-  "tweezer-top": tweezerTop,
-
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
   "standard-doji": doji,
   "four-price-doji": fourPriceDoji,
   "long-legged-doji": longLegDoji,
@@ -117,7 +73,6 @@ export default function FlashCardDeck() {
   const [flipped, setFlipped] = useState(false);
   const [mastered, setMastered] = useState(new Set());
 
-<<<<<<< HEAD
   const allCards = useMemo(() =>
     flashcardCategories.flatMap((cat) =>
       cat.cards.map((card) => ({ ...card, categoryKey: cat.key, categoryTitle: cat.title }))
@@ -125,25 +80,6 @@ export default function FlashCardDeck() {
 
   const deck = useMemo(() => {
     if (activeCategory === "starred") return allCards.filter((c) => highPriorityPatternIds.includes(c.id));
-=======
-  const allCards = useMemo(() => {
-    return flashcardCategories.flatMap((cat) =>
-      cat.cards.map((card) => ({
-        ...card,
-        categoryKey: cat.key,
-        categoryTitle: cat.title,
-      }))
-    );
-  }, []);
-
-  const deck = useMemo(() => {
-    if (activeCategory === "starred") {
-      return allCards.filter((c) =>
-        highPriorityPatternIds.includes(c.id)
-      );
-    }
-
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
     if (activeCategory === "all") return allCards;
 
     return allCards.filter(
@@ -158,7 +94,6 @@ export default function FlashCardDeck() {
       ? Math.round((mastered.size / deck.length) * 100)
       : 0;
 
-<<<<<<< HEAD
   function handleCategoryChange(key) { setActiveCategory(key); setCardIndex(0); setFlipped(false); }
   function handlePrev() { setCardIndex((i) => Math.max(0, i - 1)); setFlipped(false); }
   function handleNext() { setCardIndex((i) => Math.min(deck.length - 1, i + 1)); setFlipped(false); }
@@ -166,40 +101,6 @@ export default function FlashCardDeck() {
     setMastered((prev) => {
       const next = new Set(prev);
       next.has(card.id) ? next.delete(card.id) : next.add(card.id);
-=======
-  function handleCategoryChange(key) {
-    setActiveCategory(key);
-    setCardIndex(0);
-    setFlipped(false);
-  }
-
-  function handlePrev() {
-    setCardIndex((i) => Math.max(0, i - 1));
-    setFlipped(false);
-  }
-
-  function handleNext() {
-    setCardIndex((i) =>
-      Math.min(deck.length - 1, i + 1)
-    );
-    setFlipped(false);
-  }
-
-  function handleFlip() {
-    setFlipped((f) => !f);
-  }
-
-  function handleMastered() {
-    setMastered((prev) => {
-      const next = new Set(prev);
-
-      if (next.has(card.id)) {
-        next.delete(card.id);
-      } else {
-        next.add(card.id);
-      }
-
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
       return next;
     });
   }
@@ -218,13 +119,7 @@ export default function FlashCardDeck() {
       <div className="flashDeckHeader">
         <div className="flashDeckTitle">
           <span>FLASHCARDS</span>
-<<<<<<< HEAD
           <span className="flashDeckCount">{deck.length} cards</span>
-=======
-          <span className="flashDeckCount">
-            {deck.length} cards
-          </span>
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
         </div>
 
         <div className="flashDeckProgress">
@@ -245,31 +140,12 @@ export default function FlashCardDeck() {
       <div className="flashCategoryBar">
         {[
           { key: "all", label: "All" },
-<<<<<<< HEAD
           { key: "starred", label: "⭐ Priority" },
           ...flashcardCategories.map((c) => ({ key: c.key, label: c.title })),
         ].map((cat) => (
           <button key={cat.key}
             className={"flashCategoryBtn" + (activeCategory === cat.key ? " active" : "")}
             onClick={() => handleCategoryChange(cat.key)}>
-=======
-          { key: "starred", label: "Priority" },
-          ...flashcardCategories.map((c) => ({
-            key: c.key,
-            label: c.title,
-          })),
-        ].map((cat) => (
-          <button
-            key={cat.key}
-            className={
-              "flashCategoryBtn" +
-              (activeCategory === cat.key ? " active" : "")
-            }
-            onClick={() =>
-              handleCategoryChange(cat.key)
-            }
-          >
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
             {cat.label}
           </button>
         ))}
@@ -277,19 +153,8 @@ export default function FlashCardDeck() {
 
       {/* Card */}
       <div className="flashCardArea">
-<<<<<<< HEAD
         <div className={"flashCard" + (flipped ? " flipped" : "") + (isMastered ? " mastered" : "")}
           onClick={() => setFlipped((f) => !f)}>
-=======
-        <div
-          className={
-            "flashCard" +
-            (flipped ? " flipped" : "") +
-            (isMastered ? " mastered" : "")
-          }
-          onClick={handleFlip}
-        >
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
           <div className="flashCardInner">
 
             {/* FRONT */}
@@ -297,7 +162,6 @@ export default function FlashCardDeck() {
               {isHighPriority && (
                 <div className="flashCardPriorityBadge"><Star size={12} /> High Win Rate</div>
               )}
-<<<<<<< HEAD
               <div className="flashCardCategory">{card.categoryTitle}</div>
               <div className="flashCardPatternName">{card.front}</div>
               {patternImages[card.id] && (
@@ -305,32 +169,6 @@ export default function FlashCardDeck() {
               )}
               <div className="flashCardHint">{card.frontHint}</div>
               <div className="flashCardFlipHint">Click card to flip</div>
-=======
-
-              <div className="flashCardCategory">
-                {card.categoryTitle}
-              </div>
-
-              <div className="flashCardPatternName">
-                {card.front}
-              </div>
-
-              {patternImages[card.id] && (
-                <img
-                  src={patternImages[card.id]}
-                  alt={card.front}
-                  className="flashPatternImage"
-                />
-              )}
-
-              <div className="flashCardHint">
-                {card.frontHint}
-              </div>
-
-              <div className="flashCardFlipHint">
-                Tap to reveal
-              </div>
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
             </div>
 
             {/* BACK */}
@@ -369,46 +207,19 @@ export default function FlashCardDeck() {
                   </div>
 
                   <div className="flashCardBackTags">
-<<<<<<< HEAD
                     {card.bestLocation.map((loc, i) => <span key={i} className="flashCardTag">{loc}</span>)}
-=======
-                    {card.bestLocation.map((loc, i) => (
-                      <span
-                        key={i}
-                        className="flashCardTag"
-                      >
-                        {loc}
-                      </span>
-                    ))}
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
                   </div>
                 </div>
               )}
 
               {card.confirmation && (
                 <div className="flashCardBackSection">
-<<<<<<< HEAD
                   <div className="flashCardBackLabel">Confirmation / Notes</div>
                   <div className="flashCardBackValue">{card.confirmation}</div>
                 </div>
               )}
 
               <div className="flashCardFlipHint">Click to flip back</div>
-=======
-                  <div className="flashCardBackLabel">
-                    Confirmation
-                  </div>
-
-                  <div className="flashCardBackValue">
-                    {card.confirmation}
-                  </div>
-                </div>
-              )}
-
-              <div className="flashCardFlipHint">
-                Tap to flip back
-              </div>
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
             </div>
           </div>
         </div>
@@ -416,15 +227,7 @@ export default function FlashCardDeck() {
 
       {/* Controls */}
       <div className="flashDeckControls">
-<<<<<<< HEAD
         <button className="flashNavBtn" onClick={handlePrev} disabled={cardIndex === 0}>
-=======
-        <button
-          className="flashNavBtn"
-          onClick={handlePrev}
-          disabled={cardIndex === 0}
-        >
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
           <ChevronLeft size={20} />
         </button>
 
@@ -434,7 +237,6 @@ export default function FlashCardDeck() {
           </span>
 
           <button
-<<<<<<< HEAD
             className={"flashMasterBtn" + (isMastered ? " done" : "")}
             onClick={(e) => { e.stopPropagation(); handleMastered(); }}>
             {isMastered ? "✓ Mastered" : "Mark Mastered"}
@@ -442,28 +244,6 @@ export default function FlashCardDeck() {
         </div>
 
         <button className="flashNavBtn" onClick={handleNext} disabled={cardIndex === deck.length - 1}>
-=======
-            className={
-              "flashMasterBtn" +
-              (isMastered ? " done" : "")
-            }
-            onClick={(e) => {
-              e.stopPropagation();
-              handleMastered();
-            }}
-          >
-            {isMastered
-              ? "Mastered"
-              : "Mark Mastered"}
-          </button>
-        </div>
-
-        <button
-          className="flashNavBtn"
-          onClick={handleNext}
-          disabled={cardIndex === deck.length - 1}
-        >
->>>>>>> 53602ddfbaf52bec6ecb617c09eb0de6cea1ab20
           <ChevronRight size={20} />
         </button>
       </div>
