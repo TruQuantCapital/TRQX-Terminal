@@ -53,14 +53,24 @@ function fmtPct(v) {
   return `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
 }
 
+function fmtPrem(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return "—";
+  if (n >= 1000000) return `$${(n/1000000).toFixed(1)}M`;
+  if (n >= 1000) return `$${(n/1000).toFixed(0)}K`;
+  return `$${n}`;
+}
+
 const SYMBOLS = ["SPY", "QQQ", "IWM", "NVDA"];
 
 export default function TopRibbon() {
   const [tiles, setTiles] = useState(SYMBOLS.map(s => ({ symbol: s, price: "—", change: "—", trend: "flat", stale: true })));
+  const [flowStats, setFlowStats] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [countdown, setCountdown] = useState("—");
   const [cpiLabel, setCpiLabel] = useState("CPI Release");
 
+  // CPI countdown
   useEffect(() => {
     function tick() {
       const next = getNextCPI();
@@ -73,6 +83,7 @@ export default function TopRibbon() {
     return () => clearInterval(id);
   }, []);
 
+  // Stock quotes
   async function fetchTiles() {
     const results = await Promise.all(SYMBOLS.map(async (symbol) => {
       try {
@@ -92,14 +103,33 @@ export default function TopRibbon() {
     setLastUpdate(new Date());
   }
 
+  // Flow stats
+  async function fetchFlowStats() {
+    try {
+      const res = await fetch(`${API}/api/flow/stats`);
+      if (!res.ok) throw new Error("failed");
+      const data = await res.json();
+      setFlowStats(data);
+    } catch {
+      setFlowStats(null);
+    }
+  }
+
   useEffect(() => {
     fetchTiles();
-    const t = setInterval(fetchTiles, 30000);
-    return () => clearInterval(t);
+    fetchFlowStats();
+    const t1 = setInterval(fetchTiles, 30000);
+    const t2 = setInterval(fetchFlowStats, 15000);
+    return () => { clearInterval(t1); clearInterval(t2); };
   }, []);
+
+  const sentimentColor = flowStats?.sentiment === "Bullish" ? "var(--green)"
+    : flowStats?.sentiment === "Bearish" ? "var(--red)"
+    : "var(--gold)";
 
   return (
     <header className="top">
+      {/* Stock tiles */}
       {tiles.map((m) => (
         <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
           <div className="tickerText">
@@ -113,6 +143,36 @@ export default function TopRibbon() {
         </div>
       ))}
 
+      {/* Flow stat tiles */}
+      {flowStats && (
+        <>
+          <div className="ticker flowTile">
+            <div className="tickerText">
+              <b>FLOW SENTIMENT</b>
+              <span style={{ color: sentimentColor, fontSize: "16px" }}>{flowStats.sentiment?.toUpperCase() ?? "—"}</span>
+              <em style={{ color: sentimentColor }}>Ratio {flowStats.ratio ?? "—"}</em>
+            </div>
+          </div>
+
+          <div className="ticker flowTile">
+            <div className="tickerText">
+              <b>CALL PREMIUM</b>
+              <span style={{ color: "var(--green)", fontSize: "16px" }}>{fmtPrem(flowStats.callPremium)}</span>
+              <em style={{ color: "var(--muted)" }}>{flowStats.sweepCount} sweeps</em>
+            </div>
+          </div>
+
+          <div className="ticker flowTile">
+            <div className="tickerText">
+              <b>PUT PREMIUM</b>
+              <span style={{ color: "var(--red)", fontSize: "16px" }}>{fmtPrem(flowStats.putPremium)}</span>
+              <em style={{ color: "var(--muted)" }}>{flowStats.blockCount} blocks</em>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Market Status */}
       <div className="statusBox">
         <span className="dot" />
         <div>
@@ -121,6 +181,7 @@ export default function TopRibbon() {
         </div>
       </div>
 
+      {/* Next Event */}
       <div className="eventBox">
         <b>Next Event</b>
         <p>{cpiLabel}</p>
