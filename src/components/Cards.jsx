@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { GraduationCap, Waves, Crown, ExternalLink } from "lucide-react";
 import DataTable from "./DataTable";
 import {
@@ -511,6 +512,8 @@ export function AcademyCard() {
     </section>
   );
 }
+
+
 
 
 
