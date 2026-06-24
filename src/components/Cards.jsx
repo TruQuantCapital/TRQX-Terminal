@@ -259,16 +259,17 @@ export function GammaCard({ full = false }) {
 }
 
 export function ScannerCard({ full = false }) {
+  const navigate = useNavigate();
   return (
     <section className={`card scanner ${full ? "fullPageCard" : "wide"}`}>
       <div className="cardTitle purple">Scanner</div>
       <div className="tabs">
-        <button>Momentum</button>
-        <button>ORB</button>
-        <button>Low Float</button>
-        <button>Unusual Volume</button>
-        <button>Gappers</button>
-        <button>Squeeze Candidates</button>
+        <button onClick={() => navigate("/scanner?filter=momentum")}>Momentum</button>
+        <button onClick={() => navigate("/scanner?filter=orb")}>ORB</button>
+        <button onClick={() => navigate("/scanner?filter=lowfloat")}>Low Float</button>
+        <button onClick={() => navigate("/scanner?filter=unusual")}>Unusual Volume</button>
+        <button onClick={() => navigate("/scanner?filter=gappers")}>Gappers</button>
+        <button onClick={() => navigate("/scanner?filter=squeeze")}>Squeeze Candidates</button>
       </div>
       <DataTable
         headers={[
@@ -295,7 +296,7 @@ export function ScannerCard({ full = false }) {
           r.setup,
         ]}
       />
-      <a>View Full Scanner</a>
+      <a onClick={() => navigate("/scanner")} style={{ cursor: "pointer" }}>View Full Scanner →</a>
     </section>
   );
 }
@@ -347,10 +348,10 @@ export function OptionsFlowCard({ full = false }) {
       <div className="cardTitle purple">Options Flow</div>
 
       <div className="tabs">
-        <button>Sweeps</button>
-        <button>Blocks</button>
-        <button>Big Premium</button>
-        <button>Unusual</button>
+        <button onClick={() => navigate("/options-flow?filter=sweep")}>Sweeps</button>
+        <button onClick={() => navigate("/options-flow?filter=block")}>Blocks</button>
+        <button onClick={() => navigate("/options-flow?filter=premium")}>Big Premium</button>
+        <button onClick={() => navigate("/options-flow?filter=unusual")}>Unusual</button>
       </div>
 
       <div style={{ margin: "10px 0 12px" }}>
@@ -512,6 +513,7 @@ export function AcademyCard() {
     </section>
   );
 }
+
 
 
 
