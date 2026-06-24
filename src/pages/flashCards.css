@@ -3,6 +3,9 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .flashDeckHeader {
@@ -91,12 +94,10 @@
 
 .flashCardArea {
   perspective: 1200px;
-  min-height: 320px;
 }
 
 .flashCard {
   width: 100%;
-  min-height: 320px;
   position: relative;
   cursor: pointer;
   transform-style: preserve-3d;
@@ -107,44 +108,41 @@
   transform: rotateY(180deg);
 }
 
-.flashCard.mastered {
-  opacity: .75;
-}
+.flashCard.mastered { opacity: .75; }
 
 .flashCardInner {
   position: relative;
   width: 100%;
-  height: 100%;
 }
 
 .flashCardFront,
 .flashCardBack {
-  position: absolute;
-  inset: 0;
-  min-height: 320px;
-  padding: 28px 24px;
+  width: 100%;
+  padding: 24px 20px;
   border-radius: 16px;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
 }
 
 .flashCardFront {
   background: linear-gradient(160deg, rgba(15,23,42,.98), rgba(3,7,18,.99));
   border: 1px solid rgba(212,175,55,.3);
   align-items: center;
-  justify-content: center;
   text-align: center;
-  gap: 12px;
+  position: relative;
 }
 
 .flashCardBack {
   background: linear-gradient(160deg, rgba(10,18,35,.98), rgba(3,7,18,.99));
   border: 1px solid rgba(212,175,55,.25);
   transform: rotateY(180deg);
-  gap: 14px;
-  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .flashCardPriorityBadge {
@@ -159,8 +157,8 @@
   font-size: 11px;
   font-weight: 800;
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 14px;
+  right: 14px;
 }
 
 .flashCardCategory {
@@ -173,28 +171,49 @@
 
 .flashCardPatternName {
   color: #d4af37;
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 900;
   line-height: 1.1;
 }
 
+.flashCardPatternNameBack {
+  color: #d4af37;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.flashCardBackHeader {
+  border-bottom: 1px solid rgba(212,175,55,.15);
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+}
+
+.flashPatternImage {
+  width: 100%;
+  max-width: 300px;
+  margin: 8px auto;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid rgba(212,175,55,.25);
+  box-shadow: 0 8px 20px rgba(0,0,0,.4);
+}
+
 .flashCardHint {
   color: #d1d5db;
-  font-size: 14px;
+  font-size: 13px;
   font-style: italic;
 }
 
 .flashCardFlipHint {
   color: rgba(255,255,255,.2);
   font-size: 11px;
-  margin-top: auto;
-  padding-top: 12px;
+  margin-top: 8px;
 }
 
 .flashCardBackSection {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .flashCardBackLabel {
@@ -244,6 +263,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-top: 8px;
 }
 
 .flashNavBtn {
@@ -320,9 +340,7 @@
   transition: color .15s ease;
 }
 
-.flashResetBtn:hover {
-  color: #9ca3af;
-}
+.flashResetBtn:hover { color: #9ca3af; }
 
 .flashDeckEmpty {
   padding: 40px;

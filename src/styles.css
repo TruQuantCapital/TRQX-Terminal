@@ -67,17 +67,44 @@ button, select { font: inherit; }
 .sidebarCard button { width: 100%; }
 .discord { border-color: rgba(159,107,255,0.3); }
 .avatar {
-  width: 39px; height: 39px; border-radius: 50%;
+  width: 39px;
+  height: 39px;
+  border-radius: 50%;
   background: linear-gradient(135deg, #0a5028, #39dd70);
-  display: grid; place-items: center; font-weight: 800;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
 }
-.content { padding: 14px 18px 26px; min-width: 0; }
-.top { display: grid; grid-template-columns: 1fr 220px 170px; gap: 12px; align-items: stretch; margin-bottom: 14px; }
-.tickerWrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.ticker, .statusBox, .eventBox, .card, .pageHeader {
+
+.content {
+  padding: 14px 18px 26px;
+  min-width: 0;
+}
+
+.top {
+  grid-template-columns: minmax(0, 1fr) 250px 250px;
+  margin-top: 16px;
+}
+
+.tickerWrap {
+  grid-template-columns: repeat(8, minmax(150px, 1fr));
+}
+
+.ticker {
+  min-height: 86px;
+}
+.statusBox,
+.eventBox,
+.card,
+.pageHeader {
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(15,27,42,0.96), rgba(8,16,26,0.96));
-  border-radius: 12px; box-shadow: 0 16px 45px rgba(0,0,0,0.28);
+  background: linear-gradient(
+    180deg,
+    rgba(15,27,42,0.96),
+    rgba(8,16,26,0.96)
+  );
+  border-radius: 12px;
+  box-shadow: 0 16px 45px rgba(0,0,0,0.28);
 }
 .ticker { padding: 12px; display: grid; grid-template-columns: 1fr 95px; gap: 8px; min-height: 76px; }
 .ticker b { display: block; }
@@ -1646,4 +1673,224 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
   padding: 10px 14px;
   font-weight: 800;
   cursor: pointer;
+}
+.lux-flash {
+  background:
+    radial-gradient(circle at 15% 10%, rgba(212,175,55,.16), transparent 30%),
+    linear-gradient(135deg, rgba(3,7,18,.98), rgba(12,18,32,.98));
+  border: 1px solid rgba(212,175,55,.35);
+  box-shadow: 0 0 30px rgba(212,175,55,.08);
+}
+
+.lux-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+  background:
+    linear-gradient(135deg, rgba(8,13,24,.98), rgba(20,26,40,.98));
+  border: 1px solid rgba(212,175,55,.45);
+  box-shadow:
+    inset 0 0 24px rgba(212,175,55,.06),
+    0 20px 45px rgba(0,0,0,.35);
+}
+
+.lux-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(120deg, transparent, rgba(212,175,55,.08), transparent);
+  pointer-events: none;
+}
+
+.flash-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flash-badge {
+  color: rgba(212,175,55,.8);
+  border: 1px solid rgba(212,175,55,.3);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.lux-candles {
+  height: 92px;
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  margin: 18px 0;
+  position: relative;
+}
+
+.candle {
+  width: 24px;
+  border-radius: 6px;
+  position: relative;
+  box-shadow: 0 0 14px rgba(255,255,255,.08);
+}
+
+.candle::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 3px;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,.45);
+  top: -18px;
+  bottom: -18px;
+  border-radius: 4px;
+}
+
+.candle.bull {
+  background: linear-gradient(180deg, #f8d56a, #a77b18);
+}
+
+.candle.bear {
+  background: linear-gradient(180deg, #ff5b67, #7d111a);
+}
+
+.candle.tall { height: 76px; }
+.candle.medium { height: 56px; }
+.candle.small { height: 34px; }
+
+.goldLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,.7), transparent);
+}
+
+.flash-card.flipped .candle.bull,
+.lux-candles.answerMode .candle.bull {
+  box-shadow: 0 0 18px rgba(212,175,55,.35);
+}
+
+.flash-text {
+  position: relative;
+  z-index: 2;
+  font-size: 22px;
+  line-height: 1.45;
+  max-width: 900px;
+}
+
+.flash-hint {
+  position: relative;
+  z-index: 2;
+  color: rgba(255,255,255,.45);
+}
+
+.flash-actions button {
+  background: linear-gradient(135deg, rgba(212,175,55,.18), rgba(212,175,55,.08));
+  color: #f5d76e;
+  border: 1px solid rgba(212,175,55,.4);
+}
+
+.flash-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 14px rgba(212,175,55,.18);
+}
+import { useMemo, useState } from "react";
+
+function makeCards(lesson) {
+  const headings = lesson.content?.filter((x) => x.type === "heading") || [];
+  const paragraphs = lesson.content?.filter((x) => x.type === "p") || [];
+
+  const cards = [];
+
+  headings.forEach((h, i) => {
+    const answer =
+      paragraphs[i]?.text ||
+      lesson.objective ||
+      "Review this section in the lesson.";
+
+    cards.push({
+      front: h.text.replace(/[📘🎯🧠✅📚📝✍️🧪👀🚨]/g, "").trim(),
+      back: answer,
+    });
+  });
+
+  if (cards.length === 0) {
+    cards.push({
+      front: lesson.title,
+      back: lesson.objective || "Review the lesson content.",
+    });
+  }
+
+  return cards.slice(0, 12);
+}
+
+function MiniCandles() {
+  return (
+    <div className="flash-mini-chart" aria-hidden="true">
+      <span className="flash-grid-line one"></span>
+      <span className="flash-grid-line two"></span>
+      <span className="flash-candle bull tall"></span>
+      <span className="flash-candle bear small"></span>
+      <span className="flash-candle bull mid"></span>
+      <span className="flash-candle bull small2"></span>
+    </div>
+  );
+}
+
+export default function FlashCards({ lesson }) {
+  const cards = useMemo(() => makeCards(lesson), [lesson]);
+  const [index, setIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+
+  const card = cards[index];
+
+  function nextCard() {
+    setFlipped(false);
+    setIndex((i) => (i + 1) % cards.length);
+  }
+
+  function prevCard() {
+    setFlipped(false);
+    setIndex((i) => (i - 1 + cards.length) % cards.length);
+  }
+
+  return (
+    <div className="flash-wrap">
+      <div className="flash-head">
+        <div>
+          <small>FLASHCARDS</small>
+          <h3>{lesson.title}</h3>
+        </div>
+        <span>
+          {index + 1} / {cards.length}
+        </span>
+      </div>
+
+      <button
+        className={`flash-card ${flipped ? "flipped" : ""}`}
+        onClick={() => setFlipped((v) => !v)}
+      >
+        <div className="flash-card-top">
+          <div className="flash-label">{flipped ? "ANSWER" : "QUESTION"}</div>
+          <div className="flash-brand">TRQX</div>
+        </div>
+
+        <MiniCandles />
+
+        <div className="flash-text">{flipped ? card.back : card.front}</div>
+        <div className="flash-hint">Click card to flip</div>
+      </button>
+
+      <div className="flash-actions">
+        <button onClick={prevCard}>← Previous</button>
+        <button onClick={() => setFlipped((v) => !v)}>
+          {flipped ? "Show Question" : "Show Answer"}
+        </button>
+        <button onClick={nextCard}>Next →</button>
+      </div>
+    </div>
+  );
 }
