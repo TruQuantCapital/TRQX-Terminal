@@ -262,7 +262,7 @@ export function GammaCard({ full = false }) {
   return (
     <section className={`card gamma ${full ? "fullPageCard" : "wide"}`}>
       <div className="cardTitle purple" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span>Gamma Exposure ({gamma?.ticker ?? ticker})</span>
+        <span style={{ cursor: "pointer" }} onClick={() => navigate("/gamma-ex")}>Gamma Exposure ({gamma?.ticker ?? ticker}) ↗</span>
         <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
           <input
             value={tickerInput}
@@ -556,6 +556,7 @@ export function AcademyCard() {
     </section>
   );
 }
+
 
 
 
