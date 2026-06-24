@@ -1,10 +1,8 @@
 ﻿import React, { useEffect, useState } from "react";
 import WEEKLY_CALENDAR from "../data/weeklyCalendar";
 import { useNavigate } from "react-router-dom";
-import WEEKLY_CALENDAR from "../data/weeklyCalendar";
 import { GraduationCap, Waves, Crown, ExternalLink } from "lucide-react";
 import DataTable from "./DataTable";
-import WEEKLY_CALENDAR from "../data/weeklyCalendar";
 import {
   economicRows,
   gammaMetrics,
@@ -560,6 +558,7 @@ export function AcademyCard() {
     </section>
   );
 }
+
 
 
 
