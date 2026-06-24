@@ -1,6 +1,10 @@
 ﻿import React, { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight, RotateCcw, Star } from "lucide-react";
-import { flashcardCategories, highPriorityPatternIds } from "../data/flashcardLibrary";
+import {
+  flashcardCategories,
+  highPriorityPatternIds,
+} from "../data/flashcardLibrary";
+
 import "./flashCards.css";
 
 import hammer from "../assets/hammer.png";
@@ -77,11 +81,18 @@ export default function FlashCardDeck() {
   const deck = useMemo(() => {
     if (activeCategory === "starred") return allCards.filter((c) => highPriorityPatternIds.includes(c.id));
     if (activeCategory === "all") return allCards;
-    return allCards.filter((c) => c.categoryKey === activeCategory);
+
+    return allCards.filter(
+      (c) => c.categoryKey === activeCategory
+    );
   }, [activeCategory, allCards]);
 
   const card = deck[cardIndex];
-  const progress = deck.length > 0 ? Math.round((mastered.size / deck.length) * 100) : 0;
+
+  const progress =
+    deck.length > 0
+      ? Math.round((mastered.size / deck.length) * 100)
+      : 0;
 
   function handleCategoryChange(key) { setActiveCategory(key); setCardIndex(0); setFlipped(false); }
   function handlePrev() { setCardIndex((i) => Math.max(0, i - 1)); setFlipped(false); }
@@ -98,7 +109,8 @@ export default function FlashCardDeck() {
   if (!card) return <div className="flashDeckEmpty"><p>No cards in this category yet.</p></div>;
 
   const isMastered = mastered.has(card.id);
-  const isHighPriority = highPriorityPatternIds.includes(card.id);
+  const isHighPriority =
+    highPriorityPatternIds.includes(card.id);
 
   return (
     <div className="flashDeckRoot">
@@ -109,11 +121,18 @@ export default function FlashCardDeck() {
           <span>FLASHCARDS</span>
           <span className="flashDeckCount">{deck.length} cards</span>
         </div>
+
         <div className="flashDeckProgress">
           <div className="flashDeckProgressBar">
-            <div className="flashDeckProgressFill" style={{ width: progress + "%" }} />
+            <div
+              className="flashDeckProgressFill"
+              style={{ width: progress + "%" }}
+            />
           </div>
-          <span className="flashDeckProgressLabel">{mastered.size} / {deck.length} mastered</span>
+
+          <span className="flashDeckProgressLabel">
+            {mastered.size} / {deck.length} mastered
+          </span>
         </div>
       </div>
 
@@ -160,13 +179,21 @@ export default function FlashCardDeck() {
               </div>
 
               <div className="flashCardBackSection">
-                <div className="flashCardBackLabel">What It Means</div>
-                <div className="flashCardBackValue">{card.meaning}</div>
+                <div className="flashCardBackLabel">
+                  What It Means
+                </div>
+
+                <div className="flashCardBackValue">
+                  {card.meaning}
+                </div>
               </div>
 
               {card.howToSpot?.length > 0 && (
                 <div className="flashCardBackSection">
-                  <div className="flashCardBackLabel">How To Spot It</div>
+                  <div className="flashCardBackLabel">
+                    How To Spot It
+                  </div>
+
                   <ul className="flashCardBackList">
                     {card.howToSpot.map((item, i) => <li key={i}>{item}</li>)}
                   </ul>
@@ -175,7 +202,10 @@ export default function FlashCardDeck() {
 
               {card.bestLocation?.length > 0 && (
                 <div className="flashCardBackSection">
-                  <div className="flashCardBackLabel">Best Location</div>
+                  <div className="flashCardBackLabel">
+                    Best Location
+                  </div>
+
                   <div className="flashCardBackTags">
                     {card.bestLocation.map((loc, i) => <span key={i} className="flashCardTag">{loc}</span>)}
                   </div>
@@ -202,7 +232,10 @@ export default function FlashCardDeck() {
         </button>
 
         <div className="flashDeckMiddle">
-          <span className="flashDeckPosition">{cardIndex + 1} / {deck.length}</span>
+          <span className="flashDeckPosition">
+            {cardIndex + 1} / {deck.length}
+          </span>
+
           <button
             className={"flashMasterBtn" + (isMastered ? " done" : "")}
             onClick={(e) => { e.stopPropagation(); handleMastered(); }}>
@@ -216,7 +249,10 @@ export default function FlashCardDeck() {
       </div>
 
       {mastered.size > 0 && (
-        <button className="flashResetBtn" onClick={handleReset}>
+        <button
+          className="flashResetBtn"
+          onClick={handleReset}
+        >
           <RotateCcw size={13} /> Reset progress
         </button>
       )}

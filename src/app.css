@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
 
-/* ─── CSS Variables ─────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ CSS Variables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
   --gold:       #C9A84C;
   --gold-light: #FFD700;
@@ -27,7 +27,7 @@
   --radius-lg:  12px;
 }
 
-/* ─── Reset ─────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 15px; }
 body {
@@ -42,7 +42,7 @@ a { color: inherit; text-decoration: none; }
 button { cursor: pointer; border: none; background: none; }
 input, select { outline: none; }
 
-/* ─── Loading Screen ─────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Loading Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .loading-screen {
   display: flex;
   flex-direction: column;
@@ -63,7 +63,7 @@ input, select { outline: none; }
 }
 @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
-/* ─── Nav ───────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Nav â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .nav {
   display: flex;
   align-items: center;
@@ -135,7 +135,7 @@ input, select { outline: none; }
 }
 .nav-btn:hover { background: rgba(201,168,76,0.15); }
 
-/* ─── Scanner Page ───────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Scanner Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .scanner-page { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
 
 /* Stats Bar */
@@ -354,7 +354,7 @@ input, select { outline: none; }
 .tag-block   { background: rgba(167,139,250,0.15); color: var(--purple); }
 .tag-unusual { background: rgba(249,115,22,0.15); color: var(--orange); }
 
-/* ─── AI Chat ────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ AI Chat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ai-chat {
   background: var(--black-3);
   border: 1px solid var(--border);
@@ -448,7 +448,7 @@ input, select { outline: none; }
 .locked-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--gold); }
 .locked-sub { color: var(--text-dim); font-size: 14px; }
 
-/* ─── Sector Heatmap ─────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Sector Heatmap â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .heatmap { background: var(--black-3); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
 .heatmap-title { font-family: var(--font-head); font-size: 16px; letter-spacing: 2px; color: var(--gold); margin-bottom: 14px; }
 .heatmap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
@@ -471,7 +471,7 @@ input, select { outline: none; }
 .heatmap-count { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 .heatmap-empty { padding: 40px; text-align: center; color: var(--text-muted); }
 
-/* ─── Smart Money ────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Smart Money â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .smart-money { background: var(--black-3); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
 .smart-title { font-family: var(--font-head); font-size: 16px; letter-spacing: 2px; color: var(--gold); margin-bottom: 14px; }
 .smart-list { display: flex; flex-direction: column; gap: 6px; }
@@ -493,7 +493,7 @@ input, select { outline: none; }
 .smart-last { font-size: 12px; color: var(--text-muted); }
 .smart-empty { padding: 40px; text-align: center; color: var(--text-muted); }
 
-/* ─── Reports Page ───────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Reports Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .reports-page { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; max-width: 1000px; margin: 0 auto; }
 .reports-header { border-bottom: 1px solid var(--border); padding-bottom: 14px; }
 .reports-title { font-family: var(--font-head); font-size: 24px; font-weight: 700; letter-spacing: 2px; color: var(--gold); }
@@ -581,7 +581,7 @@ input, select { outline: none; }
 .reports-features li { font-size: 15px; color: var(--text); }
 .reports-loading, .reports-error { padding: 60px; text-align: center; color: var(--text-dim); }
 
-/* ─── Alerts Page ────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Alerts Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .alerts-page { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; max-width: 900px; margin: 0 auto; }
 .alerts-header { }
 .alerts-header h1 { font-family: var(--font-head); font-size: 28px; font-weight: 700; color: var(--gold); }
@@ -665,7 +665,7 @@ input, select { outline: none; }
 .save-btn:hover { opacity: 0.85; }
 .discord-help { font-size: 13px; color: var(--text-dim); line-height: 1.6; padding: 12px 14px; background: var(--black-4); border-radius: var(--radius); border-left: 3px solid var(--gold); }
 
-/* ─── Upgrade Button ─────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Upgrade Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .upgrade-btn {
   display: inline-block;
   padding: 12px 28px;
@@ -680,7 +680,7 @@ input, select { outline: none; }
 }
 .upgrade-btn:hover { opacity: 0.85; }
 
-/* ─── Auth Page ──────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Auth Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -960,7 +960,7 @@ input, select { outline: none; }
   .auth-trust-bar { padding: 16px 20px; }
 }
 
-/* ─── Pricing Page ───────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Pricing Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pricing-page {
   padding: 40px 24px 60px;
   max-width: 1200px;
@@ -1144,7 +1144,7 @@ input, select { outline: none; }
   color: var(--gold);
 }
 
-/* ─── Flow Replay ────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Flow Replay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .replay-page { display: flex; flex-direction: column; gap: 12px; }
 .replay-locked {
   background: var(--black-3); border: 1px solid var(--border);
@@ -1258,7 +1258,7 @@ input, select { outline: none; }
   color: var(--gold); border-radius: 3px; margin-left: 4px;
 }
 
-/* ─── ORB Dashboard ──────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ ORB Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .orb-page { display: flex; flex-direction: column; gap: 12px; }
 .orb-locked {
   background: var(--black-3); border: 1px solid var(--border);
@@ -1370,7 +1370,7 @@ input, select { outline: none; }
   .orb-chart-wrap { height: 400px; }
 }
 
-/* ─── Stats Filter Label ─────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Stats Filter Label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .stats-filter-label {
   font-family: var(--font-head);
   font-size: 12px;
@@ -1386,7 +1386,7 @@ input, select { outline: none; }
   align-items: center;
 }
 
-/* ─── Force white bold on all table headers ──────────────────────────────────── */
+/* â”€â”€â”€ Force white bold on all table headers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .scanner-page th,
 .table-wrap th,
 .flow-table th,
@@ -1606,3 +1606,16 @@ input, select { outline: none; }
 .spotlightBox button:hover {
   opacity: 0.85;
 }
+
+/* ── Ribbon size boost ───────────────────────────────────────────── */
+header.top { height: 72px !important; }
+.ticker { min-width: 175px !important; padding: 0 22px !important; }
+.tickerText span { font-size: 22px !important; }
+.tickerText b { font-size: 13px !important; }
+.tickerText em { font-size: 12px !important; }
+.spark { width: 85px !important; height: 34px !important; }
+.statusBox { min-width: 200px !important; padding: 0 22px !important; }
+.statusBox b { font-size: 14px !important; }
+.eventBox { min-width: 170px !important; padding: 0 22px !important; }
+.eventBox span { font-size: 19px !important; }
+

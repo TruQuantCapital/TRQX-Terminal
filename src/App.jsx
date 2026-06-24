@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
 import TopRibbon from "./components/TopRibbon";
+import TickerTape from "./components/TickerTape";
 import Dashboard from "./pages/Dashboard";
 import Scanner from "./pages/Scanner";
 import GammaPage from "./pages/GammaPage";
@@ -89,6 +90,7 @@ function TerminalLayout({ children }) {
 
       <section className="content">
         <TopRibbon />
+        <TickerTape />
 
         {user && (
           <div className="terminal-userbar">
@@ -146,4 +148,10 @@ export default function App() {
     </AuthProvider>
   );
 }
+
+
+
+
+
+
 

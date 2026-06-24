@@ -7,7 +7,7 @@ export default function PatternsPage() {
       <section className="pageHeader">
         <div>
           <p>TRQX ACADEMY</p>
-          <h1>Pattern Library</h1>
+          <h1>Flash Cards</h1>
           <span>28 patterns across 6 categories. Tap any card to reveal the full breakdown.</span>
         </div>
       </section>
@@ -18,3 +18,4 @@ export default function PatternsPage() {
     </main>
   );
 }
+
