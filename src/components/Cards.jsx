@@ -459,7 +459,7 @@ export function OptionsFlowCard({ full = false }) {
             ? `${Number(r.contracts).toLocaleString()} @ ${Number(r.price).toFixed(2)}`
             : r.details ?? "--",
         ]}
-      <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} results` : "View All Options Flow"} →</a>
+      <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>View All Options Flow</a>
 
     </section>
   );
