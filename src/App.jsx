@@ -138,7 +138,8 @@ export default function App() {
           <Route path="/research" element={<ProtectedTerminal><ResearchPage /></ProtectedTerminal>} />
           <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
           <Route path="/home" element={<LandingPage />} />
-          <Route path="/" element={<ProtectedTerminal><Dashboard /></ProtectedTerminal>} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/" element={<PublicRoute />} />
           <Route path="/dashboard" element={<ProtectedTerminal><Dashboard /></ProtectedTerminal>} />
           <Route path="/scanner" element={<ProtectedTerminal><Scanner /></ProtectedTerminal>} />
           <Route path="/options-flow" element={<ProtectedTerminal><OptionsPage /></ProtectedTerminal>} />
