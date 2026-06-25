@@ -520,14 +520,6 @@ export function NewsCard() {
     </section>
   );
 }
-        <p className="newsLine" key={r[0]}>
-          <b>{r[0]}</b> {r[1]}
-        </p>
-      ))}
-      <a onClick={() => navigate("/news")} style={{ cursor: "pointer" }}>View All News →</a>
-    </section>
-  );
-}
 
 export function AcademyCard() {
   const navigate = useNavigate();
