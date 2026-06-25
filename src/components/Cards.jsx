@@ -479,10 +479,7 @@ export function NewsCard() {
   React.useEffect(() => {
     fetch(`https://trqx-flow-scanner-production.up.railway.app/api/news?limit=6`)
       .then(r => r.ok ? r.json() : { rows: [] })
-      .then(data => {
-        setRows(data.rows || []);
-        setLoading(false);
-      })
+      .then(data => { setRows(data.rows || []); setLoading(false); })
       .catch(() => setLoading(false));
     const interval = setInterval(() => {
       fetch(`https://trqx-flow-scanner-production.up.railway.app/api/news?limit=6`)
@@ -501,24 +498,28 @@ export function NewsCard() {
         <div style={{ color: "#9ca3af", fontSize: "13px", padding: "12px 0" }}>Loading headlines...</div>
       ) : rows.length === 0 ? (
         <div style={{ color: "#9ca3af", fontSize: "13px", padding: "12px 0" }}>No recent news</div>
-      } : rows.map((newsItem, i) => (
-  <a key={i} href={newsItem.url} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
-    <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", alignItems: "flex-start", cursor: "pointer" }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "3px", flex: 1 }}>
-        <span style={{ color: "#f5f1e8", fontSize: "12px", lineHeight: "1.4", fontWeight: "500" }}>{newsItem.title}</span>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <span style={{ color: "#d4af37", fontSize: "10px", fontWeight: "600" }}>{newsItem.source}</span>
-          <span style={{ color: "#9ca3af", fontSize: "10px" }}>{new Date(newsItem.published).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
-          {newsItem.sentiment && newsItem.sentiment !== "neutral" && (
-            <span style={{ color: sentimentColor(newsItem.sentiment), fontSize: "10px", fontWeight: "700" }}>
-              {newsItem.sentiment.toUpperCase()}
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
-  </a>
-))}
+      ) : rows.map((newsItem, i) => (
+        <a key={i} href={newsItem.url} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+          <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", alignItems: "flex-start", cursor: "pointer" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "3px", flex: 1 }}>
+              <span style={{ color: "#f5f1e8", fontSize: "12px", lineHeight: "1.4", fontWeight: "500" }}>{newsItem.title}</span>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <span style={{ color: "#d4af37", fontSize: "10px", fontWeight: "600" }}>{newsItem.source}</span>
+                <span style={{ color: "#9ca3af", fontSize: "10px" }}>{new Date(newsItem.published).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                {newsItem.sentiment && newsItem.sentiment !== "neutral" && (
+                  <span style={{ color: sentimentColor(newsItem.sentiment), fontSize: "10px", fontWeight: "700" }}>
+                    {newsItem.sentiment.toUpperCase()}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+      <a onClick={() => navigate("/news")} style={{ cursor: "pointer" }}>View All News →</a>
+    </section>
+  );
+}
         <p className="newsLine" key={r[0]}>
           <b>{r[0]}</b> {r[1]}
         </p>
