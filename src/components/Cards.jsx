@@ -358,7 +358,7 @@ export function ScannerCard({ full = false }) {
           r.setup,
         ]}
       />
-      <a onClick={() => navigate("/scanner")} style={{ cursor: "pointer" }}>View Full Scanner ?</a>
+      <a onClick={() => navigate("/scanner")} style={{ cursor: "pointer" }}>View Full Scanner →</a>
     </section>
   );
 }
@@ -459,7 +459,7 @@ export function OptionsFlowCard({ full = false }) {
             ? `${Number(r.contracts).toLocaleString()} @ ${Number(r.price).toFixed(2)}`
             : r.details ?? "--",
         ]}
-      />
+      <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} results` : "View All Options Flow"} →</a>
 
       <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} result(s) for ${query.toUpperCase()}` : "View All Options Flow ?"}</a>
     </section>
@@ -559,7 +559,7 @@ export function NewsCard() {
           </div>
         </a>
       ))}
-      <a onClick={() => navigate("/news")} style={{ cursor: "pointer" }}>View All News ?</a>
+      <a onClick={() => navigate("/news")} style={{ cursor: "pointer" }}>View All News →</a>
     </section>
   );
 }
