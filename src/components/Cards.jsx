@@ -125,45 +125,88 @@ export function CalendarCard() {
 }
 
 export function AiSummary() {
+  const [analysis, setAnalysis] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const API = "https://trqx-flow-scanner-production.up.railway.app";
+
+  React.useEffect(() => {
+    async function load() {
+      try {
+        const [calRes, flowRes] = await Promise.all([
+          fetch(API + "/api/economic-calendar"),
+          fetch(API + "/api/flow/stats"),
+        ]);
+        const cal = calRes.ok ? await calRes.json() : [];
+        const flow = flowRes.ok ? await flowRes.json() : {};
+        const events = Array.isArray(cal) ? cal : cal.value || cal.rows || [];
+        const topEvents = events.slice(0, 5).map(function(e) {
+          return Array.isArray(e)
+            ? e[0] + " - " + e[1] + " (Impact: " + e[2] + ", Actual: " + e[3] + ", Forecast: " + e[4] + ")"
+            : e.time + " - " + e.event;
+        }).join(", ");
+
+        const prompt = "You are a trading educator at TRQX Capital. Explain today's economic events in plain language for beginner traders. Events: " + topEvents + ". Flow Sentiment: " + (flow.sentiment || "Neutral") + ". Provide: 1) A 2-sentence plain-English summary of what happened. 2) Whether this is BULLISH, BEARISH, or NEUTRAL for stocks and why. 3) Three bullet points of what traders should watch. Keep it simple and educational.";
+
+        const aiRes = await fetch(API + "/api/ai/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: prompt, history: [] }),
+        });
+        if (aiRes.ok) {
+          const data = await aiRes.json();
+          setAnalysis(data.reply || data.message || data.content || null);
+        }
+      } catch (e) {
+        console.log("AiSummary error:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const textLines = analysis ? analysis.split("\n").filter(function(l) { return l.trim(); }) : [];
+  const isBullish = analysis && analysis.toLowerCase().includes("bullish");
+  const isBearish = analysis && analysis.toLowerCase().includes("bearish");
+  const sentimentColor = isBullish ? "#22c55e" : isBearish ? "#ef4444" : "#d4af37";
+  const sentimentLabel = isBullish ? "BULLISH" : isBearish ? "BEARISH" : "NEUTRAL";
+
   return (
     <section className="card ai">
       <div className="cardTitle purple">
-        AI Market Summary <span>TRQX AI</span>
+        Market Intelligence <span>TRQX AI</span>
       </div>
-      <p>
-        Markets are trading higher as investors digest inflation data and await
-        the Fedâ€™s next move. Tech and growth names are leading while volatility
-        remains compressed.
-      </p>
-      <b>Key Takeaways</b>
-      <ul>
-        <li>Inflation cooling supports risk assets</li>
-        <li>Gamma exposure positive above 530</li>
-        <li>Watch 4,300 SPX for regime change</li>
-      </ul>
+      {loading ? (
+        <p style={{ color: "#9ca3af", fontSize: "13px" }}>Analyzing today's economic events...</p>
+      ) : analysis ? (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+            <span style={{ background: sentimentColor + "20", border: "1px solid " + sentimentColor + "60", color: sentimentColor, fontSize: "11px", fontWeight: "800", padding: "3px 10px", borderRadius: "6px", letterSpacing: "0.08em" }}>
+              {sentimentLabel}
+            </span>
+            <span style={{ color: "#9ca3af", fontSize: "11px" }}>for equities today</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {textLines.map(function(line, i) {
+              const isBullet = line.startsWith("-") || line.startsWith("â€¢") || line.startsWith("*") || /^\d\./.test(line);
+              const clean = line.replace(/^[-â€¢*\d\.]\s*/, "").replace(/\*\*/g, "").trim();
+              if (!clean) return null;
+              if (isBullet) return (
+                <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                  <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>â€¢</span>
+                  <span style={{ color: "#9ca3af", fontSize: "13px", lineHeight: "1.5" }}>{clean}</span>
+                </div>
+              );
+              return <p key={i} style={{ color: "#f5f1e8", fontSize: "13px", lineHeight: "1.6", margin: "0 0 4px" }}>{clean}</p>;
+            })}
+          </div>
+        </div>
+      ) : (
+        <p style={{ color: "#9ca3af", fontSize: "13px" }}>No economic events to analyze today.</p>
+      )}
     </section>
   );
 }
-
-export function BreadthCard() {
-  const sectors = [
-    ["Technology", "+1.25%", 92],
-    ["Communication", "+0.60%", 78],
-    ["Financials", "+0.23%", 52],
-    ["Energy", "-0.12%", 38],
-    ["Healthcare", "-0.32%", 30],
-    ["Utilities", "-0.45%", 24],
-  ];
-
-  return (
-    <section className="card breadth">
-      <div className="cardTitle">Market Breadth</div>
-      <div className="donut"></div>
-      <div className="breadStats">
-        <span><b className="positive">72%</b> Advancing</span>
-        <span><b className="negative">23%</b> Declining</span>
-        <span><b>5%</b> Unchanged</span>
-      </div>
       <div className="sectorList">
         {sectors.map((s) => (
           <div className="sector" key={s[0]}>
