@@ -32,6 +32,7 @@ function calcFlowScore(stats) {
 export default function MarketBrief() {
   const navigate = useNavigate();
   const { token } = useAuth();
+  const [stats, setStats] = useState(null);
   const [topContracts, setTopContracts] = useState([]);
   const [gamma, setGamma] = useState(null);
   const [aiRead, setAiRead] = useState(null);
