@@ -103,12 +103,14 @@ export default function Sidebar({ active, setActive, user, tier }) {
         {navGroups.map((group) => (
           <div key={group.label}>
             <div style={{
-              color: "rgba(212,175,55,0.5)",
-              fontSize: "9px",
-              fontWeight: "800",
-              letterSpacing: "0.12em",
+              color: "rgba(212,175,55,0.6)",
+              fontSize: "10px",
+              fontWeight: "900",
+              letterSpacing: "0.15em",
               textTransform: "uppercase",
-              padding: "14px 12px 6px",
+              padding: "20px 12px 4px",
+              borderTop: group.label === "MARKET INTELLIGENCE" ? "none" : "1px solid rgba(255,255,255,0.06)",
+              marginTop: group.label === "MARKET INTELLIGENCE" ? "0" : "8px",
             }}>
               {group.label}
             </div>
