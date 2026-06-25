@@ -64,7 +64,7 @@ export default function Auth() {
       return;
     }
 
-    navigate(mode === "signup" ? "/welcome" : "/scanner");
+    navigate(mode === "signup" ? "/welcome" : "/dashboard");
   }
 
   return (
@@ -79,8 +79,8 @@ export default function Auth() {
             />
           </div>
           <div className="auth-brand-name">TRQX</div>
-          <div className="auth-brand-sub">FLOW SCANNER</div>
-          <div className="auth-brand-desc">Institutional Options Flow Intelligence</div>
+          <div className="auth-brand-sub">CAPITAL</div>
+          <div className="auth-brand-desc">Discipline. Execution. Precision.</div>
         </div>
 
         <div className="auth-divider" />
@@ -260,7 +260,7 @@ export default function Auth() {
               : mode === "reset"
                 ? "Send Reset Link →"
                 : mode === "login"
-                  ? "Enter The Scanner →"
+                  ? "Enter TRQX Capital →"
                   : "Create Account →"}
           </button>
         </form>
