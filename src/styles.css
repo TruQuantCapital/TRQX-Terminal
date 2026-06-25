@@ -1145,8 +1145,9 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
   margin: 10px 0 0;
 }
 .newsVideoWide {
-  grid-column: span 2;
-}
+    grid-column: span 2;
+    overflow: hidden;
+  }
 
 .newsVideoWide .newsVideoFrame {
   height: 360px;

@@ -184,13 +184,37 @@ setNews(sorted);
     </div>
     <span>Live Feed</span>
   </div>
-
-  <iframe
-    className="newsVideoFrame"
-    src="https://s.tradingview.com/embed-widget/timeline/?locale=en#%7B%22feedMode%22%3A%22market%22%2C%22market%22%3A%22stock%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D"
-    title="Market News Feed"
-    style={{ border: "none", width: "100%", height: "100%" }}
-  />
+  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "14px" }}>
+    {/* Left: Bloomberg TV */}
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+        📺 Bloomberg Television
+      </div>
+      <iframe
+        style={{ width: "100%", height: "280px", border: "none", borderRadius: "10px" }}
+        src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=0&mute=1"
+        title="Bloomberg Live"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+      <p style={{ color: "#9ca3af", fontSize: "11px", margin: 0 }}>
+        If unavailable, Bloomberg is blocking the embed or is not live.
+      </p>
+    </div>
+    {/* Right: TradingView News */}
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+        📰 Top Stories
+      </div>
+      <div style={{ height: "280px", borderRadius: "10px", overflow: "hidden" }}>
+        <iframe
+          src="https://s.tradingview.com/embed-widget/timeline/?locale=en#%7B%22feedMode%22%3A%22market%22%2C%22market%22%3A%22stock%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D"
+          title="Market News"
+          style={{ border: "none", width: "100%", height: "100%" }}
+        />
+      </div>
+    </div>
+  </div>
 </section>
         <div className="flowMiniCard gold" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <small>FILTERED HEADLINES</small>
