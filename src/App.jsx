@@ -1,4 +1,4 @@
-﻿import React from "react";
+﻿// TRQX Terminal v2.4 - 2026-06-25 18:51
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
