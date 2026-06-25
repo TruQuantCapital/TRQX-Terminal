@@ -473,17 +473,52 @@ export function WatchlistCard() {
 
 export function NewsCard() {
   const navigate = useNavigate();
-  const rows = [
-    ["9:12 AM", "CPI comes in line with expectations"],
-    ["9:05 AM", "Fed policy remains well-positioned"],
-    ["8:58 AM", "Unusual call activity detected in NVDA"],
-    ["8:45 AM", "Pre-market movers: MSTR, PLTR, GME"],
-  ];
+  const [rows, setRows] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    fetch(`https://trqx-flow-scanner-production.up.railway.app/api/news?limit=6`)
+      .then(r => r.ok ? r.json() : { rows: [] })
+      .then(data => {
+        setRows(data.rows || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+    const interval = setInterval(() => {
+      fetch(`https://trqx-flow-scanner-production.up.railway.app/api/news?limit=6`)
+        .then(r => r.ok ? r.json() : { rows: [] })
+        .then(data => setRows(data.rows || []));
+    }, 120000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const sentimentColor = (s) => s === "positive" ? "#22c55e" : s === "negative" ? "#ef4444" : "#9ca3af";
 
   return (
     <section className="card news">
       <div className="cardTitle purple">News & Alerts</div>
-      {rows.map((r) => (
+      {loading ? (
+        <div style={{ color: "#9ca3af", fontSize: "13px", padding: "12px 0" }}>Loading headlines...</div>
+      ) : rows.length === 0 ? (
+        <div style={{ color: "#9ca3af", fontSize: "13px", padding: "12px 0" }}>No recent news</div>
+      ) : rows.map((r, i) => (
+        <a key={i} href={r.url} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+          <div style={{ display: "flex", gap: "10px", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", alignItems: "flex-start", cursor: "pointer" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "3px", flex: 1 }}>
+              <span style={{ color: "#f5f1e8", fontSize: "12px", lineHeight: "1.4", fontWeight: "500" }}>{r.title}</span>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <span style={{ color: "#d4af37", fontSize: "10px", fontWeight: "600" }}>{r.source}</span>
+                <span style={{ color: "#9ca3af", fontSize: "10px" }}>{new Date(r.published).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                {r.sentiment && r.sentiment !== "neutral" && (
+                  <span style={{ color: sentimentColor(r.sentiment), fontSize: "10px", fontWeight: "700" }}>
+                    {r.sentiment.toUpperCase()}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
         <p className="newsLine" key={r[0]}>
           <b>{r[0]}</b> {r[1]}
         </p>
