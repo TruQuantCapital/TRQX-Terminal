@@ -145,7 +145,8 @@ export function AiSummary() {
             : e.time + " - " + e.event;
         }).join(", ");
 
-        const prompt = "You are a trading educator at TRQX Capital. Explain today's economic events in plain language for beginner traders. Events: " + topEvents + ". Flow Sentiment: " + (flow.sentiment || "Neutral") + ". Provide: 1) A 2-sentence plain-English summary of what happened. 2) Whether this is BULLISH, BEARISH, or NEUTRAL for stocks and why. 3) Three bullet points of what traders should watch. Keep it simple and educational.";
+        const eventText = topEvents || "No major economic events scheduled today.";
+        const prompt = "You are a trading educator at TRQX Capital. Give traders a brief market intelligence update based on current conditions. Flow Sentiment: " + (flow.sentiment || "Neutral") + ". Call Premium: $" + Math.round((flow.callPremium||0)/1000000) + "M. Put Premium: $" + Math.round((flow.putPremium||0)/1000000) + "M. Sweeps: " + (flow.sweepCount||0) + ". Economic Events: " + eventText + ". Provide: 1) A 2-sentence plain-English summary of current market conditions. 2) Whether this is BULLISH, BEARISH, or NEUTRAL and why. 3) Three bullet points of what traders should watch today. Keep it simple and educational.";
 
         const aiRes = await fetch(API + "/api/ai/chat", {
           method: "POST",
@@ -201,7 +202,7 @@ export function AiSummary() {
           </div>
         </div>
       ) : (
-        <p style={{ color: "#9ca3af", fontSize: "13px" }}>No economic events to analyze today.</p>
+        <p style={{ color: "#9ca3af", fontSize: "13px" }}>Loading market intelligence...</p>
       )}
     </section>
   );
