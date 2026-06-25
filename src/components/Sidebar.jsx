@@ -18,21 +18,40 @@ import {
 } from "lucide-react";
 
 export const nav = [
-  { key: "home", label: "Home", icon: Home },
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { key: "scanner", label: "Scanner", icon: Search },
+  { key: "news", label: "News & Alerts", icon: Newspaper },
+  { key: "calendar", label: "Calendar", icon: CalendarDays },
+  { key: "research", label: "Stock Research", icon: BarChart3 },
   { key: "options", label: "Options Flow", icon: Activity },
-  { key: "tradeplan", label: "Trade Plan", icon: Target },
+  { key: "scanner", label: "Flow Scanner", icon: Search },
   { key: "gamma", label: "GEMX", icon: Waves },
-  { key: "news", label: "News", icon: Newspaper },
-  { key: "calendar", label: "Economic Calendar", icon: CalendarDays },
+  { key: "tradeplan", label: "Trade Plan", icon: Target },
   { key: "alerts", label: "Alerts", icon: Bell },
   { key: "academy", label: "Academy", icon: GraduationCap },
-  { key: "research", label: "Stock Research", icon: BarChart3 },
-  { key: "guide", label: "Platform Guide", icon: BookOpen },
   { key: "patterns", label: "Flash Cards", icon: BookOpen },
+  { key: "guide", label: "How To Use", icon: BookOpen },
   { key: "discord", label: "Discord", icon: MessageCircle },
+  { key: "home", label: "Home", icon: Home },
   { key: "settings", label: "Settings", icon: Settings },
+];
+
+const navGroups = [
+  {
+    label: "MARKET INTELLIGENCE",
+    keys: ["dashboard", "news", "calendar", "research"],
+  },
+  {
+    label: "TRADING TOOLS",
+    keys: ["options", "scanner", "gamma", "tradeplan", "alerts"],
+  },
+  {
+    label: "EDUCATION",
+    keys: ["academy", "patterns", "guide"],
+  },
+  {
+    label: "COMMUNITY & ACCOUNT",
+    keys: ["discord", "home", "settings"],
+  },
 ];
 
 function initialsFromEmail(email) {
@@ -81,25 +100,43 @@ export default function Sidebar({ active, setActive, user, tier }) {
       </div>
 
       <nav className="nav">
-        {nav.map((item) => {
-          const Icon = item.icon;
-          return (
-            <button
-              key={item.key}
-              className={"navBtn " + (active === item.key ? "active" : "")}
-              onClick={() => {
-  if (item.key === "home") {
-    window.open("https://thetrulies.com", "_blank");
-  } else {
-    setActive(item.key);
-  }
-}}
-            >
-              <Icon size={18} />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
+        {navGroups.map((group) => (
+          <div key={group.label}>
+            <div style={{
+              color: "rgba(212,175,55,0.5)",
+              fontSize: "9px",
+              fontWeight: "800",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              padding: "14px 12px 6px",
+            }}>
+              {group.label}
+            </div>
+            {group.keys.map((key) => {
+              const item = nav.find(n => n.key === key);
+              if (!item) return null;
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.key}
+                  className={"navBtn " + (active === item.key ? "active" : "")}
+                  onClick={() => {
+                    if (item.key === "home") {
+                      window.open("https://thetrulies.com", "_blank");
+                    } else if (item.key === "discord") {
+                      window.open("https://discord.gg/jy3ta9qkfH", "_blank");
+                    } else {
+                      setActive(item.key);
+                    }
+                  }}
+                >
+                  <Icon size={18} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       <div className="sidebarCard pro">
