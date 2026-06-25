@@ -124,7 +124,7 @@ export default function Sidebar({ active, setActive, user, tier }) {
                   className={"navBtn " + (active === item.key ? "active" : "")}
                   onClick={() => {
                     if (item.key === "home") {
-                      window.open("https://thetrulies.com", "_blank");
+                      window.location.href = "/home";
                     } else if (item.key === "discord") {
                       window.open("https://discord.gg/jy3ta9qkfH", "_blank");
                     } else {
