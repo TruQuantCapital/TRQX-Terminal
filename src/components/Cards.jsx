@@ -109,52 +109,16 @@ export function GaugeCard() {
 
 export function CalendarCard() {
   const navigate = useNavigate();
-  const [rows, setRows] = React.useState([]);
-
-  React.useEffect(() => {
-    fetch(`https://trqx-flow-scanner-production.up.railway.app/api/economic-calendar`)
-      .then(r => r.ok ? r.json() : [])
-      .then(data => {
-        const events = Array.isArray(data) ? data : data.value || data.events || data.rows || [];
-        setRows(events.slice(0, 8));
-      })
-      .catch(() => {});
-  }, []);
-
   return (
     <section className="card calendar">
       <div className="cardTitle">Economic Calendar</div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>Event</th>
-            <th>Impact</th>
-            <th>Actual</th>
-            <th>Forecast</th>
-            <th>Prev</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i}>
-              <td>{r[0]}</td>
-              <td>{r[1]}</td>
-              <td>
-                <span className={`tag ${String(r[2]).toLowerCase()}`}>
-                  {r[2]}
-                </span>
-              </td>
-              <td>{r[3]}</td>
-              <td>{r[4]}</td>
-              <td>{r[5]}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
+      <div style={{ height: "320px", borderRadius: "8px", overflow: "hidden", marginBottom: "10px" }}>
+        <iframe
+          src="https://s.tradingview.com/embed-widget/events/?locale=en#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%2C%22countryFilter%22%3A%22us%22%7D"
+          style={{ width: "100%", height: "100%", border: "none" }}
+          title="Economic Calendar"
+        />
+      </div>
       <a onClick={() => navigate("/economic-calendar")} style={{ cursor: "pointer" }}>View Full Calendar →</a>
     </section>
   );
