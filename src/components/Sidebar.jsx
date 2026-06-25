@@ -1,6 +1,5 @@
 ﻿import React from "react";
 import {
-  Home,
   LayoutDashboard,
   Search,
   Activity,
@@ -13,7 +12,9 @@ import {
   Newspaper,
   Settings,
   Crown,
-  BookOpen
+  BookOpen,
+  Home,
+  BarChart3,
 } from "lucide-react";
 
 export const nav = [
