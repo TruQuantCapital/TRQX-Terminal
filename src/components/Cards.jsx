@@ -188,13 +188,12 @@ export function AiSummary() {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {textLines.map(function(line, i) {
-              const isBullet = line.startsWith("-") || line.startsWith("â€¢") || line.startsWith("*") || /^\d\./.test(line);
-              const clean = line.replace(/^[-â€¢*\d\.]\s*/, "").replace(/\*\*/g, "").trim();
-              if (!clean) return null;
+              const isBullet = line.startsWith("-") || line.startsWith("*") || /^\d\./.test(line);
+              const clean = line.replace(/^[-*\d.]\s*/, "").replace(/\*\*/g, "").trim();
               if (isBullet) return (
                 <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
                   <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>â€¢</span>
-                  <span style={{ color: "#9ca3af", fontSize: "13px", lineHeight: "1.5" }}>{clean}</span>
+                  <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>-</span>
                 </div>
               );
               return <p key={i} style={{ color: "#f5f1e8", fontSize: "13px", lineHeight: "1.6", margin: "0 0 4px" }}>{clean}</p>;
@@ -207,6 +206,24 @@ export function AiSummary() {
     </section>
   );
 }
+export function BreadthCard() {
+  const sectors = [
+    ["Technology", "+1.25%", 92],
+    ["Communication", "+0.60%", 78],
+    ["Financials", "+0.23%", 52],
+    ["Energy", "-0.12%", 38],
+    ["Healthcare", "-0.32%", 30],
+    ["Utilities", "-0.45%", 24],
+  ];
+  return (
+    <section className="card breadth">
+      <div className="cardTitle">Market Breadth</div>
+      <div className="donut"></div>
+      <div className="breadStats">
+        <span><b className="positive">72%</b> Advancing</span>
+        <span><b className="negative">23%</b> Declining</span>
+        <span><b>5%</b> Unchanged</span>
+      </div>
       <div className="sectorList">
         {sectors.map((s) => (
           <div className="sector" key={s[0]}>
