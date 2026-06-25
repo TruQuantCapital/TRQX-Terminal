@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Link } from "react-router-dom";
 import {
   Zap,
@@ -42,30 +42,28 @@ const features = [
 
 const plans = [
   {
-    name: "TRQX ORB Indicator",
-    price: "$49.99",
-    features: ["Precision ORB Indicator", "Setup Guide", "ORB Academy Lessons", "Discord ORB Channel"],
+    name: "Free",
+    price: "$0",
+    badge: null,
+    features: ["Market Intelligence (AI daily brief)", "News & Alerts feed", "Economic Calendar", "Landing page access"],
   },
   {
-    name: "TRQX Scanner + Gamma",
+    name: "Starter",
+    price: "$49",
+    badge: "FOUNDING",
+    features: ["Everything in Free", "TRQX Academy - all 3 levels", "Flash Cards (28 pattern cards)", "Platform Guide", "Stock Research"],
+  },
+  {
+    name: "Pro",
     price: "$79",
-    features: ["Options Flow Scanner", "Gamma Dashboard", "Unusual Activity", "Dark Pool Activity", "Daily Watchlist"],
+    badge: "MOST POPULAR",
+    features: ["Everything in Starter", "Options Flow Scanner", "GEMX Gamma Dashboard", "Trade Plan builder", "AI Chat on Scanner & Academy", "Golden flow alerts", "Dark pool prints"],
   },
   {
-    name: "TRQX Academy",
-    price: "$99",
-    features: ["Structured Lessons", "Quizzes & Homework", "Beginner to Advanced", "Trading Fundamentals", "Community Access"],
-  },
-  {
-    name: "TRQX Elite",
+    name: "Elite",
     price: "$149",
-    badge: "Best Value",
-    features: ["Everything in Scanner", "Everything in Academy", "Market News", "Economic Calendar", "Trade Plan Engine", "Multi-Asset Coverage"],
-  },
-  {
-    name: "TRQX Mentorship",
-    price: "$299",
-    features: ["Everything in Elite", "Weekly Group Coaching", "Chart & Trade Reviews", "Direct Q&A Access", "Accountability & Support"],
+    badge: "ALL ACCESS",
+    features: ["Everything in Pro", "Discord webhook alerts", "ORB Indicator access", "AI Chat everywhere", "MarketBrief AI read", "Smart money tracker", "Flow replay"],
   },
 ];
 
@@ -129,7 +127,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Live Market Overview</b>
-              <Link to="/dashboard">View All →</Link>
+              <Link to="/dashboard">View All â†’</Link>
             </div>
             <div className="marketGrid">
               {marketRows.map(([sym, price, change]) => (
@@ -145,7 +143,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Today's Smart Money</b>
-              <Link to="/options-flow">View Flow →</Link>
+              <Link to="/options-flow">View Flow â†’</Link>
             </div>
             {smartMoney.map(([sym, prem, type]) => (
               <div key={sym} className="flowRow">
@@ -159,7 +157,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Gamma Dashboard</b>
-              <Link to="/gamma-ex">View Map →</Link>
+              <Link to="/gamma-ex">View Map â†’</Link>
             </div>
             <div className="gammaLine"><span>Gamma Flip</span><div><i style={{ width: "82%" }} /></div><b>534</b></div>
             <div className="gammaLine"><span>Call Wall</span><div><i style={{ width: "70%" }} /></div><b>560</b></div>
@@ -170,7 +168,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Economic Calendar</b>
-              <Link to="/economic-calendar">View Calendar →</Link>
+              <Link to="/economic-calendar">View Calendar â†’</Link>
             </div>
             <div className="eventRow"><span>08:30 AM</span><b>CPI Release</b><em>High</em></div>
             <div className="eventRow"><span>10:00 AM</span><b>FOMC Minutes</b><em>High</em></div>
@@ -208,7 +206,7 @@ export default function LandingPage() {
               <h3>{plan.name}</h3>
               <div className="planPrice">{plan.price}<span>/mo</span></div>
               <ul>
-                {plan.features.map((item) => <li key={item}>✓ {item}</li>)}
+                {plan.features.map((item) => <li key={item}>âœ“ {item}</li>)}
               </ul>
               <Link to="/pricing" className={plan.badge ? "goldButton" : "darkButton"}>
                 {plan.name.includes("Mentorship") ? "Apply Now" : "Get Started"}
