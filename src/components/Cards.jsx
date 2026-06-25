@@ -149,14 +149,14 @@ export function AiSummary() {
         const prompt = "You are a trading educator at TRQX Capital. Give traders a brief market intelligence update. Flow Sentiment: " + (flow.sentiment || "Neutral") + ". Call Premium: $" + Math.round((flow.callPremium||0)/1000000) + "M. Put Premium: $" + Math.round((flow.putPremium||0)/1000000) + "M. Sweeps: " + (flow.sweepCount||0) + ". Events: " + eventText + ". Respond with plain text only, no markdown or hashtags. Write: one 2-sentence summary, then BULLISH BEARISH or NEUTRAL with one reason, then 3 watch items each starting with a dash.";
 
         const aiRes = await fetch(API + "/api/market-intelligence", {
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ prompt }),
-});
-if (aiRes.ok) {
-  const data = await aiRes.json();
-  setAnalysis(data.reply || null);
-}
-      } catch (e) {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt }),
+        });
+        if (aiRes.ok) {
+          const data = await aiRes.json();
+          setAnalysis(data.reply || null);
+        }
         console.log("AiSummary error:", e);
       } finally {
         setLoading(false);
