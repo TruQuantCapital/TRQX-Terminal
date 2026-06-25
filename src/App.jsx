@@ -21,6 +21,7 @@ import Alerts from "./pages/Alerts";
 import Reports from "./pages/Reports";
 import Welcome from "./pages/Welcome";
 import ResetPassword from "./pages/ResetPassword";
+import SettingsPage from "./pages/SettingsPage";
 import "./styles.css";
 import "./app.css";
 
@@ -146,8 +147,7 @@ export default function App() {
           <Route path="/reports" element={<ProtectedTerminal><Reports /></ProtectedTerminal>} />
 
           <Route path="/discord" element={<DiscordRedirect />} />
-          <Route path="/settings" element={<ProtectedTerminal><PlaceholderPage active="settings" /></ProtectedTerminal>} />
-
+          <Route path="/settings" element={<ProtectedTerminal><SettingsPage /></ProtectedTerminal>} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>

@@ -97,7 +97,7 @@ export default function Sidebar({ active, setActive, user, tier }) {
           <b>TRQX CAPITAL ELITE</b>
           <p>Elite Member</p>
         </div>
-        <button>Elite Access</button>
+        <button onClick={() => window.location.href = "/pricing"}>Elite Access</button>
       </div>
 
       <div className="sidebarCard discord">
@@ -106,7 +106,7 @@ export default function Sidebar({ active, setActive, user, tier }) {
           <b>TRQX Trading Floor</b>
           <p>Live alerts - Education - Market prep</p>
         </div>
-        <button>Join Floor</button>
+        <button onClick={() => window.open("https://discord.gg/jy3ta9qkfH", "_blank")}>Join Floor</button>
       </div>
 
       <div className="userMini">
