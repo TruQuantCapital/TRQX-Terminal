@@ -57,7 +57,7 @@ function Card({ children, style }) {
   return (
     <div style={{
       background: CARD, border: `1px solid ${BORDER}`,
-      borderRadius: "12px", padding: "20px", ...style,
+      borderRadius: "14px", padding: "24px", ...style,
     }}>
       {children}
     </div>
@@ -189,31 +189,35 @@ function RevenueChart({ reports }) {
   const maxRev = Math.max(...reports.map(r => Math.abs(Number(r.revenue) || 0)));
   const maxNI = Math.max(...reports.map(r => Math.abs(Number(r.netIncome) || 0)));
   const maxVal = Math.max(maxRev, maxNI);
+  const CHART_H = 160;
   return (
     <div>
-      <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
+      <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div style={{ width: "12px", height: "12px", borderRadius: "2px", background: GREEN }} />
-          <span style={{ color: MUTED, fontSize: "12px" }}>Revenue (B)</span>
+          <span style={{ color: MUTED, fontSize: "13px" }}>Revenue (B)</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div style={{ width: "12px", height: "12px", borderRadius: "2px", background: GOLD }} />
-          <span style={{ color: MUTED, fontSize: "12px" }}>Net Income (B)</span>
+          <span style={{ color: MUTED, fontSize: "13px" }}>Net Income (B)</span>
         </div>
       </div>
-      <div style={{ display: "flex", alignItems: "flex-end", gap: "12px", height: "120px" }}>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", height: `${CHART_H}px`, padding: "0 8px" }}>
         {reports.map((r, i) => {
           const rev = Number(r.revenue) || 0;
           const ni = Number(r.netIncome) || 0;
-          const revH = maxVal > 0 ? (Math.abs(rev) / maxVal) * 100 : 0;
-          const niH = maxVal > 0 ? (Math.abs(ni) / maxVal) * 100 : 0;
+          const revH = maxVal > 0 ? Math.max((Math.abs(rev) / maxVal) * (CHART_H - 24), 4) : 4;
+          const niH = maxVal > 0 ? Math.max((Math.abs(ni) / maxVal) * (CHART_H - 24), 4) : 4;
+          const revLabel = Math.abs(rev) >= 1e9 ? `$${(rev/1e9).toFixed(0)}B` : rev ? `$${(rev/1e6).toFixed(0)}M` : "";
           return (
-            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
-              <div style={{ display: "flex", alignItems: "flex-end", gap: "3px", height: "100px" }}>
-                <div style={{ width: "16px", height: `${revH}%`, background: GREEN, borderRadius: "3px 3px 0 0", minHeight: "4px" }} />
-                <div style={{ width: "16px", height: `${niH}%`, background: GOLD, borderRadius: "3px 3px 0 0", minHeight: "4px" }} />
+            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+              <div style={{ display: "flex", alignItems: "flex-end", gap: "4px", height: `${CHART_H - 24}px` }}>
+                <div style={{ width: "22px", height: `${revH}px`, background: GREEN, borderRadius: "4px 4px 0 0", position: "relative" }}>
+                  {revLabel && <span style={{ position: "absolute", top: "-18px", left: "50%", transform: "translateX(-50%)", color: GREEN, fontSize: "9px", whiteSpace: "nowrap", fontWeight: "700" }}>{revLabel}</span>}
+                </div>
+                <div style={{ width: "22px", height: `${niH}px`, background: GOLD, borderRadius: "4px 4px 0 0" }} />
               </div>
-              <span style={{ color: MUTED, fontSize: "10px" }}>{r.year || r.period?.split("-")[0] || `Y${i + 1}`}</span>
+              <span style={{ color: MUTED, fontSize: "11px", fontWeight: "600" }}>{r.year || r.period?.split("-")[0] || `Y${i + 1}`}</span>
             </div>
           );
         })}
@@ -225,7 +229,7 @@ function RevenueChart({ reports }) {
 // ── TradingView Chart ─────────────────────────────────────────────────────────
 function TVChart({ symbol }) {
   return (
-    <div style={{ width: "100%", height: "300px", background: "rgba(0,0,0,0.3)", borderRadius: "8px", overflow: "hidden" }}>
+    <div style={{ width: "100%", height: "380px", background: "rgba(0,0,0,0.3)", borderRadius: "8px", overflow: "hidden" }}>
       <iframe
         title={`${symbol} chart`}
         src={`https://s.tradingview.com/widgetembed/?frameElementId=tv_chart&symbol=${symbol}&interval=D&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&toolbarbg=000000&studies=[]&theme=dark&style=1&timezone=exchange&withdateranges=1&showpopupbutton=0`}
@@ -501,7 +505,7 @@ export default function ResearchPage() {
 
           {/* OVERVIEW TAB */}
           {activeTab === "Overview" && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
 
               {/* 1. Company Overview */}
               <Card style={{ gridColumn: "1" }}>
