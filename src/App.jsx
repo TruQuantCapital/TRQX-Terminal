@@ -128,6 +128,12 @@ function DiscordRedirect() {
   }, []);
   return null;
 }
+function PublicRoute() {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingScreen />;
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <LandingPage />;
+}
 export default function App() {
   return (
     <AuthProvider>
