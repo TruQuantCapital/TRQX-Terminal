@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const API = import.meta.env.VITE_API_URL || "https://trqx-flow-scanner-production.up.railway.app";
 
@@ -30,13 +31,14 @@ function calcFlowScore(stats) {
 
 export default function MarketBrief() {
   const navigate = useNavigate();
-  const [stats, setStats] = useState(null);
+  const { token } = useAuth();
   const [topContracts, setTopContracts] = useState([]);
   const [gamma, setGamma] = useState(null);
   const [aiRead, setAiRead] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!token) return;
     async function load() {
       try {
         const [statsRes, topRes, gammaRes] = await Promise.all([
@@ -69,7 +71,10 @@ Write exactly 2 sentences. Be specific, professional, and actionable. Reference 
 
             const aiRes = await fetch(`${API}/api/ai/chat`, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+              },
               body: JSON.stringify({ message: prompt, history: [] }),
             });
             if (aiRes.ok) {
@@ -164,7 +169,7 @@ Write exactly 2 sentences. Be specific, professional, and actionable. Reference 
           ? "Loading market intelligence..."
           : aiRead
           ? aiRead
-          : `Market conditions are ${sentiment.toLowerCase()}. Dealer positioning is ${dealerPos.toLowerCase()} with ${fmtPrem(stats?.callPremium)} in call premium vs ${fmtPrem(stats?.putPremium)} in put premium. Top flow in ${topTicker} — watch key gamma levels for continuation.`
+          : `Market conditions are ${sentiment.toLowerCase()}. Dealer positioning is ${dealerPos.toLowerCase()} with ${fmtPrem(stats?.callPremium)} in call premium vs ${fmtPrem(stats?.putPremium)} in put premium. Top flow in ${topTicker} â€” watch key gamma levels for continuation.`
         }
       </div>
 
