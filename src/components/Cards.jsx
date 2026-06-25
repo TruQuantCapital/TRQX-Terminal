@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+ï»¿import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GraduationCap, Waves, Crown, ExternalLink } from "lucide-react";
 import DataTable from "./DataTable";
@@ -148,7 +148,7 @@ export function AiSummary() {
         const eventText = topEvents || "No major economic events scheduled today.";
         const prompt = "You are a trading educator at TRQX Capital. Give traders a brief market intelligence update. Flow Sentiment: " + (flow.sentiment || "Neutral") + ". Call Premium: $" + Math.round((flow.callPremium||0)/1000000) + "M. Put Premium: $" + Math.round((flow.putPremium||0)/1000000) + "M. Sweeps: " + (flow.sweepCount||0) + ". Events: " + eventText + ". Respond with plain text only, no markdown or hashtags. Write: one 2-sentence summary, then BULLISH BEARISH or NEUTRAL with one reason, then 3 watch items each starting with a dash.";
 
-  method: "POST",
+        const aiRes = await fetch(API + "/api/market-intelligence", {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ prompt }),
 });
@@ -191,18 +191,18 @@ if (aiRes.ok) {
   const clean = line
     .replace(/^#{1,3}\s*/, "")
     .replace(/\*\*/g, "")
-    .replace(/^[-•*]\s*/, "")
+    .replace(/^[-â€¢*]\s*/, "")
     .replace(/^\d\.\s*/, "")
     .trim();
   if (!clean || clean === "-") return null;
   const isHeader = line.startsWith("#") || line.startsWith("**");
-  const isBullet = line.trimStart().startsWith("-") || line.trimStart().startsWith("•") || line.trimStart().startsWith("*") || /^\d\./.test(line.trimStart());
+  const isBullet = line.trimStart().startsWith("-") || line.trimStart().startsWith("â€¢") || line.trimStart().startsWith("*") || /^\d\./.test(line.trimStart());
   if (isHeader) return (
     <b key={i} style={{ color: "#f5f1e8", fontSize: "13px", display: "block", marginTop: "10px", marginBottom: "4px" }}>{clean}</b>
   );
   if (isBullet) return (
     <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start", marginBottom: "4px" }}>
-      <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>•</span>
+      <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>â€¢</span>
       <span style={{ color: "#9ca3af", fontSize: "13px", lineHeight: "1.5" }}>{clean}</span>
     </div>
   );
@@ -469,11 +469,11 @@ export function OptionsFlowCard({ full = false }) {
 export function WatchlistCard() {
   const navigate = useNavigate();
   const [rows, setRows] = useState([
-    { ticker: "SPY", price: "—", change: "—", volume: "—" },
-    { ticker: "QQQ", price: "—", change: "—", volume: "—" },
-    { ticker: "IWM", price: "—", change: "—", volume: "—" },
-    { ticker: "NVDA", price: "—", change: "—", volume: "—" },
-    { ticker: "TSLA", price: "—", change: "—", volume: "—" },
+    { ticker: "SPY", price: "â€”", change: "â€”", volume: "â€”" },
+    { ticker: "QQQ", price: "â€”", change: "â€”", volume: "â€”" },
+    { ticker: "IWM", price: "â€”", change: "â€”", volume: "â€”" },
+    { ticker: "NVDA", price: "â€”", change: "â€”", volume: "â€”" },
+    { ticker: "TSLA", price: "â€”", change: "â€”", volume: "â€”" },
   ]);
 
   useEffect(() => {
@@ -484,11 +484,11 @@ export function WatchlistCard() {
           const res = await fetch(`${API}/api/quote/${sym}`);
           if (!res.ok) throw new Error("failed");
           const d = await res.json();
-          const price = d.price ? Number(d.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—";
-          const change = d.changePct != null ? `${d.changePct >= 0 ? "+" : ""}${Number(d.changePct).toFixed(2)}%` : "—";
-          return { ticker: sym, price, change, volume: "—" };
+          const price = d.price ? Number(d.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "â€”";
+          const change = d.changePct != null ? `${d.changePct >= 0 ? "+" : ""}${Number(d.changePct).toFixed(2)}%` : "â€”";
+          return { ticker: sym, price, change, volume: "â€”" };
         } catch {
-          return { ticker: sym, price: "—", change: "—", volume: "—" };
+          return { ticker: sym, price: "â€”", change: "â€”", volume: "â€”" };
         }
       }));
       setRows(results);
