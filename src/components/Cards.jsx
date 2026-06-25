@@ -189,16 +189,26 @@ if (aiRes.ok) {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {textLines.map(function(line, i) {
-              const isBullet = line.startsWith("-") || line.startsWith("*") || /^\d\./.test(line);
-              const clean = line.replace(/^[-*\d.]\s*/, "").replace(/\*\*/g, "").trim();
-              if (isBullet) return (
-                <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
-                  <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>â€¢</span>
-                  <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>-</span>
-                </div>
-              );
-              return <p key={i} style={{ color: "#f5f1e8", fontSize: "13px", lineHeight: "1.6", margin: "0 0 4px" }}>{clean}</p>;
-            })}
+  const clean = line
+    .replace(/^#{1,3}\s*/, "")
+    .replace(/\*\*/g, "")
+    .replace(/^[-•*]\s*/, "")
+    .replace(/^\d\.\s*/, "")
+    .trim();
+  if (!clean || clean === "-") return null;
+  const isHeader = line.startsWith("#") || line.startsWith("**");
+  const isBullet = line.trimStart().startsWith("-") || line.trimStart().startsWith("•") || line.trimStart().startsWith("*") || /^\d\./.test(line.trimStart());
+  if (isHeader) return (
+    <b key={i} style={{ color: "#f5f1e8", fontSize: "13px", display: "block", marginTop: "10px", marginBottom: "4px" }}>{clean}</b>
+  );
+  if (isBullet) return (
+    <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start", marginBottom: "4px" }}>
+      <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>•</span>
+      <span style={{ color: "#9ca3af", fontSize: "13px", lineHeight: "1.5" }}>{clean}</span>
+    </div>
+  );
+  return <p key={i} style={{ color: "#f5f1e8", fontSize: "13px", lineHeight: "1.6", margin: "0 0 6px" }}>{clean}</p>;
+})}
           </div>
         </div>
       ) : (
