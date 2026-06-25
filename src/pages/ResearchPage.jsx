@@ -186,38 +186,37 @@ function RevenueChart({ reports }) {
   if (!reports || reports.length === 0) return (
     <div style={{ color: MUTED, fontSize: "13px", padding: "20px 0" }}>No financial data available</div>
   );
-  const maxRev = Math.max(...reports.map(r => Math.abs(Number(r.revenue) || 0)));
-  const maxNI = Math.max(...reports.map(r => Math.abs(Number(r.netIncome) || 0)));
-  const maxVal = Math.max(maxRev, maxNI);
+  const maxVal = Math.max(...reports.map(r => Math.abs(Number(r.epsActual) || 0)));
   const CHART_H = 160;
   return (
     <div>
       <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div style={{ width: "12px", height: "12px", borderRadius: "2px", background: GREEN }} />
-          <span style={{ color: MUTED, fontSize: "13px" }}>Revenue (B)</span>
+          <span style={{ color: MUTED, fontSize: "13px" }}>EPS Actual</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <div style={{ width: "12px", height: "12px", borderRadius: "2px", background: GOLD }} />
-          <span style={{ color: MUTED, fontSize: "13px" }}>Net Income (B)</span>
+          <span style={{ color: MUTED, fontSize: "13px" }}>EPS Estimate</span>
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", height: `${CHART_H}px`, padding: "0 8px" }}>
         {reports.map((r, i) => {
-          const rev = Number(r.revenue) || 0;
-          const ni = Number(r.netIncome) || 0;
-          const revH = maxVal > 0 ? Math.max((Math.abs(rev) / maxVal) * (CHART_H - 24), 4) : 4;
-          const niH = maxVal > 0 ? Math.max((Math.abs(ni) / maxVal) * (CHART_H - 24), 4) : 4;
-          const revLabel = Math.abs(rev) >= 1e9 ? `$${(rev/1e9).toFixed(0)}B` : rev ? `$${(rev/1e6).toFixed(0)}M` : "";
+          const actual = Number(r.epsActual) || 0;
+          const estimate = Number(r.epsEstimate) || 0;
+          const actualH = maxVal > 0 ? Math.max((Math.abs(actual) / maxVal) * (CHART_H - 30), 6) : 6;
+          const estimateH = maxVal > 0 ? Math.max((Math.abs(estimate) / maxVal) * (CHART_H - 30), 6) : 6;
           return (
             <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-              <div style={{ display: "flex", alignItems: "flex-end", gap: "4px", height: `${CHART_H - 24}px` }}>
-                <div style={{ width: "22px", height: `${revH}px`, background: GREEN, borderRadius: "4px 4px 0 0", position: "relative" }}>
-                  {revLabel && <span style={{ position: "absolute", top: "-18px", left: "50%", transform: "translateX(-50%)", color: GREEN, fontSize: "9px", whiteSpace: "nowrap", fontWeight: "700" }}>{revLabel}</span>}
+              <div style={{ display: "flex", alignItems: "flex-end", gap: "4px", height: `${CHART_H - 30}px` }}>
+                <div style={{ position: "relative", width: "22px", height: `${actualH}px`, background: GREEN, borderRadius: "4px 4px 0 0" }}>
+                  <span style={{ position: "absolute", top: "-18px", left: "50%", transform: "translateX(-50%)", color: GREEN, fontSize: "9px", whiteSpace: "nowrap", fontWeight: "700" }}>
+                    ${fmt(actual)}
+                  </span>
                 </div>
-                <div style={{ width: "22px", height: `${niH}px`, background: GOLD, borderRadius: "4px 4px 0 0" }} />
+                <div style={{ width: "22px", height: `${estimateH}px`, background: GOLD, borderRadius: "4px 4px 0 0" }} />
               </div>
-              <span style={{ color: MUTED, fontSize: "11px", fontWeight: "600" }}>{r.year || r.period?.split("-")[0] || `Y${i + 1}`}</span>
+              <span style={{ color: MUTED, fontSize: "11px", fontWeight: "600" }}>{r.year}</span>
             </div>
           );
         })}
@@ -666,9 +665,9 @@ export default function ResearchPage() {
                       {financials.reports.map((r, i) => (
                         <tr key={i}>
                           <td style={{ color: TEXT, padding: "10px 0", borderBottom: `1px solid ${BORDER}` }}>{r.year}</td>
-                          <td style={{ color: GREEN, padding: "10px 0", borderBottom: `1px solid ${BORDER}` }}>{fmtB(r.revenue)}</td>
-                          <td style={{ color: r.netIncome > 0 ? GREEN : RED, padding: "10px 0", borderBottom: `1px solid ${BORDER}` }}>{fmtB(r.netIncome)}</td>
-                          <td style={{ color: MUTED, padding: "10px 0", borderBottom: `1px solid ${BORDER}` }}>{fmtB(r.operatingCF)}</td>
+                          <td style={{ color: GREEN, padding: "10px 0", borderBottom: `1px solid ${BORDER}`, fontWeight: "700" }}>${fmt(r.epsActual)}</td>
+                          <td style={{ color: MUTED, padding: "10px 0", borderBottom: `1px solid ${BORDER}` }}>${fmt(r.epsEstimate)}</td>
+                          <td style={{ color: MUTED, padding: "10px 0", borderBottom: `1px solid ${BORDER}` }}>{r.quarters || "--"} qtrs</td>
                         </tr>
                       ))}
                     </tbody>
