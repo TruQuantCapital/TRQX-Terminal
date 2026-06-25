@@ -27,6 +27,7 @@ export const nav = [
   { key: "calendar", label: "Economic Calendar", icon: CalendarDays },
   { key: "alerts", label: "Alerts", icon: Bell },
   { key: "academy", label: "Academy", icon: GraduationCap },
+  { key: "research", label: "Stock Research", icon: BarChart3 },
   { key: "guide", label: "Platform Guide", icon: BookOpen },
   { key: "patterns", label: "Flash Cards", icon: BookOpen },
   { key: "discord", label: "Discord", icon: MessageCircle },

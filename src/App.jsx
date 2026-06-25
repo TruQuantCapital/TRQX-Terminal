@@ -13,6 +13,7 @@ import OptionsPage from "./pages/OptionsPage";
 import TradePlanPage from "./pages/TradePlanPage";
 import EconomicCalendarPage from "./pages/EconomicCalendarPage";
 import AcademyPage from "./pages/AcademyPage";
+import ResearchPage from "./pages/ResearchPage";
 import PatternsPage from "./pages/PatternsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import Auth from "./pages/Auth";
@@ -35,6 +36,7 @@ const routeByKey = {
   calendar: "/economic-calendar",
   alerts: "/alerts",
   academy: "/academy",
+  research: "/research",
   patterns: "/patterns",
   guide: "/guide",
   discord: "/discord",
@@ -52,6 +54,7 @@ const keyByPath = {
   "/economic-calendar": "calendar",
   "/alerts": "alerts",
   "/academy": "academy",
+  "/research": "research",
   "/patterns": "patterns",
   "/guide": "guide",
   "/discord": "discord",
@@ -132,6 +135,7 @@ export default function App() {
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/research" element={<ProtectedTerminal><ResearchPage /></ProtectedTerminal>} />
           <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
           <Route path="/home" element={<LandingPage />} />
           <Route path="/" element={<ProtectedTerminal><Dashboard /></ProtectedTerminal>} />
@@ -148,7 +152,6 @@ export default function App() {
           <Route path="/pricing" element={<ProtectedTerminal><Pricing /></ProtectedTerminal>} />
           <Route path="/alerts" element={<ProtectedTerminal><Alerts /></ProtectedTerminal>} />
           <Route path="/reports" element={<ProtectedTerminal><Reports /></ProtectedTerminal>} />
-
           <Route path="/discord" element={<DiscordRedirect />} />
           <Route path="/settings" element={<ProtectedTerminal><SettingsPage /></ProtectedTerminal>} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
