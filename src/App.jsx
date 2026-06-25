@@ -114,7 +114,13 @@ function ProtectedTerminal({ children }) {
     </ProtectedRoute>
   );
 }
-
+function DiscordRedirect() {
+  React.useEffect(() => {
+    window.open("https://discord.gg/jy3ta9qkfH", "_blank");
+    window.history.back();
+  }, []);
+  return null;
+}
 export default function App() {
   return (
     <AuthProvider>
@@ -139,7 +145,7 @@ export default function App() {
           <Route path="/alerts" element={<ProtectedTerminal><Alerts /></ProtectedTerminal>} />
           <Route path="/reports" element={<ProtectedTerminal><Reports /></ProtectedTerminal>} />
 
-          <Route path="/discord" element={<ProtectedTerminal><PlaceholderPage active="discord" /></ProtectedTerminal>} />
+          <Route path="/discord" element={<DiscordRedirect />} />
           <Route path="/settings" element={<ProtectedTerminal><PlaceholderPage active="settings" /></ProtectedTerminal>} />
 
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
