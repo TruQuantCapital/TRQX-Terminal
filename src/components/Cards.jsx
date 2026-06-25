@@ -1,4 +1,4 @@
-ï»¿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GraduationCap, Waves, Crown, ExternalLink } from "lucide-react";
 import DataTable from "./DataTable";
@@ -119,7 +119,7 @@ export function CalendarCard() {
           title="Economic Calendar"
         />
       </div>
-      <a onClick={() => navigate("/economic-calendar")} style={{ cursor: "pointer" }}>View Full Calendar â†’</a>
+      <a onClick={() => navigate("/economic-calendar")} style={{ cursor: "pointer" }}>View Full Calendar ?</a>
     </section>
   );
 }
@@ -146,8 +146,8 @@ export function AiSummary() {
         }).join(", ");
 
         const eventText = topEvents || "No major economic events scheduled today.";
-". Respond with plain text only, no markdown symbols or hashtags. Provide: A 2-sentence summary of current conditions. Then state BULLISH, BEARISH, or NEUTRAL and one sentence why. Then list 3 things to watch starting each with a dash."
-        const aiRes = await fetch(API + "/api/market-intelligence", {
+        const prompt = "You are a trading educator at TRQX Capital. Give traders a brief market intelligence update. Flow Sentiment: " + (flow.sentiment || "Neutral") + ". Call Premium: $" + Math.round((flow.callPremium||0)/1000000) + "M. Put Premium: $" + Math.round((flow.putPremium||0)/1000000) + "M. Sweeps: " + (flow.sweepCount||0) + ". Events: " + eventText + ". Respond with plain text only, no markdown or hashtags. Write: one 2-sentence summary, then BULLISH BEARISH or NEUTRAL with one reason, then 3 watch items each starting with a dash.";
+
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ prompt }),
@@ -191,18 +191,18 @@ if (aiRes.ok) {
   const clean = line
     .replace(/^#{1,3}\s*/, "")
     .replace(/\*\*/g, "")
-    .replace(/^[-â€¢*]\s*/, "")
+    .replace(/^[-•*]\s*/, "")
     .replace(/^\d\.\s*/, "")
     .trim();
   if (!clean || clean === "-") return null;
   const isHeader = line.startsWith("#") || line.startsWith("**");
-  const isBullet = line.trimStart().startsWith("-") || line.trimStart().startsWith("â€¢") || line.trimStart().startsWith("*") || /^\d\./.test(line.trimStart());
+  const isBullet = line.trimStart().startsWith("-") || line.trimStart().startsWith("•") || line.trimStart().startsWith("*") || /^\d\./.test(line.trimStart());
   if (isHeader) return (
     <b key={i} style={{ color: "#f5f1e8", fontSize: "13px", display: "block", marginTop: "10px", marginBottom: "4px" }}>{clean}</b>
   );
   if (isBullet) return (
     <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start", marginBottom: "4px" }}>
-      <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>â€¢</span>
+      <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>•</span>
       <span style={{ color: "#9ca3af", fontSize: "13px", lineHeight: "1.5" }}>{clean}</span>
     </div>
   );
@@ -284,7 +284,7 @@ export function GammaCard({ full = false }) {
   return (
     <section className={`card gamma ${full ? "fullPageCard" : "wide"}`}>
       <div className="cardTitle purple" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ cursor: "pointer" }} onClick={() => navigate("/gamma-ex")}>Gamma Exposure ({gamma?.ticker ?? ticker}) â†—</span>
+        <span style={{ cursor: "pointer" }} onClick={() => navigate("/gamma-ex")}>Gamma Exposure ({gamma?.ticker ?? ticker}) ?</span>
         <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
           <input
             value={tickerInput}
@@ -358,7 +358,7 @@ export function ScannerCard({ full = false }) {
           r.setup,
         ]}
       />
-      <a onClick={() => navigate("/scanner")} style={{ cursor: "pointer" }}>View Full Scanner â†’</a>
+      <a onClick={() => navigate("/scanner")} style={{ cursor: "pointer" }}>View Full Scanner ?</a>
     </section>
   );
 }
@@ -461,7 +461,7 @@ export function OptionsFlowCard({ full = false }) {
         ]}
       />
 
-      <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} result(s) for ${query.toUpperCase()}` : "View All Options Flow â†’"}</a>
+      <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} result(s) for ${query.toUpperCase()}` : "View All Options Flow ?"}</a>
     </section>
   );
 }
@@ -469,11 +469,11 @@ export function OptionsFlowCard({ full = false }) {
 export function WatchlistCard() {
   const navigate = useNavigate();
   const [rows, setRows] = useState([
-    { ticker: "SPY", price: "â€”", change: "â€”", volume: "â€”" },
-    { ticker: "QQQ", price: "â€”", change: "â€”", volume: "â€”" },
-    { ticker: "IWM", price: "â€”", change: "â€”", volume: "â€”" },
-    { ticker: "NVDA", price: "â€”", change: "â€”", volume: "â€”" },
-    { ticker: "TSLA", price: "â€”", change: "â€”", volume: "â€”" },
+    { ticker: "SPY", price: "—", change: "—", volume: "—" },
+    { ticker: "QQQ", price: "—", change: "—", volume: "—" },
+    { ticker: "IWM", price: "—", change: "—", volume: "—" },
+    { ticker: "NVDA", price: "—", change: "—", volume: "—" },
+    { ticker: "TSLA", price: "—", change: "—", volume: "—" },
   ]);
 
   useEffect(() => {
@@ -484,11 +484,11 @@ export function WatchlistCard() {
           const res = await fetch(`${API}/api/quote/${sym}`);
           if (!res.ok) throw new Error("failed");
           const d = await res.json();
-          const price = d.price ? Number(d.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "â€”";
-          const change = d.changePct != null ? `${d.changePct >= 0 ? "+" : ""}${Number(d.changePct).toFixed(2)}%` : "â€”";
-          return { ticker: sym, price, change, volume: "â€”" };
+          const price = d.price ? Number(d.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—";
+          const change = d.changePct != null ? `${d.changePct >= 0 ? "+" : ""}${Number(d.changePct).toFixed(2)}%` : "—";
+          return { ticker: sym, price, change, volume: "—" };
         } catch {
-          return { ticker: sym, price: "â€”", change: "â€”", volume: "â€”" };
+          return { ticker: sym, price: "—", change: "—", volume: "—" };
         }
       }));
       setRows(results);
@@ -559,7 +559,7 @@ export function NewsCard() {
           </div>
         </a>
       ))}
-      <a onClick={() => navigate("/news")} style={{ cursor: "pointer" }}>View All News â†’</a>
+      <a onClick={() => navigate("/news")} style={{ cursor: "pointer" }}>View All News ?</a>
     </section>
   );
 }
@@ -601,7 +601,7 @@ export function AcademyCard() {
           <small>Continue Learning</small>
           <b>Understanding Gamma</b>
         </div>
-        <button onClick={() => navigate("/academy")}>Continue â†’</button>
+        <button onClick={() => navigate("/academy")}>Continue ?</button>
       </div>
     </section>
   );
