@@ -958,11 +958,12 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
 }
 
 .calendarCard {
-  background: linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98));
-  border: 1px solid rgba(212,175,55,.18);
-  border-radius: 16px;
-  padding: 18px;
-}
+    background: linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98));
+    border: 1px solid rgba(212,175,55,.18);
+    border-radius: 16px;
+    padding: 24px;
+    font-size: 15px;
+  }
 
 .calendarCard.highImpact {
   border-color: rgba(239,68,68,.55);
@@ -993,9 +994,22 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
 }
 
 .calendarCard h3 {
-  color: white;
-  margin: 12px 0;
-}
+    font-size: 17px;
+    line-height: 1.4;
+    margin: 10px 0;
+    color: #f5f1e8;
+  }
+.calendarCard p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #9ca3af;
+  }
+.calendarCard small {
+    font-size: 12px;
+  }
+.calendarCard b {
+    font-size: 15px;
+  }
 
 .calendarMetrics {
   display: grid;

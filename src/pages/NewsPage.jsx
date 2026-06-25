@@ -180,22 +180,17 @@ setNews(sorted);
   <div className="tvChartHeader">
     <div>
       <small>LIVE MARKET NEWS</small>
-      <h3>Bloomberg Television</h3>
+      <h3>Market News Feed</h3>
     </div>
     <span>Live Feed</span>
   </div>
 
   <iframe
     className="newsVideoFrame"
-    src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=0&mute=1"
-    title="Bloomberg Live Market News"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowFullScreen
+    src="https://s.tradingview.com/embed-widget/timeline/?locale=en#%7B%22feedMode%22%3A%22market%22%2C%22market%22%3A%22stock%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D"
+    title="Market News Feed"
+    style={{ border: "none", width: "100%", height: "100%" }}
   />
-
-  <p className="newsVideoNote">
-    If the stream is unavailable, the broadcaster is blocking embeds or is not live.
-  </p>
 </section>
         <div className="flowMiniCard gold" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <small>FILTERED HEADLINES</small>
