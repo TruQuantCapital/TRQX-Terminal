@@ -20,7 +20,7 @@ import {
 export const nav = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { key: "news", label: "News & Alerts", icon: Newspaper },
-  { key: "calendar", label: "Calendar", icon: CalendarDays },
+  { key: "calendar", label: "Economic Calendar", icon: CalendarDays },
   { key: "research", label: "Stock Research", icon: BarChart3 },
   { key: "options", label: "Options Flow", icon: Activity },
   { key: "scanner", label: "Flow Scanner", icon: Search },
