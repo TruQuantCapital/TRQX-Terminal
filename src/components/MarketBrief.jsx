@@ -167,7 +167,7 @@ Write exactly 2 sentences. Be specific, professional, and actionable. Reference 
           ? "Loading market intelligence..."
           : aiRead
           ? aiRead
-          : `Market conditions are ${sentiment.toLowerCase()}. Dealer positioning is ${dealerPos.toLowerCase()} with ${fmtPrem(stats?.callPremium)} in call premium vs ${fmtPrem(stats?.putPremium)} in put premium. Top flow in ${topTicker} - watch key gamma levels for continuation.`
+          : `Market conditions are ${sentiment.toLowerCase()}. Dealer positioning is ${dealerPos.toLowerCase()} with ${fmtPrem(stats?.callPremium)} in call premium vs ${fmtPrem(stats?.putPremium)} in put premium. Top flow in ${topTicker} â€” watch key gamma levels for continuation.`
         }
       </div>
 

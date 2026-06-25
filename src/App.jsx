@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
@@ -94,9 +94,11 @@ function TerminalLayout({ children }) {
   return (
     <div className="app">
       <Sidebar active={active} setActive={setActive} user={user} tier={tier} canAccess={canAccess} />
+
       <section className="content">
         <TopRibbon />
         <TickerTape />
+
         {user && (
           <div className="terminal-userbar">
             <span>{user.email}</span>
@@ -105,6 +107,7 @@ function TerminalLayout({ children }) {
             <button onClick={signOut}>Sign out</button>
           </div>
         )}
+
         {children}
       </section>
     </div>
@@ -118,7 +121,6 @@ function ProtectedTerminal({ children }) {
     </ProtectedRoute>
   );
 }
-
 function DiscordRedirect() {
   React.useEffect(() => {
     window.open("https://discord.gg/jy3ta9qkfH", "_blank");
@@ -126,14 +128,12 @@ function DiscordRedirect() {
   }, []);
   return null;
 }
-
 function PublicRoute() {
   const { user, loading } = useAuth();
-  if (loading) return null;
+  if (loading) return <LoadingScreen />;
   if (user) return <Navigate to="/dashboard" replace />;
   return <LandingPage />;
 }
-
 export default function App() {
   return (
     <AuthProvider>
@@ -141,6 +141,7 @@ export default function App() {
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/research" element={<ProtectedTerminal><ResearchPage /></ProtectedTerminal>} />
           <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
           <Route path="/home" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
@@ -154,7 +155,6 @@ export default function App() {
           <Route path="/news" element={<ProtectedTerminal><NewsPage /></ProtectedTerminal>} />
           <Route path="/patterns" element={<ProtectedTerminal><PatternsPage /></ProtectedTerminal>} />
           <Route path="/academy" element={<ProtectedTerminal><AcademyPage /></ProtectedTerminal>} />
-          <Route path="/research" element={<ProtectedTerminal><ResearchPage /></ProtectedTerminal>} />
           <Route path="/guide" element={<ProtectedTerminal><GuidePage /></ProtectedTerminal>} />
           <Route path="/pricing" element={<ProtectedTerminal><Pricing /></ProtectedTerminal>} />
           <Route path="/alerts" element={<ProtectedTerminal><Alerts /></ProtectedTerminal>} />
@@ -167,3 +167,10 @@ export default function App() {
     </AuthProvider>
   );
 }
+
+
+
+
+
+
+

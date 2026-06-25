@@ -206,7 +206,7 @@ export default function LandingPage() {
               <h3>{plan.name}</h3>
               <div className="planPrice">{plan.price}<span>/mo</span></div>
               <ul>
-                {plan.features.map((item) => <li key={item}>&#10003; {item}</li>)}
+                {plan.features.map((item) => <li key={item}>âœ“ {item}</li>)}
               </ul>
               <Link to="/pricing" className={plan.badge ? "goldButton" : "darkButton"}>
                 {plan.name.includes("Mentorship") ? "Apply Now" : "Get Started"}
