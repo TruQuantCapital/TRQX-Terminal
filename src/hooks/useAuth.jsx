@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 
 const AuthContext = createContext(null);
 
+const OWNER_EMAILS = ["michaelvalerio@thetrulies.com"];
 const TIER_FEATURES = {
   free:    ["market_intelligence", "news", "calendar"],
   starter: ["market_intelligence", "news", "calendar", "academy", "flashcards", "guide", "stock_research"],
