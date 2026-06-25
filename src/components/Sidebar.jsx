@@ -1,5 +1,6 @@
 ﻿import React from "react";
 import {
+  Home,
   LayoutDashboard,
   Search,
   Activity,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 
 export const nav = [
+  { key: "home", label: "Home", icon: Home },
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { key: "scanner", label: "Scanner", icon: Search },
   { key: "options", label: "Options Flow", icon: Activity },
@@ -82,7 +84,13 @@ export default function Sidebar({ active, setActive, user, tier }) {
             <button
               key={item.key}
               className={"navBtn " + (active === item.key ? "active" : "")}
-              onClick={() => setActive(item.key)}
+              onClick={() => {
+  if (item.key === "home") {
+    window.open("https://thetrulies.com", "_blank");
+  } else {
+    setActive(item.key);
+  }
+}}
             >
               <Icon size={18} />
               <span>{item.label}</span>
