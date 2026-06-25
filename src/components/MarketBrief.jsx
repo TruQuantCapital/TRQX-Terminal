@@ -70,17 +70,14 @@ Gamma Flip: ${g.gammaFlip} | Call Wall: ${g.callWall} | Put Wall: ${g.putWall}
 
 Write exactly 2 sentences. Be specific, professional, and actionable. Reference actual tickers and levels. No fluff.`;
 
-            const aiRes = await fetch(`${API}/api/ai/chat`, {
+            const aiRes = await fetch(`${API}/api/market-intelligence`, {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-              },
-              body: JSON.stringify({ message: prompt, history: [] }),
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt }),
             });
             if (aiRes.ok) {
               const aiData = await aiRes.json();
-              setAiRead(aiData.reply || aiData.message || aiData.content || null);
+              setAiRead(aiData.reply || null);
             }
           } catch (e) {
             console.log("AI read failed:", e.message);
