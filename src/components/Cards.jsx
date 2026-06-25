@@ -461,7 +461,6 @@ export function OptionsFlowCard({ full = false }) {
         ]}
       <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} results` : "View All Options Flow"} →</a>
 
-      <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} result(s) for ${query.toUpperCase()}` : "View All Options Flow ?"}</a>
     </section>
   );
 }
