@@ -1,5 +1,4 @@
 ﻿import React, { useEffect, useState } from "react";
-import WEEKLY_CALENDAR from "../data/weeklyCalendar";
 import { useNavigate } from "react-router-dom";
 import { GraduationCap, Waves, Crown, ExternalLink } from "lucide-react";
 import DataTable from "./DataTable";
@@ -110,7 +109,25 @@ export function GaugeCard() {
 
 export function CalendarCard() {
   const navigate = useNavigate();
-  const rows = WEEKLY_CALENDAR;
+  const [rows, setRows] = React.useState([]);
+
+  React.useEffect(() => {
+    fetch(`https://trqx-flow-scanner-production.up.railway.app/api/economic-calendar`)
+      .then(r => r.ok ? r.json() : [])
+      .then(data => {
+        const events = Array.isArray(data) ? data : data.events || data.rows || [];
+        const formatted = events.slice(0, 8).map(e => [
+          e.time || e.date || "--",
+          e.event || e.name || e.title || "--",
+          e.impact || e.importance || "Med",
+          e.actual ?? "--",
+          e.forecast ?? "--",
+          e.previous ?? "--",
+        ]);
+        setRows(formatted);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section className="card calendar">
