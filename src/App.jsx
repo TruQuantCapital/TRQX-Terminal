@@ -83,7 +83,7 @@ function ProtectedRoute({ children }) {
 function TerminalLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, tier, signOut } = useAuth();
+  const { user, tier, signOut, canAccess } = useAuth();
   const active = keyByPath[location.pathname] || "dashboard";
 
   const setActive = (key) => {
@@ -93,7 +93,7 @@ function TerminalLayout({ children }) {
 
   return (
     <div className="app">
-      <Sidebar active={active} setActive={setActive} user={user} tier={tier} />
+      <Sidebar active={active} setActive={setActive} user={user} tier={tier} canAccess={canAccess} />
 
       <section className="content">
         <TopRibbon />

@@ -18,21 +18,21 @@ import {
 } from "lucide-react";
 
 export const nav = [
-  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { key: "news", label: "News & Alerts", icon: Newspaper },
-  { key: "calendar", label: "Economic Calendar", icon: CalendarDays },
-  { key: "research", label: "Stock Research", icon: BarChart3 },
-  { key: "options", label: "Options Flow", icon: Activity },
-  { key: "scanner", label: "Flow Scanner", icon: Search },
-  { key: "gamma", label: "GEMX", icon: Waves },
-  { key: "tradeplan", label: "Trade Plan", icon: Target },
-  { key: "alerts", label: "Alerts", icon: Bell },
-  { key: "academy", label: "Academy", icon: GraduationCap },
-  { key: "patterns", label: "Flash Cards", icon: BookOpen },
-  { key: "guide", label: "How To Use", icon: BookOpen },
-  { key: "discord", label: "Discord", icon: MessageCircle },
-  { key: "home", label: "Home", icon: Home },
-  { key: "settings", label: "Settings", icon: Settings },
+  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, feature: null },
+  { key: "news", label: "News & Alerts", icon: Newspaper, feature: "news" },
+  { key: "calendar", label: "Economic Calendar", icon: CalendarDays, feature: "calendar" },
+  { key: "research", label: "Stock Research", icon: BarChart3, feature: "stock_research" },
+  { key: "options", label: "Options Flow", icon: Activity, feature: "options_flow" },
+  { key: "scanner", label: "Flow Scanner", icon: Search, feature: "basic_flow" },
+  { key: "gamma", label: "GEMX", icon: Waves, feature: "gemx" },
+  { key: "tradeplan", label: "Trade Plan", icon: Target, feature: "trade_plan" },
+  { key: "alerts", label: "Alerts", icon: Bell, feature: "alerts" },
+  { key: "academy", label: "Academy", icon: GraduationCap, feature: "academy" },
+  { key: "patterns", label: "Flash Cards", icon: BookOpen, feature: "flashcards" },
+  { key: "guide", label: "How To Use", icon: BookOpen, feature: "guide" },
+  { key: "discord", label: "Discord", icon: MessageCircle, feature: null },
+  { key: "home", label: "Home", icon: Home, feature: null },
+  { key: "settings", label: "Settings", icon: Settings, feature: null },
 ];
 
 const navGroups = [
@@ -78,7 +78,7 @@ function capitalize(s) {
   return s ? s[0].toUpperCase() + s.slice(1) : s;
 }
 
-export default function Sidebar({ active, setActive, user, tier }) {
+export default function Sidebar({ active, setActive, user, tier, canAccess }) {
   const email = user && user.email;
   const initials = initialsFromEmail(email);
   const displayName = displayNameFromEmail(email);
@@ -121,8 +121,12 @@ export default function Sidebar({ active, setActive, user, tier }) {
               return (
                 <button
                   key={item.key}
-                  className={"navBtn " + (active === item.key ? "active" : "")}
+                  className={"navBtn " + (active === item.key ? "active" : "") + (item.feature && canAccess && !canAccess(item.feature) ? " navBtn-locked" : "")}
                   onClick={() => {
+                    if (item.feature && canAccess && !canAccess(item.feature)) {
+                      window.location.href = "/pricing";
+                      return;
+                    }
                     if (item.key === "home") {
                       window.location.href = "/home";
                     } else if (item.key === "discord") {
@@ -134,6 +138,9 @@ export default function Sidebar({ active, setActive, user, tier }) {
                 >
                   <Icon size={18} />
                   <span>{item.label}</span>
+                  {item.feature && canAccess && !canAccess(item.feature) && (
+                    <span style={{ marginLeft: "auto", fontSize: "10px", color: "#6b7280" }}>🔒</span>
+                  )}
                 </button>
               );
             })}
