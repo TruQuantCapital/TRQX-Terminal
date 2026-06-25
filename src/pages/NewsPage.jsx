@@ -19,6 +19,12 @@ const WATCHLIST = [
   "PLTR",
   "COIN",
   "MSTR",
+  "NFLX",
+  "ARM",
+  "SMCI",
+  "MU",
+  "BABA",
+  "SOFI",
 ];
 
 const IMPORTANT_WORDS = [
@@ -191,22 +197,71 @@ setNews(sorted);
     If the stream is unavailable, the broadcaster is blocking embeds or is not live.
   </p>
 </section>
-        <div className="flowMiniCard gold">
+        <div className="flowMiniCard gold" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <small>FILTERED HEADLINES</small>
-          <b>{cleanNews.length}</b>
+          <b style={{ fontSize: "28px" }}>{cleanNews.length}</b>
           <span>Trader-relevant stories</span>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "10px", display: "flex", flexDirection: "column", gap: "8px" }}>
+            {cleanNews.slice(0, 3).map((item, i) => (
+              <a key={i} href={item.url} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+                <div style={{ color: "#f5f1e8", fontSize: "11px", lineHeight: "1.4", opacity: 0.85 }}>
+                  {item.title?.slice(0, 70)}{item.title?.length > 70 ? "..." : ""}
+                </div>
+                <div style={{ color: "#9ca3af", fontSize: "10px", marginTop: "2px" }}>{item.source}</div>
+              </a>
+            ))}
+          </div>
         </div>
 
-        <div className="flowMiniCard">
+        <div className="flowMiniCard" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <small>LIVE FEED</small>
-          <b>ACTIVE</b>
+          <b style={{ color: "#22c55e", fontSize: "20px" }}>ACTIVE</b>
           <span>Polygon News</span>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "10px", display: "flex", flexDirection: "column", gap: "6px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#9ca3af", fontSize: "11px" }}>Total Stories</span>
+              <span style={{ color: "#f5f1e8", fontSize: "11px", fontWeight: "700" }}>{news.length}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#9ca3af", fontSize: "11px" }}>After Filter</span>
+              <span style={{ color: "#f5f1e8", fontSize: "11px", fontWeight: "700" }}>{cleanNews.length}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#9ca3af", fontSize: "11px" }}>High Impact</span>
+              <span style={{ color: "#d4af37", fontSize: "11px", fontWeight: "700" }}>{cleanNews.filter(n => n.impactScore >= 7).length}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#9ca3af", fontSize: "11px" }}>Last Updated</span>
+              <span style={{ color: "#f5f1e8", fontSize: "11px", fontWeight: "700" }}>{new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+            </div>
+          </div>
         </div>
 
-        <div className="flowMiniCard bullish">
+        <div className="flowMiniCard bullish" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <small>TOP IMPACT</small>
-          <b>{topCatalysts[0]?.impactScore ?? "--"}/10</b>
-          <span>{topCatalysts[0]?.tickers?.[0] || "Market"}</span>
+          <b style={{ fontSize: "28px" }}>{topCatalysts[0]?.impactScore ?? "--"}/10</b>
+          <span style={{ color: "#d4af37", fontWeight: "700" }}>{topCatalysts[0]?.tickers?.[0] || "Market"}</span>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "10px", display: "flex", flexDirection: "column", gap: "8px" }}>
+            {topCatalysts[0] && (
+              <a href={topCatalysts[0].url} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+                <div style={{ color: "#f5f1e8", fontSize: "11px", lineHeight: "1.4" }}>
+                  {topCatalysts[0].title?.slice(0, 100)}{topCatalysts[0].title?.length > 100 ? "..." : ""}
+                </div>
+                <div style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
+                  <span style={{ color: "#9ca3af", fontSize: "10px" }}>{topCatalysts[0].source}</span>
+                  <span style={{ color: topCatalysts[0].sentiment === "positive" ? "#22c55e" : topCatalysts[0].sentiment === "negative" ? "#ef4444" : "#9ca3af", fontSize: "10px", fontWeight: "700" }}>
+                    {topCatalysts[0].sentiment?.toUpperCase() || "NEUTRAL"}
+                  </span>
+                </div>
+              </a>
+            )}
+            {topCatalysts.slice(1).map((item, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ color: "#9ca3af", fontSize: "11px" }}>{item.tickers?.[0] || "MKT"}</span>
+                <span style={{ color: "#d4af37", fontSize: "11px", fontWeight: "700" }}>{item.impactScore}/10</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
