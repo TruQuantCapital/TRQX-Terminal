@@ -458,7 +458,7 @@ export function OptionsFlowCard({ full = false }) {
           r.contracts && r.price
             ? `${Number(r.contracts).toLocaleString()} @ ${Number(r.price).toFixed(2)}`
             : r.details ?? "--",
-        ]}
+        ]} />
       <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>View All Options Flow</a>
 
     </section>
