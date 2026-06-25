@@ -3,12 +3,12 @@ import { supabase } from "../lib/supabase";
 
 const AuthContext = createContext(null);
 
-const OWNER_EMAILS = ["michaelvalerio@thetrulies.com"];
-
 const TIER_FEATURES = {
-  free:    ["basic_flow"],
-  starter: ["basic_flow", "filters", "alerts", "ai_chat"],
-  pro:     ["basic_flow", "filters", "alerts", "ai_chat", "dark_pool", "golden", "sector_heat", "reports", "flow_score"],
+  free:    ["market_intelligence", "news", "calendar"],
+  starter: ["market_intelligence", "news", "calendar", "academy", "flashcards", "guide", "stock_research"],
+  pro:     ["market_intelligence", "news", "calendar", "academy", "flashcards", "guide", "stock_research", "basic_flow", "filters", "alerts", "ai_chat", "dark_pool", "golden", "sector_heat", "reports", "flow_score", "gemx", "trade_plan", "options_flow"],
+  elite:   ["market_intelligence", "news", "calendar", "academy", "flashcards", "guide", "stock_research", "basic_flow", "filters", "alerts", "ai_chat", "dark_pool", "golden", "sector_heat", "reports", "flow_score", "gemx", "trade_plan", "options_flow", "webhooks", "api_access", "smart_money", "flow_replay", "orb_indicator", "ai_everywhere", "market_brief_ai"],
+};
   elite:   ["basic_flow", "filters", "alerts", "ai_chat", "dark_pool", "golden", "sector_heat", "reports", "flow_score", "webhooks", "api_access", "smart_money", "flow_replay"],
 };
 
