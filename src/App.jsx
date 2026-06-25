@@ -16,6 +16,7 @@ import AcademyPage from "./pages/AcademyPage";
 import PatternsPage from "./pages/PatternsPage";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import Auth from "./pages/Auth";
+import GuidePage from "./pages/GuidePage";
 import Pricing from "./pages/Pricing";
 import Alerts from "./pages/Alerts";
 import Reports from "./pages/Reports";
@@ -35,6 +36,7 @@ const routeByKey = {
   alerts: "/alerts",
   academy: "/academy",
   patterns: "/patterns",
+  guide: "/guide",
   discord: "/discord",
   news: "/news",
   settings: "/settings",
@@ -51,6 +53,7 @@ const keyByPath = {
   "/alerts": "alerts",
   "/academy": "academy",
   "/patterns": "patterns",
+  "/guide": "guide",
   "/discord": "discord",
   "/news": "news",
   "/settings": "settings",
@@ -141,7 +144,7 @@ export default function App() {
           <Route path="/news" element={<ProtectedTerminal><NewsPage /></ProtectedTerminal>} />
           <Route path="/patterns" element={<ProtectedTerminal><PatternsPage /></ProtectedTerminal>} />
           <Route path="/academy" element={<ProtectedTerminal><AcademyPage /></ProtectedTerminal>} />
-
+          <Route path="/guide" element={<ProtectedTerminal><GuidePage /></ProtectedTerminal>} />
           <Route path="/pricing" element={<ProtectedTerminal><Pricing /></ProtectedTerminal>} />
           <Route path="/alerts" element={<ProtectedTerminal><Alerts /></ProtectedTerminal>} />
           <Route path="/reports" element={<ProtectedTerminal><Reports /></ProtectedTerminal>} />
