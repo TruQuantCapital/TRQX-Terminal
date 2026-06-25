@@ -1,4 +1,4 @@
-// TRQX Academy — Hardcoded Flashcard Q&A Pairs
+﻿// TRQX Academy â€” Hardcoded Flashcard Q&A Pairs
 // One entry per lesson, keyed by lesson title
 
 const LESSON_FLASHCARDS = {
@@ -15,7 +15,7 @@ const LESSON_FLASHCARDS = {
     { front: "Who are institutional traders?", back: "Large organizations like hedge funds, banks, and pension funds that trade massive amounts of capital." },
     { front: "What is a market maker?", back: "A firm that provides liquidity by continuously quoting buy and sell prices and profiting from the spread." },
     { front: "What is the difference between the primary and secondary market?", back: "Primary market is where new securities are issued (IPOs). Secondary market is where existing securities are traded between investors." },
-    { front: "What does OTC mean?", back: "Over The Counter — trades that happen directly between parties, not on a centralized exchange." },
+    { front: "What does OTC mean?", back: "Over The Counter â€” trades that happen directly between parties, not on a centralized exchange." },
   ],
 
   "What Is Ownership?": [
@@ -30,30 +30,30 @@ const LESSON_FLASHCARDS = {
     { front: "What is a bull market?", back: "A market trending upward, characterized by rising prices, optimism, and strong buying pressure." },
     { front: "What is a bear market?", back: "A market trending downward, characterized by falling prices, pessimism, and strong selling pressure." },
     { front: "What percentage decline defines a bear market?", back: "A drop of 20% or more from recent highs is commonly used to define a bear market." },
-    { front: "What is market sentiment?", back: "The overall attitude of traders and investors toward a market — bullish (optimistic) or bearish (pessimistic)." },
+    { front: "What is market sentiment?", back: "The overall attitude of traders and investors toward a market â€” bullish (optimistic) or bearish (pessimistic)." },
     { front: "What is a market correction?", back: "A short-term price decline of 10-20% from recent highs, considered a healthy part of a bull market." },
   ],
 
   "What Is a Trend?": [
-    { front: "What is an uptrend?", back: "A series of higher highs and higher lows — price is consistently moving upward over time." },
-    { front: "What is a downtrend?", back: "A series of lower highs and lower lows — price is consistently moving downward over time." },
-    { front: "What is a sideways trend?", back: "Price moves horizontally with no clear direction — also called consolidation or ranging market." },
-    { front: "What is trend confirmation?", back: "Evidence that a trend is valid — typically from volume, momentum indicators, or multiple timeframes agreeing." },
+    { front: "What is an uptrend?", back: "A series of higher highs and higher lows â€” price is consistently moving upward over time." },
+    { front: "What is a downtrend?", back: "A series of lower highs and lower lows â€” price is consistently moving downward over time." },
+    { front: "What is a sideways trend?", back: "Price moves horizontally with no clear direction â€” also called consolidation or ranging market." },
+    { front: "What is trend confirmation?", back: "Evidence that a trend is valid â€” typically from volume, momentum indicators, or multiple timeframes agreeing." },
     { front: "Why do traders say 'the trend is your friend'?", back: "Trading in the direction of the trend increases your probability of success because you have momentum on your side." },
   ],
 
   "Support & Resistance": [
     { front: "What is support?", back: "A price level where buying pressure is strong enough to prevent the price from falling further." },
     { front: "What is resistance?", back: "A price level where selling pressure is strong enough to prevent the price from rising further." },
-    { front: "What happens when support breaks?", back: "Support becomes resistance — the old floor becomes a new ceiling for price." },
+    { front: "What happens when support breaks?", back: "Support becomes resistance â€” the old floor becomes a new ceiling for price." },
     { front: "What is a role reversal?", back: "When a broken support level becomes new resistance, or a broken resistance level becomes new support." },
     { front: "How do you identify key support and resistance levels?", back: "Look for areas where price has reversed multiple times, high volume nodes, and round numbers." },
   ],
 
   "Market Structure": [
-    { front: "What is market structure?", back: "The framework of price movement — the pattern of highs and lows that define the trend direction." },
+    { front: "What is market structure?", back: "The framework of price movement â€” the pattern of highs and lows that define the trend direction." },
     { front: "What is a break of structure (BOS)?", back: "When price breaks above a previous high (bullish BOS) or below a previous low (bearish BOS), confirming trend direction." },
-    { front: "What is a change of character (ChoCH)?", back: "The first sign that a trend may be reversing — price fails to make a new high or low in the prevailing direction." },
+    { front: "What is a change of character (ChoCH)?", back: "The first sign that a trend may be reversing â€” price fails to make a new high or low in the prevailing direction." },
     { front: "What does it mean when market structure is bullish?", back: "Price is making higher highs and higher lows, indicating buyers are in control." },
     { front: "Why is market structure important for trading?", back: "It tells you who is in control (buyers or sellers) and helps you identify high-probability trade entries." },
   ],
@@ -62,56 +62,56 @@ const LESSON_FLASHCARDS = {
     { front: "What is multiple time frame analysis?", back: "Analyzing a market on different timeframes (e.g. weekly, daily, hourly) to get a complete picture of trend and entry." },
     { front: "What is the top-down approach?", back: "Starting analysis on higher timeframes to identify trend, then drilling down to lower timeframes to find entries." },
     { front: "Why do higher timeframes matter more?", back: "Higher timeframe levels have more significance because more traders and institutions are watching them." },
-    { front: "What timeframe should you use for entries?", back: "Lower timeframes (5min, 15min, 1hr) for precise entries — but always aligned with the higher timeframe trend." },
-    { front: "What is timeframe confluence?", back: "When multiple timeframes agree on the same direction or level — increasing the probability of a successful trade." },
+    { front: "What timeframe should you use for entries?", back: "Lower timeframes (5min, 15min, 1hr) for precise entries â€” but always aligned with the higher timeframe trend." },
+    { front: "What is timeframe confluence?", back: "When multiple timeframes agree on the same direction or level â€” increasing the probability of a successful trade." },
   ],
 
   "Supply, Demand & Liquidity": [
-    { front: "What is a supply zone?", back: "A price area where heavy selling occurred in the past — sellers dominate and price tends to reverse downward." },
-    { front: "What is a demand zone?", back: "A price area where heavy buying occurred in the past — buyers dominate and price tends to reverse upward." },
+    { front: "What is a supply zone?", back: "A price area where heavy selling occurred in the past â€” sellers dominate and price tends to reverse downward." },
+    { front: "What is a demand zone?", back: "A price area where heavy buying occurred in the past â€” buyers dominate and price tends to reverse upward." },
     { front: "What is liquidity?", back: "Clusters of stop losses and pending orders that large institutions target to fill their positions." },
     { front: "What is a liquidity grab?", back: "When price briefly moves beyond a key high or low to trigger stop losses before reversing in the opposite direction." },
-    { front: "Why do institutions hunt liquidity?", back: "They need large amounts of orders to fill their massive positions — retail stop losses provide that liquidity." },
+    { front: "Why do institutions hunt liquidity?", back: "They need large amounts of orders to fill their massive positions â€” retail stop losses provide that liquidity." },
   ],
 
   "Volume, Momentum & Confirmation": [
-    { front: "What does high volume on a breakout mean?", back: "Strong participation — the breakout is more likely to be genuine and sustained." },
-    { front: "What is momentum?", back: "The rate of price change — strong momentum means price is moving quickly and forcefully in one direction." },
-    { front: "What is divergence?", back: "When price makes a new high but an indicator (like RSI) makes a lower high — warning of potential reversal." },
-    { front: "What is confirmation in trading?", back: "Additional evidence that validates your trade idea — such as volume, a second indicator agreeing, or a candle close." },
-    { front: "What does low volume during a rally mean?", back: "Weak buying interest — the move may not be sustainable and could reverse." },
+    { front: "What does high volume on a breakout mean?", back: "Strong participation â€” the breakout is more likely to be genuine and sustained." },
+    { front: "What is momentum?", back: "The rate of price change â€” strong momentum means price is moving quickly and forcefully in one direction." },
+    { front: "What is divergence?", back: "When price makes a new high but an indicator (like RSI) makes a lower high â€” warning of potential reversal." },
+    { front: "What is confirmation in trading?", back: "Additional evidence that validates your trade idea â€” such as volume, a second indicator agreeing, or a candle close." },
+    { front: "What does low volume during a rally mean?", back: "Weak buying interest â€” the move may not be sustainable and could reverse." },
   ],
 
   "Candlestick Mastery": [
-    { front: "What does a doji candle indicate?", back: "Indecision — buyers and sellers are equally matched, often signaling a potential reversal or pause." },
-    { front: "What is a hammer candlestick?", back: "A bullish reversal candle with a small body and long lower wick — shows buyers rejected lower prices." },
-    { front: "What is a shooting star?", back: "A bearish reversal candle with a small body and long upper wick — shows sellers rejected higher prices." },
-    { front: "What is a bullish engulfing pattern?", back: "A two-candle pattern where a large bullish candle completely engulfs the prior bearish candle — strong buy signal." },
+    { front: "What does a doji candle indicate?", back: "Indecision â€” buyers and sellers are equally matched, often signaling a potential reversal or pause." },
+    { front: "What is a hammer candlestick?", back: "A bullish reversal candle with a small body and long lower wick â€” shows buyers rejected lower prices." },
+    { front: "What is a shooting star?", back: "A bearish reversal candle with a small body and long upper wick â€” shows sellers rejected higher prices." },
+    { front: "What is a bullish engulfing pattern?", back: "A two-candle pattern where a large bullish candle completely engulfs the prior bearish candle â€” strong buy signal." },
     { front: "What is an evening star?", back: "A three-candle bearish reversal pattern: large bullish candle, small indecision candle, large bearish candle." },
   ],
 
   "Market Sessions": [
     { front: "What are the three main trading sessions?", back: "Asian session (Tokyo), London session, and New York session." },
-    { front: "Which session has the highest volatility?", back: "The London-New York overlap (8am-12pm EST) — the most active trading period of the day." },
-    { front: "What happens during the Asian session?", back: "Lower volatility, ranging conditions — price often consolidates before the London session opens." },
-    { front: "What is the kill zone?", back: "High-probability trading windows around session opens — London open (2-5am EST) and NY open (8-11am EST)." },
-    { front: "Why does the London session matter so much?", back: "London is the largest forex trading center in the world — its open often sets the day's directional bias." },
+    { front: "Which session has the highest volatility?", back: "The London-New York overlap (8am-12pm EST) â€” the most active trading period of the day." },
+    { front: "What happens during the Asian session?", back: "Lower volatility, ranging conditions â€” price often consolidates before the London session opens." },
+    { front: "What is the kill zone?", back: "High-probability trading windows around session opens â€” London open (2-5am EST) and NY open (8-11am EST)." },
+    { front: "Why does the London session matter so much?", back: "London is the largest forex trading center in the world â€” its open often sets the day's directional bias." },
   ],
 
   "Gap Ups & Gap Downs": [
     { front: "What is a gap up?", back: "When a stock opens significantly higher than its previous close, leaving a gap on the chart." },
-    { front: "What causes a gap up?", back: "Positive news after hours — earnings beats, upgrades, or major announcements." },
+    { front: "What causes a gap up?", back: "Positive news after hours â€” earnings beats, upgrades, or major announcements." },
     { front: "What is gap fill?", back: "When price returns to close the price gap left from the previous session's open." },
-    { front: "What is a gap and go?", back: "When a stock gaps up and continues moving higher without filling the gap — a momentum continuation strategy." },
-    { front: "How do traders use gaps?", back: "As support/resistance levels, entry points, or targets — gaps often act as magnets for price." },
+    { front: "What is a gap and go?", back: "When a stock gaps up and continues moving higher without filling the gap â€” a momentum continuation strategy." },
+    { front: "How do traders use gaps?", back: "As support/resistance levels, entry points, or targets â€” gaps often act as magnets for price." },
   ],
 
   "Support & Resistance Mastery (Advanced)": [
     { front: "What makes a support/resistance level 'strong'?", back: "Multiple touches, high volume at the level, and confluence with other technical factors like moving averages or Fibonacci." },
-    { front: "What is a flip zone?", back: "A price level that has acted as both support and resistance — highly significant because both buyers and sellers watch it." },
-    { front: "What is confluence?", back: "When multiple technical factors align at the same level — increasing the probability it will hold as support or resistance." },
-    { front: "What is the psychology behind support/resistance?", back: "Traders remember key price levels and act on them — creating self-fulfilling prophecies as orders cluster there." },
-    { front: "How does volume confirm a support/resistance level?", back: "High volume at a level shows strong participation — confirming that many traders are active at that price." },
+    { front: "What is a flip zone?", back: "A price level that has acted as both support and resistance â€” highly significant because both buyers and sellers watch it." },
+    { front: "What is confluence?", back: "When multiple technical factors align at the same level â€” increasing the probability it will hold as support or resistance." },
+    { front: "What is the psychology behind support/resistance?", back: "Traders remember key price levels and act on them â€” creating self-fulfilling prophecies as orders cluster there." },
+    { front: "How does volume confirm a support/resistance level?", back: "High volume at a level shows strong participation â€” confirming that many traders are active at that price." },
   ],
 
   "Introduction to Options": [
@@ -119,95 +119,95 @@ const LESSON_FLASHCARDS = {
     { front: "What is a call option?", back: "A contract that gives the buyer the right to BUY 100 shares at the strike price before expiration." },
     { front: "What is a put option?", back: "A contract that gives the buyer the right to SELL 100 shares at the strike price before expiration." },
     { front: "What is the strike price?", back: "The price at which the option holder can buy (call) or sell (put) the underlying asset." },
-    { front: "What is premium in options?", back: "The price you pay to buy an option contract — the cost of having the right to buy or sell." },
+    { front: "What is premium in options?", back: "The price you pay to buy an option contract â€” the cost of having the right to buy or sell." },
   ],
 
   "Risk Management & Position Sizing": [
     { front: "What is the 1% rule in trading?", back: "Never risk more than 1% of your total account on a single trade." },
     { front: "What is a stop loss?", back: "A predetermined price where you exit a losing trade to limit your losses." },
-    { front: "What is risk/reward ratio?", back: "The ratio of potential profit to potential loss — a 3:1 ratio means you risk $1 to potentially make $3." },
+    { front: "What is risk/reward ratio?", back: "The ratio of potential profit to potential loss â€” a 3:1 ratio means you risk $1 to potentially make $3." },
     { front: "What is position sizing?", back: "Determining how many shares or contracts to trade based on your account size and risk tolerance." },
-    { front: "Why is risk management more important than being right?", back: "Even with a 40% win rate you can be profitable with proper risk management — one bad trade can't blow your account." },
+    { front: "Why is risk management more important than being right?", back: "Even with a 40% win rate you can be profitable with proper risk management â€” one bad trade can't blow your account." },
   ],
 
   "Trade Planning & Journaling": [
     { front: "What should a trade plan include?", back: "Entry price, stop loss, target, position size, risk amount, and the reason for the trade." },
-    { front: "What is a trading journal?", back: "A record of every trade you take — entry, exit, size, P&L, and what you learned — used to improve over time." },
+    { front: "What is a trading journal?", back: "A record of every trade you take â€” entry, exit, size, P&L, and what you learned â€” used to improve over time." },
     { front: "What is pre-market preparation?", back: "Reviewing the economic calendar, key levels, overnight news, and your watchlist before the market opens." },
-    { front: "What is trade management?", back: "How you handle a trade once it's open — moving stop losses, taking partial profits, or adding to winners." },
-    { front: "Why do most traders fail without a plan?", back: "Emotional decisions driven by fear and greed replace logic — a plan keeps you disciplined and consistent." },
+    { front: "What is trade management?", back: "How you handle a trade once it's open â€” moving stop losses, taking partial profits, or adding to winners." },
+    { front: "Why do most traders fail without a plan?", back: "Emotional decisions driven by fear and greed replace logic â€” a plan keeps you disciplined and consistent." },
   ],
 
   "Reading an Options Chain": [
-    { front: "What is an options chain?", back: "A table showing all available options contracts for a stock — organized by expiration date and strike price." },
+    { front: "What is an options chain?", back: "A table showing all available options contracts for a stock â€” organized by expiration date and strike price." },
     { front: "What does 'in the money' mean?", back: "A call is ITM when the stock price is ABOVE the strike. A put is ITM when the stock price is BELOW the strike." },
-    { front: "What is open interest?", back: "The total number of outstanding option contracts that have not been settled — shows where traders have positioned." },
+    { front: "What is open interest?", back: "The total number of outstanding option contracts that have not been settled â€” shows where traders have positioned." },
     { front: "What is the bid-ask spread in options?", back: "The difference between the highest price a buyer will pay (bid) and the lowest a seller will accept (ask)." },
-    { front: "What does high open interest at a strike indicate?", back: "Many traders have positions at that level — it often acts as a magnet for price (max pain level)." },
+    { front: "What does high open interest at a strike indicate?", back: "Many traders have positions at that level â€” it often acts as a magnet for price (max pain level)." },
   ],
 
-  "Options Greeks — Delta & Gamma": [
+  "Options Greeks â€” Delta & Gamma": [
     { front: "What is Delta?", back: "How much an option's price changes for every $1 move in the underlying stock. A delta of 0.5 means the option moves $0.50 per $1 move." },
-    { front: "What is Gamma?", back: "The rate of change of Delta — how fast Delta itself changes as the stock price moves." },
-    { front: "What does a high Gamma mean for traders?", back: "The option's Delta is changing rapidly — small moves in the stock create large changes in option value." },
-    { front: "What is a Delta-neutral position?", back: "A position where the total Delta is zero — the position doesn't gain or lose value from small price moves." },
-    { front: "What is Gamma risk?", back: "The risk that rapid Delta changes will create large unexpected losses — especially dangerous near expiration." },
+    { front: "What is Gamma?", back: "The rate of change of Delta â€” how fast Delta itself changes as the stock price moves." },
+    { front: "What does a high Gamma mean for traders?", back: "The option's Delta is changing rapidly â€” small moves in the stock create large changes in option value." },
+    { front: "What is a Delta-neutral position?", back: "A position where the total Delta is zero â€” the position doesn't gain or lose value from small price moves." },
+    { front: "What is Gamma risk?", back: "The risk that rapid Delta changes will create large unexpected losses â€” especially dangerous near expiration." },
   ],
 
-  "Options Greeks — Theta & Vega": [
-    { front: "What is Theta?", back: "Time decay — how much value an option loses each day as it approaches expiration." },
-    { front: "Who benefits from Theta?", back: "Option sellers — they collect premium and profit as time decay erodes the option's value." },
+  "Options Greeks â€” Theta & Vega": [
+    { front: "What is Theta?", back: "Time decay â€” how much value an option loses each day as it approaches expiration." },
+    { front: "Who benefits from Theta?", back: "Option sellers â€” they collect premium and profit as time decay erodes the option's value." },
     { front: "What is Vega?", back: "How much an option's price changes for every 1% change in implied volatility." },
-    { front: "What happens to option prices when volatility increases?", back: "They become more expensive — higher Vega means higher premium as uncertainty increases." },
-    { front: "What is Theta decay acceleration?", back: "Time decay accelerates in the final 30 days before expiration — options lose value much faster near expiry." },
+    { front: "What happens to option prices when volatility increases?", back: "They become more expensive â€” higher Vega means higher premium as uncertainty increases." },
+    { front: "What is Theta decay acceleration?", back: "Time decay accelerates in the final 30 days before expiration â€” options lose value much faster near expiry." },
   ],
 
-  "Options Greeks — Rho": [
+  "Options Greeks â€” Rho": [
     { front: "What is Rho?", back: "How much an option's price changes for every 1% change in interest rates." },
-    { front: "Which options are most affected by Rho?", back: "Long-dated options (LEAPS) — they have more time for interest rates to impact their value." },
-    { front: "How does rising interest rates affect call options?", back: "Call options become slightly more valuable — higher rates increase the cost of carrying stock positions." },
-    { front: "Is Rho important for short-term traders?", back: "Generally no — Rho has minimal impact on short-term options. It matters more for long-dated positions." },
-    { front: "What is the risk-free rate in options pricing?", back: "Typically the US Treasury bill rate — used in options pricing models like Black-Scholes as the baseline return." },
+    { front: "Which options are most affected by Rho?", back: "Long-dated options (LEAPS) â€” they have more time for interest rates to impact their value." },
+    { front: "How does rising interest rates affect call options?", back: "Call options become slightly more valuable â€” higher rates increase the cost of carrying stock positions." },
+    { front: "Is Rho important for short-term traders?", back: "Generally no â€” Rho has minimal impact on short-term options. It matters more for long-dated positions." },
+    { front: "What is the risk-free rate in options pricing?", back: "Typically the US Treasury bill rate â€” used in options pricing models like Black-Scholes as the baseline return." },
   ],
 
   "Implied Volatility Deep Dive": [
-    { front: "What is implied volatility (IV)?", back: "The market's expectation of future price movement — derived from current option prices." },
-    { front: "What is IV rank?", back: "Where the current IV sits relative to its high and low over the past 52 weeks — expressed as a percentage." },
-    { front: "What is a volatility crush?", back: "A sharp drop in IV after a catalyst event like earnings — option premiums collapse rapidly." },
-    { front: "Why do options get expensive before earnings?", back: "Traders expect a big move — IV rises to reflect uncertainty, making both calls and puts more expensive." },
-    { front: "How do option sellers exploit high IV?", back: "They sell options when IV is high (expensive) and buy them back after IV drops — profiting from the crush." },
+    { front: "What is implied volatility (IV)?", back: "The market's expectation of future price movement â€” derived from current option prices." },
+    { front: "What is IV rank?", back: "Where the current IV sits relative to its high and low over the past 52 weeks â€” expressed as a percentage." },
+    { front: "What is a volatility crush?", back: "A sharp drop in IV after a catalyst event like earnings â€” option premiums collapse rapidly." },
+    { front: "Why do options get expensive before earnings?", back: "Traders expect a big move â€” IV rises to reflect uncertainty, making both calls and puts more expensive." },
+    { front: "How do option sellers exploit high IV?", back: "They sell options when IV is high (expensive) and buy them back after IV drops â€” profiting from the crush." },
   ],
 
   "Options Pricing & Premium": [
     { front: "What are the two components of option premium?", back: "Intrinsic value (how far ITM the option is) and extrinsic value (time value + volatility)." },
-    { front: "What is intrinsic value?", back: "The real, tangible value of an option — for a call, it's the stock price minus the strike price (when ITM)." },
-    { front: "What is extrinsic value?", back: "The extra value beyond intrinsic — reflecting time remaining and implied volatility." },
-    { front: "What happens to extrinsic value at expiration?", back: "It goes to zero — only intrinsic value remains at expiration." },
+    { front: "What is intrinsic value?", back: "The real, tangible value of an option â€” for a call, it's the stock price minus the strike price (when ITM)." },
+    { front: "What is extrinsic value?", back: "The extra value beyond intrinsic â€” reflecting time remaining and implied volatility." },
+    { front: "What happens to extrinsic value at expiration?", back: "It goes to zero â€” only intrinsic value remains at expiration." },
     { front: "What is the Black-Scholes model?", back: "A mathematical model used to price options based on stock price, strike, time, volatility, and interest rates." },
   ],
 
   "Probability & Expected Value": [
     { front: "What is probability of profit (POP)?", back: "The statistical likelihood that a trade will be profitable at expiration." },
-    { front: "What is expected value (EV)?", back: "The average outcome of a trade if you repeated it many times — positive EV means profitable over time." },
-    { front: "How do you calculate expected value?", back: "(Win rate × avg win) - (Loss rate × avg loss) = Expected Value. Positive EV = edge." },
+    { front: "What is expected value (EV)?", back: "The average outcome of a trade if you repeated it many times â€” positive EV means profitable over time." },
+    { front: "How do you calculate expected value?", back: "(Win rate Ã— avg win) - (Loss rate Ã— avg loss) = Expected Value. Positive EV = edge." },
     { front: "What does delta tell you about probability?", back: "A 0.30 delta option has roughly a 30% chance of expiring in the money." },
-    { front: "Why is having an edge more important than winning every trade?", back: "With positive EV, losses are part of the system — over many trades, the math works in your favor." },
+    { front: "Why is having an edge more important than winning every trade?", back: "With positive EV, losses are part of the system â€” over many trades, the math works in your favor." },
   ],
 
   "Gamma Exposure & Dealer Positioning": [
-    { front: "What is Gamma Exposure (GEX)?", back: "The total gamma held by options dealers — determines whether they stabilize or amplify price moves." },
-    { front: "What is positive GEX?", back: "Dealers are long gamma — they BUY dips and SELL rallies, creating a stabilizing effect on price." },
-    { front: "What is negative GEX?", back: "Dealers are short gamma — they SELL dips and BUY rallies, amplifying price moves in both directions." },
-    { front: "What is the Gamma Flip level?", back: "The price where dealer gamma exposure switches from positive to negative — a critical pivot for market behavior." },
-    { front: "What is the Call Wall?", back: "The strike with the highest call open interest — acts as resistance as dealers hedge by selling stock." },
+    { front: "What is Gamma Exposure (GEX)?", back: "The total gamma held by options dealers â€” determines whether they stabilize or amplify price moves." },
+    { front: "What is positive GEX?", back: "Dealers are long gamma â€” they BUY dips and SELL rallies, creating a stabilizing effect on price." },
+    { front: "What is negative GEX?", back: "Dealers are short gamma â€” they SELL dips and BUY rallies, amplifying price moves in both directions." },
+    { front: "What is the Gamma Flip level?", back: "The price where dealer gamma exposure switches from positive to negative â€” a critical pivot for market behavior." },
+    { front: "What is the Call Wall?", back: "The strike with the highest call open interest â€” acts as resistance as dealers hedge by selling stock." },
   ],
 
   "Options Flow Analysis": [
-    { front: "What is options flow?", back: "Real-time data showing large options orders being placed — reveals where smart money is positioning." },
-    { front: "What is a sweep?", back: "A large options order that aggressively fills across multiple exchanges simultaneously — signals urgency and conviction." },
-    { front: "What is a block trade?", back: "A single large options order executed at once — often institutional activity seeking to move quietly." },
-    { front: "What does unusual options activity mean?", back: "Options volume significantly exceeding open interest or historical norms — a signal that informed money is active." },
-    { front: "How do you interpret bullish flow?", back: "Large call sweeps, high premium paid, near-term expiration — suggests institutions expect the stock to move up soon." },
+    { front: "What is options flow?", back: "Real-time data showing large options orders being placed â€” reveals where smart money is positioning." },
+    { front: "What is a sweep?", back: "A large options order that aggressively fills across multiple exchanges simultaneously â€” signals urgency and conviction." },
+    { front: "What is a block trade?", back: "A single large options order executed at once â€” often institutional activity seeking to move quietly." },
+    { front: "What does unusual options activity mean?", back: "Options volume significantly exceeding open interest or historical norms â€” a signal that informed money is active." },
+    { front: "How do you interpret bullish flow?", back: "Large call sweeps, high premium paid, near-term expiration â€” suggests institutions expect the stock to move up soon." },
   ],
 };
 
