@@ -225,7 +225,7 @@ export default function LandingPage() {
       </section>
 
       <section className="bottomCta">
-        <Crown />
+        <img src={trqxLionHero} alt="TRQX Capital" style={{ width: "80px", height: "80px", objectFit: "contain", borderRadius: "50%" }} />
         <div>
           <h2>Ready To Trade Smarter?</h2>
           <p>Join TRQX and see what institutions are doing before the crowd.</p>
