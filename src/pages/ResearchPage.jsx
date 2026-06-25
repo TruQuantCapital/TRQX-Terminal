@@ -504,7 +504,7 @@ export default function ResearchPage() {
 
           {/* OVERVIEW TAB */}
           {activeTab === "Overview" && (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr 1fr 1fr", gap: "20px" }}>
 
               {/* 1. Company Overview */}
               <Card style={{ gridColumn: "1" }}>
@@ -536,13 +536,13 @@ export default function ResearchPage() {
               </Card>
 
               {/* 2. Price Chart */}
-              <Card style={{ gridColumn: "2" }}>
+              <Card style={{ gridColumn: "2 / span 2" }}>
                 <SectionTitle>2. Price Performance</SectionTitle>
                 <TVChart symbol={symbol} />
-              </Card>
+               </Card>
 
               {/* 3. Key Metrics */}
-              <Card style={{ gridColumn: "3" }}>
+              <Card style={{ gridColumn: "4" }}>
                 <SectionTitle>3. Key Metrics</SectionTitle>
                 <MetricRow label="P/E Ratio (TTM)" value={fmt(profile.pe)} color={GOLD} />
                 <MetricRow label="Forward P/E" value={fmt(profile.forwardPE)} color={GOLD} />
@@ -566,14 +566,14 @@ export default function ResearchPage() {
                 <HealthRow label="Balance Sheet" value={profile.currentRatio > 1.5 ? 1 : -1} />
               </Card>
 
-              {/* 5. Revenue & Earnings */}
-              <Card style={{ gridColumn: "2" }}>
+               {/* 5. Revenue & Earnings */}
+               <Card style={{ gridColumn: "2 / span 2" }}>
                 <SectionTitle>5. Revenue & Earnings Growth</SectionTitle>
                 <RevenueChart reports={financials?.reports} />
-              </Card>
+               </Card>
 
               {/* 6. Analyst Ratings */}
-              <Card style={{ gridColumn: "3" }}>
+              <Card style={{ gridColumn: "4" }}>
                 <SectionTitle>6. Analyst Ratings</SectionTitle>
                 <AnalystDonut ratings={ratings} />
                 {ratings?.avgTarget && (
@@ -609,7 +609,7 @@ export default function ResearchPage() {
 
               {/* 8. Risks */}
               {verdict?.risks && (
-                <Card style={{ gridColumn: "2" }}>
+                <Card style={{ gridColumn: "2 / span 2" }}>
                   <SectionTitle>8. Risks to Consider</SectionTitle>
                   {verdict.risks.map((r, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "10px" }}>
@@ -621,7 +621,7 @@ export default function ResearchPage() {
               )}
 
               {/* 9. Final Thoughts + Quick Actions */}
-              <div style={{ gridColumn: "3", display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ gridColumn: "4", display: "flex", flexDirection: "column", gap: "16px" }}>
                 {verdict?.finalThoughts && (
                   <Card>
                     <SectionTitle>9. Final Thoughts</SectionTitle>
