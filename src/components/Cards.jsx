@@ -157,7 +157,7 @@ export function AiSummary() {
           const data = await aiRes.json();
           setAnalysis(data.reply || null);
         }
-        console.log("AiSummary error:", e);
+      } catch (e) {
       } finally {
         setLoading(false);
       }
