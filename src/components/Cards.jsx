@@ -146,8 +146,7 @@ export function AiSummary() {
         }).join(", ");
 
         const eventText = topEvents || "No major economic events scheduled today.";
-        const prompt = "You are a trading educator at TRQX Capital. Give traders a brief market intelligence update based on current conditions. Flow Sentiment: " + (flow.sentiment || "Neutral") + ". Call Premium: $" + Math.round((flow.callPremium||0)/1000000) + "M. Put Premium: $" + Math.round((flow.putPremium||0)/1000000) + "M. Sweeps: " + (flow.sweepCount||0) + ". Economic Events: " + eventText + ". Provide: 1) A 2-sentence plain-English summary of current market conditions. 2) Whether this is BULLISH, BEARISH, or NEUTRAL and why. 3) Three bullet points of what traders should watch today. Keep it simple and educational.";
-
+". Respond with plain text only, no markdown symbols or hashtags. Provide: A 2-sentence summary of current conditions. Then state BULLISH, BEARISH, or NEUTRAL and one sentence why. Then list 3 things to watch starting each with a dash."
         const aiRes = await fetch(API + "/api/market-intelligence", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
