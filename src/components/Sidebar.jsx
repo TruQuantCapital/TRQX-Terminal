@@ -22,6 +22,7 @@ export const nav = [
   { key: "news", label: "News & Alerts", icon: Newspaper, feature: "news" },
   { key: "calendar", label: "Economic Calendar", icon: CalendarDays, feature: "calendar" },
   { key: "research", label: "Stock Research", icon: BarChart3, feature: "stock_research" },
+  { key: "dividends", label: "Dividend Stocks", icon: DollarSign, feature: "stock_research" },
   { key: "options", label: "Options Flow", icon: Activity, feature: "options_flow" },
   { key: "scanner", label: "Flow Scanner", icon: Search, feature: "basic_flow" },
   { key: "gamma", label: "GEMX", icon: Waves, feature: "gemx" },
@@ -38,7 +39,7 @@ export const nav = [
 const navGroups = [
   {
     label: "MARKET INTELLIGENCE",
-    keys: ["dashboard", "news", "calendar", "research"],
+    keys: ["dashboard", "news", "calendar", "research", "dividends"],
   },
   {
     label: "TRADING TOOLS",

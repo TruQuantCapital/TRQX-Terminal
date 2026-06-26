@@ -6,6 +6,7 @@ import TopRibbon from "./components/TopRibbon";
 import TickerTape from "./components/TickerTape";
 import Dashboard from "./pages/Dashboard";
 import Scanner from "./pages/Scanner";
+import DividendPage from "./pages/DividendPage";
 import GammaPage from "./pages/GammaPage";
 import LandingPage from "./pages/LandingPage";
 import NewsPage from "./pages/NewsPage";
@@ -31,7 +32,9 @@ const routeByKey = {
   dashboard: "/dashboard",
   scanner: "/scanner",
   options: "/options-flow",
+  dividends: "/dividends",
   tradeplan: "/trade-plan",
+  dividends: "/dividends",
   gamma: "/gamma-ex",
   calendar: "/economic-calendar",
   alerts: "/alerts",
@@ -142,6 +145,7 @@ export default function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/research" element={<ProtectedTerminal><ResearchPage /></ProtectedTerminal>} />
+          <Route path="/dividends" element={<ProtectedTerminal><DividendPage /></ProtectedTerminal>} />
           <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
           <Route path="/home" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
