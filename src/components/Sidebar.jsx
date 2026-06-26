@@ -15,6 +15,7 @@ import {
   Newspaper,
   BarChart3,
   DollarSign,
+  Crown,
 } from "lucide-react";
 
 export const nav = [
