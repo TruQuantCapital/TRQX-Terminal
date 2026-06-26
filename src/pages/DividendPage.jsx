@@ -83,7 +83,10 @@ export default function DividendPage() {
                 yield: data.dividendYield || null,
                 price: data.price || null,
                 pe: data.pe || null,
-                grossMargin: data.grossMargin || null,
+                annualDividend: data.annualDividend || null,
+                payoutRatio: data.payoutRatio || null,
+                dividendGrowth: data.dividendGrowth || null,
+                exDividendDate: data.exDividendDate || null,
               };
             }
           } catch {}
@@ -249,7 +252,7 @@ export default function DividendPage() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
-              {["Ticker", "Company", "Sector", "Div Yield", "Price", "P/E Ratio", "Research"].map(h => (
+              {["Ticker", "Company", "Sector", "Div Yield", "Annual Div", "Payout Ratio", "5Y Growth", "Price", "Research"].map(h => (
                 <th key={h} style={{ color: MUTED, fontSize: "11px", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.08em", padding: "16px 20px", textAlign: "left" }}>{h}</th>
               ))}
             </tr>
@@ -282,13 +285,27 @@ export default function DividendPage() {
                     )}
                   </td>
                   <td style={{ padding: "16px 20px" }}>
-                    <span style={{ color: TEXT, fontSize: "14px", fontWeight: "600" }}>
-                      {live?.price ? `$${fmt(live.price)}` : "--"}
+                    <span style={{ color: TEXT, fontSize: "14px", fontWeight: "700" }}>
+                      {live?.annualDividend ? `$${fmt(live.annualDividend)}` : "--"}
                     </span>
                   </td>
                   <td style={{ padding: "16px 20px" }}>
-                    <span style={{ color: MUTED, fontSize: "14px" }}>
-                      {live?.pe ? fmt(live.pe) : "--"}
+                    {live?.payoutRatio ? (
+                      <span style={{ color: Number(live.payoutRatio) > 80 ? RED : Number(live.payoutRatio) > 60 ? GOLD : GREEN, fontSize: "14px", fontWeight: "700" }}>
+                        {fmt(live.payoutRatio)}%
+                      </span>
+                    ) : <span style={{ color: MUTED }}>--</span>}
+                  </td>
+                  <td style={{ padding: "16px 20px" }}>
+                    {live?.dividendGrowth ? (
+                      <span style={{ color: Number(live.dividendGrowth) > 0 ? GREEN : RED, fontSize: "14px", fontWeight: "700" }}>
+                        {Number(live.dividendGrowth) > 0 ? "+" : ""}{fmt(live.dividendGrowth)}%
+                      </span>
+                    ) : <span style={{ color: MUTED }}>--</span>}
+                  </td>
+                  <td style={{ padding: "16px 20px" }}>
+                    <span style={{ color: TEXT, fontSize: "14px", fontWeight: "600" }}>
+                      {live?.price ? `$${fmt(live.price)}` : "--"}
                     </span>
                   </td>
                   <td style={{ padding: "16px 20px" }}>
