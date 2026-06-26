@@ -8,13 +8,13 @@ import {
   CalendarDays,
   Bell,
   GraduationCap,
-  MessageCircle,
-  Newspaper,
-  Settings,
-  Crown,
   BookOpen,
+  MessageCircle,
   Home,
+  Settings,
+  Newspaper,
   BarChart3,
+  DollarSign,
 } from "lucide-react";
 
 export const nav = [
