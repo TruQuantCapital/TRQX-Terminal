@@ -1,31 +1,13 @@
 import { useMemo, useState } from "react";
+import LESSON_FLASHCARDS from "../data/lessonFlashcards";
 
 function makeCards(lesson) {
-  const headings = lesson.content?.filter((x) => x.type === "heading") || [];
-  const paragraphs = lesson.content?.filter((x) => x.type === "p") || [];
-
-  const cards = [];
-
-  headings.forEach((h, i) => {
-    const answer =
-      paragraphs[i]?.text ||
-      lesson.objective ||
-      "Review this section in the lesson.";
-
-    cards.push({
-      front: h.text.replace(/[📘🎯🧠✅📚📝✍️🧪👀🚨]/g, "").trim(),
-      back: answer,
-    });
-  });
-
-  if (cards.length === 0) {
-    cards.push({
-      front: lesson.title,
-      back: lesson.objective || "Review the lesson content.",
-    });
-  }
-
-  return cards.slice(0, 12);
+  const hardcoded = LESSON_FLASHCARDS[lesson.title];
+  if (hardcoded && hardcoded.length > 0) return hardcoded;
+  return [{
+    front: `What is "${lesson.title}" about?`,
+    back: lesson.objective || "Review the lesson content.",
+  }];
 }
 
 function MiniCandles() {
