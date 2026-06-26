@@ -86,8 +86,8 @@ Be fair but honest. A score of 7+ is a Pass. Be encouraging but accurate.`;
       {!result ? (
         <>
           <p style={{ color: MUTED, fontSize: "14px", lineHeight: "1.6", marginBottom: "16px" }}>
-            Write your answer below based on what you learned in this lesson. Your response will be graded by the TRQX AI with detailed feedback.
-          </p>
+            Copy and paste each assignment question above along with your answer and submit one at a time. The TRQX AI will grade your response and give you detailed feedback. This is a knowledge check — use it to strengthen your understanding before moving on.
+                </p>
           <textarea
             value={answer}
             onChange={e => setAnswer(e.target.value)}
