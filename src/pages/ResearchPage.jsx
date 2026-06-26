@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import PageChatWidget from "../components/PageChatWidget";
 import {
   Search, CheckCircle, AlertTriangle, Users, Globe,
   Building, Calendar, DollarSign, Activity, Loader,
@@ -601,6 +602,8 @@ export default function ResearchPage() {
           </div>
         </div>
       )}
+      <PageChatWidget context="The user is on the Stock Research page analyzing fundamental data, AI investment verdicts, analyst ratings, and financial metrics." placeholder="Ask me about this stock, what the metrics mean, or how to interpret the analyst ratings." />
     </div>
   );
 }
+ 

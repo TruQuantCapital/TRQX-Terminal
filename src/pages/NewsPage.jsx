@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-
+import PageChatWidget from "../components/PageChatWidget";
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
 const WATCHLIST = [
@@ -398,6 +398,7 @@ setNews(sorted);
           </div>
         )}
       </section>
+      <PageChatWidget context="The user is on the News & Alerts page viewing live market headlines, catalyst events, and options flow news." placeholder="Ask me about any headline, what it means for the market, or how to trade around this news." />
     </main>
   );
 }

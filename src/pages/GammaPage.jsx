@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useState, useRef } from "react";
+import PageChatWidget from "../components/PageChatWidget";
 
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
@@ -334,7 +335,7 @@ export default function GammaPage() {
         <span>Real-Time Options Flow • Dealer Positioning • Gamma Intelligence</span>
         <span>TRQX 🦁</span>
       </div>
-
+<PageChatWidget context="The user is viewing the GEMX Gamma Exposure dashboard showing dealer positioning, gamma flip levels, call wall, put wall, and squeeze risk for options traders." placeholder="Ask me about gamma exposure, dealer positioning, or what these levels mean for your trades." />
     </main>
   );
 }
