@@ -12,6 +12,7 @@ import "./drills.css";
 import "./timelineDrill.css";
 import "./footerButtons.css";
 import FlashCards from "../components/FlashCards";
+import AssignmentGrader from "../components/AssignmentGrader";
 
 export default function LessonReader({
   level,
@@ -66,6 +67,14 @@ export default function LessonReader({
         <div className="lessonReaderBody">
           {lesson.content.map((block, i) => {
             if (block.type === "heading") {
+              if (block.text.includes("STUDENT ASSIGNMENT")) {
+                return (
+                  <div key={i}>
+                    <h3>{block.text}</h3>
+                    <AssignmentGrader lesson={lesson} />
+                  </div>
+                );
+              }
               return <h3 key={i}>{block.text}</h3>;
             }
             if (block.type === "callout") {
