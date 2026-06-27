@@ -128,19 +128,28 @@ export default function NewsPage() {
             <span>Live Feed</span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "14px" }}>
-            {/* Left: TradingView Market News */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>Live Market News</div>
-              <div style={{ height: "280px", borderRadius: "10px", overflow: "hidden" }}>
-                <iframe
-                  src="https://www.youtube.com/embed/dp8PhLsUcFE?autoplay=1&mute=1"
-title="Bloomberg Live"
-allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-allowFullScreen
-                  style={{ border: "none", width: "100%", height: "100%" }}
-                />
-              </div>
-            </div>
+            {/* Left: Live TV Links */}
+<div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+  <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>Live Financial TV</div>
+  <div style={{ display: "flex", flexDirection: "column", gap: "10px", height: "280px", overflowY: "auto" }}>
+    {[
+      { name: "Bloomberg Markets", desc: "Live markets coverage and breaking financial news", url: "https://www.youtube.com/@markets/live", color: "#d4af37" },
+      { name: "CNBC Live TV", desc: "Real-time business news, market data, and analysis", url: "https://www.youtube.com/@CNBC/live", color: "#0088ff" },
+      { name: "Yahoo Finance Live", desc: "Live market coverage, earnings, and economic data", url: "https://www.youtube.com/@YahooFinance/live", color: "#a855f7" },
+    ].map((s, i) => (
+      <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <div style={{ color: "#f5f1e8", fontSize: "13px", fontWeight: "700", marginBottom: "4px" }}>{s.name}</div>
+          <div style={{ color: "#9ca3af", fontSize: "11px" }}>{s.desc}</div>
+        </div>
+        <button onClick={() => window.open(s.url, "_blank")}
+          style={{ background: `${s.color}22`, border: `1px solid ${s.color}55`, borderRadius: "8px", padding: "8px 16px", color: s.color, fontSize: "11px", fontWeight: "800", cursor: "pointer", whiteSpace: "nowrap", marginLeft: "12px" }}>
+          WATCH LIVE
+        </button>
+      </div>
+    ))}
+  </div>
+</div>
             {/* Right: TradingView Top Stories */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>Top Stories</div>
