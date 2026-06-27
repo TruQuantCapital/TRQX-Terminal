@@ -63,17 +63,17 @@ const keyByPath = {
   "/news": "news",
   "/settings": "settings",
   "/pricing": "settings",
-  "/pricing": "settings",
   "/reports": "news",
   "/dividends": "dividends",
 };
+
+function LoadingScreen() {
   return (
     <div className="loading-screen">
       <div className="loading-logo">⚡</div>
       <div className="loading-text">TRQX UNIFIED TERMINAL</div>
     </div>
   );
-}
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
