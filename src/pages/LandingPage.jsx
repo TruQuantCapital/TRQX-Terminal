@@ -41,32 +41,32 @@ const features = [
 ];
 
 const plans = [
+const plans = [
   {
     name: "Free",
     price: "$0",
     badge: null,
-    features: ["Market Intelligence (AI daily brief)", "News & Alerts feed", "Economic Calendar", "Landing page access"],
+    features: ["Claude AI Market Intelligence", "News & Alerts feed", "Economic Calendar", "Landing page access"],
   },
   {
     name: "Starter",
     price: "$49",
     badge: "FOUNDING",
-    features: ["Everything in Free", "TRQX Academy - all 3 levels", "Flash Cards (28 pattern cards)", "Platform Guide", "Stock Research"],
+    features: ["Everything in Free", "TRQX Academy - all 3 levels", "Flash Cards (28 patterns)", "Stock Research with AI Verdict", "Dividend Stocks + Deep Dive Reports"],
   },
   {
     name: "Pro",
     price: "$79",
     badge: "MOST POPULAR",
-    features: ["Everything in Starter", "Options Flow Scanner", "GEMX Gamma Dashboard", "Trade Plan builder", "AI Chat on Scanner & Academy", "Golden flow alerts", "Dark pool prints"],
+    features: ["Everything in Starter", "Options Flow Scanner", "GEMX Gamma Dashboard", "Trade Plan builder", "Claude AI Chat on Scanner & Academy", "Golden flow alerts", "Dark pool prints"],
   },
   {
     name: "Elite",
     price: "$149",
     badge: "ALL ACCESS",
-    features: ["Everything in Pro", "Discord webhook alerts", "ORB Indicator access", "AI Chat everywhere", "MarketBrief AI read", "Smart money tracker", "Flow replay"],
+    features: ["Everything in Pro", "Claude AI everywhere in terminal", "Discord webhook alerts", "ORB Indicator access", "MarketBrief AI read", "Smart money tracker", "Flow replay"],
   },
 ];
-
 export default function LandingPage() {
   return (
     <main className="trqxLanding">
@@ -206,7 +206,7 @@ export default function LandingPage() {
               <h3>{plan.name}</h3>
               <div className="planPrice">{plan.price}<span>/mo</span></div>
               <ul>
-                {plan.features.map((item) => <li key={item}>âœ“ {item}</li>)}
+                {plan.features.map((item) => <li key={item}>&#10003; {item}</li>)}
               </ul>
               <Link to="/pricing" className={plan.badge ? "goldButton" : "darkButton"}>
                 {plan.name.includes("Mentorship") ? "Apply Now" : "Get Started"}
