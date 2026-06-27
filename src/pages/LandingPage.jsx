@@ -173,6 +173,18 @@ export default function LandingPage() {
             <div className="eventRow"><span>10:00 AM</span><b>FOMC Minutes</b><em>High</em></div>
             <div className="eventRow"><span>02:00 PM</span><b>Fed Chair Powell</b><em>Med</em></div>
           </div>
+
+          <div className="intelCard">
+            <div className="cardTop">
+              <b>Top Dividend Yields</b>
+              <Link to="/dividends">View All &rarr;</Link>
+            </div>
+            <div className="flowRow"><b>MO</b><strong className="gain">9.2%</strong><span>Consumer Staples</span></div>
+            <div className="flowRow"><b>VZ</b><strong className="gain">6.8%</strong><span>Telecom</span></div>
+            <div className="flowRow"><b>T</b><strong className="gain">5.9%</strong><span>Telecom</span></div>
+            <div className="flowRow"><b>MAIN</b><strong className="gain">5.4%</strong><span>Finance</span></div>
+            <div className="flowRow"><b>KO</b><strong className="gain">3.1%</strong><span>Consumer Staples</span></div>
+          </div>
         </aside>
       </section>
 
