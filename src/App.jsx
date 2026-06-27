@@ -34,7 +34,6 @@ const routeByKey = {
   options: "/options-flow",
   dividends: "/dividends",
   tradeplan: "/trade-plan",
-  dividends: "/dividends",
   gamma: "/gamma-ex",
   calendar: "/economic-calendar",
   alerts: "/alerts",
@@ -64,10 +63,10 @@ const keyByPath = {
   "/news": "news",
   "/settings": "settings",
   "/pricing": "settings",
+  "/pricing": "settings",
   "/reports": "news",
+  "/dividends": "dividends",
 };
-
-function LoadingScreen() {
   return (
     <div className="loading-screen">
       <div className="loading-logo">⚡</div>
