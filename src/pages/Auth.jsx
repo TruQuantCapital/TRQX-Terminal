@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { supabase } from "../lib/supabase";
+import { Mail, Lock, Eye, EyeOff, BarChart3, Zap, GraduationCap, Bot } from "lucide-react";
 
 export default function Auth() {
   const [mode, setMode] = useState("login");
@@ -45,28 +46,33 @@ export default function Auth() {
     navigate(mode === "signup" ? "/welcome" : "/dashboard");
   }
 
+  const features = [
+    { icon: BarChart3, label: "OPTIONS FLOW" },
+    { icon: Zap, label: "GAMMA ANALYTICS" },
+    { icon: GraduationCap, label: "TRADING ACADEMY" },
+    { icon: Bot, label: "AI INTELLIGENCE" },
+  ];
+
   return (
     <div style={{
       width: "100vw", height: "100vh", overflow: "hidden",
       position: "relative", display: "flex", alignItems: "center", justifyContent: "center",
-      fontFamily: "''JetBrains Mono'', monospace",
+      fontFamily: "'JetBrains Mono', monospace",
     }}>
       {/* Background */}
       <div style={{
         position: "absolute", inset: 0,
-        backgroundImage: "url(''/auth-bg.jpg'')",
+        backgroundImage: "url('/auth-bg.jpg')",
         backgroundSize: "cover", backgroundPosition: "center",
         filter: "brightness(0.3)", zIndex: 0,
       }} />
-
-      {/* Dark overlay â€” extra dark on right side to hide "I AM THE ALGO" */}
       <div style={{
         position: "absolute", inset: 0,
         background: "linear-gradient(105deg, rgba(0,0,0,0.7) 0%, rgba(5,8,16,0.4) 40%, rgba(0,0,0,0.97) 100%)",
         zIndex: 1,
       }} />
 
-      {/* LEFT â€” Mike photo full height */}
+      {/* LEFT - Mike photo + signature + name */}
       <div style={{
         position: "absolute", left: 0, bottom: 0, top: 0,
         width: "380px", zIndex: 3,
@@ -74,22 +80,17 @@ export default function Auth() {
         paddingLeft: "32px", paddingBottom: "24px",
       }}>
         <img src="/mike-photo.png" alt="Michael Valerio"
-          style={{
-            width: "360px", height: "auto",
-            objectFit: "contain", objectPosition: "bottom",
-            filter: "drop-shadow(0 0 50px rgba(212,175,55,0.15))",
-          }} />
+          style={{ width: "360px", height: "auto", objectFit: "contain", objectPosition: "bottom",
+            filter: "drop-shadow(0 0 50px rgba(212,175,55,0.15))" }} />
         <img src="/signature.png" alt="Signature"
-          style={{
-            width: "220px", height: "auto",
+          style={{ width: "220px", height: "auto",
             filter: "drop-shadow(0 0 12px rgba(212,175,55,0.7))",
-            marginBottom: "8px", marginTop: "-10px",
-          }} />
+            marginBottom: "8px", marginTop: "-10px" }} />
         <div style={{ color: "#d4af37", fontSize: "16px", fontWeight: "900", letterSpacing: "0.1em" }}>MICHAEL A. VALERIO</div>
-        <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", letterSpacing: "0.18em", marginTop: "4px" }}>FOUNDER &amp; CEO â€” TRQX CAPITAL</div>
+        <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", letterSpacing: "0.18em", marginTop: "4px" }}>FOUNDER &amp; CEO &mdash; TRQX CAPITAL</div>
       </div>
 
-      {/* CENTER â€” Big Login Card */}
+      {/* CENTER - Big Login Card */}
       <div style={{
         position: "relative", zIndex: 4,
         width: "100%", maxWidth: "720px",
@@ -101,15 +102,13 @@ export default function Auth() {
         backdropFilter: "blur(40px)",
         maxHeight: "96vh", overflowY: "auto",
       }}>
-        {/* Logo â€” brighter */}
+        {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "16px" }}>
           <img src="/trqx-logo-auth.png" alt="TRQX"
-            style={{
-              width: "190px", height: "190px", objectFit: "contain",
+            style={{ width: "190px", height: "190px", objectFit: "contain",
               mixBlendMode: "screen",
               filter: "brightness(1.4) drop-shadow(0 0 30px rgba(212,175,55,0.6))",
-              marginBottom: "6px",
-            }} />
+              marginBottom: "6px" }} />
           <div style={{ color: "#d4af37", fontSize: "13px", fontWeight: "800", letterSpacing: "0.35em" }}>CAPITAL</div>
           <div style={{ color: "rgba(212,175,55,0.4)", fontSize: "10px", letterSpacing: "0.22em", marginTop: "5px" }}>PRECISION. DISCIPLINE. EXECUTION.</div>
         </div>
@@ -120,13 +119,13 @@ export default function Auth() {
         {/* Headline */}
         <div style={{ textAlign: "center", marginBottom: "26px" }}>
           <h2 style={{ color: "#f5f1e8", fontSize: "30px", fontWeight: "800", margin: "0 0 8px" }}>
-            {mode === "login" ? <>Welcome Back, <span style={{ color: "#d4af37" }}>Trader</span></> :
+            {mode === "login" ? <span>Welcome Back, <span style={{ color: "#d4af37" }}>Trader</span></span> :
              mode === "reset" ? "Reset Password" : "Get Started"}
           </h2>
           <p style={{ color: "#6b7280", fontSize: "14px", margin: 0, letterSpacing: "0.06em" }}>
             {mode === "login" ? "Master the Market & Mind." :
              mode === "reset" ? "Enter your email for a reset link." :
-             "Create your account â€” no card required"}
+             "Create your account — no card required"}
           </p>
         </div>
 
@@ -136,7 +135,7 @@ export default function Auth() {
           <div>
             <label style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "800", letterSpacing: "0.18em", display: "block", marginBottom: "8px" }}>EMAIL</label>
             <div style={{ position: "relative" }}>
-              <span style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", fontSize: "16px" }}>âœ‰</span>
+              <Mail size={16} style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280" }} />
               <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"
                 style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "14px", padding: "17px 18px 17px 50px", color: "#f5f1e8", fontSize: "15px", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} />
             </div>
@@ -147,12 +146,12 @@ export default function Auth() {
             <div>
               <label style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "800", letterSpacing: "0.18em", display: "block", marginBottom: "8px" }}>PASSWORD</label>
               <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", fontSize: "16px" }}>ðŸ”’</span>
-                <input type={showPass ? "text" : "password"} required value={pass} onChange={e => setPass(e.target.value)} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                <Lock size={16} style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280" }} />
+                <input type={showPass ? "text" : "password"} required value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••••"
                   style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "14px", padding: "17px 50px 17px 50px", color: "#f5f1e8", fontSize: "15px", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} />
                 <button type="button" onClick={() => setShowPass(v => !v)}
-                  style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#6b7280", cursor: "pointer", fontSize: "18px", padding: 0 }}>
-                  {showPass ? "ðŸ™ˆ" : "ðŸ‘"}
+                  style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#6b7280", cursor: "pointer", padding: 0, display: "flex", alignItems: "center" }}>
+                  {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
@@ -190,8 +189,8 @@ export default function Auth() {
                 <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(212,175,55,0.15)", fontSize: "11px", lineHeight: "1.7", color: "#9a9a9a", maxHeight: "180px", overflowY: "auto" }}>
                   <div style={{ color: "#d4af37", fontWeight: "bold", marginBottom: "6px" }}>NON-PROFESSIONAL SUBSCRIBER CERTIFICATION</div>
                   <div style={{ marginBottom: "10px" }}>By creating an account, you represent and warrant that you are a natural person accessing this platform solely for personal, non-commercial purposes, and that you do not use market data in connection with any trade, business, or professional activity as defined under applicable exchange rules and regulations.</div>
-                  <div style={{ color: "#d4af37", fontWeight: "bold", marginBottom: "6px" }}>RISK DISCLOSURE &amp; DISCLAIMER</div>
-                  <div style={{ marginBottom: "10px" }}>TRQX Capital LLC ("TRQX") is a financial education and market intelligence technology platform. All content, data, tools, analyses, alerts, and materials provided through this platform are for <b style={{ color: "#f5f1e8" }}>informational and educational purposes only</b> and do not constitute investment advice, financial advice, trading recommendations, or any form of solicitation to buy or sell any security, option, futures contract, or other financial instrument.</div>
+                  <div style={{ color: "#d4af37", fontWeight: "bold", marginBottom: "6px" }}>RISK DISCLOSURE AND DISCLAIMER</div>
+                  <div style={{ marginBottom: "10px" }}>TRQX Capital LLC is a financial education and market intelligence technology platform. All content, data, tools, analyses, alerts, and materials provided through this platform are for informational and educational purposes only and do not constitute investment advice, financial advice, trading recommendations, or any form of solicitation to buy or sell any security, option, futures contract, or other financial instrument.</div>
                   <div style={{ marginBottom: "10px" }}>Nothing on this platform should be construed as a recommendation or endorsement of any particular investment strategy or security. Past performance of any strategy, signal, or indicator is not indicative of future results. All trading involves substantial risk of loss, including possible loss of principal.</div>
                   <div>TRQX Capital LLC, its officers, employees, affiliates, and licensors expressly disclaim any liability for losses or damages arising from your use of or reliance on any information or tools provided through this platform. You are solely responsible for your own investment and trading decisions.</div>
                 </div>
@@ -202,7 +201,7 @@ export default function Auth() {
           {/* Error */}
           {error && (
             <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "12px", padding: "14px 18px", color: "#fca5a5", fontSize: "13px" }}>
-              âš  {error}
+              {error}
             </div>
           )}
 
@@ -217,9 +216,11 @@ export default function Auth() {
               opacity: loading ? 0.7 : 1, fontFamily: "inherit",
               boxShadow: "0 4px 32px rgba(212,175,55,0.4)",
             }}>
-            {loading ? (mode === "reset" ? "SENDING..." : "AUTHENTICATING...") :
-              mode === "reset" ? "SEND RESET LINK â†’" :
-              mode === "login" ? "ACCESS TERMINAL â†’" : "CREATE ACCOUNT â†’"}
+            {loading
+              ? (mode === "reset" ? "SENDING..." : "AUTHENTICATING...")
+              : mode === "reset" ? "SEND RESET LINK"
+              : mode === "login" ? "ACCESS TERMINAL"
+              : "CREATE ACCOUNT"}
           </button>
         </form>
 
@@ -235,17 +236,15 @@ export default function Auth() {
 
         {/* Feature icons */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "14px", marginTop: "28px", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-          {[
-            { icon: "ðŸ“Š", label: "OPTIONS FLOW" },
-            { icon: "âš¡", label: "GAMMA ANALYTICS" },
-            { icon: "ðŸŽ“", label: "TRADING ACADEMY" },
-            { icon: "ðŸ¤–", label: "AI INTELLIGENCE" },
-          ].map((f, i) => (
-            <div key={i} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "26px", marginBottom: "6px" }}>{f.icon}</div>
-              <div style={{ color: "#4b5563", fontSize: "10px", fontWeight: "800", letterSpacing: "0.06em" }}>{f.label}</div>
-            </div>
-          ))}
+          {features.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <div key={i} style={{ textAlign: "center" }}>
+                <Icon size={28} color="#d4af37" style={{ marginBottom: "6px" }} />
+                <div style={{ color: "#4b5563", fontSize: "10px", fontWeight: "800", letterSpacing: "0.06em" }}>{f.label}</div>
+              </div>
+            );
+          })}
         </div>
 
         <div style={{ textAlign: "center", marginTop: "16px", color: "#2d3748", fontSize: "10px", letterSpacing: "0.1em" }}>
@@ -255,4 +254,3 @@ export default function Auth() {
     </div>
   );
 }
-
