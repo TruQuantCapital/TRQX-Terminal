@@ -126,7 +126,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Live Market Overview</b>
-              <Link to="/dashboard">View All â†’</Link>
+              <Link to="/dashboard">View All &rarr;</Link>
             </div>
             <div className="marketGrid">
               {marketRows.map(([sym, price, change]) => (
@@ -142,7 +142,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Today's Smart Money</b>
-              <Link to="/options-flow">View Flow â†’</Link>
+              <Link to="/options-flow">View Flow &rarr;</Link>
             </div>
             {smartMoney.map(([sym, prem, type]) => (
               <div key={sym} className="flowRow">
@@ -156,7 +156,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Gamma Dashboard</b>
-              <Link to="/gamma-ex">View Map â†’</Link>
+              <Link to="/gamma-ex">View Map &rarr;</Link>
             </div>
             <div className="gammaLine"><span>Gamma Flip</span><div><i style={{ width: "82%" }} /></div><b>534</b></div>
             <div className="gammaLine"><span>Call Wall</span><div><i style={{ width: "70%" }} /></div><b>560</b></div>
@@ -167,7 +167,7 @@ export default function LandingPage() {
           <div className="intelCard">
             <div className="cardTop">
               <b>Economic Calendar</b>
-              <Link to="/economic-calendar">View Calendar â†’</Link>
+              <Link to="/economic-calendar">View Calendar &rarr;</Link>
             </div>
             <div className="eventRow"><span>08:30 AM</span><b>CPI Release</b><em>High</em></div>
             <div className="eventRow"><span>10:00 AM</span><b>FOMC Minutes</b><em>High</em></div>
