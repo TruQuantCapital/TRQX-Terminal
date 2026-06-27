@@ -41,7 +41,6 @@ const features = [
 ];
 
 const plans = [
-const plans = [
   {
     name: "Free",
     price: "$0",
