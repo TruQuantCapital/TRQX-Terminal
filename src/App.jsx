@@ -74,7 +74,7 @@ function LoadingScreen() {
       <div className="loading-text">TRQX UNIFIED TERMINAL</div>
     </div>
   );
-
+}
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <LoadingScreen />;
