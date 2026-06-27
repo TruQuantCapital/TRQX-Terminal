@@ -3,78 +3,28 @@ import PageChatWidget from "../components/PageChatWidget";
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
 const WATCHLIST = [
-  "ALL",
-  "SPY",
-  "QQQ",
-  "IWM",
-  "SPX",
-  "NVDA",
-  "TSLA",
-  "AAPL",
-  "AMD",
-  "META",
-  "MSFT",
-  "AMZN",
-  "GOOGL",
-  "PLTR",
-  "COIN",
-  "MSTR",
-  "NFLX",
-  "ARM",
-  "SMCI",
-  "MU",
-  "BABA",
-  "SOFI",
+  "ALL","SPY","QQQ","IWM","SPX","NVDA","TSLA","AAPL","AMD","META",
+  "MSFT","AMZN","GOOGL","PLTR","COIN","MSTR","NFLX","ARM","SMCI","MU","BABA","SOFI",
 ];
 
 const IMPORTANT_WORDS = [
-  "earnings",
-  "guidance",
-  "upgrade",
-  "downgrade",
-  "analyst",
-  "fed",
-  "fomc",
-  "powell",
-  "inflation",
-  "cpi",
-  "jobs",
-  "payroll",
-  "rates",
-  "treasury",
-  "oil",
-  "tariff",
-  "ai",
-  "chip",
-  "delivery",
-  "lawsuit",
-  "merger",
-  "acquisition",
-  "approval",
+  "earnings","guidance","upgrade","downgrade","analyst","fed","fomc","powell",
+  "inflation","cpi","jobs","payroll","rates","treasury","oil","tariff","ai",
+  "chip","delivery","lawsuit","merger","acquisition","approval",
 ];
 
 const JUNK_WORDS = [
-  "class action",
-  "deadline",
-  "investors with losses",
-  "market size",
-  "market share",
-  "cagr",
-  "research report",
-  "law firm",
-  "notice",
+  "class action","deadline","investors with losses","market size","market share",
+  "cagr","research report","law firm","notice",
 ];
 
 function getImpactScore(item) {
   const text = `${item.title || ""} ${item.description || ""}`.toLowerCase();
   const tickers = item.tickers || [];
-
   let score = 3;
-
   if (tickers.some((t) => WATCHLIST.includes(t))) score += 3;
   if (IMPORTANT_WORDS.some((w) => text.includes(w))) score += 3;
   if (String(item.sentiment || "").toLowerCase() !== "neutral") score += 1;
-
   return Math.min(10, score);
 }
 
@@ -92,19 +42,17 @@ function sentimentClass(sentiment) {
 
 function catalystType(item) {
   const text = `${item.title || ""} ${item.description || ""}`.toLowerCase();
-
   if (text.includes("earnings") || text.includes("guidance")) return "Earnings";
   if (text.includes("upgrade") || text.includes("downgrade") || text.includes("analyst")) return "Analyst";
   if (text.includes("fed") || text.includes("fomc") || text.includes("cpi") || text.includes("inflation")) return "Macro";
   if (text.includes("ai") || text.includes("chip")) return "AI / Tech";
   if (text.includes("merger") || text.includes("acquisition")) return "M&A";
   if (text.includes("lawsuit")) return "Legal";
-
   return "Market News";
 }
+
 function getCatalystType(title = "") {
   const t = title.toLowerCase();
-
   if (t.includes("earnings")) return "Earnings";
   if (t.includes("guidance")) return "Guidance";
   if (t.includes("upgrade")) return "Upgrade";
@@ -117,9 +65,9 @@ function getCatalystType(title = "") {
   if (t.includes("offering")) return "Offering";
   if (t.includes("fda")) return "FDA";
   if (t.includes("bankruptcy")) return "Bankruptcy";
-
   return "Market-Wide";
 }
+
 export default function NewsPage() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -129,14 +77,10 @@ export default function NewsPage() {
     async function loadNews() {
       try {
         const res = await fetch(`${API}/api/news`);
-
         if (res.ok) {
           const data = await res.json();
-          const sorted = (data.rows || []).sort(
-  (a, b) => getImpactScore(b) - getImpactScore(a)
-);
-
-setNews(sorted);
+          const sorted = (data.rows || []).sort((a, b) => getImpactScore(b) - getImpactScore(a));
+          setNews(sorted);
         }
       } catch (err) {
         console.error(err);
@@ -144,7 +88,6 @@ setNews(sorted);
         setLoading(false);
       }
     }
-
     loadNews();
   }, []);
 
@@ -176,46 +119,40 @@ setNews(sorted);
       </section>
 
       <section className="flowQuickStats">
-       <section className="newsVideoCard newsVideoWide">
-  <div className="tvChartHeader">
-    <div>
-      <small>LIVE MARKET NEWS</small>
-      <h3>Market News Feed</h3>
-    </div>
-    <span>Live Feed</span>
-  </div>
-  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "14px" }}>
-  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "14px" }}>
-    {/* Left: TradingView Market News */}
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>Live Market News</div>
-      <div style={{ height: "280px", borderRadius: "10px", overflow: "hidden" }}>
-        <iframe
-          src="https://s.tradingview.com/embed-widget/timeline/?locale=en#%7B%22feedMode%22%3A%22all_symbols%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D"
-          title="Live Market News"
-          style={{ border: "none", width: "100%", height: "100%" }}
-        />
-      </div>
-    </div>
-    {/* Right: TradingView Top Stories */}
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>Top Stories</div>
-      <div style={{ height: "280px", borderRadius: "10px", overflow: "hidden" }}>
-        <iframe
-          src="https://s.tradingview.com/embed-widget/timeline/?locale=en#%7B%22feedMode%22%3A%22market%22%2C%22market%22%3A%22stock%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D"
-          title="Top Stories"
-          style={{ border: "none", width: "100%", height: "100%" }}
-        />
-      </div>
-    </div>
-          src="https://s.tradingview.com/embed-widget/timeline/?locale=en#%7B%22feedMode%22%3A%22market%22%2C%22market%22%3A%22stock%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D"
-          title="Market News"
-          style={{ border: "none", width: "100%", height: "100%" }}
-        />
-      </div>
-    </div>
-  </div>
-</section>
+        <section className="newsVideoCard newsVideoWide">
+          <div className="tvChartHeader">
+            <div>
+              <small>LIVE MARKET NEWS</small>
+              <h3>Market News Feed</h3>
+            </div>
+            <span>Live Feed</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "14px" }}>
+            {/* Left: TradingView Market News */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>Live Market News</div>
+              <div style={{ height: "280px", borderRadius: "10px", overflow: "hidden" }}>
+                <iframe
+                  src="https://s.tradingview.com/embed-widget/timeline/?locale=en#%7B%22feedMode%22%3A%22all_symbols%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D"
+                  title="Live Market News"
+                  style={{ border: "none", width: "100%", height: "100%" }}
+                />
+              </div>
+            </div>
+            {/* Right: TradingView Top Stories */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>Top Stories</div>
+              <div style={{ height: "280px", borderRadius: "10px", overflow: "hidden" }}>
+                <iframe
+                  src="https://s.tradingview.com/embed-widget/timeline/?locale=en#%7B%22feedMode%22%3A%22market%22%2C%22market%22%3A%22stock%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D"
+                  title="Top Stories"
+                  style={{ border: "none", width: "100%", height: "100%" }}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
         <div className="flowMiniCard gold" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <small>FILTERED HEADLINES</small>
           <b style={{ fontSize: "28px" }}>{cleanNews.length}</b>
@@ -286,11 +223,7 @@ setNews(sorted);
 
       <section className="calendarFilterBar">
         {WATCHLIST.map((x) => (
-          <button
-            key={x}
-            className={filter === x ? "active" : ""}
-            onClick={() => setFilter(x)}
-          >
+          <button key={x} className={filter === x ? "active" : ""} onClick={() => setFilter(x)}>
             {x}
           </button>
         ))}
@@ -301,7 +234,6 @@ setNews(sorted);
           <small>TODAY'S TOP CATALYSTS</small>
           <h3>{filter === "ALL" ? "Market-Wide" : filter}</h3>
         </div>
-
         <div className="smartMoneyGrid">
           {topCatalysts.length ? (
             topCatalysts.map((item, i) => (
@@ -321,83 +253,39 @@ setNews(sorted);
         </div>
       </section>
 
-
       <section className="calendarGrid">
         {loading ? (
-          <div className="calendarCard">
-            <b>Loading news...</b>
-          </div>
+          <div className="calendarCard"><b>Loading news...</b></div>
         ) : cleanNews.length ? (
           cleanNews.map((item, idx) => (
-            <div
-              key={idx}
-              className={`calendarCard ${sentimentClass(item.sentiment)}`}
-            >
+            <div key={idx} className={`calendarCard ${sentimentClass(item.sentiment)}`}>
               <div className="calendarTop">
                 <small>{item.source}</small>
                 <span>{item.sentiment || "Neutral"}</span>
               </div>
-
               <h3>{item.title}</h3>
               <div className="newsMeta">
-  <span className={`impactBadge impact-${item.impact || 5}`}>
-    Impact {item.impact || 5}/10
-  </span>
-
-  <span className="typeBadge">
-    {item.category || "Market"}
-  </span>
-</div>
-
+                <span className={`impactBadge impact-${item.impact || 5}`}>Impact {item.impact || 5}/10</span>
+                <span className="typeBadge">{item.category || "Market"}</span>
+              </div>
               <p>{item.description}</p>
-              <p className="trqxRead">
-  <strong>TRQX Read:</strong>{" "}
-  {item.description?.slice(0, 180)}
-</p>
-
               <div className="calendarMetrics">
-
-  <div>
-    <small>Impact</small>
-    <b>{getImpactScore(item)}/10</b>
-  </div>
-
-  <div>
-    <small>Type</small>
-    <b>{getCatalystType(item.title)}</b>
-  </div>
-
-  <div>
-    <small>Tickers</small>
-    <b>
-      {(item.tickers || []).slice(0,3).join(", ") || "--"}
-    </b>
-  </div>
-
-</div>
-
+                <div><small>Impact</small><b>{getImpactScore(item)}/10</b></div>
+                <div><small>Type</small><b>{getCatalystType(item.title)}</b></div>
+                <div><small>Tickers</small><b>{(item.tickers || []).slice(0, 3).join(", ") || "--"}</b></div>
+              </div>
               <p className="tradeImpactText">
                 <strong>TRQX Read:</strong>{" "}
-                {item.reason ||
-                  "Headline may affect short-term sentiment. Confirm with price action and volume."}
+                {item.reason || "Headline may affect short-term sentiment. Confirm with price action and volume."}
               </p>
-
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noreferrer"
-                className="tradePlanBtn"
-              >
-                Read Story
-              </a>
+              <a href={item.url} target="_blank" rel="noreferrer" className="tradePlanBtn">Read Story</a>
             </div>
           ))
         ) : (
-          <div className="calendarCard">
-            <b>No trader-relevant catalyst news found.</b>
-          </div>
+          <div className="calendarCard"><b>No trader-relevant catalyst news found.</b></div>
         )}
       </section>
+
       <PageChatWidget context="The user is on the News & Alerts page viewing live market headlines, catalyst events, and options flow news." placeholder="Ask me about any headline, what it means for the market, or how to trade around this news." />
     </main>
   );
