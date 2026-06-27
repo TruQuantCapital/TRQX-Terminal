@@ -56,61 +56,74 @@ export default function Auth() {
         position: "absolute", inset: 0,
         backgroundImage: "url('/auth-bg.jpg')",
         backgroundSize: "cover", backgroundPosition: "center",
-        filter: "brightness(0.35)", zIndex: 0,
+        filter: "brightness(0.3)", zIndex: 0,
       }} />
+
+      {/* Dark overlay — extra dark on right side to hide "I AM THE ALGO" */}
       <div style={{
         position: "absolute", inset: 0,
-        background: "linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(5,8,16,0.45) 50%, rgba(0,0,0,0.9) 100%)",
+        background: "linear-gradient(105deg, rgba(0,0,0,0.7) 0%, rgba(5,8,16,0.4) 40%, rgba(0,0,0,0.97) 100%)",
         zIndex: 1,
       }} />
 
-      {/* LEFT — Mike photo + signature + name */}
+      {/* LEFT — Mike photo full height */}
       <div style={{
-        position: "absolute", left: 0, bottom: 0,
-        width: "320px", zIndex: 3,
+        position: "absolute", left: 0, bottom: 0, top: 0,
+        width: "380px", zIndex: 3,
         display: "flex", flexDirection: "column", justifyContent: "flex-end",
-        paddingLeft: "32px", paddingBottom: "28px",
+        paddingLeft: "32px", paddingBottom: "24px",
       }}>
         <img src="/mike-photo.png" alt="Michael Valerio"
-          style={{ width: "300px", height: "auto", objectFit: "contain", objectPosition: "bottom",
-            filter: "drop-shadow(0 0 40px rgba(212,175,55,0.15))", marginBottom: "0px" }} />
+          style={{
+            width: "360px", height: "auto",
+            objectFit: "contain", objectPosition: "bottom",
+            filter: "drop-shadow(0 0 50px rgba(212,175,55,0.15))",
+          }} />
         <img src="/signature.png" alt="Signature"
-          style={{ width: "200px", height: "auto", filter: "drop-shadow(0 0 10px rgba(212,175,55,0.6))",
-            marginBottom: "8px", marginTop: "-4px" }} />
-        <div style={{ color: "#d4af37", fontSize: "15px", fontWeight: "900", letterSpacing: "0.1em" }}>MICHAEL A. VALERIO</div>
-        <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", letterSpacing: "0.18em", marginTop: "3px" }}>FOUNDER &amp; CEO — TRQX CAPITAL</div>
+          style={{
+            width: "220px", height: "auto",
+            filter: "drop-shadow(0 0 12px rgba(212,175,55,0.7))",
+            marginBottom: "8px", marginTop: "-10px",
+          }} />
+        <div style={{ color: "#d4af37", fontSize: "16px", fontWeight: "900", letterSpacing: "0.1em" }}>MICHAEL A. VALERIO</div>
+        <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", letterSpacing: "0.18em", marginTop: "4px" }}>FOUNDER &amp; CEO — TRQX CAPITAL</div>
       </div>
 
       {/* CENTER — Big Login Card */}
       <div style={{
         position: "relative", zIndex: 4,
-        width: "100%", maxWidth: "680px",
-        background: "rgba(4, 7, 14, 0.96)",
-        border: "1px solid rgba(212,175,55,0.3)",
+        width: "100%", maxWidth: "720px",
+        background: "rgba(4, 7, 14, 0.97)",
+        border: "1px solid rgba(212,175,55,0.32)",
         borderRadius: "28px",
-        padding: "56px 72px",
-        boxShadow: "0 0 140px rgba(0,0,0,0.98), 0 0 80px rgba(212,175,55,0.06)",
-        backdropFilter: "blur(32px)",
+        padding: "52px 80px",
+        boxShadow: "0 0 160px rgba(0,0,0,0.99), 0 0 80px rgba(212,175,55,0.06)",
+        backdropFilter: "blur(40px)",
+        maxHeight: "96vh", overflowY: "auto",
       }}>
-        {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        {/* Logo — brighter */}
+        <div style={{ textAlign: "center", marginBottom: "16px" }}>
           <img src="/trqx-logo-auth.png" alt="TRQX"
-            style={{ width: "180px", height: "180px", objectFit: "contain",
-              mixBlendMode: "lighten", filter: "drop-shadow(0 0 30px rgba(212,175,55,0.5))", marginBottom: "8px" }} />
+            style={{
+              width: "190px", height: "190px", objectFit: "contain",
+              mixBlendMode: "screen",
+              filter: "brightness(1.4) drop-shadow(0 0 30px rgba(212,175,55,0.6))",
+              marginBottom: "6px",
+            }} />
           <div style={{ color: "#d4af37", fontSize: "13px", fontWeight: "800", letterSpacing: "0.35em" }}>CAPITAL</div>
-          <div style={{ color: "rgba(212,175,55,0.35)", fontSize: "10px", letterSpacing: "0.22em", marginTop: "6px" }}>PRECISION. DISCIPLINE. EXECUTION.</div>
+          <div style={{ color: "rgba(212,175,55,0.4)", fontSize: "10px", letterSpacing: "0.22em", marginTop: "5px" }}>PRECISION. DISCIPLINE. EXECUTION.</div>
         </div>
 
         {/* Divider */}
-        <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent)", marginBottom: "28px" }} />
+        <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.45), transparent)", marginBottom: "26px" }} />
 
         {/* Headline */}
-        <div style={{ textAlign: "center", marginBottom: "28px" }}>
-          <h2 style={{ color: "#f5f1e8", fontSize: "28px", fontWeight: "800", margin: "0 0 8px", letterSpacing: "0.02em" }}>
+        <div style={{ textAlign: "center", marginBottom: "26px" }}>
+          <h2 style={{ color: "#f5f1e8", fontSize: "30px", fontWeight: "800", margin: "0 0 8px" }}>
             {mode === "login" ? <>Welcome Back, <span style={{ color: "#d4af37" }}>Trader</span></> :
              mode === "reset" ? "Reset Password" : "Get Started"}
           </h2>
-          <p style={{ color: "#6b7280", fontSize: "13px", margin: 0, letterSpacing: "0.08em" }}>
+          <p style={{ color: "#6b7280", fontSize: "14px", margin: 0, letterSpacing: "0.06em" }}>
             {mode === "login" ? "Master the Market & Mind." :
              mode === "reset" ? "Enter your email for a reset link." :
              "Create your account — no card required"}
@@ -118,14 +131,14 @@ export default function Auth() {
         </div>
 
         {/* Form */}
-        <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+        <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {/* Email */}
           <div>
             <label style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "800", letterSpacing: "0.18em", display: "block", marginBottom: "8px" }}>EMAIL</label>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", fontSize: "16px" }}>✉</span>
               <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"
-                style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "14px", padding: "16px 18px 16px 48px", color: "#f5f1e8", fontSize: "15px", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} />
+                style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "14px", padding: "17px 18px 17px 50px", color: "#f5f1e8", fontSize: "15px", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} />
             </div>
           </div>
 
@@ -136,7 +149,7 @@ export default function Auth() {
               <div style={{ position: "relative" }}>
                 <span style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", fontSize: "16px" }}>🔒</span>
                 <input type={showPass ? "text" : "password"} required value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••••"
-                  style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "14px", padding: "16px 48px 16px 48px", color: "#f5f1e8", fontSize: "15px", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} />
+                  style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "14px", padding: "17px 50px 17px 50px", color: "#f5f1e8", fontSize: "15px", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} />
                 <button type="button" onClick={() => setShowPass(v => !v)}
                   style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#6b7280", cursor: "pointer", fontSize: "18px", padding: 0 }}>
                   {showPass ? "🙈" : "👁"}
@@ -196,13 +209,13 @@ export default function Auth() {
           {/* Submit */}
           <button type="submit" disabled={loading}
             style={{
-              width: "100%", padding: "18px",
+              width: "100%", padding: "20px",
               background: "linear-gradient(135deg, #c9a227, #f8bf31, #c9a227)",
               border: "none", borderRadius: "14px",
               color: "#000", fontSize: "15px", fontWeight: "900",
-              letterSpacing: "0.12em", cursor: loading ? "not-allowed" : "pointer",
+              letterSpacing: "0.14em", cursor: loading ? "not-allowed" : "pointer",
               opacity: loading ? 0.7 : 1, fontFamily: "inherit",
-              boxShadow: "0 4px 30px rgba(212,175,55,0.35)",
+              boxShadow: "0 4px 32px rgba(212,175,55,0.4)",
             }}>
             {loading ? (mode === "reset" ? "SENDING..." : "AUTHENTICATING...") :
               mode === "reset" ? "SEND RESET LINK →" :
@@ -211,17 +224,17 @@ export default function Auth() {
         </form>
 
         {/* Toggle */}
-        <div style={{ textAlign: "center", marginTop: "20px", fontSize: "13px", color: "#6b7280" }}>
+        <div style={{ textAlign: "center", marginTop: "22px", fontSize: "14px", color: "#6b7280" }}>
           {mode === "reset" ? "Remembered your password?" : mode === "login" ? "New to TRQX?" : "Already have an account?"}
           {" "}
           <button onClick={() => { setMode(mode === "reset" ? "login" : mode === "login" ? "signup" : "login"); setError(""); setPass(""); }}
-            style={{ background: "none", border: "none", color: "#d4af37", fontWeight: "800", cursor: "pointer", fontSize: "13px", fontFamily: "inherit" }}>
+            style={{ background: "none", border: "none", color: "#d4af37", fontWeight: "800", cursor: "pointer", fontSize: "14px", fontFamily: "inherit" }}>
             {mode === "reset" ? "Back to login" : mode === "login" ? "Start free" : "Sign in"}
           </button>
         </div>
 
         {/* Feature icons */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginTop: "28px", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "14px", marginTop: "28px", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           {[
             { icon: "📊", label: "OPTIONS FLOW" },
             { icon: "⚡", label: "GAMMA ANALYTICS" },
@@ -229,8 +242,8 @@ export default function Auth() {
             { icon: "🤖", label: "AI INTELLIGENCE" },
           ].map((f, i) => (
             <div key={i} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "24px", marginBottom: "6px" }}>{f.icon}</div>
-              <div style={{ color: "#4b5563", fontSize: "9px", fontWeight: "800", letterSpacing: "0.08em" }}>{f.label}</div>
+              <div style={{ fontSize: "26px", marginBottom: "6px" }}>{f.icon}</div>
+              <div style={{ color: "#4b5563", fontSize: "10px", fontWeight: "800", letterSpacing: "0.06em" }}>{f.label}</div>
             </div>
           ))}
         </div>
