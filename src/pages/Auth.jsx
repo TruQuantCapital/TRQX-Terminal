@@ -64,7 +64,7 @@ export default function Auth() {
         position: "absolute", inset: 0,
         backgroundImage: "url('/auth-bg.jpg')",
         backgroundSize: "cover", backgroundPosition: "center",
-        filter: "brightness(0.70)", zIndex: 0,
+        filter: "brightness(0.80)", zIndex: 0,
       }} />
       <div style={{
         position: "absolute", inset: 0,
