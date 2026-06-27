@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { supabase } from "../lib/supabase";
@@ -49,24 +49,24 @@ export default function Auth() {
     <div style={{
       width: "100vw", height: "100vh", overflow: "hidden",
       position: "relative", display: "flex", alignItems: "center", justifyContent: "center",
-      fontFamily: "'JetBrains Mono', monospace",
+      fontFamily: "''JetBrains Mono'', monospace",
     }}>
       {/* Background */}
       <div style={{
         position: "absolute", inset: 0,
-        backgroundImage: "url('/auth-bg.jpg')",
+        backgroundImage: "url(''/auth-bg.jpg'')",
         backgroundSize: "cover", backgroundPosition: "center",
         filter: "brightness(0.3)", zIndex: 0,
       }} />
 
-      {/* Dark overlay — extra dark on right side to hide "I AM THE ALGO" */}
+      {/* Dark overlay â€” extra dark on right side to hide "I AM THE ALGO" */}
       <div style={{
         position: "absolute", inset: 0,
         background: "linear-gradient(105deg, rgba(0,0,0,0.7) 0%, rgba(5,8,16,0.4) 40%, rgba(0,0,0,0.97) 100%)",
         zIndex: 1,
       }} />
 
-      {/* LEFT — Mike photo full height */}
+      {/* LEFT â€” Mike photo full height */}
       <div style={{
         position: "absolute", left: 0, bottom: 0, top: 0,
         width: "380px", zIndex: 3,
@@ -86,10 +86,10 @@ export default function Auth() {
             marginBottom: "8px", marginTop: "-10px",
           }} />
         <div style={{ color: "#d4af37", fontSize: "16px", fontWeight: "900", letterSpacing: "0.1em" }}>MICHAEL A. VALERIO</div>
-        <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", letterSpacing: "0.18em", marginTop: "4px" }}>FOUNDER &amp; CEO — TRQX CAPITAL</div>
+        <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", letterSpacing: "0.18em", marginTop: "4px" }}>FOUNDER &amp; CEO â€” TRQX CAPITAL</div>
       </div>
 
-      {/* CENTER — Big Login Card */}
+      {/* CENTER â€” Big Login Card */}
       <div style={{
         position: "relative", zIndex: 4,
         width: "100%", maxWidth: "720px",
@@ -101,7 +101,7 @@ export default function Auth() {
         backdropFilter: "blur(40px)",
         maxHeight: "96vh", overflowY: "auto",
       }}>
-        {/* Logo — brighter */}
+        {/* Logo â€” brighter */}
         <div style={{ textAlign: "center", marginBottom: "16px" }}>
           <img src="/trqx-logo-auth.png" alt="TRQX"
             style={{
@@ -126,7 +126,7 @@ export default function Auth() {
           <p style={{ color: "#6b7280", fontSize: "14px", margin: 0, letterSpacing: "0.06em" }}>
             {mode === "login" ? "Master the Market & Mind." :
              mode === "reset" ? "Enter your email for a reset link." :
-             "Create your account — no card required"}
+             "Create your account â€” no card required"}
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export default function Auth() {
           <div>
             <label style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "800", letterSpacing: "0.18em", display: "block", marginBottom: "8px" }}>EMAIL</label>
             <div style={{ position: "relative" }}>
-              <span style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", fontSize: "16px" }}>✉</span>
+              <span style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", fontSize: "16px" }}>âœ‰</span>
               <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"
                 style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "14px", padding: "17px 18px 17px 50px", color: "#f5f1e8", fontSize: "15px", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} />
             </div>
@@ -147,12 +147,12 @@ export default function Auth() {
             <div>
               <label style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "800", letterSpacing: "0.18em", display: "block", marginBottom: "8px" }}>PASSWORD</label>
               <div style={{ position: "relative" }}>
-                <span style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", fontSize: "16px" }}>🔒</span>
-                <input type={showPass ? "text" : "password"} required value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••••"
+                <span style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)", color: "#6b7280", fontSize: "16px" }}>ðŸ”’</span>
+                <input type={showPass ? "text" : "password"} required value={pass} onChange={e => setPass(e.target.value)} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "14px", padding: "17px 50px 17px 50px", color: "#f5f1e8", fontSize: "15px", outline: "none", boxSizing: "border-box", fontFamily: "inherit" }} />
                 <button type="button" onClick={() => setShowPass(v => !v)}
                   style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#6b7280", cursor: "pointer", fontSize: "18px", padding: 0 }}>
-                  {showPass ? "🙈" : "👁"}
+                  {showPass ? "ðŸ™ˆ" : "ðŸ‘"}
                 </button>
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function Auth() {
           {/* Error */}
           {error && (
             <div style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "12px", padding: "14px 18px", color: "#fca5a5", fontSize: "13px" }}>
-              ⚠ {error}
+              âš  {error}
             </div>
           )}
 
@@ -218,8 +218,8 @@ export default function Auth() {
               boxShadow: "0 4px 32px rgba(212,175,55,0.4)",
             }}>
             {loading ? (mode === "reset" ? "SENDING..." : "AUTHENTICATING...") :
-              mode === "reset" ? "SEND RESET LINK →" :
-              mode === "login" ? "ACCESS TERMINAL →" : "CREATE ACCOUNT →"}
+              mode === "reset" ? "SEND RESET LINK â†’" :
+              mode === "login" ? "ACCESS TERMINAL â†’" : "CREATE ACCOUNT â†’"}
           </button>
         </form>
 
@@ -236,10 +236,10 @@ export default function Auth() {
         {/* Feature icons */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "14px", marginTop: "28px", paddingTop: "24px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           {[
-            { icon: "📊", label: "OPTIONS FLOW" },
-            { icon: "⚡", label: "GAMMA ANALYTICS" },
-            { icon: "🎓", label: "TRADING ACADEMY" },
-            { icon: "🤖", label: "AI INTELLIGENCE" },
+            { icon: "ðŸ“Š", label: "OPTIONS FLOW" },
+            { icon: "âš¡", label: "GAMMA ANALYTICS" },
+            { icon: "ðŸŽ“", label: "TRADING ACADEMY" },
+            { icon: "ðŸ¤–", label: "AI INTELLIGENCE" },
           ].map((f, i) => (
             <div key={i} style={{ textAlign: "center" }}>
               <div style={{ fontSize: "26px", marginBottom: "6px" }}>{f.icon}</div>
@@ -255,3 +255,4 @@ export default function Auth() {
     </div>
   );
 }
+
