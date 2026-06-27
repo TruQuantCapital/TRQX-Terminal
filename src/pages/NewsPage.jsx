@@ -133,8 +133,10 @@ export default function NewsPage() {
               <div style={{ color: "#9ca3af", fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em" }}>Live Market News</div>
               <div style={{ height: "280px", borderRadius: "10px", overflow: "hidden" }}>
                 <iframe
-                  src="https://s.tradingview.com/embed-widget/timeline/?locale=en#%7B%22feedMode%22%3A%22all_symbols%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D"
-                  title="Live Market News"
+                  src="https://www.youtube.com/embed/dp8PhLsUcFE?autoplay=1&mute=1"
+title="Bloomberg Live"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+allowFullScreen
                   style={{ border: "none", width: "100%", height: "100%" }}
                 />
               </div>
