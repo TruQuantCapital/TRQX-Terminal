@@ -147,10 +147,12 @@ export default function Welcome() {
   const normalizedTier = (tier || "free").toLowerCase();
   const config = TIER_CONFIG[normalizedTier] || TIER_CONFIG.free;
   const userRank = TIER_RANK[normalizedTier] ?? 0;
+  const isFirstVisit = !localStorage.getItem("trqx_visited");
 
   useEffect(() => {
     confetti();
     triggerWelcomeEmail();
+    localStorage.setItem("trqx_visited", "true");
   }, []);
 
   return (
@@ -303,7 +305,7 @@ export default function Welcome() {
             letterSpacing: "4px",
             margin: "0 0 10px",
             lineHeight: 1,
-          }}>YOU'RE IN.</h1>
+          }}>{isFirstVisit ? "YOU'RE IN." : "WELCOME BACK, TRADER."}</h1>
           <p style={{
             color: "var(--text-dim)",
             fontSize: "15px",
