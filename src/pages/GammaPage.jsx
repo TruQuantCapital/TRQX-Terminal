@@ -21,13 +21,94 @@ function fmtM(v) {
   return `$${n}`;
 }
 
-// Full-width gamma histogram matching mockup
 function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
   if (!strikeChart?.length) return (
     <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", color: "#6b7280", fontSize: 13 }}>
       No strike data available
     </div>
-    {/* Legend */}
+  );
+
+  const maxVal = Math.max(...strikeChart.map(s => Math.max(Math.abs(s.calls || 0), Math.abs(s.puts || 0))), 1);
+  const chartH = 180;
+  const half = chartH / 2;
+
+  const levels = [
+    { val: putWall, color: "#ef4444", label: "PUT WALL" },
+    { val: gammaFlip, color: "#d4af37", label: "GAMMA FLIP" },
+    { val: price, color: "#ffffff", label: "CURRENT PRICE" },
+    { val: callWall, color: "#22c55e", label: "CALL WALL" },
+  ];
+
+  return (
+    <div style={{ position: "relative" }}>
+      <div style={{ display: "flex", gap: 0 }}>
+        {/* Y-axis */}
+        <div style={{ width: 50, display: "flex", flexDirection: "column", justifyContent: "space-between", height: chartH, paddingRight: 6, color: "#6b7280", fontSize: 9, textAlign: "right" }}>
+          <span style={{ color: "#22c55e" }}>+GAMMA</span>
+          <span>0</span>
+          <span style={{ color: "#ef4444" }}>-GAMMA</span>
+        </div>
+
+        <div style={{ flex: 1, position: "relative", height: chartH }}>
+          {/* Zero line */}
+          <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.15)", zIndex: 1 }} />
+
+          {/* Level lines */}
+          {levels.map(({ val, color, label }) => {
+            if (!val) return null;
+            const idx = strikeChart.findIndex(s => Number(s.strike) >= Number(val));
+            if (idx < 0) return null;
+            const pct = (idx / strikeChart.length) * 100;
+            return (
+              <div key={label} style={{ position: "absolute", left: `${pct}%`, top: 0, bottom: 0, zIndex: 2 }}>
+                <div style={{ borderLeft: `2px dashed ${color}`, height: "100%", opacity: 0.85 }} />
+                <div style={{ position: "absolute", top: -32, left: "50%", transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}>
+                  <div style={{ color, fontSize: 9, fontWeight: 800, letterSpacing: 0.5 }}>{label}</div>
+                  <div style={{ color, fontSize: 11, fontWeight: 900 }}>{val}</div>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Bars */}
+          <div style={{ display: "flex", alignItems: "center", height: chartH, gap: 1 }}>
+            {strikeChart.map((bar, i) => {
+              const isAboveFlip = gammaFlip && Number(bar.strike) >= Number(gammaFlip);
+              const barColor = isAboveFlip ? "#22c55e" : "#ef4444";
+              const netGamma = bar.net !== undefined ? bar.net : (bar.calls || 0) - (bar.puts || 0);
+              const isPositive = netGamma >= 0;
+              const h = Math.max(4, (Math.abs(netGamma) / maxVal) * half);
+
+              return (
+                <div key={i} style={{ flex: 1, minWidth: 4, display: "flex", flexDirection: "column", alignItems: "center", height: chartH, justifyContent: "center" }}>
+                  {isPositive ? (
+                    <>
+                      <div style={{ width: "75%", height: h, background: barColor, borderRadius: "3px 3px 0 0", opacity: 0.85 }} />
+                      <div style={{ width: "75%", height: half - h, background: "transparent" }} />
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ width: "75%", height: half, background: "transparent" }} />
+                      <div style={{ width: "75%", height: h, background: barColor, borderRadius: "0 0 3px 3px", opacity: 0.6 }} />
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Strike axis */}
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, color: "#6b7280", fontSize: 9 }}>
+            {[0, 0.25, 0.5, 0.75, 1].map(pct => {
+              const idx = Math.floor(pct * (strikeChart.length - 1));
+              return <span key={pct}>{strikeChart[idx]?.strike ?? ""}</span>;
+            })}
+          </div>
+          <div style={{ textAlign: "center", color: "#6b7280", fontSize: 9, marginTop: 2 }}>STRIKE</div>
+        </div>
+      </div>
+
+      {/* Legend */}
       <div style={{ display: "flex", gap: 20, marginTop: 12, flexWrap: "wrap" }}>
         {[
           { color: "#22c55e", label: "Positive Gamma (Dealer Long)" },
@@ -41,7 +122,7 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
         ))}
       </div>
 
-      {/* Synthetic notice — INSIDE GammaHistogram */}
+      {/* Synthetic notice */}
       {Array.isArray(strikeChart) && strikeChart.some(s => s.synthetic) && (
         <div style={{ color: "#6b7280", fontSize: 10, marginTop: 6, fontStyle: "italic" }}>
           ⚠️ Estimated profile — real data loads as flow accumulates for this ticker.
@@ -50,7 +131,8 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
     </div>
   );
 }
-   const maxVal = Math.max(...strikeChart.map(s => Math.max(Math.abs(s.calls || 0), Math.abs(s.puts || 0))), 1);
+ 
+  const maxVal = Math.max(...strikeChart.map(s => Math.max(Math.abs(s.calls || 0), Math.abs(s.puts || 0))), 1);
   const chartH = 180;
   const half = chartH / 2;
 
