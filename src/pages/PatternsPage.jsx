@@ -2349,7 +2349,7 @@ const BATCH2 = [
 // Merge all patterns
 const ALL_PATTERNS = [...PATTERNS, ...BATCH2];
 
-
+const CATEGORIES = ['All', 'Single Candle', 'Multi Candle', 'Chart Pattern', 'Market Structure', 'Support & Resistance', 'Price Action', 'Gap Pattern', 'Volume Pattern'];
 const LEVELS = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continuation', 'Bearish Continuation', 'Indecision'];
 
