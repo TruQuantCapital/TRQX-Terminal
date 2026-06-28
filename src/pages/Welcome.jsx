@@ -76,37 +76,38 @@ function confetti() {
   }, 5000);
 }
 
-{FEATURES.map((f, i) => (
-  <div
-    key={i}
-    style={{
-      display: "flex",
-      alignItems: "flex-start",
-      gap: "14px",
-      background: "var(--black-3)",
-      border: "1px solid rgba(201,168,76,0.15)",
-      borderRadius: "12px",
-      padding: "16px 18px",
-      transition: "border-color 0.2s, background 0.2s",
-    }}
-  >
-    <div style={{ fontSize: "24px", minWidth: "32px", textAlign: "center", marginTop: "2px" }}>{f.icon}</div>
-    <div style={{ flex: 1 }}>
-      <div style={{
-        fontFamily: "var(--font-head)",
-        fontSize: "14px",
-        fontWeight: 700,
-        color: "var(--text)",
-        marginBottom: "4px",
-      }}>{f.title}</div>
-      <div style={{
-        fontSize: "12px",
-        color: "var(--text-dim)",
-        lineHeight: 1.5,
-      }}>{f.desc}</div>
-    </div>
-  </div>
-))}
+const FEATURES = [
+  {
+    icon: "📊",
+    title: "Options Flow Scanner",
+    desc: "Live institutional sweeps, blocks & unusual activity in real time.",
+  },
+  {
+    icon: "⚡",
+    title: "GEMX Gamma Dashboard",
+    desc: "Gamma exposure levels, dealer positioning & key price levels.",
+  },
+  {
+    icon: "💰",
+    title: "Dividend Channel",
+    desc: "70 curated dividend stocks with live yields & deep dive reports.",
+  },
+  {
+    icon: "🔍",
+    title: "Stock Research",
+    desc: "AI-powered stock verdicts, technicals & institutional analysis.",
+  },
+  {
+    icon: "🎓",
+    title: "Trading Academy",
+    desc: "27 lessons, drills, flashcards & quizzes across 3 levels.",
+  },
+  {
+    icon: "🤖",
+    title: "AI Intelligence",
+    desc: "Ask AI anything about flow, gamma, charts & trade setups.",
+  },
+];
 
 export default function Welcome() {
   const navigate = useNavigate();
