@@ -59,7 +59,7 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
             return (
               <div key={label} style={{ position: "absolute", left: `${pct}%`, top: 0, bottom: 0, zIndex: 2 }}>
                 <div style={{ borderLeft: `2px dashed ${color}`, height: "100%", opacity: 0.85 }} />
-                <div style={{ position: "absolute", top: -32, left: "50%", transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}>
+                <div style={{ position: "absolute", top: -44, left: "50%", transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}>
                   <div style={{ color, fontSize: 9, fontWeight: 800, letterSpacing: 0.5 }}>{label}</div>
                   <div style={{ color, fontSize: 11, fontWeight: 900 }}>{val}</div>
                 </div>
@@ -265,7 +265,7 @@ export default function GammaPage() {
   const netGamma = callPrem - putPrem;
 
   return (
-    <main className="pageStack" style={{ maxWidth: "100%", padding: "0 16px 40px", background: "#080d14" }}>
+    <main className="pageStack" style={{ maxWidth: "100%", padding: "0 16px 80px", background: "#080d14", minHeight: "100vh" }}>
 
       {/* HEADER */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 0 14px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
@@ -317,8 +317,8 @@ export default function GammaPage() {
       </div>
 
       {/* ROW 2: FULL WIDTH GAMMA HISTOGRAM */}
-      <div style={{ background: "#0d1421", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "20px 20px 14px", marginTop: 12 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+      <div style={{ background: "#0d1421", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "48px 20px 14px", marginTop: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 48 }}>
           <div>
             <div style={{ color: "#d4af37", fontSize: 11, fontWeight: 800, letterSpacing: 1 }}>GAMMA EXPOSURE BY STRIKE ({ticker})</div>
             {price && <div style={{ color: "#9ca3af", fontSize: 11, marginTop: 2 }}>Current Price: <span style={{ color: "white", fontWeight: 700 }}>${fmtPrice(price)}</span></div>}
