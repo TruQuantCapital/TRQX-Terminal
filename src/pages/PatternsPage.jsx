@@ -4335,6 +4335,57 @@ const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continu
 // ─────────────────────────────────────────────
 function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }) {
   const svgRef = useRef(null);
+  const defs = mkEl('defs', {});
+
+const bullGradient = mkEl('linearGradient', {
+  id: 'bullGradient',
+  x1: '0%',
+  y1: '0%',
+  x2: '100%',
+  y2: '100%'
+});
+
+bullGradient.appendChild(mkEl('stop', {
+  offset: '0%',
+  stopColor: '#9fffee'
+}));
+
+bullGradient.appendChild(mkEl('stop', {
+  offset: '45%',
+  stopColor: TEAL
+}));
+
+bullGradient.appendChild(mkEl('stop', {
+  offset: '100%',
+  stopColor: '#0b5f55'
+}));
+
+const bearGradient = mkEl('linearGradient', {
+  id: 'bearGradient',
+  x1: '0%',
+  y1: '0%',
+  x2: '100%',
+  y2: '100%'
+});
+
+bearGradient.appendChild(mkEl('stop', {
+  offset: '0%',
+  stopColor: '#ffb3b3'
+}));
+
+bearGradient.appendChild(mkEl('stop', {
+  offset: '45%',
+  stopColor: RED
+}));
+
+bearGradient.appendChild(mkEl('stop', {
+  offset: '100%',
+  stopColor: '#7a1010'
+}));
+
+defs.appendChild(bullGradient);
+defs.appendChild(bearGradient);
+svg.appendChild(defs);
   const animRef = useRef(null);
   const stepRef = useRef(0);
 
@@ -4356,7 +4407,7 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }
     return PAD_L + i * spacing + spacing / 2;
   }
 
-  useEffect(() => {
+      useEffect(() => {
     if (!svgRef.current) return;
     const svg = svgRef.current;
     if (!playing) return;
@@ -4364,7 +4415,38 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }
     stepRef.current = 0;
     svg.innerHTML = '';
 
-    // Layer groups — order matters for z-index
+    // 3D candle gradients
+    const defs = mkEl('defs', {});
+
+    const bullGradient = mkEl('linearGradient', {
+      id: 'bullGradient',
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '100%'
+    });
+
+    bullGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#9fffee' }));
+    bullGradient.appendChild(mkEl('stop', { offset: '45%', stopColor: TEAL }));
+    bullGradient.appendChild(mkEl('stop', { offset: '100%', stopColor: '#0b5f55' }));
+
+    const bearGradient = mkEl('linearGradient', {
+      id: 'bearGradient',
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '100%'
+    });
+
+    bearGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#ffb3b3' }));
+    bearGradient.appendChild(mkEl('stop', { offset: '45%', stopColor: RED }));
+    bearGradient.appendChild(mkEl('stop', { offset: '100%', stopColor: '#7a1010' }));
+
+    defs.appendChild(bullGradient);
+    defs.appendChild(bearGradient);
+    svg.appendChild(defs);
+
+        // Layer groups — order matters for z-index
     const gridG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     const zoneG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     const candleG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -4405,20 +4487,25 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }
 
       const bTop = Math.min(yO, yC2);
       const bH = Math.max(Math.abs(yO - yC2), 2);
-      const body = mkEl('rect', { x: x - candleW / 2, y: bTop,
-        width: candleW, height: bH, fill: color, rx: '1' });
-      candleG.appendChild(body);
+      const body = mkEl('rect', {
+  x: x - candleW / 2,
+  y: bTop,
+  width: candleW,
+  height: bH,
+  fill: c.bull ? 'url(#bullGradient)' : 'url(#bearGradient)',
+  stroke: c.bull ? '#8fffe9' : '#ffb3b3',
+  'stroke-width': 1.4,
+  rx: '3',
+  style: `
+    filter:
+      drop-shadow(0 0 7px ${c.bull ? TEAL : RED})
+      drop-shadow(0 0 12px rgba(212,175,55,0.25));
+  `
+});
+candleG.appendChild(body);
 
       stepRef.current++;
       animRef.current = setTimeout(drawNextCandle, 65);
-    }
-
-    // After candles: draw all overlays
-    function drawOverlays() {
-      setTimeout(() => {
-        drawAutoOverlays();
-        drawAnnotations();
-      }, 200);
     }
 
     // Auto-detect and draw trendlines/necklines based on pattern type
@@ -4774,14 +4861,24 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }
       }
     }
 
-    drawNextCandle();
+        drawNextCandle();
 
-    return () => { if (animRef.current) clearTimeout(animRef.current); };
+    return () => {
+      if (animRef.current) clearTimeout(animRef.current);
+    };
   }, [playing, pattern]);
 
   return (
-    <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`}
-      style={{ width: '100%', height: '100%', display: 'block', background: 'transparent' }} />
+    <svg
+      ref={svgRef}
+      viewBox={`0 0 ${W} ${H}`}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'block',
+        background: 'transparent'
+      }}
+    />
   );
 }
 
