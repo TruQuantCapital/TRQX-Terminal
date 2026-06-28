@@ -4328,35 +4328,38 @@ const LEVELS = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continuation', 'Bearish Continuation', 'Indecision'];
 
 // ─────────────────────────────────────────────
+// CANDLE ANIMATION ENGINE
+// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
 // CANDLE ANIMATION ENGINE — Full Rebuild
 // ─────────────────────────────────────────────
-  function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }) {
+function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }) {
   const svgRef = useRef(null);
   const animRef = useRef(null);
   const stepRef = useRef(0);
 
-  function mkEl(tag, attrs = {}) {
-    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
-
-    Object.entries(attrs).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        el.setAttribute(key, value);
-      }
-    });
-
-    return el;
-  }
-
-  const W = width, H = height;
-  const candles = pattern.candles;
-  const allPrices = candles.flatMap(c => [c.h, c.l]);
+  const W = width;
+  const H = height;
+  const candles = pattern.candles || [];
+  const allPrices = candles.flatMap(c => [c.h, c.l, c.o, c.c]);
   const minP = Math.min(...allPrices) - 8;
   const maxP = Math.max(...allPrices) + 8;
-  const PAD_L = 36, PAD_R = 16, PAD_T = 32, PAD_B = 28;
+  const PAD_L = 46;
+  const PAD_R = 36;
+  const PAD_T = 36;
+  const PAD_B = 42;
   const chartW = W - PAD_L - PAD_R;
   const chartH = H - PAD_T - PAD_B;
-  const candleW = Math.min(18, chartW / candles.length - 3);
-  const spacing = chartW / candles.length;
+  const candleW = Math.max(8, Math.min(20, chartW / Math.max(candles.length, 1) - 8));
+  const spacing = chartW / Math.max(candles.length, 1);
+
+  function mkEl(tag, attrs = {}) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    Object.entries(attrs).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) el.setAttribute(key, String(value));
+    });
+    return el;
+  }
 
   function yS(price) {
     return PAD_T + ((maxP - price) / (maxP - minP)) * chartH;
@@ -4373,8 +4376,15 @@ const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continu
 
     stepRef.current = 0;
     svg.innerHTML = '';
+    if (animRef.current) clearTimeout(animRef.current);
 
+    // Layer groups — order matters for z-index.
     const defs = mkEl('defs', {});
+    const gridG = mkEl('g', {});
+    const zoneG = mkEl('g', {});
+    const candleG = mkEl('g', {});
+    const lineG = mkEl('g', {});
+    const labelG = mkEl('g', {});
 
     const bullGradient = mkEl('linearGradient', {
       id: 'bullGradient',
@@ -4383,7 +4393,6 @@ const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continu
       x2: '100%',
       y2: '100%'
     });
-
     bullGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#9fffee' }));
     bullGradient.appendChild(mkEl('stop', { offset: '45%', stopColor: TEAL }));
     bullGradient.appendChild(mkEl('stop', { offset: '100%', stopColor: '#0b5f55' }));
@@ -4395,37 +4404,174 @@ const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continu
       x2: '100%',
       y2: '100%'
     });
-
     bearGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#ffb3b3' }));
     bearGradient.appendChild(mkEl('stop', { offset: '45%', stopColor: RED }));
     bearGradient.appendChild(mkEl('stop', { offset: '100%', stopColor: '#7a1010' }));
 
     defs.appendChild(bullGradient);
     defs.appendChild(bearGradient);
-    svg.appendChild(defs);
+    [defs, gridG, zoneG, candleG, lineG, labelG].forEach(g => svg.appendChild(g));
 
-        // Layer groups — order matters for z-index
-    const gridG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    const zoneG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    const candleG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    const lineG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    const labelG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    [gridG, zoneG, candleG, lineG, labelG].forEach(g => svg.appendChild(g));
+    function fadeIn(el, delay = 100) {
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        el.style.opacity = '1';
+      }, delay);
+    }
 
-    // Grid lines + price labels
+    function addText(text, x, y, color = GOLD, size = 11, anchor = 'middle', delay = 300) {
+      const labelWidth = Math.max(34, text.length * size * 0.62 + 14);
+      const labelHeight = size + 9;
+      const rectX = anchor === 'middle' ? x - labelWidth / 2 : anchor === 'end' ? x - labelWidth : x;
+      const bg = mkEl('rect', {
+        x: Math.max(PAD_L, Math.min(W - PAD_R - labelWidth, rectX)),
+        y: Math.max(6, Math.min(H - PAD_B - labelHeight, y - labelHeight + 3)),
+        width: labelWidth,
+        height: labelHeight,
+        rx: 5,
+        fill: 'rgba(4,10,18,0.92)',
+        stroke: `${color}55`,
+        'stroke-width': 0.75
+      });
+      bg.style.opacity = '0';
+      labelG.appendChild(bg);
+      fadeIn(bg, delay);
+
+      const tx = mkEl('text', {
+        x,
+        y,
+        fill: color,
+        'font-size': size,
+        'font-weight': 900,
+        'font-family': 'Inter, Arial, sans-serif',
+        'text-anchor': anchor
+      });
+      tx.textContent = text;
+      tx.style.opacity = '0';
+      labelG.appendChild(tx);
+      fadeIn(tx, delay + 40);
+      return tx;
+    }
+
+    function drawLine(x1, y1, x2, y2, color = GOLD, label = '', opts = {}) {
+      const line = mkEl('line', {
+        x1,
+        y1,
+        x2,
+        y2,
+        stroke: color,
+        'stroke-width': opts.width || 1.6,
+        'stroke-dasharray': opts.dash || '',
+        'stroke-linecap': 'round'
+      });
+      line.style.opacity = '0';
+      lineG.appendChild(line);
+      fadeIn(line, opts.delay || 900);
+      if (label) addText(label, opts.labelX || (x1 + x2) / 2, opts.labelY || y1 - 8, color, opts.fontSize || 11, opts.anchor || 'middle', (opts.delay || 900) + 120);
+      return line;
+    }
+
+    function drawArrow(x1, y1, x2, y2, color = GOLD, label = '', delay = 1000) {
+      const id = `arrow-${pattern.id}-${Math.random().toString(16).slice(2)}`;
+      const marker = mkEl('marker', {
+        id,
+        markerWidth: 8,
+        markerHeight: 8,
+        refX: 6,
+        refY: 3,
+        orient: 'auto',
+        markerUnits: 'strokeWidth'
+      });
+      marker.appendChild(mkEl('path', { d: 'M0,0 L0,6 L7,3 z', fill: color }));
+      defs.appendChild(marker);
+      const arrow = mkEl('line', {
+        x1,
+        y1,
+        x2,
+        y2,
+        stroke: color,
+        'stroke-width': 1.8,
+        'stroke-linecap': 'round',
+        'marker-end': `url(#${id})`
+      });
+      arrow.style.opacity = '0';
+      lineG.appendChild(arrow);
+      fadeIn(arrow, delay);
+      if (label) addText(label, x1, y1 - 8, color, 11, 'middle', delay + 120);
+    }
+
+    function drawZone(x1, y1, x2, y2, fill, stroke, label, delay = 1200) {
+      const top = Math.min(y1, y2);
+      const height = Math.abs(y2 - y1);
+      if (height < 4) return;
+      const rect = mkEl('rect', {
+        x: Math.min(x1, x2),
+        y: top,
+        width: Math.abs(x2 - x1),
+        height,
+        rx: 6,
+        fill,
+        stroke,
+        'stroke-width': 0.8
+      });
+      rect.style.opacity = '0';
+      zoneG.appendChild(rect);
+      fadeIn(rect, delay);
+      if (label) addText(label, Math.min(x1, x2) + 8, top + 15, stroke, 10, 'start', delay + 80);
+    }
+
+    function drawBracket(start, end, label, color = GOLD, delay = 1200) {
+      const x1 = xC(start) - candleW / 2;
+      const x2 = xC(end) + candleW / 2;
+      const y = H - PAD_B + 15;
+      drawLine(x1, y, x2, y, color, '', { delay, width: 1.5 });
+      drawLine(x1, y - 7, x1, y + 5, color, '', { delay, width: 1.5 });
+      drawLine(x2, y - 7, x2, y + 5, color, '', { delay, width: 1.5 });
+      if (label) addText(label, (x1 + x2) / 2, y + 19, color, 11, 'middle', delay + 120);
+    }
+
+    function candleLabelText(ann, c, x, delay) {
+      const labelY = Math.max(PAD_T + 16, yS(c.h) - 16 + (ann.offset || 0));
+      addText(ann.text, x, labelY, ann.color || GOLD, 10, 'middle', delay);
+      drawArrow(x, labelY + 8, x, yS(c.h) - 3, ann.color || GOLD, '', delay + 120);
+    }
+
+    // Grid lines + price labels.
     for (let i = 0; i <= 5; i++) {
       const price = minP + (i / 5) * (maxP - minP);
       const y = yS(price);
-      const gl = mkEl('line', { x1: PAD_L, x2: W - PAD_R, y1: y, y2: y,
-        stroke: 'rgba(255,255,255,0.06)', 'stroke-width': '0.5' });
-      gridG.appendChild(gl);
-      const pt = mkEl('text', { x: PAD_L - 4, y: y + 4, fill: 'rgba(156,163,175,0.5)',
-        'font-size': '9', 'text-anchor': 'end', 'font-family': 'monospace' });
+      gridG.appendChild(mkEl('line', {
+        x1: PAD_L,
+        x2: W - PAD_R,
+        y1: y,
+        y2: y,
+        stroke: 'rgba(255,255,255,0.06)',
+        'stroke-width': 0.7
+      }));
+      const pt = mkEl('text', {
+        x: PAD_L - 8,
+        y: y + 4,
+        fill: 'rgba(203,213,225,0.55)',
+        'font-size': 10,
+        'text-anchor': 'end',
+        'font-family': 'monospace'
+      });
       pt.textContent = Math.round(price);
       gridG.appendChild(pt);
     }
 
-    // Draw candles one by one
+    for (let i = 0; i <= candles.length; i += 2) {
+      const x = PAD_L + i * spacing;
+      gridG.appendChild(mkEl('line', {
+        x1: x,
+        x2: x,
+        y1: PAD_T,
+        y2: H - PAD_B,
+        stroke: 'rgba(255,255,255,0.035)',
+        'stroke-width': 0.7
+      }));
+    }
+
     function drawNextCandle() {
       const i = stepRef.current;
       if (i >= candles.length) {
@@ -4433,393 +4579,170 @@ const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continu
         onComplete && onComplete();
         return;
       }
+
       const c = candles[i];
       const color = c.bull ? TEAL : RED;
       const x = xC(i);
-      const yH = yS(c.h), yL = yS(c.l);
-      const yO = yS(c.o), yC2 = yS(c.c);
-
-      const wick = mkEl('line', { x1: x, x2: x, y1: yH, y2: yL,
-        stroke: color, 'stroke-width': '1.5' });
-      candleG.appendChild(wick);
-
+      const yH = yS(c.h);
+      const yL = yS(c.l);
+      const yO = yS(c.o);
+      const yC2 = yS(c.c);
       const bTop = Math.min(yO, yC2);
-      const bH = Math.max(Math.abs(yO - yC2), 2);
-      const body = mkEl('rect', {
-  x: x - candleW / 2,
-  y: bTop,
-  width: candleW,
-  height: bH,
-  fill: c.bull ? 'url(#bullGradient)' : 'url(#bearGradient)',
-  stroke: c.bull ? '#8fffe9' : '#ffb3b3',
-  'stroke-width': 1.4,
-  rx: '3',
-  style: `
-    filter:
-      drop-shadow(0 0 7px ${c.bull ? TEAL : RED})
-      drop-shadow(0 0 12px rgba(212,175,55,0.25));
-  `
-});
-candleG.appendChild(body);
+      const bH = Math.max(Math.abs(yO - yC2), 3);
 
-      stepRef.current++;
+      const wick = mkEl('line', {
+        x1: x,
+        x2: x,
+        y1: yH,
+        y2: yL,
+        stroke: color,
+        'stroke-width': 1.8,
+        'stroke-linecap': 'round',
+        style: `filter: drop-shadow(0 0 5px ${color});`
+      });
+      wick.style.opacity = '0';
+      candleG.appendChild(wick);
+      fadeIn(wick, 10);
+
+      const body = mkEl('rect', {
+        x: x - candleW / 2,
+        y: bTop,
+        width: candleW,
+        height: bH,
+        fill: c.bull ? 'url(#bullGradient)' : 'url(#bearGradient)',
+        stroke: c.bull ? '#8fffe9' : '#ffb3b3',
+        'stroke-width': 1.4,
+        rx: 4,
+        style: `filter: drop-shadow(0 0 7px ${color}) drop-shadow(0 0 12px rgba(212,175,55,0.18));`
+      });
+      body.style.opacity = '0';
+      candleG.appendChild(body);
+      fadeIn(body, 10);
+
+      stepRef.current += 1;
       animRef.current = setTimeout(drawNextCandle, 65);
     }
 
-    // Auto-detect and draw trendlines/necklines based on pattern type
-    function drawAutoOverlays() {
+    function drawOverlays() {
       const name = (pattern.name || '').toLowerCase();
       const signal = (pattern.signal || '').toLowerCase();
+      const bullish = signal.includes('bullish');
+      const bearish = signal.includes('bearish');
+      const delay = 500;
 
-      // ── Neckline for H&S, Double Top, Double Bottom, Triple Top, Triple Bottom ──
-      if (name.includes('head & shoulders') || name.includes('head and shoulders')) {
-        // Find the two neckline lows (troughs between shoulders and head)
-        const neckPrices = [candles[3], candles[7]].filter(Boolean);
-        if (neckPrices.length === 2) {
-          const y1 = yS(neckPrices[0].l);
-          const y2 = yS(neckPrices[1].l);
-          drawDashedLine(PAD_L, y1, W - PAD_R, y2, GOLD, '6,3', 'Neckline', 1500);
-        }
-      }
-
-      if (name.includes('inverse head')) {
-        const neckPrices = [candles[4], candles[8]].filter(Boolean);
-        if (neckPrices.length === 2) {
-          const y1 = yS(neckPrices[0].h);
-          const y2 = yS(neckPrices[1].h);
-          drawDashedLine(PAD_L, y1, W - PAD_R, y2, GOLD, '6,3', 'Neckline', 1500);
-        }
-      }
-
-      if (name.includes('double top')) {
-        const neckY = yS(candles[5]?.l || candles[5]?.c || 200);
-        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '6,3', 'Neckline', 1500);
-      }
-
-      if (name.includes('double bottom')) {
-        const neckY = yS(candles[6]?.h || candles[6]?.c || 210);
-        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, '6,3', 'Neckline', 1500);
-      }
-
-      if (name.includes('triple top')) {
-        const neckY = yS(candles[4]?.l || 197);
-        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '6,3', 'Neckline', 1500);
-      }
-
-      if (name.includes('triple bottom')) {
-        const neckY = yS(candles[4]?.h || 209);
-        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '6,3', 'Neckline', 1500);
-      }
-
-      // ── Trendlines for wedges ──
-      if (name.includes('rising wedge')) {
-        const x1 = xC(0), x2 = xC(candles.length - 4);
-        const upperY1 = yS(candles[0].h), upperY2 = yS(candles[7].h);
-        const lowerY1 = yS(candles[0].l), lowerY2 = yS(candles[6].l);
-        drawTrendLine(x1, upperY1, x2, upperY2, RED, '5,3', 'Resistance', 1200);
-        drawTrendLine(x1, lowerY1, x2, lowerY2, GOLD, '5,3', 'Support', 1400);
-      }
-
-      if (name.includes('falling wedge')) {
-        const x1 = xC(0), x2 = xC(candles.length - 4);
-        const upperY1 = yS(candles[0].h), upperY2 = yS(candles[6].h);
-        const lowerY1 = yS(candles[0].l), lowerY2 = yS(candles[8].l);
-        drawTrendLine(x1, upperY1, x2, upperY2, RED, '5,3', 'Resistance', 1200);
-        drawTrendLine(x1, lowerY1, x2, lowerY2, TEAL, '5,3', 'Support', 1400);
-      }
-
-      // ── Channel lines ──
-      if (name.includes('rising channel')) {
-        const x1 = xC(0), x2 = xC(candles.length - 1);
-        drawTrendLine(x1, yS(candles[0].l), x2, yS(candles[candles.length - 1].l), TEAL, '5,3', 'Support', 1200);
-        drawTrendLine(x1, yS(candles[0].h), x2, yS(candles[candles.length - 3].h), RED, '5,3', 'Resistance', 1400);
-      }
-
-      if (name.includes('falling channel')) {
-        const x1 = xC(0), x2 = xC(candles.length - 1);
-        drawTrendLine(x1, yS(candles[0].h), x2, yS(candles[candles.length - 1].h), RED, '5,3', 'Resistance', 1200);
-        drawTrendLine(x1, yS(candles[0].l), x2, yS(candles[candles.length - 3].l), TEAL, '5,3', 'Support', 1400);
-      }
-
-      // ── Flag trendlines ──
-      if (name.includes('bull flag')) {
-        const flagStart = 5, flagEnd = 9;
-        drawTrendLine(xC(flagStart), yS(candles[flagStart].h), xC(flagEnd), yS(candles[flagEnd].h), RED, '4,3', 'Flag Top', 1200);
-        drawTrendLine(xC(flagStart), yS(candles[flagStart].l), xC(flagEnd), yS(candles[flagEnd].l), TEAL, '4,3', 'Flag Bottom', 1400);
-      }
-
-      if (name.includes('bear flag')) {
-        const flagStart = 4, flagEnd = 8;
-        drawTrendLine(xC(flagStart), yS(candles[flagStart].h), xC(flagEnd), yS(candles[flagEnd].h), RED, '4,3', 'Flag Top', 1200);
-        drawTrendLine(xC(flagStart), yS(candles[flagStart].l), xC(flagEnd), yS(candles[flagEnd].l), TEAL, '4,3', 'Flag Bottom', 1400);
-      }
-
-      // ── Triangle resistance/support lines ──
-      if (name.includes('ascending triangle')) {
-        const flatY = yS(candles[3].h);
-        drawDashedLine(xC(3), flatY, xC(10), flatY, RED, '5,3', 'Resistance', 1200);
-        drawTrendLine(xC(3), yS(candles[4].l), xC(9), yS(candles[8].l), TEAL, '5,3', 'Support', 1400);
-      }
-
-      if (name.includes('descending triangle')) {
-        const flatY = yS(candles[2].l);
-        drawDashedLine(xC(2), flatY, xC(10), flatY, TEAL, '5,3', 'Support', 1200);
-        drawTrendLine(xC(2), yS(candles[1].h), xC(9), yS(candles[8].h), RED, '5,3', 'Resistance', 1400);
-      }
-
-      // ── Rectangle zones ──
-      if (name.includes('rectangle')) {
-        const topY = yS(Math.max(...candles.slice(2, 9).map(c => c.h)));
-        const botY = yS(Math.min(...candles.slice(2, 9).map(c => c.l)));
-        const zone = mkEl('rect', {
-          x: xC(2), y: topY,
-          width: xC(8) - xC(2), height: botY - topY,
-          fill: 'rgba(212,175,55,0.06)',
-          stroke: 'rgba(212,175,55,0.25)',
-          'stroke-width': '1',
-          'stroke-dasharray': '4,3',
-          rx: '3'
-        });
-        zone.style.opacity = '0';
-        zoneG.appendChild(zone);
-        fadeIn(zone, 1200);
-      }
-
-      // ── Support/Resistance hlines ──
-      if (name.includes('support bounce')) {
-        const supY = yS(Math.min(...candles.slice(4, 7).map(c => c.l)));
-        drawDashedLine(PAD_L, supY, W - PAD_R, supY, TEAL, '6,3', 'Support', 1200);
-      }
-
-      if (name.includes('resistance rejection')) {
-        const resY = yS(Math.max(...candles.slice(4, 7).map(c => c.h)));
-        drawDashedLine(PAD_L, resY, W - PAD_R, resY, RED, '6,3', 'Resistance', 1200);
-      }
-
-      // ── Stop/Target zones for any pattern ──
-      const lastCandle = candles[candles.length - 1];
-      const isBull = signal.includes('bullish');
-      const isBear = signal.includes('bearish');
-
-      if (isBull && lastCandle) {
-        const entryY = yS(lastCandle.c);
-        const stopY = yS(Math.min(...candles.map(c => c.l)) + 1);
-        const targetY = yS(Math.max(...candles.map(c => c.h)) + 8);
-
-        // Stop zone
-        drawZone(xC(candles.length - 3), stopY, xC(candles.length - 1) + candleW, entryY,
-          'rgba(239,83,80,0.12)', 'rgba(239,83,80,0.3)', 'Stop', 1800);
-        // Target zone
-        drawZone(xC(candles.length - 3), targetY, xC(candles.length - 1) + candleW, entryY - 10,
-          'rgba(38,166,154,0.12)', 'rgba(38,166,154,0.3)', 'Target', 2000);
-      }
-
-      if (isBear && lastCandle) {
-        const entryY = yS(lastCandle.c);
-        const stopY = yS(Math.max(...candles.map(c => c.h)) - 1);
-        const targetY = yS(Math.min(...candles.map(c => c.l)) - 8);
-
-        drawZone(xC(candles.length - 3), entryY, xC(candles.length - 1) + candleW, stopY,
-          'rgba(239,83,80,0.12)', 'rgba(239,83,80,0.3)', 'Stop', 1800);
-        drawZone(xC(candles.length - 3), entryY + 10, xC(candles.length - 1) + candleW, targetY,
-          'rgba(38,166,154,0.12)', 'rgba(38,166,154,0.3)', 'Target', 2000);
-      }
-    }
-
-    // Draw annotations from pattern data
-    function drawAnnotations() {
+      // Every pattern still uses its original labels/brackets/arrows.
       pattern.annotations?.forEach((ann, idx) => {
-        const delay = 800 + idx * 120;
-
+        const d = delay + idx * 160;
         if (ann.type === 'label' && ann.candleIdx !== undefined) {
           const c = candles[ann.candleIdx];
           if (!c) return;
-          const x = xC(ann.candleIdx);
-          const isBullSig = pattern.signal?.toLowerCase().includes('bullish');
-          const candleTopY = yS(c.h);
-          const candleBotY = yS(c.l);
-
-          // Place above for bullish labels at tops, below for bottoms
-          const placeAbove = candleTopY > PAD_T + 20;
-          const labelY = placeAbove ? candleTopY - 18 : candleBotY + 18;
-          const clampedY = Math.max(PAD_T + 12, Math.min(H - PAD_B - 8, labelY));
-
-          const tw = (ann.text?.length || 0) * 6 + 14;
-          const bg = mkEl('rect', {
-            x: x - tw / 2, y: clampedY - 10,
-            width: tw, height: 14,
-            fill: 'rgba(6,11,20,0.95)', rx: '3',
-            stroke: `${ann.color || GOLD}40`, 'stroke-width': '0.5'
-          });
-          bg.style.opacity = '0';
-          labelG.appendChild(bg);
-          fadeIn(bg, delay);
-
-          const txt = mkEl('text', {
-            x, y: clampedY,
-            fill: ann.color || GOLD,
-            'font-size': '10', 'font-weight': '700',
-            'font-family': 'monospace', 'text-anchor': 'middle'
-          });
-          txt.textContent = ann.text;
-          txt.style.opacity = '0';
-          labelG.appendChild(txt);
-          fadeIn(txt, delay);
-
-          // Tick line
-          const tickEnd = placeAbove ? candleTopY - 3 : candleBotY + 3;
-          const tickStart = placeAbove ? clampedY + 5 : clampedY - 13;
-          if (Math.abs(tickEnd - tickStart) > 5) {
-            const tick = mkEl('line', {
-              x1: x, x2: x, y1: tickStart, y2: tickEnd,
-              stroke: ann.color || GOLD,
-              'stroke-width': '0.5', 'stroke-dasharray': '2,2'
-            });
-            tick.style.opacity = '0';
-            lineG.appendChild(tick);
-            fadeIn(tick, delay);
-          }
+          candleLabelText(ann, c, xC(ann.candleIdx), d);
         }
-
+        if (ann.type === 'bracket' && ann.start !== undefined && ann.end !== undefined) {
+          drawBracket(ann.start, ann.end, ann.label || 'Pattern', ann.color || GOLD, d);
+        }
         if (ann.type === 'hline' && ann.candleIdx !== undefined) {
           const c = candles[ann.candleIdx];
-          const next = candles[ann.candleIdx + 1];
-          const y = yS(Math.max(c.h, next?.h || c.h));
-          drawDashedLine(PAD_L, y, W - PAD_R, y, ann.color || GOLD, '5,3', ann.label, delay);
+          if (!c) return;
+          const y = bullish ? yS(c.l) : yS(c.h);
+          drawLine(PAD_L, y, W - PAD_R, y, ann.color || GOLD, ann.label || 'Key Level', { dash: '7,5', delay: d });
         }
-
-        if (ann.type === 'bracket' && ann.start !== undefined) {
-          const x1 = xC(ann.start) - candleW / 2;
-          const x2 = xC(ann.end) + candleW / 2;
-          const y = H - PAD_B + 8;
-          const midX = (x1 + x2) / 2;
-
-          const bline = mkEl('line', { x1, x2, y1: y, y2: y,
-            stroke: ann.color || GOLD, 'stroke-width': '1' });
-          bline.style.opacity = '0';
-          lineG.appendChild(bline);
-          fadeIn(bline, delay);
-
-          [x1, x2].forEach(tx => {
-            const tick = mkEl('line', { x1: tx, x2: tx, y1: y - 4, y2: y + 4,
-              stroke: ann.color || GOLD, 'stroke-width': '1' });
-            tick.style.opacity = '0';
-            lineG.appendChild(tick);
-            fadeIn(tick, delay);
-          });
-
-          const lw = (ann.label?.length || 0) * 5.5 + 10;
-          const lbg = mkEl('rect', { x: midX - lw / 2, y: y + 4, width: lw, height: 13,
-            fill: 'rgba(6,11,20,0.95)', rx: '2' });
-          lbg.style.opacity = '0';
-          labelG.appendChild(lbg);
-          fadeIn(lbg, delay + 80);
-
-          const ltxt = mkEl('text', { x: midX, y: y + 13,
-            fill: ann.color || GOLD, 'font-size': '9', 'font-weight': '700',
-            'font-family': 'monospace', 'text-anchor': 'middle' });
-          ltxt.textContent = ann.label || '';
-          ltxt.style.opacity = '0';
-          labelG.appendChild(ltxt);
-          fadeIn(ltxt, delay + 80);
+        if (ann.type === 'arrow' && ann.candleIdx !== undefined) {
+          const c = candles[ann.candleIdx];
+          if (!c) return;
+          const x = xC(ann.candleIdx);
+          const up = ann.direction === 'up';
+          drawArrow(x, up ? yS(c.l) + 30 : yS(c.h) - 30, x, up ? yS(c.l) + 3 : yS(c.h) - 3, ann.color || (up ? TEAL : RED), up ? 'Buyers step in' : 'Sellers reject', d);
         }
       });
-    }
 
-    // ── Helpers ──
-    function mkEl(tag, attrs = {}) {
-      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
-      return el;
-    }
+      // Automatic child-simple teaching overlays for common pattern families.
+      if (name.includes('engulfing')) {
+        const idx = Math.max(1, candles.findIndex((c, i) => i > 0 && Math.abs(c.c - c.o) > Math.abs(candles[i - 1].c - candles[i - 1].o) && c.bull !== candles[i - 1].bull));
+        const prev = Math.max(0, idx - 1);
+        drawBracket(prev, idx, 'Pattern', GOLD, 900);
+        addText(candles[idx]?.bull ? 'Big green candle swallows the red candle' : 'Big red candle swallows the green candle', xC(idx), yS(candles[idx]?.h || maxP) - 26, candles[idx]?.bull ? TEAL : RED, 11, 'middle', 950);
+        drawArrow(xC(idx), yS(candles[idx]?.h || maxP) - 12, xC(idx), yS(candles[idx]?.h || maxP) + 6, candles[idx]?.bull ? TEAL : RED, '', 1050);
+      }
 
-    function fadeIn(el, delay) {
-      setTimeout(() => {
-        el.style.transition = 'opacity 0.4s';
-        el.style.opacity = '1';
-      }, delay || 100);
-    }
+      if (name.includes('hammer')) {
+        const idx = candles.findIndex(c => Math.abs(c.l - Math.min(c.o, c.c)) > Math.abs(c.o - c.c) * 2);
+        if (idx >= 0) {
+          addText('Long wick = sellers got rejected', xC(idx), yS(candles[idx].l) + 28, TEAL, 11, 'middle', 900);
+          drawArrow(xC(idx), yS(candles[idx].l) + 15, xC(idx), yS(candles[idx].l) + 3, TEAL, '', 1000);
+        }
+      }
 
-    function drawDashedLine(x1, y1, x2, y2, color, dash, label, delay) {
-      const line = mkEl('line', { x1, x2, y1, y2,
-        stroke: color || GOLD, 'stroke-width': '1.2',
-        'stroke-dasharray': dash || '5,3' });
-      line.style.opacity = '0';
-      lineG.appendChild(line);
-      fadeIn(line, delay);
+      if (name.includes('shooting star') || name.includes('gravestone')) {
+        const idx = candles.findIndex(c => Math.abs(c.h - Math.max(c.o, c.c)) > Math.abs(c.o - c.c) * 2);
+        if (idx >= 0) {
+          addText('Long top wick = buyers got rejected', xC(idx), yS(candles[idx].h) - 22, RED, 11, 'middle', 900);
+          drawArrow(xC(idx), yS(candles[idx].h) - 8, xC(idx), yS(candles[idx].h) + 6, RED, '', 1000);
+        }
+      }
 
-      if (label) {
-        const lw = label.length * 5.5 + 12;
-        const lbg = mkEl('rect', { x: W - PAD_R - lw, y: y1 - 10, width: lw, height: 13,
-          fill: 'rgba(6,11,20,0.92)', rx: '2' });
-        lbg.style.opacity = '0';
-        lineG.appendChild(lbg);
-        fadeIn(lbg, delay + 100);
+      if (name.includes('double top') || name.includes('triple top') || name.includes('head')) {
+        const highs = candles.map(c => c.h);
+        const resistance = Math.max(...highs.slice(0, Math.max(3, candles.length - 2)));
+        const resistanceY = yS(resistance);
+        drawLine(PAD_L, resistanceY, W - PAD_R, resistanceY, RED, 'Resistance — sellers defend here', { dash: '7,5', delay: 800, labelY: resistanceY - 10 });
+        candles.forEach((c, i) => {
+          if (c.h >= resistance - 3 && i < candles.length - 1) addText(name.includes('triple') ? `Top ${Math.min(i + 1, 3)}` : 'Top', xC(i), yS(c.h) - 18, RED, 10, 'middle', 1000 + i * 80);
+        });
+        const lows = candles.slice(2, -1).map(c => c.l);
+        const neck = Math.min(...lows) + 2;
+        const neckY = yS(neck);
+        drawLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, 'Neckline / support', { dash: '7,5', delay: 1100, labelY: neckY + 16 });
+        drawArrow(W - PAD_R - 90, neckY - 28, W - PAD_R - 45, neckY + 4, RED, 'Break below support', 1300);
+      }
 
-        const ltxt = mkEl('text', { x: W - PAD_R - 4, y: y1,
-          fill: color || GOLD, 'font-size': '9', 'font-weight': '700',
-          'font-family': 'monospace', 'text-anchor': 'end' });
-        ltxt.textContent = label;
-        ltxt.style.opacity = '0';
-        lineG.appendChild(ltxt);
-        fadeIn(ltxt, delay + 100);
+      if (name.includes('double bottom') || name.includes('triple bottom') || name.includes('inverse head')) {
+        const lows = candles.map(c => c.l);
+        const support = Math.min(...lows.slice(0, Math.max(3, candles.length - 2)));
+        const supportY = yS(support);
+        drawLine(PAD_L, supportY, W - PAD_R, supportY, TEAL, 'Support — buyers defend here', { dash: '7,5', delay: 800, labelY: supportY + 16 });
+        candles.forEach((c, i) => {
+          if (c.l <= support + 3 && i < candles.length - 1) addText(name.includes('triple') ? `Bottom ${Math.min(i + 1, 3)}` : 'Bottom', xC(i), yS(c.l) + 22, TEAL, 10, 'middle', 1000 + i * 80);
+        });
+        const highs = candles.slice(2, -1).map(c => c.h);
+        const neck = Math.max(...highs) - 2;
+        const neckY = yS(neck);
+        drawLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, 'Neckline / breakout level', { dash: '7,5', delay: 1100, labelY: neckY - 10 });
+        drawArrow(W - PAD_R - 90, neckY + 28, W - PAD_R - 45, neckY - 4, TEAL, 'Break above resistance', 1300);
+      }
+
+      if (name.includes('triangle') || name.includes('wedge') || name.includes('pennant') || name.includes('flag')) {
+        const first = 0;
+        const last = Math.max(1, candles.length - 3);
+        const upperStart = yS(candles[first].h);
+        const upperEnd = yS(candles[last].h);
+        const lowerStart = yS(candles[first].l);
+        const lowerEnd = yS(candles[last].l);
+        drawLine(xC(first), upperStart, xC(last), upperEnd, RED, 'Resistance line', { dash: '6,4', delay: 900 });
+        drawLine(xC(first), lowerStart, xC(last), lowerEnd, TEAL, 'Support line', { dash: '6,4', delay: 1050, labelY: lowerEnd + 14 });
+        const lastC = candles[candles.length - 2] || candles[candles.length - 1];
+        drawArrow(xC(candles.length - 3), yS(lastC.c), xC(candles.length - 1), yS(lastC.c), bullish ? TEAL : RED, bullish ? 'Breakout' : 'Breakdown', 1300);
+      }
+
+      if (name.includes('cup')) {
+        addText('Rounded cup', xC(Math.floor(candles.length / 2)), H - PAD_B - 18, GOLD, 12, 'middle', 900);
+        drawArrow(xC(candles.length - 4), yS(candles[candles.length - 4].h) - 20, xC(candles.length - 2), yS(candles[candles.length - 2].h) - 2, GOLD, 'Handle', 1100);
+      }
+
+      if (bearish) {
+        const entryY = yS(candles[candles.length - 3]?.c || minP);
+        drawZone(W - PAD_R - 145, entryY - 30, W - PAD_R - 15, entryY - 4, 'rgba(239,83,80,0.11)', 'rgba(239,83,80,0.45)', 'Stop zone', 1600);
+        drawZone(W - PAD_R - 145, entryY + 5, W - PAD_R - 15, Math.min(H - PAD_B, entryY + 48), 'rgba(38,166,154,0.10)', 'rgba(38,166,154,0.35)', 'Target zone', 1750);
+      }
+
+      if (bullish) {
+        const entryY = yS(candles[candles.length - 3]?.c || maxP);
+        drawZone(W - PAD_R - 145, Math.max(PAD_T, entryY - 48), W - PAD_R - 15, entryY - 5, 'rgba(38,166,154,0.10)', 'rgba(38,166,154,0.35)', 'Target zone', 1600);
+        drawZone(W - PAD_R - 145, entryY + 5, W - PAD_R - 15, entryY + 30, 'rgba(239,83,80,0.11)', 'rgba(239,83,80,0.45)', 'Stop zone', 1750);
       }
     }
 
-    function drawTrendLine(x1, y1, x2, y2, color, dash, label, delay) {
-      // Extend slightly beyond the candles
-      const slope = (y2 - y1) / (x2 - x1);
-      const ex1 = x1 - 10;
-      const ey1 = y1 - slope * 10;
-      const ex2 = x2 + 30;
-      const ey2 = y2 + slope * 30;
-
-      const line = mkEl('line', { x1: ex1, x2: ex2, y1: ey1, y2: ey2,
-        stroke: color || GOLD, 'stroke-width': '1.2',
-        'stroke-dasharray': dash || '5,3' });
-      line.style.opacity = '0';
-      lineG.appendChild(line);
-      fadeIn(line, delay);
-
-      if (label) {
-        const lbg = mkEl('rect', { x: ex2 - 2, y: ey2 - 11,
-          width: label.length * 5.5 + 10, height: 13,
-          fill: 'rgba(6,11,20,0.92)', rx: '2' });
-        lbg.style.opacity = '0';
-        lineG.appendChild(lbg);
-        fadeIn(lbg, delay + 100);
-
-        const ltxt = mkEl('text', { x: ex2 + 2, y: ey2 - 1,
-          fill: color || GOLD, 'font-size': '9', 'font-weight': '700',
-          'font-family': 'monospace', 'text-anchor': 'start' });
-        ltxt.textContent = label;
-        ltxt.style.opacity = '0';
-        lineG.appendChild(ltxt);
-        fadeIn(ltxt, delay + 100);
-      }
-    }
-
-    function drawZone(x1, y1, x2, y2, fill, stroke, label, delay) {
-      if (y1 > y2) [y1, y2] = [y2, y1];
-      if (y2 - y1 < 4) return;
-      const rect = mkEl('rect', { x: x1, y: y1, width: x2 - x1, height: y2 - y1,
-        fill, stroke, 'stroke-width': '0.5', rx: '3' });
-      rect.style.opacity = '0';
-      zoneG.appendChild(rect);
-      fadeIn(rect, delay);
-
-      if (label) {
-        const ltxt = mkEl('text', { x: x1 + 6, y: y1 + 10,
-          fill: '#fff', 'font-size': '8', 'font-weight': '700',
-          'font-family': 'monospace' });
-        ltxt.textContent = label;
-        ltxt.style.opacity = '0';
-        labelG.appendChild(ltxt);
-        fadeIn(ltxt, delay + 100);
-      }
-    }
-
-        drawNextCandle();
+    drawNextCandle();
 
     return () => {
       if (animRef.current) clearTimeout(animRef.current);
@@ -4839,6 +4762,7 @@ candleG.appendChild(body);
     />
   );
 }
+
 
 // ─────────────────────────────────────────────
 // PATTERN CARD — Full Professional Layout
