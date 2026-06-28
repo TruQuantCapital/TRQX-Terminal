@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://trqx-flow-scanner-production.up.railway.app";
 
-// Pull the Supabase access token from localStorage (default sb-* auth key)
 function getAccessToken() {
   try {
     for (let i = 0; i < localStorage.length; i++) {
@@ -17,11 +16,9 @@ function getAccessToken() {
   return null;
 }
 
-// Fire-and-forget: backend dedupes via welcome_sent, so this can never double-send
 function triggerWelcomeEmail(attempt = 0) {
   const token = getAccessToken();
   if (!token) {
-    // Session may not be written to localStorage yet right after signup — retry briefly
     if (attempt < 3) setTimeout(() => triggerWelcomeEmail(attempt + 1), 1500);
     return;
   }
@@ -79,24 +76,42 @@ function confetti() {
   }, 5000);
 }
 
-const STEPS = [
+const FEATURES = [
   {
     icon: "📊",
-    title: "Explore the Flow Scanner",
-    desc: "See live institutional options flow, top contracts, and unusual activity in real time.",
-    action: "scanner",
+    title: "Options Flow Scanner",
+    desc: "Live institutional sweeps, blocks & unusual activity in real time.",
+    route: "/scanner",
+  },
+  {
+    icon: "⚡",
+    title: "GEMX Gamma Dashboard",
+    desc: "Gamma exposure levels, dealer positioning & key price levels.",
+    route: "/gamma-ex",
+  },
+  {
+    icon: "💰",
+    title: "Dividend Channel",
+    desc: "70 curated dividend stocks with live yields & deep dive reports.",
+    route: "/dividends",
+  },
+  {
+    icon: "🔍",
+    title: "Stock Research",
+    desc: "AI-powered stock verdicts, technicals & institutional analysis.",
+    route: "/research",
+  },
+  {
+    icon: "🎓",
+    title: "Trading Academy",
+    desc: "27 lessons, drills, flashcards & quizzes across 3 levels.",
+    route: "/academy",
   },
   {
     icon: "🤖",
-    title: "Learn to read the flow",
-    desc: "Use the Ask AI feature to break down any trade — just ask what a sweep or block means.",
-    action: "ai",
-  },
-  {
-    icon: "💬",
-    title: "Join the community",
-    desc: "Connect with traders sharing ideas and setups in the TRQX Discord.",
-    action: "discord",
+    title: "AI Intelligence",
+    desc: "Ask AI anything about flow, gamma, charts & trade setups.",
+    route: "/scanner",
   },
 ];
 
@@ -107,12 +122,6 @@ export default function Welcome() {
     confetti();
     triggerWelcomeEmail();
   }, []);
-
-  const handleStep = (action) => {
-    if (action === "scanner") navigate("/scanner");
-    else if (action === "ai") window.open("https://thetrulies.com/wp-content/uploads/2026/06/TRQX-Flow-Scanner-User-Guide.pdf", "_blank");
-    else if (action === "discord") window.open("https://discord.gg/jy3ta9qkfH", "_blank");
-  };
 
   return (
     <div style={{
@@ -128,7 +137,7 @@ export default function Welcome() {
     }}>
       <canvas id="confetti-canvas" style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:10 }} />
 
-      {/* Trial badge */}
+      {/* Elite badge */}
       <div style={{
         background: "rgba(34,197,94,0.15)",
         border: "1px solid rgba(34,197,94,0.4)",
@@ -145,7 +154,7 @@ export default function Welcome() {
       </div>
 
       {/* Hero */}
-      <div style={{ textAlign:"center", marginBottom:"40px" }}>
+      <div style={{ textAlign:"center", marginBottom:"36px" }}>
         <div style={{ marginBottom:"16px" }}>
           <img
             src="https://thetrulies.com/wp-content/uploads/2026/06/ChatGPT-Image-Jun-7-2026-09_11_29-PM.png"
@@ -171,70 +180,112 @@ export default function Welcome() {
           color: "var(--text-dim)",
           fontSize: "16px",
           marginTop: "12px",
-          maxWidth: "420px",
+          maxWidth: "460px",
+          margin: "12px auto 0",
         }}>
-          Welcome to TRQX Flow Scanner. You now have access to institutional-grade options flow data.
+          Welcome to the <strong style={{ color: "var(--gold)" }}>TRQX Capital Terminal</strong>. You now have full Elite access to every tool below.
         </p>
       </div>
 
-      {/* Steps */}
+      {/* Feature Grid */}
       <div style={{
         width: "100%",
-        maxWidth: "560px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-        marginBottom: "32px",
+        maxWidth: "680px",
+        marginBottom: "16px",
       }}>
         <div style={{
           fontFamily: "var(--font-head)",
           fontSize: "11px",
           letterSpacing: "3px",
           color: "var(--text-muted)",
-          marginBottom: "4px",
+          marginBottom: "14px",
           textAlign: "center",
-        }}>GET STARTED IN 3 STEPS</div>
+        }}>EVERYTHING INCLUDED IN YOUR PLAN</div>
 
-        {STEPS.map((s, i) => (
-          <div
-            key={i}
-            onClick={() => handleStep(s.action)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              background: "var(--black-3)",
-              border: "1px solid var(--border)",
-              borderRadius: "12px",
-              padding: "16px 20px",
-              cursor: "pointer",
-              transition: "border-color 0.2s, background 0.2s",
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)";
-              e.currentTarget.style.background = "var(--black-4)";
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)";
-              e.currentTarget.style.background = "var(--black-3)";
-            }}
-          >
-            <div style={{ fontSize:"28px", minWidth:"36px", textAlign:"center" }}>{s.icon}</div>
-            <div style={{ flex:1 }}>
-              <div style={{ fontFamily:"var(--font-head)", fontSize:"16px", fontWeight:700, color:"var(--text)", marginBottom:"3px" }}>{s.title}</div>
-              <div style={{ fontSize:"13px", color:"var(--text-dim)", lineHeight:1.5 }}>{s.desc}</div>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gap: "10px",
+        }}>
+          {FEATURES.map((f, i) => (
+            <div
+              key={i}
+              onClick={() => navigate(f.route)}
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "14px",
+                background: "var(--black-3)",
+                border: "1px solid rgba(201,168,76,0.15)",
+                borderRadius: "12px",
+                padding: "16px 18px",
+                cursor: "pointer",
+                transition: "border-color 0.2s, background 0.2s, box-shadow 0.2s",
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = "rgba(201,168,76,0.5)";
+                e.currentTarget.style.background = "var(--black-4)";
+                e.currentTarget.style.boxShadow = "0 0 16px rgba(201,168,76,0.1)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)";
+                e.currentTarget.style.background = "var(--black-3)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              <div style={{ fontSize: "24px", minWidth: "32px", textAlign: "center", marginTop: "2px" }}>{f.icon}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  fontFamily: "var(--font-head)",
+                  fontSize: "14px",
+                  fontWeight: 700,
+                  color: "var(--text)",
+                  marginBottom: "4px",
+                }}>{f.title}</div>
+                <div style={{
+                  fontSize: "12px",
+                  color: "var(--text-dim)",
+                  lineHeight: 1.5,
+                }}>{f.desc}</div>
+              </div>
+              <div style={{ color: "var(--gold)", fontSize: "18px", fontWeight: 700, alignSelf: "center" }}>›</div>
             </div>
-            <div style={{ color:"var(--gold)", fontSize:"20px", fontWeight:700 }}>›</div>
+          ))}
+        </div>
+      </div>
+
+      {/* New to TRQX banner */}
+      <div style={{
+        width: "100%",
+        maxWidth: "680px",
+        background: "rgba(59,130,246,0.08)",
+        border: "1px solid rgba(59,130,246,0.25)",
+        borderRadius: "12px",
+        padding: "14px 20px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: "24px",
+        cursor: "pointer",
+      }}
+        onClick={() => navigate("/academy")}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <span style={{ fontSize: "20px" }}>🌱</span>
+          <div>
+            <div style={{ color: "#93c5fd", fontSize: "13px", fontWeight: 700 }}>New to trading?</div>
+            <div style={{ color: "var(--text-dim)", fontSize: "12px" }}>Start with Academy Level 1 — it sets the foundation for every tool on this platform.</div>
           </div>
-        ))}
+        </div>
+        <div style={{ color: "#93c5fd", fontSize: "18px", fontWeight: 700, flexShrink: 0 }}>›</div>
       </div>
 
       {/* CTA */}
       <button
-        onClick={() => navigate("/scanner")}
+        onClick={() => navigate("/dashboard")}
         style={{
           width: "100%",
-          maxWidth: "560px",
+          maxWidth: "680px",
           padding: "18px",
           background: "linear-gradient(135deg, #C9A84C, #FFD700, #C9A84C)",
           backgroundSize: "200% auto",
@@ -249,11 +300,11 @@ export default function Welcome() {
           boxShadow: "0 4px 24px rgba(201,168,76,0.3)",
         }}
       >
-        GO TO SCANNER →
+        ENTER THE TERMINAL →
       </button>
 
-      <div style={{ marginTop:"12px", fontSize:"12px", color:"var(--text-muted)" }}>
-        Cancel anytime · No contracts
+      <div style={{ marginTop: "12px", fontSize: "12px", color: "var(--text-muted)" }}>
+        You have full Elite access to everything above.
       </div>
     </div>
   );
