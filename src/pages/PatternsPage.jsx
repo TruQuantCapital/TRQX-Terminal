@@ -2349,6 +2349,7 @@ const BATCH2 = [
 // Merge all patterns
 const ALL_PATTERNS = [...PATTERNS, ...BATCH2];
 
+
 const LEVELS = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continuation', 'Bearish Continuation', 'Indecision'];
 
