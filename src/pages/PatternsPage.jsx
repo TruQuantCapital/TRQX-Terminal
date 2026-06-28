@@ -4781,9 +4781,7 @@ function PatternCard({
   const [playing, setPlaying] = useState(false);
   const [done, setDone] = useState(false);
   const [multipleChoiceMode, setMultipleChoiceMode] = useState(false);
-  const [quizAnswer, setQuizAnswer] = useState(null);
-  const [quizOptions, setQuizOptions] = useState([]);
-
+  
   useEffect(() => {
     if (isExpanded && !playing && !done) {
       setTimeout(() => setPlaying(true), 250);
@@ -4801,16 +4799,6 @@ function PatternCard({
     setDone(false);
     setPlaying(false);
     setTimeout(() => setPlaying(true), 100);
-  }
-
-  function startQuiz(e) {
-    e?.stopPropagation?.();
-    const others = ALL_PATTERNS.filter(p => p.id !== pattern.id && p.category === pattern.category);
-    const shuffled = [...others].sort(() => Math.random() - 0.5).slice(0, 3);
-    const opts = [pattern, ...shuffled].sort(() => Math.random() - 0.5);
-    setQuizOptions(opts);
-    setQuizAnswer(null);
-    setMultipleChoiceMode(true);
   }
 
   const levelColor = pattern.level === 'Beginner' ? TEAL : pattern.level === 'Intermediate' ? GOLD : PURPLE;
@@ -4909,8 +4897,7 @@ function PatternCard({
                   </button>
                 </>
               )}
-              <button onClick={handleReplay} style={buttonStyle('#94a3b8')}>↻ Replay</button>
-              {!quizMode && <button onClick={startQuiz} style={buttonStyle(GOLD)}>❔ Quiz Me</button>}
+              
             </div>
           )}
         </div>
@@ -5096,8 +5083,7 @@ export default function PatternsPage() {
   const [level, setLevel] = useState('All');
   const [signal, setSignal] = useState('All');
   const [expanded, setExpanded] = useState(null);
-  const [quizMode, setQuizMode] = useState(false);
-
+ 
   const filtered = ALL_PATTERNS.filter(p => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (category !== 'All' && p.category !== category) return false;
