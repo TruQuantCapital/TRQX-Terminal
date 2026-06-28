@@ -4328,66 +4328,24 @@ const LEVELS = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continuation', 'Bearish Continuation', 'Indecision'];
 
 // ─────────────────────────────────────────────
-// CANDLE ANIMATION ENGINE
-// ─────────────────────────────────────────────
-// ─────────────────────────────────────────────
 // CANDLE ANIMATION ENGINE — Full Rebuild
 // ─────────────────────────────────────────────
-function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }) {
+  function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }) {
   const svgRef = useRef(null);
-  const defs = mkEl('defs', {});
-
-const bullGradient = mkEl('linearGradient', {
-  id: 'bullGradient',
-  x1: '0%',
-  y1: '0%',
-  x2: '100%',
-  y2: '100%'
-});
-
-bullGradient.appendChild(mkEl('stop', {
-  offset: '0%',
-  stopColor: '#9fffee'
-}));
-
-bullGradient.appendChild(mkEl('stop', {
-  offset: '45%',
-  stopColor: TEAL
-}));
-
-bullGradient.appendChild(mkEl('stop', {
-  offset: '100%',
-  stopColor: '#0b5f55'
-}));
-
-const bearGradient = mkEl('linearGradient', {
-  id: 'bearGradient',
-  x1: '0%',
-  y1: '0%',
-  x2: '100%',
-  y2: '100%'
-});
-
-bearGradient.appendChild(mkEl('stop', {
-  offset: '0%',
-  stopColor: '#ffb3b3'
-}));
-
-bearGradient.appendChild(mkEl('stop', {
-  offset: '45%',
-  stopColor: RED
-}));
-
-bearGradient.appendChild(mkEl('stop', {
-  offset: '100%',
-  stopColor: '#7a1010'
-}));
-
-defs.appendChild(bullGradient);
-defs.appendChild(bearGradient);
-svg.appendChild(defs);
   const animRef = useRef(null);
   const stepRef = useRef(0);
+
+  function mkEl(tag, attrs = {}) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+
+    Object.entries(attrs).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        el.setAttribute(key, value);
+      }
+    });
+
+    return el;
+  }
 
   const W = width, H = height;
   const candles = pattern.candles;
@@ -4403,11 +4361,12 @@ svg.appendChild(defs);
   function yS(price) {
     return PAD_T + ((maxP - price) / (maxP - minP)) * chartH;
   }
+
   function xC(i) {
     return PAD_L + i * spacing + spacing / 2;
   }
 
-      useEffect(() => {
+  useEffect(() => {
     if (!svgRef.current) return;
     const svg = svgRef.current;
     if (!playing) return;
@@ -4415,7 +4374,6 @@ svg.appendChild(defs);
     stepRef.current = 0;
     svg.innerHTML = '';
 
-    // 3D candle gradients
     const defs = mkEl('defs', {});
 
     const bullGradient = mkEl('linearGradient', {
