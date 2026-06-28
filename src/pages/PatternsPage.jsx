@@ -4768,7 +4768,12 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }
 // PATTERN CARD — Full Professional Layout
 // ─────────────────────────────────────────────
 
-function PatternCard({ pattern, isExpanded, onClick }) {
+function PatternCard({
+  pattern,
+  isExpanded,
+  onClick,
+  singleMode = false
+}) {
   const [playing, setPlaying] = useState(false);
   const [done, setDone] = useState(false);
   const [quizMode, setQuizMode] = useState(false);
@@ -4880,7 +4885,16 @@ function PatternCard({ pattern, isExpanded, onClick }) {
           </div>
 
           {isExpanded && (
-            <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
+  <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
+
+    {singleMode && (
+      <button
+        onClick={onClick}
+        style={buttonStyle('#94a3b8')}
+      >
+        ← Back
+      </button>
+    )}
               <button onClick={handleReplay} style={buttonStyle('#94a3b8')}>↻ Replay</button>
               <button onClick={startQuiz} style={buttonStyle(GOLD)}>❔ Quiz Me</button>
             </div>
@@ -5137,16 +5151,45 @@ export default function PatternsPage() {
       </div>
 
       {/* Pattern Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-        {filtered.map(p => (
-          <PatternCard
-            key={p.id}
-            pattern={p}
-isExpanded={expanded === p.id}
-            onClick={() => setExpanded(expanded === p.id ? null : p.id)}
-          />
-        ))}
-      </div>
+
+{expanded ? (
+
+  <div
+    style={{
+      width: '100%',
+      maxWidth: 1800,
+      margin: '0 auto'
+    }}
+  >
+    <PatternCard
+      pattern={filtered.find(p => p.id === expanded)}
+      isExpanded={true}
+      singleMode={true}
+      onClick={() => setExpanded(null)}
+    />
+  </div>
+
+) : (
+
+  <div
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
+      gap: 12
+    }}
+  >
+    {filtered.map(p => (
+      <PatternCard
+        key={p.id}
+        pattern={p}
+        isExpanded={false}
+        singleMode={false}
+        onClick={() => setExpanded(p.id)}
+      />
+    ))}
+  </div>
+
+)}
 
       {filtered.length === 0 && (
         <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
