@@ -5081,8 +5081,99 @@ export default function PatternsPage() {
   const [level, setLevel] = useState('All');
   const [signal, setSignal] = useState('All');
   const [expanded, setExpanded] = useState(null);
-  const [quizMode, setQuizMode] = useState(false);
- 
+  const [pageMode, setPageMode] = useState('library'); // 'library' | 'quiz'
+
+  // ── Quiz Session State ──
+  const [quizPool, setQuizPool] = useState([]);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [quizOptions, setQuizOptions] = useState([]);
+  const [quizAnswer, setQuizAnswer] = useState(null);
+  const [quizPlaying, setQuizPlaying] = useState(false);
+  const [quizDone, setQuizDone] = useState(false);
+  const [score, setScore] = useState({ correct: 0, incorrect: 0, streak: 0, bestStreak: 0 });
+  const [quizFilter, setQuizFilter] = useState({ level: 'All', category: 'All' });
+  const [showHint, setShowHint] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [weakAreas, setWeakAreas] = useState({});
+  const [sessionComplete, setSessionComplete] = useState(false);
+  const SESSION_SIZE = 10;
+
+  function buildQuizPool() {
+    let pool = [...ALL_PATTERNS];
+    if (quizFilter.level !== 'All') pool = pool.filter(p => p.level === quizFilter.level);
+    if (quizFilter.category !== 'All') pool = pool.filter(p => p.category === quizFilter.category);
+    const weighted = [];
+    pool.forEach(p => {
+      const times = 1 + (weakAreas[p.id] || 0);
+      for (let i = 0; i < times; i++) weighted.push(p);
+    });
+    const shuffled = weighted.sort(() => Math.random() - 0.5);
+    const seen = new Set();
+    const deduped = [];
+    for (const p of shuffled) {
+      if (!seen.has(p.id)) { seen.add(p.id); deduped.push(p); }
+      if (deduped.length >= SESSION_SIZE) break;
+    }
+    return deduped;
+  }
+
+  function buildOptions(current) {
+    const others = ALL_PATTERNS.filter(p => p.id !== current.id);
+    const shuffled = others.sort(() => Math.random() - 0.5).slice(0, 3);
+    return [current, ...shuffled].sort(() => Math.random() - 0.5);
+  }
+
+  function startQuizSession() {
+    const pool = buildQuizPool();
+    if (pool.length < 4) return;
+    setQuizPool(pool);
+    setQuizIndex(0);
+    setQuizOptions(buildOptions(pool[0]));
+    setQuizAnswer(null);
+    setQuizPlaying(false);
+    setQuizDone(false);
+    setShowHint(false);
+    setHintUsed(false);
+    setScore({ correct: 0, incorrect: 0, streak: 0, bestStreak: 0 });
+    setSessionComplete(false);
+    setTimeout(() => setQuizPlaying(true), 200);
+  }
+
+  function handleQuizAnswer(optId) {
+    if (quizAnswer) return;
+    const current = quizPool[quizIndex];
+    const correct = optId === current.id;
+    setQuizAnswer(optId);
+    setScore(prev => {
+      const newStreak = correct ? prev.streak + 1 : 0;
+      return {
+        correct: prev.correct + (correct ? 1 : 0),
+        incorrect: prev.incorrect + (correct ? 0 : 1),
+        streak: newStreak,
+        bestStreak: Math.max(prev.bestStreak, newStreak),
+      };
+    });
+    if (!correct) {
+      setWeakAreas(prev => ({ ...prev, [current.id]: (prev[current.id] || 0) + 1 }));
+    }
+  }
+
+  function handleNextQuestion() {
+    const nextIdx = quizIndex + 1;
+    if (nextIdx >= quizPool.length) {
+      setSessionComplete(true);
+      return;
+    }
+    setQuizIndex(nextIdx);
+    setQuizOptions(buildOptions(quizPool[nextIdx]));
+    setQuizAnswer(null);
+    setQuizPlaying(false);
+    setQuizDone(false);
+    setShowHint(false);
+    setHintUsed(false);
+    setTimeout(() => setQuizPlaying(true), 200);
+  }
+
   const filtered = ALL_PATTERNS.filter(p => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (category !== 'All' && p.category !== category) return false;
@@ -5101,31 +5192,22 @@ export default function PatternsPage() {
   const currentIndex = filtered.findIndex(p => p.id === expanded);
   const selectedPattern = filtered.find(p => p.id === expanded);
 
-  function openPattern(id) {
-    setExpanded(id);
-    setQuizMode(false);
-  }
-
-  function closePattern() {
-    setExpanded(null);
-    setQuizMode(false);
-  }
+  function openPattern(id) { setExpanded(id); }
+  function closePattern() { setExpanded(null); }
 
   function goNext() {
     if (!filtered.length) return;
-    const index = currentIndex === -1 ? 0 : currentIndex;
-    const next = filtered[(index + 1) % filtered.length];
-    setExpanded(next.id);
-    setQuizMode(false);
+    const idx = currentIndex === -1 ? 0 : currentIndex;
+    setExpanded(filtered[(idx + 1) % filtered.length].id);
   }
 
   function goPrev() {
     if (!filtered.length) return;
-    const index = currentIndex === -1 ? 0 : currentIndex;
-    const prev = filtered[(index - 1 + filtered.length) % filtered.length];
-    setExpanded(prev.id);
-    setQuizMode(false);
+    const idx = currentIndex === -1 ? 0 : currentIndex;
+    setExpanded(filtered[(idx - 1 + filtered.length) % filtered.length].id);
   }
+
+  const currentQuizPattern = quizPool[quizIndex];
 
   return (
     <main className="pageStack" style={{ maxWidth: '100%', padding: '0 20px 60px' }}>
@@ -5139,89 +5221,327 @@ export default function PatternsPage() {
             {ALL_PATTERNS.length} animated patterns — psychology, entry, stop, target, quiz and more for each.
           </span>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <div style={{ background: 'rgba(38,166,154,0.1)', border: '1px solid rgba(38,166,154,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 11, color: TEAL, fontWeight: 700 }}>
-            <div style={{ background: 'rgba(38,166,154,0.1)', border: '1px solid rgba(38,166,154,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 11, color: TEAL, fontWeight: 700 }}>
-  All 125 Patterns Live 🔥
-</div>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* Mode toggle */}
+          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 4, gap: 4 }}>
+            {[{ key: 'library', label: '📚 Library' }, { key: 'quiz', label: '⚡ Quiz Mode' }].map(m => (
+              <button key={m.key} onClick={() => { setPageMode(m.key); setExpanded(null); }}
+                style={{ background: pageMode === m.key ? GOLD : 'transparent', border: 'none', borderRadius: 9, color: pageMode === m.key ? '#000' : '#9ca3af', fontSize: 13, fontWeight: 900, padding: '9px 20px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                {m.label}
+              </button>
+            ))}
           </div>
-          <div style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 11, color: GOLD, fontWeight: 700 }}>
-            125 Patterns Total
+          <div style={{ background: 'rgba(38,166,154,0.1)', border: '1px solid rgba(38,166,154,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 11, color: TEAL, fontWeight: 700 }}>
+            All 125 Patterns Live 🔥
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
-        {[
-          { label: 'TOTAL PATTERNS', value: stats.total, color: GOLD },
-          { label: 'BEGINNER', value: stats.beginner, color: TEAL },
-          { label: 'INTERMEDIATE', value: stats.intermediate, color: GOLD },
-          { label: 'ADVANCED', value: stats.advanced, color: PURPLE },
-        ].map(s => (
-          <div key={s.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 18px' }}>
-            <div style={{ color: '#9ca3af', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, marginBottom: 6 }}>{s.label}</div>
-            <div style={{ color: s.color, fontSize: 28, fontWeight: 900, fontFamily: 'monospace' }}>{s.value}</div>
+      {/* ── LIBRARY MODE ── */}
+      {pageMode === 'library' && (
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
+            {[
+              { label: 'TOTAL PATTERNS', value: stats.total, color: GOLD },
+              { label: 'BEGINNER', value: stats.beginner, color: TEAL },
+              { label: 'INTERMEDIATE', value: stats.intermediate, color: GOLD },
+              { label: 'ADVANCED', value: stats.advanced, color: PURPLE },
+            ].map(s => (
+              <div key={s.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 18px' }}>
+                <div style={{ color: '#9ca3af', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, marginBottom: 6 }}>{s.label}</div>
+                <div style={{ color: s.color, fontSize: 28, fontWeight: 900, fontFamily: 'monospace' }}>{s.value}</div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Filters */}
-      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 20px', marginBottom: 20, display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search patterns..."
-          style={{ flex: 1, minWidth: 180, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#fff', padding: '8px 14px', fontSize: 13, outline: 'none', fontFamily: 'monospace' }}
-        />
-        {[
-          { label: 'Category', value: category, set: setCategory, opts: CATEGORIES },
-          { label: 'Level', value: level, set: setLevel, opts: LEVELS },
-          { label: 'Signal', value: signal, set: setSignal, opts: SIGNALS },
-        ].map(f => (
-          <select key={f.label} value={f.value} onChange={e => f.set(e.target.value)}
-            style={{ background: '#0d1421', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#f5f1e8', padding: '8px 12px', fontSize: 12, fontFamily: 'monospace', outline: 'none', cursor: 'pointer' }}>
-            {f.opts.map(o => <option key={o} value={o}>{f.label}: {o}</option>)}
-          </select>
-        ))}
-        <div style={{ color: '#9ca3af', fontSize: 12, fontFamily: 'monospace', flexShrink: 0 }}>
-          {filtered.length} pattern{filtered.length !== 1 ? 's' : ''}
-        </div>
-      </div>
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 20px', marginBottom: 20, display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search patterns..."
+              style={{ flex: 1, minWidth: 180, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#fff', padding: '8px 14px', fontSize: 13, outline: 'none', fontFamily: 'monospace' }} />
+            {[
+              { label: 'Category', value: category, set: setCategory, opts: CATEGORIES },
+              { label: 'Level', value: level, set: setLevel, opts: LEVELS },
+              { label: 'Signal', value: signal, set: setSignal, opts: SIGNALS },
+            ].map(f => (
+              <select key={f.label} value={f.value} onChange={e => f.set(e.target.value)}
+                style={{ background: '#0d1421', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#f5f1e8', padding: '8px 12px', fontSize: 12, fontFamily: 'monospace', outline: 'none', cursor: 'pointer' }}>
+                {f.opts.map(o => <option key={o} value={o}>{f.label}: {o}</option>)}
+              </select>
+            ))}
+            <div style={{ color: '#9ca3af', fontSize: 12, fontFamily: 'monospace', flexShrink: 0 }}>
+              {filtered.length} pattern{filtered.length !== 1 ? 's' : ''}
+            </div>
+          </div>
 
-      {/* Pattern Grid */}
-      {expanded && selectedPattern ? (
-        <div style={{ width: '100%', maxWidth: 1800, margin: '0 auto' }}>
-          <PatternCard
-  pattern={filtered.find(p => p.id === expanded)}
-  isExpanded={true}
-  singleMode={true}
-  quizMode={quizMode}
-  onClick={() => setExpanded(null)}
-  onNext={goNext}
-  onPrev={goPrev}
-  onToggleQuiz={() => setQuizMode(!quizMode)}
-/>
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 12 }}>
-          {filtered.map(p => (
-            <PatternCard
-              key={p.id}
-              pattern={p}
-              isExpanded={false}
-              singleMode={false}
-              onClick={() => openPattern(p.id)}
-            />
-          ))}
-        </div>
+          {expanded && selectedPattern ? (
+            <div style={{ width: '100%', maxWidth: 1800, margin: '0 auto' }}>
+              <PatternCard
+                pattern={selectedPattern}
+                isExpanded={true}
+                singleMode={true}
+                quizMode={false}
+                onClick={closePattern}
+                onNext={goNext}
+                onPrev={goPrev}
+                onToggleQuiz={() => {}}
+              />
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 12 }}>
+              {filtered.map(p => (
+                <PatternCard key={p.id} pattern={p} isExpanded={false} singleMode={false} onClick={() => openPattern(p.id)} />
+              ))}
+            </div>
+          )}
+
+          {filtered.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
+              <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>No patterns found</div>
+              <div style={{ fontSize: 13 }}>Try adjusting your filters</div>
+            </div>
+          )}
+        </>
       )}
 
-      {filtered.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
-          <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>No patterns found</div>
-          <div style={{ fontSize: 13 }}>Try adjusting your filters</div>
+      {/* ── QUIZ MODE ── */}
+      {pageMode === 'quiz' && (
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+
+          {/* Pre-session screen */}
+          {quizPool.length === 0 && !sessionComplete && (
+            <div style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: `1px solid ${GOLD}33`, borderRadius: 20, padding: '48px 40px', textAlign: 'center' }}>
+              <div style={{ fontSize: 52, marginBottom: 16 }}>⚡</div>
+              <div style={{ color: GOLD, fontSize: 26, fontWeight: 950, marginBottom: 10 }}>Pattern Recognition Quiz</div>
+              <div style={{ color: '#9ca3af', fontSize: 15, lineHeight: 1.7, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
+                Watch the animated pattern with zero labels. Identify it from 4 options. Track your streak, build your edge, and eliminate weak spots.
+              </div>
+
+              <div style={{ display: 'flex', gap: 24, justifyContent: 'center', marginBottom: 36, flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ color: '#9ca3af', fontSize: 11, fontWeight: 800, letterSpacing: 1.2, marginBottom: 8 }}>DIFFICULTY</div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {LEVELS.map(l => (
+                      <button key={l} onClick={() => setQuizFilter(f => ({ ...f, level: l }))}
+                        style={{ background: quizFilter.level === l ? `${GOLD}22` : 'rgba(255,255,255,0.04)', border: `1px solid ${quizFilter.level === l ? GOLD : 'rgba(255,255,255,0.1)'}`, borderRadius: 9, color: quizFilter.level === l ? GOLD : '#9ca3af', fontSize: 13, fontWeight: 800, padding: '9px 18px', cursor: 'pointer' }}>
+                        {l}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ color: '#9ca3af', fontSize: 11, fontWeight: 800, letterSpacing: 1.2, marginBottom: 8 }}>CATEGORY</div>
+                  <select value={quizFilter.category} onChange={e => setQuizFilter(f => ({ ...f, category: e.target.value }))}
+                    style={{ background: '#0d1421', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 9, color: '#f5f1e8', padding: '9px 16px', fontSize: 13, fontFamily: 'monospace', outline: 'none', cursor: 'pointer' }}>
+                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {Object.keys(weakAreas).length > 0 && (
+                <div style={{ background: 'rgba(239,83,80,0.08)', border: '1px solid rgba(239,83,80,0.25)', borderRadius: 12, padding: '14px 20px', marginBottom: 28, textAlign: 'left', maxWidth: 600, margin: '0 auto 28px' }}>
+                  <div style={{ color: RED, fontSize: 11, fontWeight: 900, letterSpacing: 1, marginBottom: 10 }}>⚠️ WEAK AREAS — weighted higher this session</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {Object.entries(weakAreas).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([id, count]) => {
+                      const p = ALL_PATTERNS.find(x => x.id === parseInt(id));
+                      return p ? (
+                        <span key={id} style={{ background: 'rgba(239,83,80,0.12)', border: '1px solid rgba(239,83,80,0.3)', color: RED, fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 6 }}>
+                          {p.name} ×{count}
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <button onClick={startQuizSession}
+                style={{ background: GOLD, border: 'none', borderRadius: 14, color: '#000', fontSize: 17, fontWeight: 950, padding: '18px 52px', cursor: 'pointer', letterSpacing: 0.5, boxShadow: `0 0 32px ${GOLD}44` }}>
+                START QUIZ — {SESSION_SIZE} PATTERNS
+              </button>
+              <div style={{ color: '#6b7280', fontSize: 12, marginTop: 14 }}>
+                One hint per question · Wrong answers appear more often in future sessions
+              </div>
+            </div>
+          )}
+
+          {/* Session complete */}
+          {sessionComplete && (
+            <div style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: `1px solid ${GOLD}33`, borderRadius: 20, padding: '48px 40px', textAlign: 'center' }}>
+              <div style={{ fontSize: 52, marginBottom: 16 }}>
+                {score.correct >= SESSION_SIZE * 0.8 ? '🏆' : score.correct >= SESSION_SIZE * 0.6 ? '📈' : '📚'}
+              </div>
+              <div style={{ color: GOLD, fontSize: 26, fontWeight: 950, marginBottom: 28 }}>Session Complete</div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
+                {[
+                  { label: 'CORRECT', value: score.correct, color: TEAL },
+                  { label: 'INCORRECT', value: score.incorrect, color: RED },
+                  { label: 'ACCURACY', value: `${Math.round((score.correct / SESSION_SIZE) * 100)}%`, color: GOLD },
+                  { label: 'BEST STREAK', value: score.bestStreak, color: PURPLE },
+                ].map(s => (
+                  <div key={s.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '18px' }}>
+                    <div style={{ color: '#9ca3af', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, marginBottom: 8 }}>{s.label}</div>
+                    <div style={{ color: s.color, fontSize: 34, fontWeight: 950, fontFamily: 'monospace' }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {score.correct >= SESSION_SIZE * 0.8 && (
+                <div style={{ background: 'rgba(38,166,154,0.1)', border: '1px solid rgba(38,166,154,0.3)', borderRadius: 12, padding: '14px 20px', marginBottom: 24, color: TEAL, fontWeight: 800, fontSize: 15 }}>
+                  🔥 Outstanding — {score.correct}/{SESSION_SIZE} correct. Elite pattern recognition.
+                </div>
+              )}
+
+              {Object.keys(weakAreas).length > 0 && score.correct < SESSION_SIZE * 0.8 && (
+                <div style={{ background: 'rgba(239,83,80,0.08)', border: '1px solid rgba(239,83,80,0.2)', borderRadius: 12, padding: '14px 20px', marginBottom: 24, textAlign: 'left' }}>
+                  <div style={{ color: RED, fontSize: 11, fontWeight: 900, letterSpacing: 1, marginBottom: 10 }}>REVIEW THESE IN THE LIBRARY</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {Object.entries(weakAreas).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([id]) => {
+                      const p = ALL_PATTERNS.find(x => x.id === parseInt(id));
+                      return p ? (
+                        <button key={id} onClick={() => { setPageMode('library'); openPattern(p.id); }}
+                          style={{ background: 'rgba(239,83,80,0.12)', border: '1px solid rgba(239,83,80,0.3)', color: RED, fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 6, cursor: 'pointer' }}>
+                          {p.name}
+                        </button>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button onClick={startQuizSession}
+                  style={{ background: GOLD, border: 'none', borderRadius: 12, color: '#000', fontSize: 15, fontWeight: 950, padding: '14px 36px', cursor: 'pointer' }}>
+                  QUIZ AGAIN
+                </button>
+                <button onClick={() => { setQuizPool([]); setSessionComplete(false); }}
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, color: '#f5f1e8', fontSize: 15, fontWeight: 800, padding: '14px 36px', cursor: 'pointer' }}>
+                  Change Settings
+                </button>
+                <button onClick={() => setPageMode('library')}
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, color: '#9ca3af', fontSize: 15, fontWeight: 700, padding: '14px 36px', cursor: 'pointer' }}>
+                  Go to Library
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Active question */}
+          {quizPool.length > 0 && !sessionComplete && currentQuizPattern && (
+            <div>
+              {/* Progress bar */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '12px 20px' }}>
+                <div style={{ color: '#9ca3af', fontSize: 13, fontFamily: 'monospace', flexShrink: 0 }}>
+                  <span style={{ color: GOLD, fontWeight: 900 }}>{quizIndex + 1}</span> / <span style={{ color: GOLD, fontWeight: 900 }}>{quizPool.length}</span>
+                </div>
+                <div style={{ flex: 1, height: 5, background: 'rgba(255,255,255,0.08)', borderRadius: 3 }}>
+                  <div style={{ height: '100%', width: `${(quizIndex / quizPool.length) * 100}%`, background: GOLD, borderRadius: 3, transition: 'width 0.3s' }} />
+                </div>
+                <div style={{ display: 'flex', gap: 16, flexShrink: 0 }}>
+                  <span style={{ color: TEAL, fontSize: 13, fontWeight: 900, fontFamily: 'monospace' }}>✓ {score.correct}</span>
+                  <span style={{ color: RED, fontSize: 13, fontWeight: 900, fontFamily: 'monospace' }}>✗ {score.incorrect}</span>
+                  {score.streak >= 2 && <span style={{ color: GOLD, fontSize: 13, fontWeight: 900, fontFamily: 'monospace' }}>🔥 {score.streak}</span>}
+                </div>
+              </div>
+
+              {/* Chart */}
+              <div style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '20px', marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                  <div style={{ width: 7, height: 7, borderRadius: '50%', background: GOLD, boxShadow: `0 0 8px ${GOLD}` }} />
+                  <span style={{ color: '#9ca3af', fontSize: 11, fontWeight: 800, letterSpacing: 1.8 }}>IDENTIFY THIS PATTERN</span>
+                  <span style={{ color: '#6b7280', fontSize: 11, marginLeft: 'auto' }}>Category: {currentQuizPattern.category}</span>
+                  {!hintUsed && !quizAnswer && (
+                    <button onClick={() => { setShowHint(true); setHintUsed(true); }}
+                      style={{ background: `${PURPLE}18`, border: `1px solid ${PURPLE}44`, borderRadius: 7, color: PURPLE, fontSize: 11, fontWeight: 800, padding: '5px 12px', cursor: 'pointer' }}>
+                      💡 Hint
+                    </button>
+                  )}
+                  {hintUsed && !quizAnswer && <span style={{ color: '#6b7280', fontSize: 11 }}>Hint used</span>}
+                </div>
+
+                {showHint && (
+                  <div style={{ background: `${PURPLE}12`, border: `1px solid ${PURPLE}30`, borderRadius: 10, padding: '12px 16px', marginBottom: 14, color: PURPLE, fontSize: 13, fontWeight: 700 }}>
+                    💡 This is a <strong>{currentQuizPattern.signal}</strong> pattern · Confidence: {currentQuizPattern.confidence}/10
+                  </div>
+                )}
+
+                <div style={{ background: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px), #050b14', backgroundSize: '48px 48px, 48px 48px', borderRadius: 12, height: 360, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <CandleChart
+                    pattern={{ ...currentQuizPattern, annotations: [] }}
+                    playing={quizPlaying}
+                    onComplete={() => setQuizDone(true)}
+                    width={900}
+                    height={344}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: 16, marginTop: 12, alignItems: 'center' }}>
+                  {[{ color: TEAL, label: 'Bullish candle' }, { color: RED, label: 'Bearish candle' }].map(item => (
+                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: 2, background: item.color }} />
+                      <span style={{ color: '#9ca3af', fontSize: 11 }}>{item.label}</span>
+                    </div>
+                  ))}
+                  {quizDone && (
+                    <button onClick={() => { setQuizPlaying(false); setQuizDone(false); setTimeout(() => setQuizPlaying(true), 100); }}
+                      style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 7, color: '#9ca3af', fontSize: 11, fontWeight: 700, padding: '5px 12px', cursor: 'pointer' }}>
+                      ↺ Replay
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Answer choices */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                {quizOptions.map(opt => {
+                  const isCorrect = opt.id === currentQuizPattern.id;
+                  const isSelected = quizAnswer === opt.id;
+                  let bg = 'rgba(255,255,255,0.04)';
+                  let border = 'rgba(255,255,255,0.1)';
+                  let color = '#f5f1e8';
+                  if (isSelected && isCorrect) { bg = 'rgba(38,166,154,0.16)'; border = `${TEAL}60`; color = TEAL; }
+                  if (isSelected && !isCorrect) { bg = 'rgba(239,83,80,0.16)'; border = `${RED}60`; color = RED; }
+                  if (quizAnswer && isCorrect) { bg = 'rgba(38,166,154,0.16)'; border = `${TEAL}60`; color = TEAL; }
+                  return (
+                    <button key={opt.id} onClick={() => handleQuizAnswer(opt.id)} disabled={!!quizAnswer}
+                      style={{ background: bg, border: `2px solid ${border}`, borderRadius: 14, color, fontSize: 15, fontWeight: 800, padding: '18px 22px', cursor: quizAnswer ? 'default' : 'pointer', textAlign: 'left', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>{opt.name}</span>
+                      {quizAnswer && isCorrect && <span style={{ fontSize: 20 }}>✓</span>}
+                      {isSelected && !isCorrect && <span style={{ fontSize: 20 }}>✗</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Answer reveal */}
+              {quizAnswer && (
+                <div style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: `1px solid ${quizAnswer === currentQuizPattern.id ? `${TEAL}44` : `${RED}44`}`, borderRadius: 16, padding: '22px', marginBottom: 16 }}>
+                  <div style={{ color: quizAnswer === currentQuizPattern.id ? TEAL : RED, fontSize: 18, fontWeight: 950, marginBottom: 16 }}>
+                    {quizAnswer === currentQuizPattern.id
+                      ? `✓ Correct — ${currentQuizPattern.name}`
+                      : `✗ That was ${currentQuizPattern.name}`}
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
+                    <InfoCard title="WHAT IT IS" color={GOLD} icon="📖">{currentQuizPattern.description}</InfoCard>
+                    <InfoCard title="KEY PSYCHOLOGY" color={currentQuizPattern.signalColor || GOLD} icon="🧠">{currentQuizPattern.psychology}</InfoCard>
+                    <InfoCard title="HOW TO TRADE IT" color={TEAL} icon="🎯">
+                      <div><strong style={{ color: TEAL }}>Entry:</strong> {currentQuizPattern.entry}</div>
+                      <div style={{ marginTop: 6 }}><strong style={{ color: RED }}>Stop:</strong> {currentQuizPattern.stop}</div>
+                      <div style={{ marginTop: 6 }}><strong style={{ color: GOLD }}>Target:</strong> {currentQuizPattern.target}</div>
+                    </InfoCard>
+                  </div>
+                  {quizAnswer !== currentQuizPattern.id && (
+                    <div style={{ background: 'rgba(239,83,80,0.08)', border: '1px solid rgba(239,83,80,0.2)', borderRadius: 10, padding: '10px 14px', marginBottom: 14, color: '#9ca3af', fontSize: 13 }}>
+                      This pattern added to your weak areas — it will appear more often in future sessions.
+                    </div>
+                  )}
+                  <button onClick={handleNextQuestion}
+                    style={{ background: GOLD, border: 'none', borderRadius: 12, color: '#000', fontSize: 15, fontWeight: 950, padding: '14px 32px', cursor: 'pointer', width: '100%' }}>
+                    {quizIndex + 1 >= quizPool.length ? 'See Results →' : 'Next Pattern →'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
