@@ -242,7 +242,7 @@ export default function Welcome() {
           {/* Photo */}
           <div style={{ marginTop: "16px", position: "relative" }}>
             <img
-              src="/mike-photo1.png"
+              src="/mike-photo.png"
               alt="Mike Valerio"
               style={{
                 width: "100%",
