@@ -5081,6 +5081,7 @@ export default function PatternsPage() {
   const [level, setLevel] = useState('All');
   const [signal, setSignal] = useState('All');
   const [expanded, setExpanded] = useState(null);
+  const [quizMode, setQuizMode] = useState(false);
  
   const filtered = ALL_PATTERNS.filter(p => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
@@ -5192,15 +5193,15 @@ export default function PatternsPage() {
       {expanded && selectedPattern ? (
         <div style={{ width: '100%', maxWidth: 1800, margin: '0 auto' }}>
           <PatternCard
-            pattern={selectedPattern}
-            isExpanded={true}
-            singleMode={true}
-            quizMode={quizMode}
-            onClick={closePattern}
-            onNext={goNext}
-            onPrev={goPrev}
-            onToggleQuiz={() => setQuizMode(v => !v)}
-          />
+  pattern={filtered.find(p => p.id === expanded)}
+  isExpanded={true}
+  singleMode={true}
+  quizMode={quizMode}
+  onClick={() => setExpanded(null)}
+  onNext={goNext}
+  onPrev={goPrev}
+  onToggleQuiz={() => setQuizMode(!quizMode)}
+/>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 12 }}>
