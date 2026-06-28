@@ -76,7 +76,7 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
             {strikeChart.map((bar, i) => {
               const isAboveFlip = gammaFlip && Number(bar.strike) >= Number(gammaFlip);
               const barColor = isAboveFlip ? "#22c55e" : "#ef4444";
-              const netGamma = (bar.calls || 0) - (bar.puts || 0);
+              const netGamma = bar.net !== undefined ? bar.net : (bar.calls || 0) - (bar.puts || 0);
               const isPositive = netGamma >= 0;
               const h = Math.max(4, (Math.abs(netGamma) / maxVal) * half);
 
@@ -337,6 +337,11 @@ export default function GammaPage() {
         </div>
         <GammaHistogram strikeChart={gamma?.strikeChart} callWall={callWall} putWall={putWall} gammaFlip={gammaFlip} price={price} />
       </div>
+      {strikeChart.some(s => s.synthetic) && (
+  <div style={{ color: "#6b7280", fontSize: 10, marginTop: 6, fontStyle: "italic" }}>
+    ⚠️ Synthetic profile — limited flow data for {ticker}. Real data loads as flow comes in.
+  </div>
+)}
 
       {/* ── ROW 3: CURRENT PRICE | GAMMA REGIME | KEY DRIVERS | PLAYBOOK | GAMMA SCORE ── */}
       <div style={{ display: "grid", gridTemplateColumns: "200px 260px 1fr 220px 200px", gap: 10, marginTop: 12 }}>
