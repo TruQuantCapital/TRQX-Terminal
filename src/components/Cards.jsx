@@ -360,7 +360,45 @@ export function AiSummary() {
         }).join(", ");
 
         const eventText = topEvents || "No major economic events scheduled today.";
-        const prompt = "You are a trading educator at TRQX Capital. Give traders a brief market intelligence update. Flow Sentiment: " + (flow.sentiment || "Neutral") + ". Call Premium: $" + Math.round((flow.callPremium||0)/1000000) + "M. Put Premium: $" + Math.round((flow.putPremium||0)/1000000) + "M. Sweeps: " + (flow.sweepCount||0) + ". Events: " + eventText + ". Respond with plain text only, no markdown or hashtags. Write: one 2-sentence summary, then BULLISH BEARISH or NEUTRAL with one reason, then 3 watch items each starting with a dash.";
+        const callM = Math.round((flow.callPremium||0)/1000000);
+const putM = Math.round((flow.putPremium||0)/1000000);
+const ratio = callM > 0 && putM > 0 ? (callM / putM).toFixed(2) : "N/A";
+const sentiment = flow.sentiment || "Neutral";
+const sweeps = flow.sweepCount || 0;
+const blocks = flow.blockCount || 0;
+
+const prompt = `You are a professional market analyst at TRQX Capital delivering a pre-market intelligence brief to active traders.
+
+LIVE OPTIONS FLOW DATA:
+- Flow Sentiment: ${sentiment}
+- Call Premium: $${callM}M | Put Premium: $${putM}M | Call/Put Ratio: ${ratio}
+- Sweep Count: ${sweeps} | Block Count: ${blocks}
+- Bias: ${callM > putM ? "Bullish — institutions are aggressively buying calls" : putM > callM ? "Bearish — institutions are hedging or buying puts" : "Neutral — balanced flow"}
+
+ECONOMIC CALENDAR (Today & Next 48 Hours):
+${eventText}
+
+Write a detailed pre-market brief using ONLY plain text — no markdown, no hashtags, no asterisks, no bullet symbols other than a dash.
+
+Structure your response exactly as follows:
+
+MARKET OVERVIEW
+Write 3 sentences summarizing current market conditions combining the options flow data and economic calendar context.
+
+FLOW ANALYSIS
+Write 2 sentences explaining what the institutional options flow is signaling and what it means for traders today.
+
+KEY EVENTS TO WATCH
+List each major economic event with its forecast vs prior value and explain in one sentence what a surprise in either direction would mean for markets. Format each as: EVENT NAME - Forecast: X, Prior: Y. Impact: [your interpretation]
+
+TRADE BIAS
+State clearly: BULLISH, BEARISH, or NEUTRAL. Then write 2 sentences explaining why based on the combination of flow data and upcoming events.
+
+WATCH LIST ITEMS
+List exactly 4 specific things traders should monitor today, each starting with a dash. Be specific — name tickers, levels, or indicators where relevant.
+
+RISK FACTORS
+List 2 things that could invalidate the current bias, each starting with a dash.`;
 
         const aiRes = await fetch(API + "/api/market-intelligence", {
           method: "POST",
