@@ -10,703 +10,681 @@ const BLUE = "#3b82f6";
 // PATTERN DATA — Batch 1 (Patterns 1-28)
 // ─────────────────────────────────────────────
 const PATTERNS = [
-  // ── LEVEL I: Single Candle Bullish ──
   {
     id: 1, name: "Bullish Engulfing", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "A large bullish candle completely engulfs the previous bearish candle. Signals that buyers have overwhelmed sellers and a reversal is likely.",
     entry: "Open of next candle after the engulfing pattern forms",
     stop: "Below the low of the engulfing candle",
     target: "1.5-2x the height of the pattern",
     candles: [
-      {o:210,c:205,h:212,l:203,bull:false},
-      {o:208,c:215,h:207,l:217,bull:true},
-      {o:203,c:200,h:204,l:198,bull:false},
-      {o:201,c:198,h:202,l:196,bull:false},
-      {o:199,c:195,h:200,l:193,bull:false},
-      {o:196,c:192,h:197,l:190,bull:false},
-      {o:193,c:189,h:194,l:187,bull:false},
-      // Engulfing pattern
-      {o:190,c:185,h:191,l:183,bull:false},
-      {o:183,c:193,h:182,l:195,bull:true},
+      {o:215,c:212,h:217,l:210,bull:false},
+      {o:213,c:210,h:215,l:208,bull:false},
+      {o:210,c:206,h:212,l:204,bull:false},
+      {o:207,c:203,h:209,l:201,bull:false},
+      {o:204,c:200,h:206,l:198,bull:false},
+      {o:201,c:197,h:203,l:195,bull:false},
+      // Bearish candle before engulfing
+      {o:198,c:194,h:200,l:192,bull:false},
+      // Bullish engulfing — opens below, closes above
+      {o:191,c:201,h:203,l:189,bull:true},
       // Continuation
-      {o:193,c:198,h:192,l:200,bull:true},
-      {o:198,c:204,h:197,l:206,bull:true},
+      {o:201,c:207,h:209,l:200,bull:true},
+      {o:207,c:213,h:215,l:206,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:7, offset:-18, text:'Bearish', color:'#ef5350'},
-      {type:'label', candleIdx:8, offset:-18, text:'Engulfing', color:TEAL},
-      {type:'bracket', start:7, end:8, label:'Pattern'},
+      {type:'label',candleIdx:6,offset:-18,text:'Bearish',color:RED},
+      {type:'label',candleIdx:7,offset:-18,text:'Engulfing ↑',color:TEAL},
+      {type:'bracket',start:6,end:7,label:'Pattern'},
     ]
   },
   {
     id: 2, name: "Hammer", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "A candle with a small body at the top and a long lower wick (2x+ the body). Signals buyers rejected lower prices and a reversal may follow.",
     entry: "Above the high of the hammer candle",
     stop: "Below the low of the hammer wick",
     target: "Previous swing high",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:205,h:211,l:203,bull:false},
-      {o:205,c:200,h:206,l:198,bull:false},
-      {o:200,c:196,h:201,l:194,bull:false},
-      {o:196,c:193,h:197,l:191,bull:false},
-      // Hammer
-      {o:193,c:195,h:196,l:183,bull:true},
-      // Continuation
-      {o:195,c:200,h:194,l:202,bull:true},
-      {o:200,c:206,h:199,l:208,bull:true},
-      {o:206,c:210,h:205,l:212,bull:true},
+      {o:220,c:215,h:221,l:213,bull:false},
+      {o:215,c:209,h:216,l:207,bull:false},
+      {o:209,c:203,h:210,l:201,bull:false},
+      {o:203,c:197,h:204,l:195,bull:false},
+      {o:197,c:192,h:198,l:190,bull:false},
+      // Hammer — tiny body at top, wick goes way down
+      {o:192,c:194,h:195,l:178,bull:true},
+      // Confirmation and continuation
+      {o:194,c:201,h:203,l:193,bull:true},
+      {o:201,c:208,h:210,l:200,bull:true},
+      {o:208,c:215,h:217,l:207,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:5, offset:-25, text:'Hammer', color:TEAL},
-      {type:'arrow', candleIdx:5, direction:'up'},
+      {type:'label',candleIdx:5,offset:-28,text:'Hammer',color:TEAL},
+      {type:'arrow',candleIdx:5,direction:'up'},
     ]
   },
   {
     id: 3, name: "Inverted Hammer", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "Small body at the bottom with a long upper wick. Appears at the bottom of a downtrend. Signals buyers tried to push higher — confirmation needed.",
     entry: "Above the high of the next bullish candle",
     stop: "Below the low of the inverted hammer",
     target: "Previous swing high",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:205,h:211,l:203,bull:false},
-      {o:205,c:200,h:206,l:198,bull:false},
-      {o:200,c:195,h:201,l:193,bull:false},
-      // Inverted hammer
-      {o:195,c:193,h:205,l:192,bull:false},
+      {o:220,c:214,h:221,l:212,bull:false},
+      {o:214,c:208,h:215,l:206,bull:false},
+      {o:208,c:202,h:209,l:200,bull:false},
+      {o:202,c:196,h:203,l:194,bull:false},
+      // Inverted hammer — tiny body at bottom, long upper wick
+      {o:193,c:195,h:210,l:192,bull:true},
       // Confirmation
-      {o:193,c:199,h:192,l:201,bull:true},
-      {o:199,c:205,h:198,l:207,bull:true},
-      {o:205,c:210,h:204,l:212,bull:true},
+      {o:195,c:202,h:204,l:194,bull:true},
+      {o:202,c:210,h:212,l:201,bull:true},
+      {o:210,c:216,h:218,l:209,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-25, text:'Inv. Hammer', color:TEAL},
-      {type:'label', candleIdx:5, offset:-18, text:'Confirm', color:GOLD},
+      {type:'label',candleIdx:4,offset:-28,text:'Inv. Hammer',color:TEAL},
+      {type:'label',candleIdx:5,offset:-18,text:'Confirm',color:GOLD},
     ]
   },
   {
     id: 4, name: "Dragonfly Doji", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "Open and close are at the high of the candle with a very long lower wick. Strong rejection of lower prices. One of the most powerful single-candle reversals.",
     entry: "Above the high of the dragonfly doji",
     stop: "Below the low of the long wick",
     target: "1.5-2x the wick length above entry",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:204,h:211,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
-      {o:198,c:193,h:199,l:191,bull:false},
-      // Dragonfly doji
-      {o:193,c:193,h:194,l:180,bull:true},
-      {o:193,c:199,h:192,l:201,bull:true},
-      {o:199,c:206,h:198,l:208,bull:true},
-      {o:206,c:212,h:205,l:214,bull:true},
+      {o:220,c:214,h:221,l:212,bull:false},
+      {o:214,c:208,h:215,l:206,bull:false},
+      {o:208,c:202,h:209,l:200,bull:false},
+      {o:202,c:196,h:203,l:194,bull:false},
+      // Dragonfly — open=close at top, massive lower wick
+      {o:194,c:194,h:195,l:176,bull:true},
+      {o:194,c:201,h:203,l:193,bull:true},
+      {o:201,c:209,h:211,l:200,bull:true},
+      {o:209,c:216,h:218,l:208,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-28, text:'Dragonfly', color:TEAL},
-      {type:'arrow', candleIdx:4, direction:'up'},
+      {type:'label',candleIdx:4,offset:-32,text:'Dragonfly Doji',color:TEAL},
+      {type:'arrow',candleIdx:4,direction:'up'},
     ]
   },
   {
     id: 5, name: "Bullish Marubozu", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Continuation",
-    signalColor: TEAL,
+    category: "Single Candle", signal: "Bullish Continuation", signalColor: TEAL,
     description: "A full bullish candle with no wicks. Opens at the low and closes at the high. Shows total buyer dominance — no hesitation. Strong momentum signal.",
     entry: "Open of next candle",
     stop: "Below the open of the marubozu",
     target: "Measured move equal to marubozu length",
     candles: [
-      {o:195,c:198,h:196,l:199,bull:true},
-      {o:198,c:202,h:199,l:203,bull:true},
-      {o:202,c:200,h:203,l:201,bull:false},
-      {o:200,c:204,h:201,l:205,bull:true},
-      // Marubozu
-      {o:200,c:212,h:200,l:212,bull:true},
-      {o:212,c:218,h:211,l:220,bull:true},
-      {o:218,c:222,h:217,l:224,bull:true},
+      {o:192,c:196,h:197,l:191,bull:true},
+      {o:196,c:200,h:201,l:195,bull:true},
+      {o:200,c:198,h:201,l:197,bull:false},
+      {o:198,c:202,h:203,l:197,bull:true},
+      // Marubozu — open = low, close = high, NO wicks
+      {o:199,c:215,h:215,l:199,bull:true},
+      {o:215,c:221,h:223,l:214,bull:true},
+      {o:221,c:226,h:228,l:220,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-18, text:'Marubozu', color:TEAL},
+      {type:'label',candleIdx:4,offset:-18,text:'Marubozu — No Wicks',color:TEAL},
     ]
   },
   {
     id: 6, name: "Piercing Pattern", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "After a bearish candle, the next candle opens below the low and closes above the midpoint of the previous candle. Signals buyers are stepping in strongly.",
     entry: "Above the high of the piercing candle",
     stop: "Below the low of the piercing candle",
     target: "Previous swing high",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:205,h:211,l:203,bull:false},
-      {o:205,c:200,h:206,l:198,bull:false},
-      {o:200,c:194,h:201,l:192,bull:false},
-      // Piercing pattern
-      {o:194,c:188,h:195,l:186,bull:false},
-      {o:185,c:192,h:184,l:194,bull:true},
-      {o:192,c:198,h:191,l:200,bull:true},
-      {o:198,c:204,h:197,l:206,bull:true},
+      {o:218,c:213,h:219,l:211,bull:false},
+      {o:213,c:207,h:214,l:205,bull:false},
+      {o:207,c:201,h:208,l:199,bull:false},
+      {o:201,c:194,h:202,l:192,bull:false},
+      // Large bearish candle
+      {o:196,c:186,h:197,l:184,bull:false},
+      // Piercing — opens below low, closes above midpoint of prev
+      {o:183,c:193,h:195,l:182,bull:true},
+      {o:193,c:200,h:202,l:192,bull:true},
+      {o:200,c:207,h:209,l:199,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-18, text:'Bearish', color:RED},
-      {type:'label', candleIdx:5, offset:-18, text:'Piercing', color:TEAL},
+      {type:'label',candleIdx:4,offset:-18,text:'Bearish',color:RED},
+      {type:'label',candleIdx:5,offset:-18,text:'Piercing ↑',color:TEAL},
     ]
   },
-
-  // ── LEVEL I: Single Candle Bearish ──
   {
     id: 7, name: "Bearish Engulfing", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "A large bearish candle completely engulfs the previous bullish candle. Signals sellers have overwhelmed buyers and a reversal lower is likely.",
     entry: "Open of next candle after engulfing forms",
     stop: "Above the high of the engulfing candle",
     target: "1.5-2x the height of the pattern below entry",
     candles: [
-      {o:190,c:195,h:189,l:197,bull:true},
-      {o:195,c:200,h:194,l:202,bull:true},
-      {o:200,c:205,h:199,l:207,bull:true},
-      {o:205,c:210,h:204,l:212,bull:true},
-      {o:210,c:215,h:209,l:217,bull:true},
-      // Engulfing
-      {o:215,c:218,h:214,l:220,bull:true},
-      {o:220,c:210,h:221,l:208,bull:false},
-      // Continuation
-      {o:210,c:204,h:211,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
+      {o:188,c:193,h:195,l:187,bull:true},
+      {o:193,c:199,h:201,l:192,bull:true},
+      {o:199,c:205,h:207,l:198,bull:true},
+      {o:205,c:211,h:213,l:204,bull:true},
+      {o:211,c:217,h:219,l:210,bull:true},
+      // Small bullish before engulfing
+      {o:217,c:221,h:223,l:216,bull:true},
+      // Bearish engulfing — opens above, closes below
+      {o:223,c:213,h:225,l:211,bull:false},
+      // Continuation down
+      {o:213,c:206,h:215,l:204,bull:false},
+      {o:206,c:199,h:208,l:197,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:5, offset:-18, text:'Bullish', color:TEAL},
-      {type:'label', candleIdx:6, offset:-18, text:'Engulfing', color:RED},
-      {type:'bracket', start:5, end:6, label:'Pattern'},
+      {type:'label',candleIdx:5,offset:-18,text:'Bullish',color:TEAL},
+      {type:'label',candleIdx:6,offset:-18,text:'Engulfing ↓',color:RED},
+      {type:'bracket',start:5,end:6,label:'Pattern'},
     ]
   },
   {
     id: 8, name: "Shooting Star", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "Small body at the bottom with a long upper wick at the TOP of an uptrend. Signals buyers were rejected at higher prices. Strong reversal signal.",
     entry: "Below the low of the shooting star",
     stop: "Above the high of the upper wick",
     target: "Previous swing low",
     candles: [
-      {o:190,c:195,h:189,l:197,bull:true},
-      {o:195,c:200,h:194,l:202,bull:true},
-      {o:200,c:206,h:199,l:208,bull:true},
-      {o:206,c:212,h:205,l:214,bull:true},
-      // Shooting star
-      {o:212,c:210,h:209,l:222,bull:false},
-      // Continuation
-      {o:210,c:204,h:211,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
-      {o:198,c:192,h:199,l:190,bull:false},
+      {o:188,c:194,h:196,l:187,bull:true},
+      {o:194,c:200,h:202,l:193,bull:true},
+      {o:200,c:207,h:209,l:199,bull:true},
+      {o:207,c:214,h:216,l:206,bull:true},
+      // Shooting star — tiny body at bottom, long upper wick
+      {o:214,c:212,h:228,l:211,bull:false},
+      // Continuation down
+      {o:212,c:205,h:213,l:203,bull:false},
+      {o:205,c:198,h:206,l:196,bull:false},
+      {o:198,c:191,h:199,l:189,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-25, text:'Shooting Star', color:RED},
-      {type:'arrow', candleIdx:4, direction:'down'},
+      {type:'label',candleIdx:4,offset:-28,text:'Shooting Star',color:RED},
+      {type:'arrow',candleIdx:4,direction:'down'},
     ]
   },
   {
     id: 9, name: "Hanging Man", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "Same shape as hammer but appears at the TOP of an uptrend. Small body, long lower wick. Sellers tested lower prices — warning sign that trend may reverse.",
     entry: "Below the low of the next bearish confirmation candle",
     stop: "Above the high of the hanging man",
     target: "Previous swing low",
     candles: [
-      {o:190,c:196,h:189,l:198,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
-      {o:208,c:214,h:207,l:216,bull:true},
-      // Hanging man
-      {o:214,c:216,h:213,l:206,bull:true},
-      // Confirmation & continuation
-      {o:216,c:210,h:217,l:208,bull:false},
-      {o:210,c:204,h:211,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
+      {o:188,c:194,h:196,l:187,bull:true},
+      {o:194,c:200,h:202,l:193,bull:true},
+      {o:200,c:207,h:209,l:199,bull:true},
+      {o:207,c:214,h:216,l:206,bull:true},
+      // Hanging man — small body at top, long lower wick
+      {o:215,c:217,h:218,l:203,bull:true},
+      // Confirmation bearish
+      {o:217,c:210,h:218,l:208,bull:false},
+      {o:210,c:203,h:211,l:201,bull:false},
+      {o:203,c:196,h:204,l:194,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-25, text:'Hanging Man', color:RED},
-      {type:'label', candleIdx:5, offset:-18, text:'Confirm', color:GOLD},
+      {type:'label',candleIdx:4,offset:-28,text:'Hanging Man',color:RED},
+      {type:'label',candleIdx:5,offset:-18,text:'Confirm',color:GOLD},
     ]
   },
   {
     id: 10, name: "Gravestone Doji", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "Open and close at the LOW with a long upper wick. Strong rejection of higher prices at the top of a trend. Mirror opposite of dragonfly doji.",
     entry: "Below the low of the gravestone doji",
     stop: "Above the high of the upper wick",
     target: "1.5-2x the wick length below entry",
     candles: [
-      {o:190,c:196,h:189,l:198,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
-      {o:208,c:214,h:207,l:216,bull:true},
-      // Gravestone doji
-      {o:214,c:214,h:213,l:226,bull:false},
-      {o:214,c:208,h:215,l:206,bull:false},
-      {o:208,c:202,h:209,l:200,bull:false},
-      {o:202,c:196,h:203,l:194,bull:false},
+      {o:188,c:194,h:196,l:187,bull:true},
+      {o:194,c:200,h:202,l:193,bull:true},
+      {o:200,c:207,h:209,l:199,bull:true},
+      {o:207,c:214,h:216,l:206,bull:true},
+      // Gravestone — open=close at bottom, massive upper wick
+      {o:214,c:214,h:230,l:213,bull:false},
+      {o:214,c:207,h:215,l:205,bull:false},
+      {o:207,c:200,h:208,l:198,bull:false},
+      {o:200,c:193,h:201,l:191,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-25, text:'Gravestone', color:RED},
-      {type:'arrow', candleIdx:4, direction:'down'},
+      {type:'label',candleIdx:4,offset:-28,text:'Gravestone Doji',color:RED},
+      {type:'arrow',candleIdx:4,direction:'down'},
     ]
   },
   {
     id: 11, name: "Bearish Marubozu", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Continuation",
-    signalColor: RED,
+    category: "Single Candle", signal: "Bearish Continuation", signalColor: RED,
     description: "Full bearish candle with no wicks. Opens at the high and closes at the low. Complete seller dominance. Strong momentum continuation signal.",
     entry: "Open of next candle",
     stop: "Above the open of the marubozu",
     target: "Measured move equal to marubozu length below",
     candles: [
-      {o:215,c:212,h:216,l:211,bull:false},
-      {o:212,c:208,h:213,l:207,bull:false},
-      {o:208,c:210,h:207,l:211,bull:true},
-      {o:210,c:206,h:211,l:205,bull:false},
-      // Marubozu
-      {o:214,c:202,h:214,l:202,bull:false},
-      {o:202,c:196,h:203,l:194,bull:false},
-      {o:196,c:190,h:197,l:188,bull:false},
+      {o:218,c:213,h:219,l:212,bull:false},
+      {o:213,c:208,h:214,l:207,bull:false},
+      {o:208,c:211,h:212,l:207,bull:true},
+      {o:211,c:206,h:212,l:205,bull:false},
+      // Marubozu — open = high, close = low, NO wicks
+      {o:218,c:202,h:218,l:202,bull:false},
+      {o:202,c:195,h:203,l:194,bull:false},
+      {o:195,c:189,h:196,l:188,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-18, text:'Marubozu', color:RED},
+      {type:'label',candleIdx:4,offset:-18,text:'Marubozu — No Wicks',color:RED},
     ]
   },
   {
     id: 12, name: "Dark Cloud Cover", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "After a bullish candle, the next opens above the high and closes below the midpoint of the previous candle. Sellers are gaining control.",
     entry: "Below the low of the dark cloud candle",
     stop: "Above the high of the dark cloud candle",
     target: "Previous swing low",
     candles: [
-      {o:190,c:196,h:189,l:198,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
-      // Dark cloud
-      {o:208,c:214,h:207,l:216,bull:true},
-      {o:217,c:209,h:218,l:207,bull:false},
-      {o:209,c:203,h:210,l:201,bull:false},
-      {o:203,c:197,h:204,l:195,bull:false},
+      {o:188,c:193,h:195,l:187,bull:true},
+      {o:193,c:199,h:201,l:192,bull:true},
+      {o:199,c:205,h:207,l:198,bull:true},
+      // Large bullish candle
+      {o:205,c:216,h:218,l:204,bull:true},
+      // Dark cloud — opens above high, closes below midpoint
+      {o:219,c:209,h:220,l:207,bull:false},
+      {o:209,c:202,h:210,l:200,bull:false},
+      {o:202,c:195,h:203,l:193,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-18, text:'Bullish', color:TEAL},
-      {type:'label', candleIdx:4, offset:-18, text:'Dark Cloud', color:RED},
+      {type:'label',candleIdx:3,offset:-18,text:'Bullish',color:TEAL},
+      {type:'label',candleIdx:4,offset:-18,text:'Dark Cloud ↓',color:RED},
     ]
   },
-
-  // ── LEVEL I: Neutral ──
   {
     id: 13, name: "Doji", level: "Beginner",
-    category: "Single Candle", signal: "Indecision",
-    signalColor: GOLD,
+    category: "Single Candle", signal: "Indecision", signalColor: GOLD,
     description: "Open and close are at virtually the same price. Buyers and sellers are in perfect equilibrium. Signals indecision — context determines direction.",
     entry: "Wait for confirmation candle",
     stop: "Below the low (bullish setup) or above the high (bearish)",
     target: "Based on confirmation candle direction",
     candles: [
-      {o:202,c:206,h:201,l:208,bull:true},
-      {o:206,c:210,h:205,l:212,bull:true},
-      {o:210,c:208,h:211,l:209,bull:false},
-      // Doji
-      {o:208,c:208,h:206,l:214,bull:true},
-      {o:208,c:214,h:207,l:216,bull:true},
-      {o:214,c:218,h:213,l:220,bull:true},
+      {o:200,c:205,h:207,l:199,bull:true},
+      {o:205,c:210,h:212,l:204,bull:true},
+      {o:210,c:208,h:212,l:207,bull:false},
+      // Doji — open very close to close, equal wicks
+      {o:208,c:208,h:215,l:201,bull:true},
+      // Continuation bullish after context
+      {o:208,c:215,h:217,l:207,bull:true},
+      {o:215,c:221,h:223,l:214,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-25, text:'Doji', color:GOLD},
+      {type:'label',candleIdx:3,offset:-28,text:'Doji',color:GOLD},
     ]
   },
   {
     id: 14, name: "Long-Legged Doji", level: "Beginner",
-    category: "Single Candle", signal: "Indecision",
-    signalColor: GOLD,
+    category: "Single Candle", signal: "Indecision", signalColor: GOLD,
     description: "A doji with very long upper and lower wicks. Extreme indecision — both bulls and bears fought hard but neither won. Major volatility signal.",
     entry: "Wait for strong confirmation candle",
     stop: "Outside the entire wick range",
     target: "Based on breakout direction",
     candles: [
-      {o:202,c:206,h:201,l:208,bull:true},
-      {o:206,c:210,h:205,l:212,bull:true},
-      {o:210,c:208,h:211,l:209,bull:false},
-      // Long-legged doji
-      {o:208,c:208,h:200,l:218,bull:true},
-      {o:208,c:214,h:207,l:216,bull:true},
-      {o:214,c:218,h:213,l:220,bull:true},
+      {o:200,c:206,h:208,l:199,bull:true},
+      {o:206,c:212,h:214,l:205,bull:true},
+      {o:212,c:209,h:213,l:208,bull:false},
+      // Long-legged doji — equal open/close, huge wicks both ways
+      {o:209,c:209,h:224,l:194,bull:true},
+      {o:209,c:216,h:218,l:208,bull:true},
+      {o:216,c:222,h:224,l:215,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-30, text:'Long-Legged Doji', color:GOLD},
+      {type:'label',candleIdx:3,offset:-35,text:'Long-Legged Doji',color:GOLD},
     ]
   },
   {
     id: 15, name: "Spinning Top", level: "Beginner",
-    category: "Single Candle", signal: "Indecision",
-    signalColor: GOLD,
+    category: "Single Candle", signal: "Indecision", signalColor: GOLD,
     description: "Small body with upper and lower wicks of roughly equal length. Shows balance between buyers and sellers. Often signals a pause before continuation or reversal.",
     entry: "Wait for next candle direction",
     stop: "Outside the wick range",
     target: "Based on next candle",
     candles: [
-      {o:200,c:205,h:199,l:207,bull:true},
-      {o:205,c:210,h:204,l:212,bull:true},
-      {o:210,c:208,h:211,l:209,bull:false},
-      // Spinning top
-      {o:208,c:210,h:204,l:214,bull:true},
-      {o:210,c:216,h:209,l:218,bull:true},
-      {o:216,c:220,h:215,l:222,bull:true},
+      {o:198,c:204,h:206,l:197,bull:true},
+      {o:204,c:210,h:212,l:203,bull:true},
+      {o:210,c:208,h:212,l:207,bull:false},
+      // Spinning top — small body, equal wicks
+      {o:208,c:211,h:217,l:202,bull:true},
+      {o:211,c:218,h:220,l:210,bull:true},
+      {o:218,c:224,h:226,l:217,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-25, text:'Spinning Top', color:GOLD},
+      {type:'label',candleIdx:3,offset:-28,text:'Spinning Top',color:GOLD},
     ]
   },
   {
     id: 16, name: "High Wave Candle", level: "Beginner",
-    category: "Single Candle", signal: "Indecision",
-    signalColor: GOLD,
+    category: "Single Candle", signal: "Indecision", signalColor: GOLD,
     description: "Extreme version of the spinning top with very long wicks on both sides and a tiny body. Shows massive uncertainty and volatility. Often precedes a major move.",
     entry: "Wait for breakout from the wick range",
     stop: "Opposite end of the wick",
     target: "Equal to the wick length in breakout direction",
     candles: [
-      {o:205,c:210,h:204,l:212,bull:true},
-      {o:210,c:208,h:211,l:209,bull:false},
-      {o:208,c:212,h:207,l:214,bull:true},
-      // High wave
-      {o:210,c:211,h:200,l:222,bull:true},
-      {o:211,c:217,h:210,l:219,bull:true},
-      {o:217,c:222,h:216,l:224,bull:true},
+      {o:203,c:208,h:210,l:202,bull:true},
+      {o:208,c:212,h:214,l:207,bull:true},
+      {o:212,c:209,h:213,l:208,bull:false},
+      // High wave — tiny body, extreme wicks both directions
+      {o:210,c:211,h:228,l:193,bull:true},
+      {o:211,c:218,h:220,l:210,bull:true},
+      {o:218,c:225,h:227,l:217,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-32, text:'High Wave', color:GOLD},
+      {type:'label',candleIdx:3,offset:-38,text:'High Wave',color:GOLD},
     ]
   },
-
-  // ── LEVEL II: Multi-Candle Bullish Reversal ──
   {
     id: 17, name: "Morning Star", level: "Beginner",
-    category: "Multi Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "Three-candle pattern: large bearish candle, small indecision candle (gaps down), large bullish candle closing above the midpoint of candle 1. Strong bottom signal.",
     entry: "Above the close of the third candle",
     stop: "Below the low of the small middle candle",
     target: "Previous swing high",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:204,h:211,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
-      {o:198,c:193,h:199,l:191,bull:false},
-      // Morning star 3 candles
-      {o:193,c:187,h:194,l:185,bull:false},
-      {o:185,c:186,h:183,l:188,bull:true},
-      {o:184,c:193,h:183,l:195,bull:true},
-      // Continuation
-      {o:193,c:199,h:192,l:201,bull:true},
-      {o:199,c:205,h:198,l:207,bull:true},
+      {o:218,c:213,h:219,l:211,bull:false},
+      {o:213,c:207,h:214,l:205,bull:false},
+      {o:207,c:200,h:208,l:198,bull:false},
+      {o:200,c:193,h:201,l:191,bull:false},
+      // Large bearish
+      {o:195,c:184,h:196,l:182,bull:false},
+      // Small star — gaps down
+      {o:182,c:183,h:185,l:180,bull:true},
+      // Large bullish — closes above midpoint of bearish
+      {o:183,c:194,h:196,l:182,bull:true},
+      {o:194,c:201,h:203,l:193,bull:true},
+      {o:201,c:208,h:210,l:200,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-18, text:'Bearish', color:RED},
-      {type:'label', candleIdx:5, offset:-20, text:'Star', color:GOLD},
-      {type:'label', candleIdx:6, offset:-18, text:'Bullish', color:TEAL},
-      {type:'bracket', start:4, end:6, label:'Morning Star'},
+      {type:'label',candleIdx:4,offset:-18,text:'Bearish',color:RED},
+      {type:'label',candleIdx:5,offset:-22,text:'Star',color:GOLD},
+      {type:'label',candleIdx:6,offset:-18,text:'Bullish',color:TEAL},
+      {type:'bracket',start:4,end:6,label:'Morning Star'},
     ]
   },
   {
     id: 18, name: "Morning Doji Star", level: "Intermediate",
-    category: "Multi Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "Like the morning star but the middle candle is a doji. Even stronger signal because the doji shows a complete standoff between buyers and sellers at the bottom.",
     entry: "Above the close of the third candle",
     stop: "Below the low of the doji",
     target: "Previous swing high",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:204,h:211,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
-      {o:198,c:192,h:199,l:190,bull:false},
-      // Morning doji star
-      {o:192,c:186,h:193,l:184,bull:false},
-      {o:184,c:184,h:182,l:187,bull:true},
-      {o:183,c:192,h:182,l:194,bull:true},
-      {o:192,c:198,h:191,l:200,bull:true},
-      {o:198,c:204,h:197,l:206,bull:true},
+      {o:218,c:212,h:219,l:210,bull:false},
+      {o:212,c:205,h:213,l:203,bull:false},
+      {o:205,c:197,h:206,l:195,bull:false},
+      {o:197,c:189,h:198,l:187,bull:false},
+      // Large bearish
+      {o:191,c:181,h:192,l:179,bull:false},
+      // Doji star — open = close, gaps down
+      {o:179,c:179,h:182,l:176,bull:true},
+      // Large bullish confirmation
+      {o:180,c:191,h:193,l:179,bull:true},
+      {o:191,c:199,h:201,l:190,bull:true},
+      {o:199,c:207,h:209,l:198,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-18, text:'Bearish', color:RED},
-      {type:'label', candleIdx:5, offset:-22, text:'Doji', color:GOLD},
-      {type:'label', candleIdx:6, offset:-18, text:'Bullish', color:TEAL},
-      {type:'bracket', start:4, end:6, label:'Morning Doji Star'},
+      {type:'label',candleIdx:4,offset:-18,text:'Bearish',color:RED},
+      {type:'label',candleIdx:5,offset:-25,text:'Doji',color:GOLD},
+      {type:'label',candleIdx:6,offset:-18,text:'Bullish',color:TEAL},
+      {type:'bracket',start:4,end:6,label:'Morning Doji Star'},
     ]
   },
   {
     id: 19, name: "Three White Soldiers", level: "Beginner",
-    category: "Multi Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "Three consecutive large bullish candles, each opening within the previous body and closing higher. Signals a powerful shift from sellers to buyers.",
     entry: "Open of candle after the third soldier",
     stop: "Below the low of the first soldier",
     target: "Measured move equal to the three-candle range",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:205,h:211,l:203,bull:false},
-      {o:205,c:200,h:206,l:198,bull:false},
-      {o:200,c:194,h:201,l:192,bull:false},
-      // Three white soldiers
-      {o:194,c:200,h:193,l:202,bull:true},
-      {o:199,c:206,h:198,l:208,bull:true},
-      {o:205,c:213,h:204,l:215,bull:true},
-      {o:213,c:218,h:212,l:220,bull:true},
-      {o:218,c:222,h:217,l:224,bull:true},
+      {o:218,c:213,h:219,l:211,bull:false},
+      {o:213,c:207,h:214,l:205,bull:false},
+      {o:207,c:201,h:208,l:199,bull:false},
+      {o:201,c:195,h:202,l:193,bull:false},
+      // Three white soldiers — large, each opens inside prev body
+      {o:194,c:204,h:205,l:193,bull:true},
+      {o:202,c:213,h:214,l:201,bull:true},
+      {o:211,c:222,h:223,l:210,bull:true},
+      {o:222,c:228,h:230,l:221,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-18, text:'Soldier 1', color:TEAL},
-      {type:'label', candleIdx:5, offset:-18, text:'Soldier 2', color:TEAL},
-      {type:'label', candleIdx:6, offset:-18, text:'Soldier 3', color:TEAL},
+      {type:'label',candleIdx:4,offset:-18,text:'Soldier 1',color:TEAL},
+      {type:'label',candleIdx:5,offset:-18,text:'Soldier 2',color:TEAL},
+      {type:'label',candleIdx:6,offset:-18,text:'Soldier 3',color:TEAL},
     ]
   },
   {
     id: 20, name: "Bullish Harami", level: "Beginner",
-    category: "Multi Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "A small bullish candle completely contained within the body of the previous large bearish candle. Signals momentum is slowing — watch for confirmation.",
     entry: "Above the high of the small bullish candle",
     stop: "Below the low of the large bearish candle",
     target: "Previous swing high",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:204,h:211,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
-      // Harami
-      {o:198,c:190,h:199,l:188,bull:false},
-      {o:191,c:194,h:190,l:196,bull:true},
+      {o:218,c:213,h:219,l:211,bull:false},
+      {o:213,c:207,h:214,l:205,bull:false},
+      {o:207,c:200,h:208,l:198,bull:false},
+      // Large bearish candle
+      {o:202,c:188,h:203,l:186,bull:false},
+      // Small bullish inside — body entirely within prev body
+      {o:190,c:195,h:196,l:189,bull:true},
       // Confirmation
-      {o:194,c:200,h:193,l:202,bull:true},
-      {o:200,c:206,h:199,l:208,bull:true},
+      {o:195,c:202,h:204,l:194,bull:true},
+      {o:202,c:209,h:211,l:201,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-18, text:'Large Bearish', color:RED},
-      {type:'label', candleIdx:4, offset:-18, text:'Small Inside', color:TEAL},
-      {type:'bracket', start:3, end:4, label:'Harami'},
+      {type:'label',candleIdx:3,offset:-18,text:'Large Bearish',color:RED},
+      {type:'label',candleIdx:4,offset:-18,text:'Small Inside',color:TEAL},
+      {type:'bracket',start:3,end:4,label:'Harami'},
     ]
   },
   {
     id: 21, name: "Tweezer Bottom", level: "Intermediate",
-    category: "Multi Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "Two candles with identical or very similar lows — one bearish, one bullish. Shows price tested a level twice and buyers defended it both times.",
     entry: "Above the high of the second candle",
     stop: "Below the shared low",
     target: "Previous swing high",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:204,h:211,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
-      // Tweezer bottom
-      {o:198,c:193,h:199,l:189,bull:false},
-      {o:190,c:196,h:189,l:189,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
+      {o:218,c:212,h:219,l:210,bull:false},
+      {o:212,c:206,h:213,l:204,bull:false},
+      {o:206,c:199,h:207,l:197,bull:false},
+      // Tweezer — identical lows
+      {o:202,c:191,h:203,l:188,bull:false},
+      {o:189,c:199,h:200,l:188,bull:true},
+      {o:199,c:207,h:209,l:198,bull:true},
+      {o:207,c:214,h:216,l:206,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-22, text:'Same Low', color:GOLD},
-      {type:'label', candleIdx:4, offset:-22, text:'Same Low', color:GOLD},
-      {type:'hline', candleIdx:3, label:'Support'},
+      {type:'label',candleIdx:3,offset:-25,text:'Same Low',color:GOLD},
+      {type:'label',candleIdx:4,offset:-25,text:'Same Low',color:GOLD},
+      {type:'hline',candleIdx:3,label:'Support'},
     ]
   },
   {
     id: 22, name: "Abandoned Baby Bottom", level: "Advanced",
-    category: "Multi Candle", signal: "Bullish Reversal",
-    signalColor: TEAL,
+    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
     description: "Rare three-candle pattern: bearish candle, then a doji that gaps below it, then a bullish candle that gaps above the doji. Very high accuracy reversal signal.",
     entry: "Above the close of the third candle",
     stop: "Below the low of the doji",
     target: "Previous swing high — full reversal expected",
     candles: [
-      {o:215,c:210,h:216,l:208,bull:false},
-      {o:210,c:204,h:211,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
-      // Abandoned baby
-      {o:198,c:192,h:199,l:190,bull:false},
-      {o:189,c:189,h:188,l:191,bull:true},
-      {o:192,c:200,h:191,l:202,bull:true},
-      {o:200,c:207,h:199,l:209,bull:true},
-      {o:207,c:213,h:206,l:215,bull:true},
+      {o:218,c:212,h:219,l:210,bull:false},
+      {o:212,c:205,h:213,l:203,bull:false},
+      {o:205,c:197,h:206,l:195,bull:false},
+      // Large bearish
+      {o:199,c:188,h:200,l:186,bull:false},
+      // Doji gaps below — isolated
+      {o:184,c:184,h:185,l:182,bull:true},
+      // Bullish gaps above doji
+      {o:187,c:198,h:200,l:186,bull:true},
+      {o:198,c:206,h:208,l:197,bull:true},
+      {o:206,c:214,h:216,l:205,bull:true},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-18, text:'Bearish', color:RED},
-      {type:'label', candleIdx:4, offset:-22, text:'Gap Doji', color:GOLD},
-      {type:'label', candleIdx:5, offset:-18, text:'Gap Up', color:TEAL},
+      {type:'label',candleIdx:3,offset:-18,text:'Bearish',color:RED},
+      {type:'label',candleIdx:4,offset:-25,text:'Gap Doji',color:GOLD},
+      {type:'label',candleIdx:5,offset:-18,text:'Gap Up',color:TEAL},
     ]
   },
-
-  // ── LEVEL II: Multi-Candle Bearish Reversal ──
   {
     id: 23, name: "Evening Star", level: "Beginner",
-    category: "Multi Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "Three-candle pattern: large bullish candle, small indecision candle (gaps up), large bearish candle closing below the midpoint of candle 1. Strong top signal.",
     entry: "Below the close of the third candle",
     stop: "Above the high of the small middle candle",
     target: "Previous swing low",
     candles: [
-      {o:190,c:196,h:189,l:198,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
-      // Evening star
-      {o:208,c:215,h:207,l:217,bull:true},
-      {o:217,c:218,h:216,l:220,bull:true},
-      {o:220,c:211,h:221,l:209,bull:false},
-      {o:211,c:204,h:212,l:202,bull:false},
-      {o:204,c:198,h:205,l:196,bull:false},
+      {o:188,c:194,h:196,l:187,bull:true},
+      {o:194,c:200,h:202,l:193,bull:true},
+      {o:200,c:207,h:209,l:199,bull:true},
+      // Large bullish
+      {o:207,c:219,h:221,l:206,bull:true},
+      // Small star gaps up
+      {o:221,c:222,h:224,l:220,bull:true},
+      // Large bearish closes below midpoint
+      {o:222,c:210,h:223,l:208,bull:false},
+      {o:210,c:202,h:211,l:200,bull:false},
+      {o:202,c:195,h:203,l:193,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-18, text:'Bullish', color:TEAL},
-      {type:'label', candleIdx:4, offset:-20, text:'Star', color:GOLD},
-      {type:'label', candleIdx:5, offset:-18, text:'Bearish', color:RED},
-      {type:'bracket', start:3, end:5, label:'Evening Star'},
+      {type:'label',candleIdx:3,offset:-18,text:'Bullish',color:TEAL},
+      {type:'label',candleIdx:4,offset:-22,text:'Star',color:GOLD},
+      {type:'label',candleIdx:5,offset:-18,text:'Bearish',color:RED},
+      {type:'bracket',start:3,end:5,label:'Evening Star'},
     ]
   },
   {
     id: 24, name: "Evening Doji Star", level: "Intermediate",
-    category: "Multi Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "Like the evening star but the middle candle is a doji. Stronger signal — perfect indecision at the top before sellers take control.",
     entry: "Below the close of the third candle",
     stop: "Above the high of the doji",
     target: "Previous swing low",
     candles: [
-      {o:190,c:196,h:189,l:198,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
-      // Evening doji star
-      {o:208,c:214,h:207,l:216,bull:true},
-      {o:216,c:216,h:215,l:219,bull:true},
-      {o:218,c:209,h:219,l:207,bull:false},
-      {o:209,c:203,h:210,l:201,bull:false},
-      {o:203,c:197,h:204,l:195,bull:false},
+      {o:188,c:194,h:196,l:187,bull:true},
+      {o:194,c:201,h:203,l:193,bull:true},
+      {o:201,c:208,h:210,l:200,bull:true},
+      // Large bullish
+      {o:208,c:220,h:222,l:207,bull:true},
+      // Doji gaps up — open=close
+      {o:222,c:222,h:225,l:220,bull:true},
+      // Large bearish closes well below
+      {o:221,c:209,h:222,l:207,bull:false},
+      {o:209,c:201,h:210,l:199,bull:false},
+      {o:201,c:193,h:202,l:191,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-18, text:'Bullish', color:TEAL},
-      {type:'label', candleIdx:4, offset:-22, text:'Doji', color:GOLD},
-      {type:'label', candleIdx:5, offset:-18, text:'Bearish', color:RED},
-      {type:'bracket', start:3, end:5, label:'Evening Doji Star'},
+      {type:'label',candleIdx:3,offset:-18,text:'Bullish',color:TEAL},
+      {type:'label',candleIdx:4,offset:-25,text:'Doji',color:GOLD},
+      {type:'label',candleIdx:5,offset:-18,text:'Bearish',color:RED},
+      {type:'bracket',start:3,end:5,label:'Evening Doji Star'},
     ]
   },
   {
     id: 25, name: "Three Black Crows", level: "Beginner",
-    category: "Multi Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "Three consecutive large bearish candles, each opening within the previous body and closing lower. Mirror of Three White Soldiers. Strong bearish reversal.",
     entry: "Open of candle after the third crow",
     stop: "Above the high of the first crow",
     target: "Measured move equal to the three-candle range below",
     candles: [
-      {o:190,c:196,h:189,l:198,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
-      {o:208,c:214,h:207,l:216,bull:true},
-      // Three black crows
-      {o:214,c:208,h:215,l:206,bull:false},
-      {o:209,c:202,h:210,l:200,bull:false},
-      {o:203,c:195,h:204,l:193,bull:false},
-      {o:195,c:190,h:196,l:188,bull:false},
+      {o:188,c:194,h:196,l:187,bull:true},
+      {o:194,c:200,h:202,l:193,bull:true},
+      {o:200,c:207,h:209,l:199,bull:true},
+      {o:207,c:214,h:216,l:206,bull:true},
+      // Three black crows — large, open inside prev body
+      {o:215,c:205,h:216,l:204,bull:false},
+      {o:207,c:196,h:208,l:195,bull:false},
+      {o:198,c:186,h:199,l:185,bull:false},
+      {o:186,c:180,h:187,l:179,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:4, offset:-18, text:'Crow 1', color:RED},
-      {type:'label', candleIdx:5, offset:-18, text:'Crow 2', color:RED},
-      {type:'label', candleIdx:6, offset:-18, text:'Crow 3', color:RED},
+      {type:'label',candleIdx:4,offset:-18,text:'Crow 1',color:RED},
+      {type:'label',candleIdx:5,offset:-18,text:'Crow 2',color:RED},
+      {type:'label',candleIdx:6,offset:-18,text:'Crow 3',color:RED},
     ]
   },
   {
     id: 26, name: "Bearish Harami", level: "Beginner",
-    category: "Multi Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "A small bearish candle completely contained within the body of the previous large bullish candle. Signals upward momentum is slowing. Watch for confirmation.",
     entry: "Below the low of the small bearish candle",
     stop: "Above the high of the large bullish candle",
     target: "Previous swing low",
     candles: [
-      {o:190,c:196,h:189,l:198,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
-      // Harami
-      {o:208,c:216,h:207,l:218,bull:true},
-      {o:215,c:212,h:216,l:211,bull:false},
-      // Continuation
-      {o:212,c:206,h:213,l:204,bull:false},
-      {o:206,c:200,h:207,l:198,bull:false},
+      {o:188,c:194,h:196,l:187,bull:true},
+      {o:194,c:201,h:203,l:193,bull:true},
+      {o:201,c:208,h:210,l:200,bull:true},
+      // Large bullish candle
+      {o:208,c:222,h:224,l:207,bull:true},
+      // Small bearish inside — body within prev body
+      {o:220,c:215,h:221,l:214,bull:false},
+      // Confirmation
+      {o:215,c:208,h:216,l:206,bull:false},
+      {o:208,c:200,h:209,l:198,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-18, text:'Large Bullish', color:TEAL},
-      {type:'label', candleIdx:4, offset:-18, text:'Small Inside', color:RED},
-      {type:'bracket', start:3, end:4, label:'Harami'},
+      {type:'label',candleIdx:3,offset:-18,text:'Large Bullish',color:TEAL},
+      {type:'label',candleIdx:4,offset:-18,text:'Small Inside',color:RED},
+      {type:'bracket',start:3,end:4,label:'Harami'},
     ]
   },
   {
     id: 27, name: "Tweezer Top", level: "Intermediate",
-    category: "Multi Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "Two candles with identical or very similar highs — one bullish, one bearish. Price tested a resistance level twice and sellers defended it both times.",
     entry: "Below the low of the second candle",
     stop: "Above the shared high",
     target: "Previous swing low",
     candles: [
-      {o:190,c:196,h:189,l:198,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
-      // Tweezer top
-      {o:208,c:214,h:207,l:218,bull:true},
-      {o:217,c:211,h:218,l:209,bull:false},
-      {o:211,c:205,h:212,l:203,bull:false},
-      {o:205,c:199,h:206,l:197,bull:false},
+      {o:188,c:194,h:196,l:187,bull:true},
+      {o:194,c:200,h:202,l:193,bull:true},
+      {o:200,c:207,h:209,l:199,bull:true},
+      // Tweezer — identical highs
+      {o:207,c:217,h:220,l:206,bull:true},
+      {o:219,c:209,h:220,l:207,bull:false},
+      {o:209,c:201,h:210,l:199,bull:false},
+      {o:201,c:193,h:202,l:191,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-22, text:'Same High', color:GOLD},
-      {type:'label', candleIdx:4, offset:-22, text:'Same High', color:GOLD},
-      {type:'hline', candleIdx:3, label:'Resistance'},
+      {type:'label',candleIdx:3,offset:-25,text:'Same High',color:GOLD},
+      {type:'label',candleIdx:4,offset:-25,text:'Same High',color:GOLD},
+      {type:'hline',candleIdx:3,label:'Resistance'},
     ]
   },
   {
     id: 28, name: "Abandoned Baby Top", level: "Advanced",
-    category: "Multi Candle", signal: "Bearish Reversal",
-    signalColor: RED,
+    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
     description: "Rare three-candle pattern: bullish candle, then a doji that gaps above it, then a bearish candle that gaps below the doji. Very high accuracy top reversal.",
     entry: "Below the close of the third candle",
     stop: "Above the high of the doji",
     target: "Previous swing low — full reversal expected",
     candles: [
-      {o:190,c:196,h:189,l:198,bull:true},
-      {o:196,c:202,h:195,l:204,bull:true},
-      {o:202,c:208,h:201,l:210,bull:true},
-      // Abandoned baby top
-      {o:208,c:215,h:207,l:217,bull:true},
-      {o:218,c:218,h:217,l:220,bull:true},
-      {o:216,c:208,h:217,l:206,bull:false},
-      {o:208,c:201,h:209,l:199,bull:false},
-      {o:201,c:195,h:202,l:193,bull:false},
+      {o:188,c:194,h:196,l:187,bull:true},
+      {o:194,c:201,h:203,l:193,bull:true},
+      {o:201,c:208,h:210,l:200,bull:true},
+      // Large bullish
+      {o:208,c:220,h:222,l:207,bull:true},
+      // Doji gaps above — isolated
+      {o:224,c:224,h:226,l:222,bull:true},
+      // Bearish gaps below doji
+      {o:221,c:209,h:222,l:207,bull:false},
+      {o:209,c:200,h:210,l:198,bull:false},
+      {o:200,c:192,h:201,l:190,bull:false},
     ],
     annotations: [
-      {type:'label', candleIdx:3, offset:-18, text:'Bullish', color:TEAL},
-      {type:'label', candleIdx:4, offset:-22, text:'Gap Doji', color:GOLD},
-      {type:'label', candleIdx:5, offset:-18, text:'Gap Down', color:RED},
+      {type:'label',candleIdx:3,offset:-18,text:'Bullish',color:TEAL},
+      {type:'label',candleIdx:4,offset:-25,text:'Gap Doji',color:GOLD},
+      {type:'label',candleIdx:5,offset:-18,text:'Gap Down',color:RED},
     ]
   },
 ];
-
 // ─────────────────────────────────────────────
 // BATCH 2 — Patterns 29-84
 // ─────────────────────────────────────────────
