@@ -4350,8 +4350,8 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }
   const PAD_B = 42;
   const chartW = W - PAD_L - PAD_R;
   const chartH = H - PAD_T - PAD_B;
-  const candleW = Math.max(8, Math.min(20, chartW / Math.max(candles.length, 1) - 8));
   const spacing = chartW / Math.max(candles.length, 1);
+  const candleW = Math.max(18, Math.min(48, spacing * 0.65));
 
   function mkEl(tag, attrs = {}) {
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
