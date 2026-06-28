@@ -42,7 +42,6 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
   return (
     <div style={{ position: "relative" }}>
       <div style={{ display: "flex", gap: 0 }}>
-        {/* Y-axis */}
         <div style={{ width: 50, display: "flex", flexDirection: "column", justifyContent: "space-between", height: chartH, paddingRight: 6, color: "#6b7280", fontSize: 9, textAlign: "right" }}>
           <span style={{ color: "#22c55e" }}>+GAMMA</span>
           <span>0</span>
@@ -50,10 +49,8 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
         </div>
 
         <div style={{ flex: 1, position: "relative", height: chartH }}>
-          {/* Zero line */}
           <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.15)", zIndex: 1 }} />
 
-          {/* Level lines */}
           {levels.map(({ val, color, label }) => {
             if (!val) return null;
             const idx = strikeChart.findIndex(s => Number(s.strike) >= Number(val));
@@ -70,7 +67,6 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
             );
           })}
 
-          {/* Bars */}
           <div style={{ display: "flex", alignItems: "center", height: chartH, gap: 1 }}>
             {strikeChart.map((bar, i) => {
               const isAboveFlip = gammaFlip && Number(bar.strike) >= Number(gammaFlip);
@@ -78,7 +74,6 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
               const netGamma = bar.net !== undefined ? bar.net : (bar.calls || 0) - (bar.puts || 0);
               const isPositive = netGamma >= 0;
               const h = Math.max(4, (Math.abs(netGamma) / maxVal) * half);
-
               return (
                 <div key={i} style={{ flex: 1, minWidth: 4, display: "flex", flexDirection: "column", alignItems: "center", height: chartH, justifyContent: "center" }}>
                   {isPositive ? (
@@ -97,7 +92,6 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
             })}
           </div>
 
-          {/* Strike axis */}
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, color: "#6b7280", fontSize: 9 }}>
             {[0, 0.25, 0.5, 0.75, 1].map(pct => {
               const idx = Math.floor(pct * (strikeChart.length - 1));
@@ -108,7 +102,6 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
         </div>
       </div>
 
-      {/* Legend */}
       <div style={{ display: "flex", gap: 20, marginTop: 12, flexWrap: "wrap" }}>
         {[
           { color: "#22c55e", label: "Positive Gamma (Dealer Long)" },
@@ -122,7 +115,6 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
         ))}
       </div>
 
-      {/* Synthetic notice */}
       {Array.isArray(strikeChart) && strikeChart.some(s => s.synthetic) && (
         <div style={{ color: "#6b7280", fontSize: 10, marginTop: 6, fontStyle: "italic" }}>
           ⚠️ Estimated profile — real data loads as flow accumulates for this ticker.
@@ -131,105 +123,7 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
     </div>
   );
 }
- 
-  const maxVal = Math.max(...strikeChart.map(s => Math.max(Math.abs(s.calls || 0), Math.abs(s.puts || 0))), 1);
-  const chartH = 180;
-  const half = chartH / 2;
 
-  const levels = [
-    { val: putWall, color: "#ef4444", label: "PUT WALL" },
-    { val: gammaFlip, color: "#d4af37", label: "GAMMA FLIP" },
-    { val: price, color: "#ffffff", label: "CURRENT PRICE" },
-    { val: callWall, color: "#22c55e", label: "CALL WALL" },
-  ];
-
-  return (
-    <div style={{ position: "relative" }}>
-      {/* Y-axis labels */}
-      <div style={{ display: "flex", gap: 0 }}>
-        <div style={{ width: 50, display: "flex", flexDirection: "column", justifyContent: "space-between", height: chartH, paddingRight: 6, color: "#6b7280", fontSize: 9, textAlign: "right" }}>
-          <span style={{ color: "#22c55e" }}>+GAMMA</span>
-          <span>0</span>
-          <span style={{ color: "#ef4444" }}>-GAMMA</span>
-        </div>
-
-        <div style={{ flex: 1, position: "relative", height: chartH }}>
-          {/* Zero line */}
-          <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 1, background: "rgba(255,255,255,0.15)", zIndex: 1 }} />
-
-          {/* Level lines with labels at top */}
-          {levels.map(({ val, color, label }) => {
-            if (!val) return null;
-            const idx = strikeChart.findIndex(s => Number(s.strike) >= Number(val));
-            if (idx < 0) return null;
-            const pct = (idx / strikeChart.length) * 100;
-            return (
-              <div key={label} style={{ position: "absolute", left: `${pct}%`, top: 0, bottom: 0, zIndex: 2 }}>
-                <div style={{ borderLeft: `2px dashed ${color}`, height: "100%", opacity: 0.85 }} />
-                <div style={{ position: "absolute", top: -32, left: "50%", transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}>
-                  <div style={{ color, fontSize: 9, fontWeight: 800, letterSpacing: 0.5 }}>{label}</div>
-                  <div style={{ color, fontSize: 11, fontWeight: 900 }}>{val}</div>
-                </div>
-              </div>
-            );
-          })}
-
-          {/* Bars */}
-          <div style={{ display: "flex", alignItems: "center", height: chartH, gap: 1 }}>
-            {strikeChart.map((bar, i) => {
-              const isAboveFlip = gammaFlip && Number(bar.strike) >= Number(gammaFlip);
-              const barColor = isAboveFlip ? "#22c55e" : "#ef4444";
-              const netGamma = bar.net !== undefined ? bar.net : (bar.calls || 0) - (bar.puts || 0);
-              const isPositive = netGamma >= 0;
-              const h = Math.max(4, (Math.abs(netGamma) / maxVal) * half);
-
-              return (
-                <div key={i} style={{ flex: 1, minWidth: 4, display: "flex", flexDirection: "column", alignItems: "center", height: chartH, justifyContent: "center" }}>
-                  {isPositive ? (
-                    <>
-                      <div style={{ width: "75%", height: h, background: barColor, borderRadius: "3px 3px 0 0", opacity: 0.85 }} />
-                      <div style={{ width: "75%", height: half - h, background: "transparent" }} />
-                    </>
-                  ) : (
-                    <>
-                      <div style={{ width: "75%", height: half, background: "transparent" }} />
-                      <div style={{ width: "75%", height: h, background: barColor, borderRadius: "0 0 3px 3px", opacity: 0.6 }} />
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Strike axis */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, color: "#6b7280", fontSize: 9 }}>
-            {[0, 0.25, 0.5, 0.75, 1].map(pct => {
-              const idx = Math.floor(pct * (strikeChart.length - 1));
-              return <span key={pct}>{strikeChart[idx]?.strike ?? ""}</span>;
-            })}
-          </div>
-          <div style={{ textAlign: "center", color: "#6b7280", fontSize: 9, marginTop: 2 }}>STRIKE</div>
-        </div>
-      </div>
-
-      {/* Legend */}
-      <div style={{ display: "flex", gap: 20, marginTop: 12, flexWrap: "wrap" }}>
-        {[
-          { color: "#22c55e", label: "Positive Gamma (Dealer Long)" },
-          { color: "#ef4444", label: "Negative Gamma (Dealer Short)" },
-          { color: "#ffffff", label: "Current Price" },
-        ].map(({ color, label }) => (
-          <div key={label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 10, height: 10, borderRadius: 2, background: color }} />
-            <span style={{ color: "#9ca3af", fontSize: 11 }}>{label}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// TRQX Gamma Score Gauge
 function GammaScoreGauge({ score, label, desc }) {
   const size = 160;
   const cx = size / 2;
@@ -373,15 +267,11 @@ export default function GammaPage() {
   return (
     <main className="pageStack" style={{ maxWidth: "100%", padding: "0 16px 40px", background: "#080d14" }}>
 
-      {/* ── HEADER ── */}
+      {/* HEADER */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 0 14px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div>
           <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 2 }}>TRQX MODULE</div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: "var(--text)" }}>
-              GAMMA EXPOSURE ({ticker})
-            </h1>
-          </div>
+          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: "var(--text)" }}>GAMMA EXPOSURE ({ticker})</h1>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <input
@@ -400,24 +290,23 @@ export default function GammaPage() {
         </div>
       </div>
 
-      {/* ── ROW 1: 6 KEY METRIC TILES ── */}
+      {/* ROW 1: 6 KEY METRIC TILES */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 10, marginTop: 14 }}>
         {[
-          { label: "CALL WALL", value: callWall ?? "--", sub: "+Gamma", color: "#22c55e", icon: "🛡", badge: "🟢" },
-          { label: "PUT WALL", value: putWall ?? "--", sub: "-Gamma", color: "#ef4444", icon: "🛡", badge: "🔴" },
-          { label: "GAMMA FLIP", value: gammaFlip ?? "--", sub: aboveFlip ? "Bullish" : "Bearish", color: "#d4af37", icon: "⚡", badge: aboveFlip ? "🟢" : "🔴" },
-          { label: "MAX PAIN", value: maxPain ?? "--", sub: "Pin Risk", color: "#d4af37", icon: "🎯", badge: "📍" },
-          { label: "SQUEEZE RISK", value: squeezeRisk, sub: "Elevated Watch", color: squeezeRisk === "High" ? "#ef4444" : squeezeRisk === "Moderate" ? "#d4af37" : "#22c55e", icon: "🔥", badge: squeezeRisk === "High" ? "🔴" : squeezeRisk === "Moderate" ? "🟡" : "🟢" },
-          { label: "DEALER POSITIONING", value: dealerPos.includes("Long") ? "Long Gamma" : "Short Gamma", sub: sentiment || "Bullish", color: dealerPos.includes("Long") ? "#22c55e" : "#ef4444", icon: "🏛", badge: dealerPos.includes("Long") ? "🟢" : "🔴" },
-        ].map(({ label, value, sub, color, icon, badge }) => (
-          <div key={label} style={{ background: "#0d1421", border: `1px solid ${color}33`, borderRadius: 12, padding: "14px 14px 12px", position: "relative", overflow: "hidden" }}>
+          { label: "CALL WALL", value: callWall ?? "--", sub: "+Gamma", color: "#22c55e", badge: "🟢" },
+          { label: "PUT WALL", value: putWall ?? "--", sub: "-Gamma", color: "#ef4444", badge: "🔴" },
+          { label: "GAMMA FLIP", value: gammaFlip ?? "--", sub: aboveFlip ? "Bullish" : "Bearish", color: "#d4af37", badge: aboveFlip ? "🟢" : "🔴" },
+          { label: "MAX PAIN", value: maxPain ?? "--", sub: "Pin Risk", color: "#d4af37", badge: "📍" },
+          { label: "SQUEEZE RISK", value: squeezeRisk, sub: "Elevated Watch", color: squeezeRisk === "High" ? "#ef4444" : squeezeRisk === "Moderate" ? "#d4af37" : "#22c55e", badge: squeezeRisk === "High" ? "🔴" : squeezeRisk === "Moderate" ? "🟡" : "🟢" },
+          { label: "DEALER POSITIONING", value: dealerPos.includes("Long") ? "Long Gamma" : "Short Gamma", sub: sentiment || "Bullish", color: dealerPos.includes("Long") ? "#22c55e" : "#ef4444", badge: dealerPos.includes("Long") ? "🟢" : "🔴" },
+        ].map(({ label, value, sub, color, badge }) => (
+          <div key={label} style={{ background: "#0d1421", border: `1px solid ${color}33`, borderRadius: 12, padding: "14px 14px 12px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
               <span style={{ color, fontSize: 9, fontWeight: 800, letterSpacing: 1 }}>{label}</span>
               <span style={{ fontSize: 14 }}>{badge}</span>
             </div>
             <div style={{ fontSize: 24, fontWeight: 900, color, marginBottom: 3, lineHeight: 1 }}>{value}</div>
             <div style={{ fontSize: 10, color: "#9ca3af" }}>{sub}</div>
-            {/* Mini sparkline placeholder */}
             <div style={{ marginTop: 8, height: 24, display: "flex", alignItems: "flex-end", gap: 1 }}>
               {[3,5,4,7,5,8,6,9,7,8].map((h, i) => (
                 <div key={i} style={{ flex: 1, height: `${h * 10}%`, background: color, opacity: 0.3 + (i / 10) * 0.7, borderRadius: 1 }} />
@@ -427,7 +316,7 @@ export default function GammaPage() {
         ))}
       </div>
 
-      {/* ── ROW 2: FULL WIDTH GAMMA HISTOGRAM ── */}
+      {/* ROW 2: FULL WIDTH GAMMA HISTOGRAM */}
       <div style={{ background: "#0d1421", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "20px 20px 14px", marginTop: 12 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
           <div>
@@ -438,10 +327,10 @@ export default function GammaPage() {
             <span style={{ color: "#9ca3af", fontSize: 11 }}>EXPOSURE LEGEND</span>
           </div>
         </div>
-                <GammaHistogram strikeChart={gamma?.strikeChart} callWall={callWall} putWall={putWall} gammaFlip={gammaFlip} price={price} />
+        <GammaHistogram strikeChart={gamma?.strikeChart} callWall={callWall} putWall={putWall} gammaFlip={gammaFlip} price={price} />
       </div>
-    
-      {/* ── ROW 3: CURRENT PRICE | GAMMA REGIME | KEY DRIVERS | PLAYBOOK | GAMMA SCORE ── */}
+
+      {/* ROW 3: CURRENT PRICE | GAMMA REGIME | KEY DRIVERS | PLAYBOOK | GAMMA SCORE */}
       <div style={{ display: "grid", gridTemplateColumns: "200px 260px 1fr 220px 200px", gap: 10, marginTop: 12 }}>
 
         {/* CURRENT PRICE STATUS */}
@@ -532,7 +421,7 @@ export default function GammaPage() {
         </div>
       </div>
 
-      {/* ── ROW 4: GAMMA FLOW STRIP + PREMIUM DATA + TRQX BRANDING ── */}
+      {/* ROW 4: GAMMA FLOW STRIP */}
       <div style={{ background: "#0d1421", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "14px 20px", marginTop: 12, display: "flex", alignItems: "center", gap: 20 }}>
         <div>
           <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 9, fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>GAMMA EXPOSURE FLOW (24H)</div>
@@ -558,9 +447,7 @@ export default function GammaPage() {
         <div style={{ marginLeft: "auto", textAlign: "right" }}>
           <div style={{ color: "#d4af37", fontSize: 18, fontWeight: 900, letterSpacing: 3 }}>TRQX</div>
           <div style={{ color: "#9ca3af", fontSize: 8, letterSpacing: 3 }}>C A P I T A L</div>
-          <div style={{ color: "#9ca3af", fontSize: 8, marginTop: 4 }}>
-            PRECISION. DISCIPLINE. <span style={{ color: "#d4af37" }}>EXECUTION.</span>
-          </div>
+          <div style={{ color: "#9ca3af", fontSize: 8, marginTop: 4 }}>PRECISION. DISCIPLINE. <span style={{ color: "#d4af37" }}>EXECUTION.</span></div>
           <div style={{ color: "#9ca3af", fontSize: 8 }}>I AM THE ALGO.</div>
         </div>
       </div>
