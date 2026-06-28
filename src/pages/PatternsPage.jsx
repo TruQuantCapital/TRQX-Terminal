@@ -2361,16 +2361,16 @@ function CandleChart({ pattern, playing, onComplete }) {
   const animRef = useRef(null);
   const stepRef = useRef(0);
 
-  const W = 320, H = 180;
+  const W = 320, H = 200;
   const candles = pattern.candles;
   const allPrices = candles.flatMap(c => [c.h, c.l]);
-  const minP = Math.min(...allPrices) - 5;
-  const maxP = Math.max(...allPrices) + 5;
+  const minP = Math.min(...allPrices) - 6;
+  const maxP = Math.max(...allPrices) + 6;
   const candleW = Math.min(14, (W - 40) / candles.length - 2);
   const spacing = (W - 40) / candles.length;
 
   function yS(price) {
-    return 20 + ((maxP - price) / (maxP - minP)) * (H - 35);
+    return 24 + ((maxP - price) / (maxP - minP)) * (H - 55);
   }
 
   function xC(i) {
@@ -2385,15 +2385,25 @@ function CandleChart({ pattern, playing, onComplete }) {
       stepRef.current = 0;
       svg.innerHTML = '';
 
+      // ── Layer groups so annotations always render on top ──
+      const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const candleGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const lineGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      svg.appendChild(gridGroup);
+      svg.appendChild(candleGroup);
+      svg.appendChild(lineGroup);
+      svg.appendChild(labelGroup);
+
       // Grid
-      for (let i = 0; i <= 3; i++) {
-        const y = 20 + (i / 3) * (H - 35);
+      for (let i = 0; i <= 4; i++) {
+        const y = 24 + (i / 4) * (H - 55);
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', 20); line.setAttribute('x2', W - 10);
         line.setAttribute('y1', y); line.setAttribute('y2', y);
         line.setAttribute('stroke', 'rgba(255,255,255,0.05)');
         line.setAttribute('stroke-width', '0.5');
-        svg.appendChild(line);
+        gridGroup.appendChild(line);
       }
 
       function drawNextCandle() {
@@ -2415,8 +2425,9 @@ function CandleChart({ pattern, playing, onComplete }) {
         const wick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         wick.setAttribute('x1', x); wick.setAttribute('x2', x);
         wick.setAttribute('y1', yH); wick.setAttribute('y2', yL);
-        wick.setAttribute('stroke', color); wick.setAttribute('stroke-width', '1.5');
-        svg.appendChild(wick);
+        wick.setAttribute('stroke', color);
+        wick.setAttribute('stroke-width', '1.5');
+        candleGroup.appendChild(wick);
 
         const bodyTop = Math.min(yO, yC);
         const bodyH = Math.max(Math.abs(yO - yC), 2);
@@ -2427,96 +2438,207 @@ function CandleChart({ pattern, playing, onComplete }) {
         body.setAttribute('height', bodyH);
         body.setAttribute('fill', color);
         body.setAttribute('rx', '1');
-        svg.appendChild(body);
+        candleGroup.appendChild(body);
 
         stepRef.current++;
         animRef.current = setTimeout(drawNextCandle, 80);
       }
 
+      function makeText(x, y, text, color, size, anchor, bold) {
+        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        txt.setAttribute('x', x);
+        txt.setAttribute('y', y);
+        txt.setAttribute('fill', color);
+        txt.setAttribute('font-size', size || '9');
+        txt.setAttribute('font-weight', bold ? '700' : '400');
+        txt.setAttribute('font-family', 'monospace');
+        txt.setAttribute('text-anchor', anchor || 'middle');
+        txt.textContent = text;
+        txt.style.opacity = '0';
+        return txt;
+      }
+
+      function makeBg(x, y, w, h, color) {
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', x - w / 2);
+        rect.setAttribute('y', y - h + 2);
+        rect.setAttribute('width', w);
+        rect.setAttribute('height', h);
+        rect.setAttribute('fill', color || 'rgba(6,11,20,0.85)');
+        rect.setAttribute('rx', '3');
+        rect.style.opacity = '0';
+        return rect;
+      }
+
+      function fadeIn(el, delay) {
+        setTimeout(() => {
+          el.style.transition = 'opacity 0.35s';
+          el.style.opacity = '1';
+        }, delay || 100);
+      }
+
       function drawAnnotations() {
         setTimeout(() => {
+          // ── Draw hlines first (in lineGroup, behind labels) ──
           pattern.annotations?.forEach(ann => {
-            if (ann.type === 'label' && ann.candleIdx !== undefined) {
-              const x = xC(ann.candleIdx);
-              const c = candles[ann.candleIdx];
-              const yBase = yS(c.l) + (ann.offset || -20);
+            if (ann.type === 'hline') {
+              // Use a fixed price if provided, otherwise derive from candle
+              let y;
+              if (ann.price !== undefined) {
+                y = yS(ann.price);
+              } else if (ann.candleIdx !== undefined) {
+                const c = candles[ann.candleIdx];
+                const next = candles[ann.candleIdx + 1];
+                y = yS(Math.max(c.h, next?.h || c.h));
+              } else {
+                return;
+              }
 
-              const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-              txt.setAttribute('x', x);
-              txt.setAttribute('y', yBase);
-              txt.setAttribute('fill', ann.color || GOLD);
-              txt.setAttribute('font-size', '9');
-              txt.setAttribute('font-weight', '700');
-              txt.setAttribute('font-family', 'monospace');
-              txt.setAttribute('text-anchor', 'middle');
-              svg.appendChild(txt);
-
-              // Fade in
-              txt.style.opacity = '0';
-              txt.textContent = ann.text;
-              setTimeout(() => { txt.style.transition = 'opacity 0.4s'; txt.style.opacity = '1'; }, 100);
-            }
-
-            if (ann.type === 'hline' && ann.candleIdx !== undefined) {
-              const c = candles[ann.candleIdx];
-              const y = yS(Math.max(c.h, candles[ann.candleIdx + 1]?.h || c.h));
-
-              const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-              line.setAttribute('x1', 20); line.setAttribute('x2', W - 10);
-              line.setAttribute('y1', y); line.setAttribute('y2', y);
-              line.setAttribute('stroke', 'rgba(212,175,55,0.6)');
-              line.setAttribute('stroke-width', '1');
-              line.setAttribute('stroke-dasharray', '5,3');
-              line.style.opacity = '0';
-              svg.appendChild(line);
-              setTimeout(() => { line.style.transition = 'opacity 0.4s'; line.style.opacity = '1'; }, 100);
+              const lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+              lineEl.setAttribute('x1', 18);
+              lineEl.setAttribute('x2', W - 12);
+              lineEl.setAttribute('y1', y);
+              lineEl.setAttribute('y2', y);
+              lineEl.setAttribute('stroke', ann.color || 'rgba(212,175,55,0.7)');
+              lineEl.setAttribute('stroke-width', '1');
+              lineEl.setAttribute('stroke-dasharray', '5,3');
+              lineEl.style.opacity = '0';
+              lineGroup.appendChild(lineEl);
+              fadeIn(lineEl, 100);
 
               if (ann.label) {
-                const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                txt.setAttribute('x', W - 12);
-                txt.setAttribute('y', y - 4);
-                txt.setAttribute('fill', GOLD);
-                txt.setAttribute('font-size', '8');
-                txt.setAttribute('font-family', 'monospace');
-                txt.setAttribute('text-anchor', 'end');
-                txt.textContent = ann.label;
-                txt.style.opacity = '0';
-                svg.appendChild(txt);
-                setTimeout(() => { txt.style.transition = 'opacity 0.4s'; txt.style.opacity = '1'; }, 200);
+                const labelW = ann.label.length * 5.5 + 10;
+                const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                bg.setAttribute('x', W - 14 - labelW);
+                bg.setAttribute('y', y - 10);
+                bg.setAttribute('width', labelW);
+                bg.setAttribute('height', 12);
+                bg.setAttribute('fill', 'rgba(6,11,20,0.9)');
+                bg.setAttribute('rx', '2');
+                bg.style.opacity = '0';
+                lineGroup.appendChild(bg);
+                fadeIn(bg, 150);
+
+                const txt = makeText(W - 14, y - 1, ann.label, ann.color || GOLD, '8', 'end', true);
+                lineGroup.appendChild(txt);
+                fadeIn(txt, 150);
               }
             }
+          });
 
+          // ── Draw bracket lines ──
+          pattern.annotations?.forEach(ann => {
             if (ann.type === 'bracket' && ann.start !== undefined) {
               const x1 = xC(ann.start) - candleW;
               const x2 = xC(ann.end) + candleW;
-              const y = H - 8;
+              const y = H - 16;
+              const midX = (x1 + x2) / 2;
 
-              const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-              line.setAttribute('x1', x1); line.setAttribute('x2', x2);
-              line.setAttribute('y1', y); line.setAttribute('y2', y);
-              line.setAttribute('stroke', GOLD);
-              line.setAttribute('stroke-width', '1');
-              line.style.opacity = '0';
-              svg.appendChild(line);
+              // Bracket line
+              const lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+              lineEl.setAttribute('x1', x1); lineEl.setAttribute('x2', x2);
+              lineEl.setAttribute('y1', y); lineEl.setAttribute('y2', y);
+              lineEl.setAttribute('stroke', ann.color || GOLD);
+              lineEl.setAttribute('stroke-width', '1');
+              lineEl.style.opacity = '0';
+              lineGroup.appendChild(lineEl);
+              fadeIn(lineEl, 200);
 
-              const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-              txt.setAttribute('x', (x1 + x2) / 2);
-              txt.setAttribute('y', y + 10);
-              txt.setAttribute('fill', GOLD);
-              txt.setAttribute('font-size', '8');
-              txt.setAttribute('font-weight', '700');
-              txt.setAttribute('font-family', 'monospace');
-              txt.setAttribute('text-anchor', 'middle');
-              txt.textContent = ann.label;
-              txt.style.opacity = '0';
-              svg.appendChild(txt);
+              // End ticks
+              [x1, x2].forEach(tx => {
+                const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                tick.setAttribute('x1', tx); tick.setAttribute('x2', tx);
+                tick.setAttribute('y1', y - 4); tick.setAttribute('y2', y + 4);
+                tick.setAttribute('stroke', ann.color || GOLD);
+                tick.setAttribute('stroke-width', '1');
+                tick.style.opacity = '0';
+                lineGroup.appendChild(tick);
+                fadeIn(tick, 200);
+              });
 
-              setTimeout(() => {
-                line.style.transition = 'opacity 0.4s'; line.style.opacity = '1';
-                txt.style.transition = 'opacity 0.4s'; txt.style.opacity = '1';
-              }, 200);
+              // Label bg + text
+              const labelW = (ann.label?.length || 0) * 5.5 + 10;
+              const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+              bg.setAttribute('x', midX - labelW / 2);
+              bg.setAttribute('y', y + 4);
+              bg.setAttribute('width', labelW);
+              bg.setAttribute('height', 12);
+              bg.setAttribute('fill', 'rgba(6,11,20,0.9)');
+              bg.setAttribute('rx', '2');
+              bg.style.opacity = '0';
+              labelGroup.appendChild(bg);
+              fadeIn(bg, 250);
+
+              const txt = makeText(midX, y + 13, ann.label || '', ann.color || GOLD, '8', 'middle', true);
+              labelGroup.appendChild(txt);
+              fadeIn(txt, 250);
             }
           });
+
+          // ── Draw labels last (always on top) ──
+          pattern.annotations?.forEach((ann, annIdx) => {
+            if (ann.type === 'label' && ann.candleIdx !== undefined) {
+              const ci = ann.candleIdx;
+              const c = candles[ci];
+              if (!c) return;
+
+              const x = xC(ci);
+
+              // Find highest high and lowest low across ALL candles for safe label placement
+              const chartTop = yS(maxP - 6);  // top of chart area
+              const chartBot = H - 20;         // bottom of chart area
+
+              // Place label ABOVE the candle high with clearance
+              const candleHighY = yS(c.h);
+              const candleLowY = yS(c.l);
+
+              // Decide placement: above or below based on signal
+              const placeAbove = ann.above !== false;
+              let labelY;
+              if (placeAbove) {
+                labelY = candleHighY - 14;
+                // Make sure it doesn't go off top of chart
+                if (labelY < chartTop + 10) labelY = chartTop + 10;
+              } else {
+                labelY = candleLowY + 14;
+                if (labelY > chartBot - 4) labelY = chartBot - 4;
+              }
+
+              // Background pill
+              const labelW = (ann.text?.length || 0) * 5.5 + 10;
+              const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+              bg.setAttribute('x', x - labelW / 2);
+              bg.setAttribute('y', labelY - 9);
+              bg.setAttribute('width', labelW);
+              bg.setAttribute('height', 12);
+              bg.setAttribute('fill', 'rgba(6,11,20,0.92)');
+              bg.setAttribute('rx', '3');
+              bg.style.opacity = '0';
+              labelGroup.appendChild(bg);
+              fadeIn(bg, 150 + annIdx * 60);
+
+              // Text
+              const txt = makeText(x, labelY, ann.text || '', ann.color || GOLD, '9', 'middle', true);
+              labelGroup.appendChild(txt);
+              fadeIn(txt, 150 + annIdx * 60);
+
+              // Small tick line from label to candle
+              const tickY1 = placeAbove ? labelY + 4 : labelY - 12;
+              const tickY2 = placeAbove ? candleHighY - 2 : candleLowY + 2;
+              if (Math.abs(tickY2 - tickY1) > 4) {
+                const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                tick.setAttribute('x1', x); tick.setAttribute('x2', x);
+                tick.setAttribute('y1', tickY1); tick.setAttribute('y2', tickY2);
+                tick.setAttribute('stroke', ann.color || GOLD);
+                tick.setAttribute('stroke-width', '0.5');
+                tick.setAttribute('stroke-dasharray', '2,2');
+                tick.style.opacity = '0';
+                lineGroup.appendChild(tick);
+                fadeIn(tick, 150 + annIdx * 60);
+              }
+            }
+          });
+
         }, 300);
       }
 
