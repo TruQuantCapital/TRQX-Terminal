@@ -345,21 +345,204 @@ export default function Welcome() {
               const isLocked = userRank < minRank;
 
               return (
+    <div style={{
+      minHeight: "100vh",
+      background: "var(--black)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      padding: "32px 24px 56px",
+      position: "relative",
+      overflow: "hidden",
+    }}>
+      <canvas id="confetti-canvas" style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 10 }} />
+
+      {/* Tier badge */}
+      <div style={{
+        background: config.badgeBg,
+        border: `1px solid ${config.badgeBorder}`,
+        borderRadius: "20px",
+        padding: "8px 24px",
+        fontSize: "14px",
+        fontWeight: 700,
+        color: config.badgeColor,
+        letterSpacing: "1px",
+        marginBottom: "28px",
+        fontFamily: "var(--font-head)",
+        zIndex: 2,
+      }}>
+        {config.badge}
+      </div>
+
+      {/* Three column layout */}
+      <div style={{
+        width: "100%",
+        maxWidth: "1400px",
+        display: "grid",
+        gridTemplateColumns: "320px 1fr 300px",
+        gap: "24px",
+        alignItems: "start",
+        zIndex: 2,
+      }}>
+
+        {/* ── LEFT: Founder Panel ── */}
+        <div style={{
+          background: "linear-gradient(160deg, #0d1117 0%, #111827 100%)",
+          border: "1px solid rgba(201,168,76,0.25)",
+          borderRadius: "16px",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}>
+          <div style={{ padding: "24px 24px 0", textAlign: "center" }}>
+            <div style={{ color: "var(--text-muted)", fontSize: "11px", letterSpacing: "2px", fontFamily: "var(--font-head)", marginBottom: "4px" }}>WELCOME TO</div>
+            <div style={{ color: "var(--gold)", fontSize: "22px", fontWeight: 800, fontFamily: "var(--font-head)", letterSpacing: "2px" }}>TRQX CAPITAL</div>
+            <div style={{ width: "40px", height: "2px", background: "var(--gold)", margin: "12px auto", borderRadius: "1px", opacity: 0.5 }} />
+          </div>
+
+          <div style={{ padding: "16px 24px 0", textAlign: "center" }}>
+            <div style={{ color: "var(--gold)", fontSize: "28px", lineHeight: 1, marginBottom: "10px", opacity: 0.6 }}>"</div>
+            <p style={{
+              color: "var(--text-dim)",
+              fontSize: "15px",
+              lineHeight: 1.8,
+              margin: 0,
+              fontStyle: "italic",
+            }}>
+              My mission is simple: help traders think like professionals, manage risk, and execute with precision.
+            </p>
+          </div>
+
+          <div style={{ padding: "16px 24px 0", textAlign: "center" }}>
+            <div style={{
+              fontFamily: "'Dancing Script', 'Brush Script MT', cursive",
+              fontSize: "26px",
+              color: "var(--gold)",
+              marginBottom: "4px",
+            }}>Mike Valerio</div>
+            <div style={{ color: "var(--text-muted)", fontSize: "11px", letterSpacing: "2px", fontFamily: "var(--font-head)" }}>FOUNDER & CEO</div>
+          </div>
+
+          <div style={{ marginTop: "20px", position: "relative" }}>
+            <img
+              src="/mike-photo.png"
+              alt="Mike Valerio"
+              style={{
+                width: "100%",
+                height: "340px",
+                objectFit: "cover",
+                objectPosition: "top center",
+                display: "block",
+              }}
+            />
+            <div style={{
+              position: "absolute",
+              bottom: 0, left: 0, right: 0,
+              height: "100px",
+              background: "linear-gradient(to top, #0d1117, transparent)",
+            }} />
+          </div>
+
+          <div style={{
+            padding: "20px 24px 24px",
+            textAlign: "center",
+            background: "rgba(0,0,0,0.3)",
+          }}>
+            <div style={{ color: "var(--gold)", fontSize: "20px", fontWeight: 800, fontFamily: "var(--font-head)", letterSpacing: "1px", lineHeight: 1.5 }}>
+              Precision.<br />Discipline.<br />Execution.
+            </div>
+            <div style={{ color: "var(--text-muted)", fontSize: "11px", letterSpacing: "3px", fontFamily: "var(--font-head)", marginTop: "10px" }}>I AM THE ALGO.</div>
+          </div>
+        </div>
+
+        {/* ── CENTER: Main Card ── */}
+        <div style={{
+          background: "linear-gradient(160deg, #0d1117 0%, #111827 100%)",
+          border: "1px solid rgba(201,168,76,0.2)",
+          borderRadius: "16px",
+          padding: "36px 32px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}>
+          <img
+            src="https://thetrulies.com/wp-content/uploads/2026/06/ChatGPT-Image-Jun-7-2026-09_11_29-PM.png"
+            alt="TRQX Crown"
+            style={{
+              width: "90px",
+              height: "auto",
+              filter: "drop-shadow(0 0 20px rgba(255,180,0,0.8))",
+              marginBottom: "14px",
+              animation: "crown-pulse 3s ease-in-out infinite",
+            }}
+          />
+          <h1 style={{
+            fontFamily: "var(--font-head)",
+            fontSize: "clamp(52px, 6vw, 80px)",
+            fontWeight: 700,
+            color: "var(--gold)",
+            letterSpacing: "4px",
+            margin: "0 0 12px",
+            lineHeight: 1,
+            textAlign: "center",
+          }}>
+            {isFirstVisit ? "YOU'RE IN." : "WELCOME BACK, TRADER."}
+          </h1>
+          <p style={{
+            color: "var(--text-dim)",
+            fontSize: "16px",
+            textAlign: "center",
+            maxWidth: "520px",
+            lineHeight: 1.7,
+            margin: "0 0 32px",
+          }}>
+            Welcome to the <strong style={{ color: "var(--gold)" }}>TRQX Capital Terminal</strong>. {config.subtitle}
+          </p>
+
+          {/* Section label */}
+          <div style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            marginBottom: "18px",
+          }}>
+            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+            <div style={{ color: "var(--text-muted)", fontSize: "11px", letterSpacing: "3px", fontFamily: "var(--font-head)", whiteSpace: "nowrap" }}>WHAT'S INCLUDED IN YOUR PLAN</div>
+            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.08)" }} />
+          </div>
+
+          {/* Feature Grid */}
+          <div style={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "12px",
+            marginBottom: "24px",
+          }}>
+            {FEATURES.map((f, i) => {
+              const unlocked = canAccess(f.featureKey);
+              const badge = getTierBadge(f.minTier);
+              const minRank = TIER_RANK[f.minTier] ?? 0;
+              const isLocked = userRank < minRank;
+
+              return (
                 <div key={i} style={{
                   display: "flex",
                   alignItems: "flex-start",
-                  gap: "12px",
-                  background: isLocked ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.04)",
+                  gap: "14px",
+                  background: isLocked ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.05)",
                   border: `1px solid ${isLocked ? "rgba(255,255,255,0.06)" : "rgba(201,168,76,0.2)"}`,
-                  borderRadius: "12px",
-                  padding: "14px 16px",
-                  opacity: isLocked ? 0.6 : 1,
+                  borderRadius: "14px",
+                  padding: "18px 20px",
+                  opacity: isLocked ? 0.65 : 1,
                   position: "relative",
-                  minHeight: "80px",
+                  minHeight: "100px",
                 }}>
                   <div style={{
-                    fontSize: "22px",
-                    minWidth: "28px",
+                    fontSize: "26px",
+                    minWidth: "32px",
                     textAlign: "center",
                     marginTop: "2px",
                     filter: isLocked ? "grayscale(1)" : "none",
@@ -367,31 +550,26 @@ export default function Welcome() {
                   <div style={{ flex: 1 }}>
                     <div style={{
                       fontFamily: "var(--font-head)",
-                      fontSize: "13px",
+                      fontSize: "15px",
                       fontWeight: 700,
                       color: isLocked ? "var(--text-dim)" : "var(--text)",
-                      marginBottom: "4px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      flexWrap: "wrap",
+                      marginBottom: "6px",
                     }}>
                       {f.title}
                     </div>
-                    <div style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.5 }}>{f.desc}</div>
+                    <div style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: 1.6 }}>{f.desc}</div>
                   </div>
 
-                  {/* Tier badge top right */}
                   {isLocked && badge ? (
                     <div style={{
                       position: "absolute",
-                      top: "10px",
-                      right: "10px",
+                      top: "12px",
+                      right: "12px",
                       background: badge.bg,
                       border: `1px solid ${badge.border}`,
                       borderRadius: "6px",
-                      padding: "2px 7px",
-                      fontSize: "9px",
+                      padding: "3px 8px",
+                      fontSize: "10px",
                       fontWeight: 800,
                       color: badge.color,
                       letterSpacing: "0.5px",
@@ -405,13 +583,13 @@ export default function Welcome() {
                   ) : !isLocked ? (
                     <div style={{
                       position: "absolute",
-                      top: "10px",
-                      right: "10px",
+                      top: "12px",
+                      right: "12px",
                       background: "rgba(34,197,94,0.12)",
                       border: "1px solid rgba(34,197,94,0.3)",
                       borderRadius: "6px",
-                      padding: "2px 7px",
-                      fontSize: "9px",
+                      padding: "3px 8px",
+                      fontSize: "10px",
                       fontWeight: 800,
                       color: "#22c55e",
                       letterSpacing: "0.5px",
@@ -425,7 +603,7 @@ export default function Welcome() {
             })}
           </div>
 
-          {/* Upgrade banner — non-elite only */}
+          {/* Upgrade banner */}
           {normalizedTier !== "elite" && (
             <div
               onClick={() => navigate("/pricing")}
@@ -434,26 +612,26 @@ export default function Welcome() {
                 background: "rgba(201,168,76,0.07)",
                 border: "1px solid rgba(201,168,76,0.25)",
                 borderRadius: "12px",
-                padding: "13px 18px",
+                padding: "16px 20px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                marginBottom: "10px",
+                marginBottom: "12px",
                 cursor: "pointer",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <span style={{ fontSize: "18px" }}>💎</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ fontSize: "20px" }}>💎</span>
                 <div>
-                  <div style={{ color: "var(--gold)", fontSize: "13px", fontWeight: 700 }}>Unlock the full terminal</div>
-                  <div style={{ color: "var(--text-dim)", fontSize: "11px" }}>Upgrade your plan to access all tools including live flow, GEMX, AI & more.</div>
+                  <div style={{ color: "var(--gold)", fontSize: "14px", fontWeight: 700 }}>Unlock the full terminal</div>
+                  <div style={{ color: "var(--text-dim)", fontSize: "12px", marginTop: "2px" }}>Upgrade your plan to access all tools including live flow, GEMX, AI & more.</div>
                 </div>
               </div>
-              <div style={{ color: "var(--gold)", fontSize: "18px", fontWeight: 700 }}>›</div>
+              <div style={{ color: "var(--gold)", fontSize: "20px", fontWeight: 700 }}>›</div>
             </div>
           )}
 
-          {/* New to trading banner */}
+          {/* Academy banner */}
           <div
             onClick={() => navigate("/academy")}
             style={{
@@ -461,22 +639,22 @@ export default function Welcome() {
               background: "rgba(59,130,246,0.07)",
               border: "1px solid rgba(59,130,246,0.25)",
               borderRadius: "12px",
-              padding: "13px 18px",
+              padding: "16px 20px",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: "20px",
+              marginBottom: "28px",
               cursor: "pointer",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span style={{ fontSize: "18px" }}>🏆</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <span style={{ fontSize: "20px" }}>🏆</span>
               <div>
-                <div style={{ color: "#93c5fd", fontSize: "13px", fontWeight: 700 }}>New to trading?</div>
-                <div style={{ color: "var(--text-dim)", fontSize: "11px" }}>Start with Academy Level 1 — it sets the foundation for every tool on this platform.</div>
+                <div style={{ color: "#93c5fd", fontSize: "14px", fontWeight: 700 }}>New to trading?</div>
+                <div style={{ color: "var(--text-dim)", fontSize: "12px", marginTop: "2px" }}>Start with Academy Level 1 — it sets the foundation for every tool on this platform.</div>
               </div>
             </div>
-            <div style={{ color: "#93c5fd", fontSize: "18px", fontWeight: 700 }}>›</div>
+            <div style={{ color: "#93c5fd", fontSize: "20px", fontWeight: 700 }}>›</div>
           </div>
 
           {/* CTA */}
@@ -484,74 +662,72 @@ export default function Welcome() {
             onClick={() => navigate("/dashboard")}
             style={{
               width: "100%",
-              padding: "18px",
+              padding: "20px",
               background: "linear-gradient(135deg, #C9A84C, #FFD700, #C9A84C)",
               color: "#000",
               border: "none",
-              borderRadius: "12px",
+              borderRadius: "14px",
               fontFamily: "var(--font-head)",
-              fontSize: "20px",
+              fontSize: "22px",
               fontWeight: 700,
               letterSpacing: "2px",
               cursor: "pointer",
-              boxShadow: "0 4px 24px rgba(201,168,76,0.35)",
+              boxShadow: "0 4px 32px rgba(201,168,76,0.4)",
             }}
           >
             ENTER TRQX TERMINAL →
           </button>
-          <div style={{ marginTop: "10px", fontSize: "12px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ marginTop: "12px", fontSize: "13px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "6px" }}>
             🛡️ {config.footerText}
           </div>
         </div>
 
         {/* ── RIGHT: Path to Mastery ── */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
 
-          {/* Path to Mastery card */}
           <div style={{
             background: "linear-gradient(160deg, #0d1117 0%, #111827 100%)",
             border: "1px solid rgba(201,168,76,0.25)",
             borderRadius: "16px",
-            padding: "22px 20px",
+            padding: "26px 22px",
           }}>
-            <div style={{ color: "var(--gold)", fontSize: "11px", fontWeight: 800, letterSpacing: "2px", fontFamily: "var(--font-head)", marginBottom: "20px", textAlign: "center" }}>YOUR PATH TO MASTERY</div>
+            <div style={{ color: "var(--gold)", fontSize: "12px", fontWeight: 800, letterSpacing: "2px", fontFamily: "var(--font-head)", marginBottom: "24px", textAlign: "center" }}>YOUR PATH TO MASTERY</div>
 
             {[
               { level: "LEVEL 1", title: "LEARN", color: "#22c55e", desc: "Build a strong foundation with our free tools & Academy lessons.", icon: "🏆" },
               { level: "LEVEL 2", title: "EXECUTE", color: "#a78bfa", desc: "Unlock advanced tools, real-time data & AI intelligence.", icon: "🎯" },
               { level: "LEVEL 3", title: "MASTER", color: "var(--gold)", desc: "Gain full access to professional-grade tools & dominate the market.", icon: "⚡" },
             ].map((lvl, i) => (
-              <div key={i} style={{ display: "flex", gap: "14px", marginBottom: i < 2 ? "20px" : 0, position: "relative" }}>
-                {/* Connector line */}
+              <div key={i} style={{ display: "flex", gap: "16px", marginBottom: i < 2 ? "24px" : 0, position: "relative" }}>
                 {i < 2 && (
                   <div style={{
                     position: "absolute",
-                    left: "19px",
-                    top: "40px",
+                    left: "22px",
+                    top: "48px",
                     width: "2px",
-                    height: "28px",
+                    height: "30px",
                     background: "rgba(255,255,255,0.08)",
                     borderRadius: "1px",
                   }} />
                 )}
                 <div style={{
-                  width: "40px",
-                  height: "40px",
+                  width: "46px",
+                  height: "46px",
                   borderRadius: "50%",
                   background: `${lvl.color}18`,
                   border: `2px solid ${lvl.color}60`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "18px",
+                  fontSize: "20px",
                   flexShrink: 0,
                 }}>
                   {lvl.icon}
                 </div>
                 <div>
-                  <div style={{ color: lvl.color, fontSize: "10px", fontWeight: 800, letterSpacing: "2px", fontFamily: "var(--font-head)" }}>{lvl.level}</div>
-                  <div style={{ color: "var(--text)", fontSize: "16px", fontWeight: 800, fontFamily: "var(--font-head)", marginBottom: "4px" }}>{lvl.title}</div>
-                  <div style={{ color: "var(--text-muted)", fontSize: "11px", lineHeight: 1.5 }}>{lvl.desc}</div>
+                  <div style={{ color: lvl.color, fontSize: "11px", fontWeight: 800, letterSpacing: "2px", fontFamily: "var(--font-head)" }}>{lvl.level}</div>
+                  <div style={{ color: "var(--text)", fontSize: "18px", fontWeight: 800, fontFamily: "var(--font-head)", marginBottom: "6px" }}>{lvl.title}</div>
+                  <div style={{ color: "var(--text-muted)", fontSize: "12px", lineHeight: 1.6 }}>{lvl.desc}</div>
                 </div>
               </div>
             ))}
@@ -562,29 +738,29 @@ export default function Welcome() {
             background: "linear-gradient(160deg, #0d1117 0%, #111827 100%)",
             border: "1px solid rgba(201,168,76,0.25)",
             borderRadius: "16px",
-            padding: "22px 20px",
+            padding: "26px 22px",
             textAlign: "center",
           }}>
-            <div style={{ color: "var(--gold)", fontSize: "11px", fontWeight: 800, letterSpacing: "2px", fontFamily: "var(--font-head)", marginBottom: "8px" }}>INCLUDED VALUE</div>
-            <div style={{ color: "var(--text)", fontSize: "28px", fontWeight: 800, fontFamily: "var(--font-head)", marginBottom: "12px" }}>{config.value}</div>
-            <div style={{ width: "100%", height: "1px", background: "rgba(255,255,255,0.07)", marginBottom: "12px" }} />
-            <div style={{ color: "var(--text-muted)", fontSize: "11px", letterSpacing: "1px", fontFamily: "var(--font-head)", marginBottom: "4px" }}>YOUR COST TODAY</div>
-            <div style={{ color: config.costColor, fontSize: "32px", fontWeight: 900, fontFamily: "var(--font-head)", lineHeight: 1 }}>{config.cost}</div>
-            <div style={{ color: config.costColor, fontSize: "11px", fontWeight: 700, letterSpacing: "2px", fontFamily: "var(--font-head)", marginTop: "4px" }}>{config.costSub}</div>
+            <div style={{ color: "var(--gold)", fontSize: "12px", fontWeight: 800, letterSpacing: "2px", fontFamily: "var(--font-head)", marginBottom: "10px" }}>INCLUDED VALUE</div>
+            <div style={{ color: "var(--text)", fontSize: "32px", fontWeight: 800, fontFamily: "var(--font-head)", marginBottom: "14px" }}>{config.value}</div>
+            <div style={{ width: "100%", height: "1px", background: "rgba(255,255,255,0.07)", marginBottom: "14px" }} />
+            <div style={{ color: "var(--text-muted)", fontSize: "12px", letterSpacing: "1px", fontFamily: "var(--font-head)", marginBottom: "6px" }}>YOUR COST TODAY</div>
+            <div style={{ color: config.costColor, fontSize: "38px", fontWeight: 900, fontFamily: "var(--font-head)", lineHeight: 1 }}>{config.cost}</div>
+            <div style={{ color: config.costColor, fontSize: "12px", fontWeight: 700, letterSpacing: "2px", fontFamily: "var(--font-head)", marginTop: "6px" }}>{config.costSub}</div>
           </div>
 
-          {/* TRQX logo bottom right */}
+          {/* TRQX logo block */}
           <div style={{
             background: "linear-gradient(160deg, #0d1117 0%, #111827 100%)",
             border: "1px solid rgba(201,168,76,0.2)",
             borderRadius: "16px",
-            padding: "18px 20px",
+            padding: "22px",
             textAlign: "center",
           }}>
-            <div style={{ color: "var(--gold)", fontSize: "22px", fontWeight: 900, fontFamily: "var(--font-head)", letterSpacing: "4px" }}>TRQX</div>
-            <div style={{ color: "var(--text-muted)", fontSize: "9px", fontWeight: 700, letterSpacing: "3px", fontFamily: "var(--font-head)" }}>C A P I T A L</div>
-            <div style={{ width: "40px", height: "1px", background: "rgba(201,168,76,0.3)", margin: "10px auto" }} />
-            <div style={{ color: "var(--text-muted)", fontSize: "9px", letterSpacing: "2px", fontFamily: "var(--font-head)" }}>PRECISION. DISCIPLINE. EXECUTION.</div>
+            <div style={{ color: "var(--gold)", fontSize: "26px", fontWeight: 900, fontFamily: "var(--font-head)", letterSpacing: "4px" }}>TRQX</div>
+            <div style={{ color: "var(--text-muted)", fontSize: "10px", fontWeight: 700, letterSpacing: "4px", fontFamily: "var(--font-head)" }}>C A P I T A L</div>
+            <div style={{ width: "40px", height: "1px", background: "rgba(201,168,76,0.3)", margin: "12px auto" }} />
+            <div style={{ color: "var(--text-muted)", fontSize: "10px", letterSpacing: "2px", fontFamily: "var(--font-head)" }}>PRECISION. DISCIPLINE. EXECUTION.</div>
           </div>
         </div>
       </div>
@@ -592,11 +768,11 @@ export default function Welcome() {
       {/* Bottom trust bar */}
       <div style={{
         width: "100%",
-        maxWidth: "1200px",
-        marginTop: "24px",
+        maxWidth: "1400px",
+        marginTop: "28px",
         display: "grid",
         gridTemplateColumns: "repeat(4, 1fr)",
-        gap: "12px",
+        gap: "14px",
         zIndex: 2,
       }}>
         {[
@@ -607,17 +783,17 @@ export default function Welcome() {
         ].map((t, i) => (
           <div key={i} style={{
             background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.07)",
             borderRadius: "12px",
-            padding: "14px 16px",
+            padding: "18px 20px",
             display: "flex",
             alignItems: "flex-start",
-            gap: "12px",
+            gap: "14px",
           }}>
-            <span style={{ fontSize: "20px", flexShrink: 0 }}>{t.icon}</span>
+            <span style={{ fontSize: "24px", flexShrink: 0 }}>{t.icon}</span>
             <div>
-              <div style={{ color: "var(--gold)", fontSize: "10px", fontWeight: 800, letterSpacing: "1.5px", fontFamily: "var(--font-head)", marginBottom: "3px" }}>{t.title}</div>
-              <div style={{ color: "var(--text-muted)", fontSize: "11px", lineHeight: 1.5 }}>{t.desc}</div>
+              <div style={{ color: "var(--gold)", fontSize: "11px", fontWeight: 800, letterSpacing: "1.5px", fontFamily: "var(--font-head)", marginBottom: "4px" }}>{t.title}</div>
+              <div style={{ color: "var(--text-muted)", fontSize: "12px", lineHeight: 1.6 }}>{t.desc}</div>
             </div>
           </div>
         ))}
