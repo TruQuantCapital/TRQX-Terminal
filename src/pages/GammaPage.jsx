@@ -27,9 +27,30 @@ function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
     <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", color: "#6b7280", fontSize: 13 }}>
       No strike data available
     </div>
-  );
+    {/* Legend */}
+      <div style={{ display: "flex", gap: 20, marginTop: 12, flexWrap: "wrap" }}>
+        {[
+          { color: "#22c55e", label: "Positive Gamma (Dealer Long)" },
+          { color: "#ef4444", label: "Negative Gamma (Dealer Short)" },
+          { color: "#ffffff", label: "Current Price" },
+        ].map(({ color, label }) => (
+          <div key={label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 10, height: 10, borderRadius: 2, background: color }} />
+            <span style={{ color: "#9ca3af", fontSize: 11 }}>{label}</span>
+          </div>
+        ))}
+      </div>
 
-  const maxVal = Math.max(...strikeChart.map(s => Math.max(Math.abs(s.calls || 0), Math.abs(s.puts || 0))), 1);
+      {/* Synthetic notice — INSIDE GammaHistogram */}
+      {Array.isArray(strikeChart) && strikeChart.some(s => s.synthetic) && (
+        <div style={{ color: "#6b7280", fontSize: 10, marginTop: 6, fontStyle: "italic" }}>
+          ⚠️ Estimated profile — real data loads as flow accumulates for this ticker.
+        </div>
+      )}
+    </div>
+  );
+}
+   const maxVal = Math.max(...strikeChart.map(s => Math.max(Math.abs(s.calls || 0), Math.abs(s.puts || 0))), 1);
   const chartH = 180;
   const half = chartH / 2;
 
@@ -335,14 +356,9 @@ export default function GammaPage() {
             <span style={{ color: "#9ca3af", fontSize: 11 }}>EXPOSURE LEGEND</span>
           </div>
         </div>
-        <GammaHistogram strikeChart={gamma?.strikeChart} callWall={callWall} putWall={putWall} gammaFlip={gammaFlip} price={price} />
+                <GammaHistogram strikeChart={gamma?.strikeChart} callWall={callWall} putWall={putWall} gammaFlip={gammaFlip} price={price} />
       </div>
-      {strikeChart.some(s => s.synthetic) && (
-  <div style={{ color: "#6b7280", fontSize: 10, marginTop: 6, fontStyle: "italic" }}>
-    ⚠️ Synthetic profile — limited flow data for {ticker}. Real data loads as flow comes in.
-  </div>
-)}
-
+    
       {/* ── ROW 3: CURRENT PRICE | GAMMA REGIME | KEY DRIVERS | PLAYBOOK | GAMMA SCORE ── */}
       <div style={{ display: "grid", gridTemplateColumns: "200px 260px 1fr 220px 200px", gap: 10, marginTop: 12 }}>
 
