@@ -230,7 +230,7 @@ export default function Auth() {
           {" "}
           <button onClick={() => { setMode(mode === "reset" ? "login" : mode === "login" ? "signup" : "login"); setError(""); setPass(""); }}
             style={{ background: "none", border: "none", color: "#d4af37", fontWeight: "800", cursor: "pointer", fontSize: "14px", fontFamily: "inherit" }}>
-            {mode === "reset" ? "Back to login" : mode === "login" ? "Start free" : "Sign in"}
+            {mode === "reset" ? "Back to login" : mode === "login" ? "Sign Up" : "Sign in"}
           </button>
         </div>
 
