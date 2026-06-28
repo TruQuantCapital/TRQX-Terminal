@@ -3085,6 +3085,7 @@ function PatternCard({ pattern, isExpanded, onClick }) {
   const [quizMode, setQuizMode] = useState(false);
   const [quizAnswer, setQuizAnswer] = useState(null);
   const [quizOptions, setQuizOptions] = useState([]);
+  const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
     if (isExpanded && !playing && !done) {
@@ -3095,6 +3096,7 @@ function PatternCard({ pattern, isExpanded, onClick }) {
       setDone(false);
       setQuizMode(false);
       setQuizAnswer(null);
+      setActiveTab('overview');
     }
   }, [isExpanded]);
 
@@ -3114,13 +3116,15 @@ function PatternCard({ pattern, isExpanded, onClick }) {
   }
 
   const levelColor = pattern.level === 'Beginner' ? TEAL : pattern.level === 'Intermediate' ? GOLD : PURPLE;
+  const sc = pattern.signalColor || GOLD;
+  const TABS = ['overview', 'setup', 'advanced', 'quiz'];
 
   return (
     <div
       onClick={!isExpanded ? onClick : undefined}
       style={{
-        background: isExpanded ? '#0d1421' : 'rgba(255,255,255,0.03)',
-        border: `1px solid ${isExpanded ? 'rgba(201,168,76,0.35)' : 'rgba(255,255,255,0.08)'}`,
+        background: isExpanded ? '#0a0f1a' : 'rgba(255,255,255,0.03)',
+        border: `1px solid ${isExpanded ? `${sc}40` : 'rgba(255,255,255,0.08)'}`,
         borderRadius: 14,
         overflow: 'hidden',
         cursor: isExpanded ? 'default' : 'pointer',
@@ -3130,206 +3134,262 @@ function PatternCard({ pattern, isExpanded, onClick }) {
     >
       {/* Card Header */}
       <div
-        style={{ padding: isExpanded ? '16px 20px' : '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+        style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', background: isExpanded ? 'rgba(255,255,255,0.02)' : 'transparent' }}
         onClick={onClick}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: `${pattern.signalColor}18`,
-            border: `1px solid ${pattern.signalColor}40`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 13, fontWeight: 900, color: pattern.signalColor, fontFamily: 'monospace',
-          }}>
+          <div style={{ width: 34, height: 34, borderRadius: 8, background: `${sc}18`, border: `1px solid ${sc}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 900, color: sc, fontFamily: 'monospace' }}>
             {pattern.id}
           </div>
           <div>
             <div style={{ color: '#f5f1e8', fontSize: 14, fontWeight: 700 }}>{pattern.name}</div>
-            <div style={{ display: 'flex', gap: 6, marginTop: 3 }}>
-              <span style={{ background: `${levelColor}18`, border: `1px solid ${levelColor}40`, color: levelColor, fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 4, letterSpacing: 0.5 }}>{pattern.level}</span>
-              <span style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#9ca3af', fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 4 }}>{pattern.category}</span>
-              <span style={{ background: `${pattern.signalColor}18`, border: `1px solid ${pattern.signalColor}40`, color: pattern.signalColor, fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 4 }}>{pattern.signal}</span>
+            <div style={{ display: 'flex', gap: 5, marginTop: 3, flexWrap: 'wrap' }}>
+              {[
+                { text: pattern.level, color: levelColor },
+                { text: pattern.category, color: '#9ca3af' },
+                { text: pattern.signal, color: sc },
+              ].map(tag => (
+                <span key={tag.text} style={{ background: `${tag.color}15`, border: `1px solid ${tag.color}35`, color: tag.color, fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 4, letterSpacing: 0.5 }}>
+                  {tag.text}
+                </span>
+              ))}
             </div>
           </div>
         </div>
-        <div style={{ color: '#9ca3af', fontSize: 18, fontWeight: 300 }}>{isExpanded ? '−' : '+'}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {isExpanded && (
+            <div style={{ color: '#9ca3af', fontSize: 11 }}>
+              <span style={{ color: sc, fontWeight: 800, fontFamily: 'monospace' }}>{pattern.confidence}</span>/10
+            </div>
+          )}
+          <div style={{ color: '#9ca3af', fontSize: 20, fontWeight: 300 }}>{isExpanded ? '−' : '+'}</div>
+        </div>
       </div>
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+        <div>
+          {/* Description strip */}
+          <div style={{ padding: '10px 20px', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#9ca3af', fontSize: 13, lineHeight: 1.6 }}>
+            {pattern.description}
+          </div>
 
-            {/* Left: Chart */}
-            <div style={{ padding: '20px', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <span style={{ color: '#9ca3af', fontSize: 11, fontWeight: 700, letterSpacing: 1 }}>PATTERN ANIMATION</span>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {done && (
-                    <button onClick={handleReplay} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 7, color: '#9ca3af', fontSize: 11, fontWeight: 700, padding: '5px 12px', cursor: 'pointer' }}>
-                      ↺ Replay
-                    </button>
-                  )}
-                  {done && !quizMode && (
-                    <button onClick={startQuiz} style={{ background: `${GOLD}18`, border: `1px solid ${GOLD}40`, borderRadius: 7, color: GOLD, fontSize: 11, fontWeight: 700, padding: '5px 12px', cursor: 'pointer' }}>
-                      Quiz Me
-                    </button>
-                  )}
-                </div>
+          {/* Action buttons + tabs */}
+          <div style={{ padding: '12px 20px', display: 'flex', gap: 8, alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap' }}>
+            {done && (
+              <button onClick={handleReplay} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#f5f1e8', fontSize: 12, fontWeight: 700, padding: '7px 16px', cursor: 'pointer' }}>
+                ↺ Replay
+              </button>
+            )}
+            {done && (
+              <button onClick={startQuiz} style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}40`, borderRadius: 8, color: GOLD, fontSize: 12, fontWeight: 700, padding: '7px 16px', cursor: 'pointer' }}>
+                ⚡ Quiz Me
+              </button>
+            )}
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+              {TABS.map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab)} style={{ background: activeTab === tab ? `${sc}20` : 'transparent', border: `1px solid ${activeTab === tab ? sc : 'rgba(255,255,255,0.1)'}`, borderRadius: 7, color: activeTab === tab ? sc : '#9ca3af', fontSize: 11, fontWeight: 700, padding: '6px 14px', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Chart + At a Glance */}
+          <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', minHeight: 420 }}>
+
+            {/* Chart — full large */}
+            <div style={{ padding: '16px 20px', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: done ? TEAL : GOLD, boxShadow: `0 0 6px ${done ? TEAL : GOLD}` }} />
+                <span style={{ color: '#9ca3af', fontSize: 10, fontWeight: 700, letterSpacing: 1.5 }}>PATTERN ANIMATION</span>
+                <span style={{ color: '#9ca3af', fontSize: 10, marginLeft: 'auto' }}>{pattern.timeframe?.join(' · ')}</span>
               </div>
 
-              <div style={{ background: '#060b14', borderRadius: 10, padding: '10px', height: 200, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ background: '#060b14', borderRadius: 12, padding: '8px', height: 360, position: 'relative', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
                 {!playing && !done && (
-                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
-                    <div style={{ color: '#9ca3af', fontSize: 12 }}>Loading animation...</div>
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', fontSize: 13 }}>
+                    Loading animation...
                   </div>
                 )}
-                <CandleChart pattern={pattern} playing={playing} onComplete={() => setDone(true)} />
+                <CandleChart
+                  pattern={pattern}
+                  playing={playing}
+                  onComplete={() => setDone(true)}
+                  width={660}
+                  height={344}
+                />
               </div>
 
-              {/* Quiz */}
-              {quizMode && (
-                <div style={{ marginTop: 14 }}>
-                  <div style={{ color: GOLD, fontSize: 11, fontWeight: 800, letterSpacing: 1, marginBottom: 10 }}>IDENTIFY THIS PATTERN</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                    {quizOptions.map(opt => {
-                      const isCorrect = opt.id === pattern.id;
-                      const isSelected = quizAnswer === opt.id;
-                      let bg = 'rgba(255,255,255,0.04)';
-                      let border = 'rgba(255,255,255,0.1)';
-                      let color = '#f5f1e8';
-                      if (isSelected && isCorrect) { bg = 'rgba(38,166,154,0.15)'; border = 'rgba(38,166,154,0.5)'; color = TEAL; }
-                      if (isSelected && !isCorrect) { bg = 'rgba(239,83,80,0.15)'; border = 'rgba(239,83,80,0.5)'; color = RED; }
-                      if (quizAnswer && isCorrect) { bg = 'rgba(38,166,154,0.15)'; border = 'rgba(38,166,154,0.5)'; color = TEAL; }
-                      return (
-                        <button key={opt.id} onClick={() => setQuizAnswer(opt.id)} disabled={!!quizAnswer}
-                          style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, color, fontSize: 12, fontWeight: 700, padding: '10px 12px', cursor: quizAnswer ? 'default' : 'pointer', textAlign: 'left', transition: 'all 0.2s' }}>
-                          {opt.name}
-                          {quizAnswer && isCorrect && ' ✓'}
-                          {isSelected && !isCorrect && ' ✗'}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {quizAnswer && (
-                    <div style={{ marginTop: 10, padding: '10px 14px', background: quizAnswer === pattern.id ? 'rgba(38,166,154,0.1)' : 'rgba(239,83,80,0.1)', borderRadius: 8, color: quizAnswer === pattern.id ? TEAL : RED, fontSize: 12, fontWeight: 700 }}>
-                      {quizAnswer === pattern.id ? '✓ Correct! Well done.' : `✗ That was ${pattern.name}. Study the animation and try again.`}
-                    </div>
-                  )}
-                  <button onClick={() => { setQuizMode(false); setQuizAnswer(null); }} style={{ marginTop: 8, background: 'none', border: 'none', color: '#9ca3af', fontSize: 11, cursor: 'pointer' }}>
-                    Close quiz
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Right: Info */}
-            <div style={{ padding: '20px', maxHeight: 620, overflowY: 'auto' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-                <InfoBox title="CONFIDENCE" color={pattern.signalColor}>
-                  <span style={{ fontSize: 20, fontWeight: 900, fontFamily: 'monospace' }}>{pattern.confidence}/10</span>
-                </InfoBox>
-                <InfoBox title="SUCCESS RATE" color={GOLD}>
-                  {pattern.successRate}
-                </InfoBox>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <InfoBox title="DESCRIPTION" color={GOLD}>
-                  {pattern.description}
-                </InfoBox>
-
-                <InfoBox title="MARKET PSYCHOLOGY" color={PURPLE}>
-                  {pattern.psychology}
-                </InfoBox>
-
-                <InfoBox title="MARKET CONTEXT" color={BLUE}>
-                  {pattern.marketContext}
-                </InfoBox>
-
-                <InfoBox title="IDEAL LOCATION" color={GOLD}>
-                  {pattern.idealLocation}
-                </InfoBox>
-
-                <InfoBox title="REQUIREMENTS" color={pattern.signalColor}>
-                  <BulletList items={pattern.requirements} />
-                </InfoBox>
-
-                <InfoBox title="CONFIRMATION CHECKLIST" color={TEAL}>
-                  <BulletList items={pattern.confirmation} />
-                </InfoBox>
-
-                <InfoBox title="VOLUME PROFILE" color={GOLD}>
-                  {pattern.volumeProfile}
-                </InfoBox>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                  <InfoBox title="TIMEFRAMES" color={BLUE}>
-                    {pattern.timeframe?.join(' • ')}
-                  </InfoBox>
-                  <InfoBox title="RISK / REWARD" color={GOLD}>
-                    {pattern.riskReward}
-                  </InfoBox>
-                </div>
-
+              {/* Legend */}
+              <div style={{ display: 'flex', gap: 16, marginTop: 10, flexWrap: 'wrap' }}>
                 {[
-                  { label: 'ENTRY', value: pattern.entry, color: TEAL, icon: '→' },
-                  { label: 'AGGRESSIVE ENTRY', value: pattern.aggressiveEntry, color: TEAL, icon: '⚡' },
-                  { label: 'CONSERVATIVE ENTRY', value: pattern.conservativeEntry, color: BLUE, icon: '✓' },
-                  { label: 'STOP LOSS', value: pattern.stop, color: RED, icon: '✕' },
-                  { label: 'TARGET', value: pattern.target, color: GOLD, icon: '★' },
+                  { color: TEAL, label: 'Bullish candle' },
+                  { color: RED, label: 'Bearish candle' },
+                  { color: 'rgba(38,166,154,0.5)', label: 'Target zone', border: TEAL },
+                  { color: 'rgba(239,83,80,0.5)', label: 'Stop zone', border: RED },
+                  { color: GOLD, label: 'Key level / Neckline', dashed: true },
+                  { color: RED, label: 'Resistance trend', dashed: true },
+                  { color: TEAL, label: 'Support trend', dashed: true },
                 ].map(item => (
-                  <div key={item.label} style={{ background: `${item.color}08`, border: `1px solid ${item.color}20`, borderRadius: 10, padding: '10px 14px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                      <span style={{ color: item.color, fontSize: 11 }}>{item.icon}</span>
-                      <span style={{ color: item.color, fontSize: 10, fontWeight: 800, letterSpacing: 1 }}>{item.label}</span>
-                    </div>
-                    <div style={{ color: '#f5f1e8', fontSize: 12, lineHeight: 1.5 }}>{item.value}</div>
+                  <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    {item.dashed
+                      ? <div style={{ width: 20, height: 0, borderTop: `2px dashed ${item.color}` }} />
+                      : <div style={{ width: 10, height: 10, borderRadius: 2, background: item.color, border: item.border ? `1px solid ${item.border}` : 'none' }} />
+                    }
+                    <span style={{ color: '#9ca3af', fontSize: 10 }}>{item.label}</span>
                   </div>
                 ))}
+              </div>
+            </div>
 
-                <InfoBox title="BEST INDICATORS" color={BLUE}>
-                  {pattern.bestIndicators?.join(' • ')}
-                </InfoBox>
-
-                <InfoBox title="OPTIONS APPLICATION" color={GOLD}>
-                  {pattern.optionsPlay}
-                </InfoBox>
-
-                <InfoBox title="INSTITUTIONAL CLUES" color={PURPLE}>
-                  <BulletList items={pattern.institutionalClues} />
-                </InfoBox>
-
-                <InfoBox title="COMMON MISTAKES" color={RED}>
-                  <BulletList items={pattern.commonMistakes} />
-                </InfoBox>
-
-                <InfoBox title="PRO TIPS" color={TEAL}>
-                  <BulletList items={pattern.proTips} />
-                </InfoBox>
-
-                <InfoBox title="RELATED PATTERNS" color={GOLD}>
-                  {pattern.relatedPatterns?.join(' • ')}
-                </InfoBox>
-
-                <InfoBox title="REAL-WORLD EXAMPLE" color={BLUE}>
-                  {pattern.example}
-                </InfoBox>
-
-                <InfoBox title="HOMEWORK" color={PURPLE}>
-                  {pattern.homework}
-                </InfoBox>
-
-                <InfoBox title="QUIZ QUESTION" color={GOLD}>
-                  <div style={{ marginBottom: 8 }}>{pattern.quiz?.question}</div>
-                  <BulletList items={pattern.quiz?.choices || []} />
-                  <div style={{ marginTop: 8, color: TEAL, fontWeight: 800 }}>Answer: {pattern.quiz?.answer}</div>
-                </InfoBox>
+            {/* At a Glance sidebar */}
+            <div style={{ padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto' }}>
+              <div style={{ color: sc, fontSize: 10, fontWeight: 800, letterSpacing: 1.5, marginBottom: 2 }}>AT A GLANCE</div>
+              {[
+                { icon: '📊', label: 'Signal', value: pattern.signal },
+                { icon: '⭐', label: 'Confidence', value: `${pattern.confidence}/10` },
+                { icon: '✅', label: 'Success Rate', value: pattern.successRate },
+                { icon: '⏱', label: 'Timeframes', value: pattern.timeframe?.slice(0, 3).join(', ') },
+                { icon: '📈', label: 'Risk/Reward', value: pattern.riskReward },
+              ].map(item => (
+                <div key={item.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '8px 10px' }}>
+                  <div style={{ color: '#9ca3af', fontSize: 9, fontWeight: 700, letterSpacing: 1, marginBottom: 3 }}>{item.icon} {item.label}</div>
+                  <div style={{ color: '#f5f1e8', fontSize: 11, fontWeight: 700, lineHeight: 1.4 }}>{item.value}</div>
+                </div>
+              ))}
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '8px 10px' }}>
+                <div style={{ color: '#9ca3af', fontSize: 9, fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>🔑 BEST INDICATORS</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                  {pattern.bestIndicators?.map(ind => (
+                    <span key={ind} style={{ background: `${sc}15`, border: `1px solid ${sc}30`, color: sc, fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 4 }}>{ind}</span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Tab content */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
+
+            {/* OVERVIEW */}
+            {activeTab === 'overview' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                <InfoCard title="PSYCHOLOGY" color={PURPLE} icon="🧠">{pattern.psychology}</InfoCard>
+                <InfoCard title="MARKET CONTEXT" color={BLUE} icon="🌍">{pattern.marketContext}</InfoCard>
+                <InfoCard title="IDEAL LOCATION" color={GOLD} icon="📍">{pattern.idealLocation}</InfoCard>
+                <InfoCard title="REQUIREMENTS" color={sc} icon="✔️"><BulletList items={pattern.requirements} /></InfoCard>
+                <InfoCard title="CONFIRMATION" color={TEAL} icon="✅"><BulletList items={pattern.confirmation} /></InfoCard>
+                <InfoCard title="VOLUME PROFILE" color={BLUE} icon="📊">{pattern.volumeProfile}</InfoCard>
+              </div>
+            )}
+
+            {/* SETUP */}
+            {activeTab === 'setup' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                <InfoCard title="→ ENTRY" color={TEAL} icon="🎯">{pattern.entry}</InfoCard>
+                <InfoCard title="⚡ AGGRESSIVE ENTRY" color={TEAL} icon="⚡">{pattern.aggressiveEntry}</InfoCard>
+                <InfoCard title="✓ CONSERVATIVE ENTRY" color={BLUE} icon="🛡">{pattern.conservativeEntry}</InfoCard>
+                <InfoCard title="✕ STOP LOSS" color={RED} icon="🛑">{pattern.stop}</InfoCard>
+                <InfoCard title="★ TARGET" color={GOLD} icon="🏆">{pattern.target}</InfoCard>
+                <InfoCard title="OPTIONS PLAY" color={PURPLE} icon="📋">{pattern.optionsPlay}</InfoCard>
+                <InfoCard title="INSTITUTIONAL CLUES" color={PURPLE} icon="🏦"><BulletList items={pattern.institutionalClues} /></InfoCard>
+                <InfoCard title="COMMON MISTAKES" color={RED} icon="⚠️"><BulletList items={pattern.commonMistakes} /></InfoCard>
+                <InfoCard title="PRO TIPS" color={TEAL} icon="💡"><BulletList items={pattern.proTips} /></InfoCard>
+              </div>
+            )}
+
+            {/* ADVANCED */}
+            {activeTab === 'advanced' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+                <InfoCard title="RELATED PATTERNS" color={GOLD} icon="🔗">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {pattern.relatedPatterns?.map(r => (
+                      <span key={r} style={{ background: `${GOLD}12`, border: `1px solid ${GOLD}30`, color: GOLD, fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 5 }}>{r}</span>
+                    ))}
+                  </div>
+                </InfoCard>
+                <InfoCard title="REAL-WORLD EXAMPLE" color={BLUE} icon="📌">{pattern.example}</InfoCard>
+                <InfoCard title="HOMEWORK" color={PURPLE} icon="📚">{pattern.homework}</InfoCard>
+                <InfoCard title="OPTIONS STRATEGY DETAIL" color={TEAL} icon="📋">{pattern.optionsPlay}</InfoCard>
+              </div>
+            )}
+
+            {/* QUIZ */}
+            {activeTab === 'quiz' && (
+              <div style={{ maxWidth: 640 }}>
+                {!quizMode ? (
+                  <div>
+                    <InfoCard title="QUIZ QUESTION" color={GOLD} icon="❓">
+                      <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 700, color: '#f5f1e8' }}>{pattern.quiz?.question}</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                        {pattern.quiz?.choices?.map((choice, i) => (
+                          <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '10px 12px', color: '#f5f1e8', fontSize: 12 }}>
+                            {String.fromCharCode(65 + i)}) {choice}
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ marginTop: 12, padding: '8px 12px', background: `${TEAL}12`, border: `1px solid ${TEAL}30`, borderRadius: 8, color: TEAL, fontSize: 12, fontWeight: 700 }}>
+                        ✓ Answer: {pattern.quiz?.answer}
+                      </div>
+                    </InfoCard>
+                    <button onClick={startQuiz} style={{ marginTop: 14, background: `${GOLD}15`, border: `1px solid ${GOLD}40`, borderRadius: 10, color: GOLD, fontSize: 13, fontWeight: 800, padding: '12px 24px', cursor: 'pointer', width: '100%' }}>
+                      ⚡ Start Pattern Recognition Quiz
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ color: GOLD, fontSize: 12, fontWeight: 800, letterSpacing: 1, marginBottom: 14 }}>
+                      IDENTIFY THIS PATTERN FROM THE ANIMATION ABOVE
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                      {quizOptions.map(opt => {
+                        const isCorrect = opt.id === pattern.id;
+                        const isSelected = quizAnswer === opt.id;
+                        let bg = 'rgba(255,255,255,0.04)';
+                        let border = 'rgba(255,255,255,0.1)';
+                        let color = '#f5f1e8';
+                        if (isSelected && isCorrect) { bg = 'rgba(38,166,154,0.15)'; border = `${TEAL}60`; color = TEAL; }
+                        if (isSelected && !isCorrect) { bg = 'rgba(239,83,80,0.15)'; border = `${RED}60`; color = RED; }
+                        if (quizAnswer && isCorrect) { bg = 'rgba(38,166,154,0.15)'; border = `${TEAL}60`; color = TEAL; }
+                        return (
+                          <button key={opt.id} onClick={() => setQuizAnswer(opt.id)} disabled={!!quizAnswer}
+                            style={{ background: bg, border: `1px solid ${border}`, borderRadius: 10, color, fontSize: 13, fontWeight: 700, padding: '14px 16px', cursor: quizAnswer ? 'default' : 'pointer', textAlign: 'left', transition: 'all 0.2s' }}>
+                            {opt.name}
+                            {quizAnswer && isCorrect && ' ✓'}
+                            {isSelected && !isCorrect && ' ✗'}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {quizAnswer && (
+                      <div style={{ marginTop: 12, padding: '12px 16px', background: quizAnswer === pattern.id ? 'rgba(38,166,154,0.1)' : 'rgba(239,83,80,0.1)', borderRadius: 10, color: quizAnswer === pattern.id ? TEAL : RED, fontSize: 13, fontWeight: 700 }}>
+                        {quizAnswer === pattern.id ? '✓ Correct! Great pattern recognition.' : `✗ That was ${pattern.name}. Replay the animation and study the key features.`}
+                      </div>
+                    )}
+                    <button onClick={() => { setQuizMode(false); setQuizAnswer(null); }} style={{ marginTop: 10, background: 'none', border: 'none', color: '#9ca3af', fontSize: 12, cursor: 'pointer' }}>
+                      ← Back
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Reusable InfoCard ──
+function InfoCard({ title, color, icon, children }) {
+  return (
+    <div style={{ background: `${color}08`, border: `1px solid ${color}20`, borderRadius: 10, padding: '12px 14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+        <span style={{ fontSize: 12 }}>{icon}</span>
+        <span style={{ color, fontSize: 10, fontWeight: 800, letterSpacing: 1 }}>{title}</span>
+      </div>
+      <div style={{ color: '#d1d5db', fontSize: 12, lineHeight: 1.6 }}>{children}</div>
     </div>
   );
 }
@@ -3343,7 +3403,6 @@ export default function PatternsPage() {
   const [level, setLevel] = useState('All');
   const [signal, setSignal] = useState('All');
   const [expanded, setExpanded] = useState(null);
-  const [viewMode, setViewMode] = useState('library');
 
   const filtered = ALL_PATTERNS.filter(p => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
@@ -3354,11 +3413,11 @@ export default function PatternsPage() {
   });
 
   const stats = {
-  total: ALL_PATTERNS.length,
-  beginner: ALL_PATTERNS.filter(p => p.level === 'Beginner').length,
-  intermediate: ALL_PATTERNS.filter(p => p.level === 'Intermediate').length,
-  advanced: ALL_PATTERNS.filter(p => p.level === 'Advanced').length,
-};
+    total: ALL_PATTERNS.length,
+    beginner: ALL_PATTERNS.filter(p => p.level === 'Beginner').length,
+    intermediate: ALL_PATTERNS.filter(p => p.level === 'Intermediate').length,
+    advanced: ALL_PATTERNS.filter(p => p.level === 'Advanced').length,
+  };
 
   return (
     <main className="pageStack" style={{ maxWidth: '100%', padding: '0 20px 60px' }}>
@@ -3369,7 +3428,7 @@ export default function PatternsPage() {
           <p style={{ color: GOLD, fontSize: 11, fontWeight: 800, letterSpacing: 2 }}>TRQX ACADEMY</p>
           <h1 style={{ margin: '4px 0 8px' }}>Pattern Library</h1>
           <span style={{ color: '#9ca3af' }}>
-            {ALL_PATTERNS.length} enhanced animated patterns across 15 categories — with quiz mode and trade setups for each.
+            {ALL_PATTERNS.length} animated patterns — psychology, entry, stop, target, quiz and more for each.
           </span>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -3440,22 +3499,13 @@ export default function PatternsPage() {
         </div>
       )}
 
-      {/* <div style={{ marginTop: 40, background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.03))', border: '1px solid rgba(212,175,55,0.2)', borderRadius: 14, padding: '28px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-  <div>
-    <div style={{ color: GOLD, fontSize: 11, fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>COMING NEXT</div>
-    <div style={{ color: '#f5f1e8', fontSize: 18, fontWeight: 800, marginBottom: 6 }}>Batch 3 — 41 More Patterns</div>
-    <div style={{ color: '#9ca3af', fontSize: 13 }}>
-      Momentum patterns, Options Flow setups, Gamma positioning patterns, Smart Money concepts, ORB setups, and Advanced Institutional patterns.
-    </div>
-  </div>
-  <div style={{ color: GOLD, fontSize: 32, flexShrink: 0 }}>⏳</div>
-</div> */}
+      {/* Batch 3 Coming */}
       <div style={{ marginTop: 40, background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.03))', border: '1px solid rgba(212,175,55,0.2)', borderRadius: 14, padding: '28px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ color: GOLD, fontSize: 11, fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>COMING NEXT</div>
-          <div style={{ color: '#f5f1e8', fontSize: 18, fontWeight: 800, marginBottom: 6 }}>Batch 2 — 57 More Patterns</div>
+          <div style={{ color: '#f5f1e8', fontSize: 18, fontWeight: 800, marginBottom: 6 }}>Batch 3 — 41 More Patterns</div>
           <div style={{ color: '#9ca3af', fontSize: 13 }}>
-            Bull Flag, Bear Flag, Ascending Triangle, Cup & Handle, Double Bottom, Triple Top, Head & Shoulders, and 50 more chart patterns.
+            Momentum, Options Flow, Gamma positioning, Smart Money concepts, ORB setups, and Advanced Institutional patterns.
           </div>
         </div>
         <div style={{ color: GOLD, fontSize: 32, flexShrink: 0 }}>⏳</div>
