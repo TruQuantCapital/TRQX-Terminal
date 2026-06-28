@@ -4772,11 +4772,15 @@ function PatternCard({
   pattern,
   isExpanded,
   onClick,
-  singleMode = false
+  singleMode = false,
+  quizMode = false,
+  onNext,
+  onPrev,
+  onToggleQuiz
 }) {
   const [playing, setPlaying] = useState(false);
   const [done, setDone] = useState(false);
-  const [quizMode, setQuizMode] = useState(false);
+  const [multipleChoiceMode, setMultipleChoiceMode] = useState(false);
   const [quizAnswer, setQuizAnswer] = useState(null);
   const [quizOptions, setQuizOptions] = useState([]);
 
@@ -4787,7 +4791,7 @@ function PatternCard({
     if (!isExpanded) {
       setPlaying(false);
       setDone(false);
-      setQuizMode(false);
+      setMultipleChoiceMode(false);
       setQuizAnswer(null);
     }
   }, [isExpanded, playing, done]);
@@ -4806,7 +4810,7 @@ function PatternCard({
     const opts = [pattern, ...shuffled].sort(() => Math.random() - 0.5);
     setQuizOptions(opts);
     setQuizAnswer(null);
-    setQuizMode(true);
+    setMultipleChoiceMode(true);
   }
 
   const levelColor = pattern.level === 'Beginner' ? TEAL : pattern.level === 'Intermediate' ? GOLD : PURPLE;
@@ -4866,17 +4870,26 @@ function PatternCard({
             </div>
             <div style={{ minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <h2 style={{ margin: 0, color: '#f8fafc', fontSize: isExpanded ? 32 : 18, lineHeight: 1.05, fontWeight: 950, letterSpacing: -0.6 }}>
-                  {pattern.name}
-                </h2>
+                {!quizMode && (
+                  <h2 style={{ margin: 0, color: '#f8fafc', fontSize: isExpanded ? 32 : 18, lineHeight: 1.05, fontWeight: 950, letterSpacing: -0.6 }}>
+                    {pattern.name}
+                  </h2>
+                )}
                 <span style={{ color: sc, fontSize: isExpanded ? 28 : 16, fontWeight: 900 }}>{directionIcon}</span>
+                {quizMode && (
+                  <span style={{ color: GOLD, fontSize: isExpanded ? 24 : 16, fontWeight: 950, letterSpacing: 0.4 }}>
+                    Guess the Pattern
+                  </span>
+                )}
               </div>
-              <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-                <Pill color={levelColor}>{pattern.level}</Pill>
-                <Pill color={BLUE}>{pattern.category}</Pill>
-                <Pill color={sc}>{pattern.signal}</Pill>
-              </div>
-              {isExpanded && (
+              {!quizMode && (
+                <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
+                  <Pill color={levelColor}>{pattern.level}</Pill>
+                  <Pill color={BLUE}>{pattern.category}</Pill>
+                  <Pill color={sc}>{pattern.signal}</Pill>
+                </div>
+              )}
+              {isExpanded && !quizMode && (
                 <p style={{ color: '#e5e7eb', fontSize: 16, lineHeight: 1.6, margin: '12px 0 0', maxWidth: 1180 }}>
                   {pattern.description}
                 </p>
@@ -4885,18 +4898,19 @@ function PatternCard({
           </div>
 
           {isExpanded && (
-  <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
-
-    {singleMode && (
-      <button
-        onClick={onClick}
-        style={buttonStyle('#94a3b8')}
-      >
-        ← Back
-      </button>
-    )}
+            <div style={{ display: 'flex', gap: 10, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              {singleMode && (
+                <>
+                  <button onClick={onClick} style={buttonStyle('#94a3b8')}>← Back</button>
+                  <button onClick={onPrev} style={buttonStyle('#94a3b8')}>← Prev</button>
+                  <button onClick={onNext} style={buttonStyle(GOLD)}>Next →</button>
+                  <button onClick={onToggleQuiz} style={buttonStyle(quizMode ? RED : TEAL)}>
+                    {quizMode ? 'Show Answer' : 'Quiz Mode'}
+                  </button>
+                </>
+              )}
               <button onClick={handleReplay} style={buttonStyle('#94a3b8')}>↻ Replay</button>
-              <button onClick={startQuiz} style={buttonStyle(GOLD)}>❔ Quiz Me</button>
+              {!quizMode && <button onClick={startQuiz} style={buttonStyle(GOLD)}>❔ Quiz Me</button>}
             </div>
           )}
         </div>
@@ -4904,11 +4918,11 @@ function PatternCard({
 
       {isExpanded && (
         <div style={{ padding: 16 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2.25fr) minmax(300px, 0.9fr)', gap: 14, alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: quizMode ? '1fr' : 'minmax(0, 2.25fr) minmax(300px, 0.9fr)', gap: 14, alignItems: 'stretch' }}>
             <Panel title="PATTERN ANIMATION" icon="▰" color={sc}>
               <div
                 style={{
-                  height: 390,
+                  height: singleMode ? 'min(62vh, 640px)' : 390,
                   borderRadius: 14,
                   background:
                     'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px), radial-gradient(circle at 50% 15%, rgba(212,175,55,0.08), transparent 35%), #050b14',
@@ -4920,13 +4934,20 @@ function PatternCard({
                   justifyContent: 'center',
                 }}
               >
-                <CandleChart pattern={pattern} playing={playing} onComplete={() => setDone(true)} width={920} height={380} />
+                <CandleChart pattern={pattern} playing={playing} onComplete={() => setDone(true)} width={singleMode ? 1200 : 920} height={singleMode ? 620 : 380} />
               </div>
               <div style={{ marginTop: 10, border: `1px solid ${sc}40`, background: `${sc}0f`, color: '#dbeafe', borderRadius: 10, padding: '10px 12px', fontSize: 14, lineHeight: 1.55 }}>
-                <strong style={{ color: sc }}>How it works:</strong> {pattern.description}
+                {quizMode ? (
+                  <strong style={{ color: GOLD }}>Study the chart only. What pattern is this?</strong>
+                ) : (
+                  <>
+                    <strong style={{ color: sc }}>How it works:</strong> {pattern.description}
+                  </>
+                )}
               </div>
             </Panel>
 
+            {!quizMode && (
             <Panel title="AT A GLANCE" icon="◉" color={TEAL}>
               <div style={{ display: 'grid', gap: 12 }}>
                 {atAGlance.map(item => (
@@ -4940,9 +4961,11 @@ function PatternCard({
                 ))}
               </div>
             </Panel>
+            )}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 12, marginTop: 12 }}>
+          {!quizMode && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12, marginTop: 12 }}>
             <InfoCard title="PSYCHOLOGY" color={RED} icon="🧠">{pattern.psychology}</InfoCard>
             <InfoCard title="REQUIREMENTS" color={TEAL} icon="✅"><BulletList items={pattern.requirements} /></InfoCard>
             <InfoCard title="IDEAL LOCATION" color={GOLD} icon="🎯"><BulletList items={toList(pattern.idealLocation)} /></InfoCard>
@@ -4972,8 +4995,9 @@ function PatternCard({
               <div>{pattern.quiz?.choices?.map((c, i) => `${String.fromCharCode(65 + i)}) ${c}`).join('   ')}</div>
             </InfoCard>
           </div>
+          )}
 
-          {quizMode && (
+          {multipleChoiceMode && (
             <div style={{ marginTop: 14, border: `1px solid ${GOLD}40`, background: 'rgba(212,175,55,0.06)', borderRadius: 14, padding: 16 }}>
               <div style={{ color: GOLD, fontSize: 14, fontWeight: 950, letterSpacing: 1.4, marginBottom: 12 }}>PATTERN RECOGNITION QUIZ</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 10 }}>
@@ -5072,6 +5096,7 @@ export default function PatternsPage() {
   const [level, setLevel] = useState('All');
   const [signal, setSignal] = useState('All');
   const [expanded, setExpanded] = useState(null);
+  const [quizMode, setQuizMode] = useState(false);
 
   const filtered = ALL_PATTERNS.filter(p => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
@@ -5087,6 +5112,35 @@ export default function PatternsPage() {
     intermediate: ALL_PATTERNS.filter(p => p.level === 'Intermediate').length,
     advanced: ALL_PATTERNS.filter(p => p.level === 'Advanced').length,
   };
+
+  const currentIndex = filtered.findIndex(p => p.id === expanded);
+  const selectedPattern = filtered.find(p => p.id === expanded);
+
+  function openPattern(id) {
+    setExpanded(id);
+    setQuizMode(false);
+  }
+
+  function closePattern() {
+    setExpanded(null);
+    setQuizMode(false);
+  }
+
+  function goNext() {
+    if (!filtered.length) return;
+    const index = currentIndex === -1 ? 0 : currentIndex;
+    const next = filtered[(index + 1) % filtered.length];
+    setExpanded(next.id);
+    setQuizMode(false);
+  }
+
+  function goPrev() {
+    if (!filtered.length) return;
+    const index = currentIndex === -1 ? 0 : currentIndex;
+    const prev = filtered[(index - 1 + filtered.length) % filtered.length];
+    setExpanded(prev.id);
+    setQuizMode(false);
+  }
 
   return (
     <main className="pageStack" style={{ maxWidth: '100%', padding: '0 20px 60px' }}>
@@ -5151,45 +5205,32 @@ export default function PatternsPage() {
       </div>
 
       {/* Pattern Grid */}
-
-{expanded ? (
-
-  <div
-    style={{
-      width: '100%',
-      maxWidth: 1800,
-      margin: '0 auto'
-    }}
-  >
-    <PatternCard
-      pattern={filtered.find(p => p.id === expanded)}
-      isExpanded={true}
-      singleMode={true}
-      onClick={() => setExpanded(null)}
-    />
-  </div>
-
-) : (
-
-  <div
-    style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
-      gap: 12
-    }}
-  >
-    {filtered.map(p => (
-      <PatternCard
-        key={p.id}
-        pattern={p}
-        isExpanded={false}
-        singleMode={false}
-        onClick={() => setExpanded(p.id)}
-      />
-    ))}
-  </div>
-
-)}
+      {expanded && selectedPattern ? (
+        <div style={{ width: '100%', maxWidth: 1800, margin: '0 auto' }}>
+          <PatternCard
+            pattern={selectedPattern}
+            isExpanded={true}
+            singleMode={true}
+            quizMode={quizMode}
+            onClick={closePattern}
+            onNext={goNext}
+            onPrev={goPrev}
+            onToggleQuiz={() => setQuizMode(v => !v)}
+          />
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 12 }}>
+          {filtered.map(p => (
+            <PatternCard
+              key={p.id}
+              pattern={p}
+              isExpanded={false}
+              singleMode={false}
+              onClick={() => openPattern(p.id)}
+            />
+          ))}
+        </div>
+      )}
 
       {filtered.length === 0 && (
         <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
