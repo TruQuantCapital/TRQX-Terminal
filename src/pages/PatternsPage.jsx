@@ -4790,7 +4790,7 @@ function PatternCard({
       setPlaying(false);
       setDone(false);
       setMultipleChoiceMode(false);
-      setQuizAnswer(null);
+      
     }
   }, [isExpanded, playing, done]);
 
@@ -5000,8 +5000,6 @@ function PatternCard({
                   return (
                     <button
                       key={opt.id}
-                      onClick={() => setQuizAnswer(opt.id)}
-                      disabled={!!quizAnswer}
                       style={{ background: bg, border: `1px solid ${border}`, borderRadius: 10, color, fontSize: 14, fontWeight: 850, padding: '13px 14px', cursor: quizAnswer ? 'default' : 'pointer', textAlign: 'left' }}
                     >
                       {opt.name}{quizAnswer && isCorrect ? ' ✓' : ''}{isSelected && !isCorrect ? ' ✗' : ''}
