@@ -76,44 +76,37 @@ function confetti() {
   }, 5000);
 }
 
-const FEATURES = [
-  {
-    icon: "📊",
-    title: "Options Flow Scanner",
-    desc: "Live institutional sweeps, blocks & unusual activity in real time.",
-    route: "/scanner",
-  },
-  {
-    icon: "⚡",
-    title: "GEMX Gamma Dashboard",
-    desc: "Gamma exposure levels, dealer positioning & key price levels.",
-    route: "/gamma-ex",
-  },
-  {
-    icon: "💰",
-    title: "Dividend Channel",
-    desc: "70 curated dividend stocks with live yields & deep dive reports.",
-    route: "/dividends",
-  },
-  {
-    icon: "🔍",
-    title: "Stock Research",
-    desc: "AI-powered stock verdicts, technicals & institutional analysis.",
-    route: "/research",
-  },
-  {
-    icon: "🎓",
-    title: "Trading Academy",
-    desc: "27 lessons, drills, flashcards & quizzes across 3 levels.",
-    route: "/academy",
-  },
-  {
-    icon: "🤖",
-    title: "AI Intelligence",
-    desc: "Ask AI anything about flow, gamma, charts & trade setups.",
-    route: "/scanner",
-  },
-];
+{FEATURES.map((f, i) => (
+  <div
+    key={i}
+    style={{
+      display: "flex",
+      alignItems: "flex-start",
+      gap: "14px",
+      background: "var(--black-3)",
+      border: "1px solid rgba(201,168,76,0.15)",
+      borderRadius: "12px",
+      padding: "16px 18px",
+      transition: "border-color 0.2s, background 0.2s",
+    }}
+  >
+    <div style={{ fontSize: "24px", minWidth: "32px", textAlign: "center", marginTop: "2px" }}>{f.icon}</div>
+    <div style={{ flex: 1 }}>
+      <div style={{
+        fontFamily: "var(--font-head)",
+        fontSize: "14px",
+        fontWeight: 700,
+        color: "var(--text)",
+        marginBottom: "4px",
+      }}>{f.title}</div>
+      <div style={{
+        fontSize: "12px",
+        color: "var(--text-dim)",
+        lineHeight: 1.5,
+      }}>{f.desc}</div>
+    </div>
+  </div>
+))}
 
 export default function Welcome() {
   const navigate = useNavigate();
