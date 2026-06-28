@@ -2621,306 +2621,869 @@ const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continu
 // ─────────────────────────────────────────────
 // CANDLE ANIMATION ENGINE
 // ─────────────────────────────────────────────
-function CandleChart({ pattern, playing, onComplete }) {
+// ─────────────────────────────────────────────
+// CANDLE ANIMATION ENGINE — Full Rebuild
+// ─────────────────────────────────────────────
+function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }) {
   const svgRef = useRef(null);
   const animRef = useRef(null);
   const stepRef = useRef(0);
 
-  const W = 320, H = 200;
+  const W = width, H = height;
   const candles = pattern.candles;
   const allPrices = candles.flatMap(c => [c.h, c.l]);
-  const minP = Math.min(...allPrices) - 6;
-  const maxP = Math.max(...allPrices) + 6;
-  const candleW = Math.min(14, (W - 40) / candles.length - 2);
-  const spacing = (W - 40) / candles.length;
+  const minP = Math.min(...allPrices) - 8;
+  const maxP = Math.max(...allPrices) + 8;
+  const PAD_L = 36, PAD_R = 16, PAD_T = 32, PAD_B = 28;
+  const chartW = W - PAD_L - PAD_R;
+  const chartH = H - PAD_T - PAD_B;
+  const candleW = Math.min(18, chartW / candles.length - 3);
+  const spacing = chartW / candles.length;
 
   function yS(price) {
-    return 24 + ((maxP - price) / (maxP - minP)) * (H - 55);
+    return PAD_T + ((maxP - price) / (maxP - minP)) * chartH;
   }
-
   function xC(i) {
-    return 25 + i * spacing + spacing / 2;
+    return PAD_L + i * spacing + spacing / 2;
   }
 
   useEffect(() => {
     if (!svgRef.current) return;
     const svg = svgRef.current;
+    if (!playing) return;
 
-    if (playing) {
-      stepRef.current = 0;
-      svg.innerHTML = '';
+    stepRef.current = 0;
+    svg.innerHTML = '';
 
-      // ── Layer groups so annotations always render on top ──
-      const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      const candleGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      const lineGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      svg.appendChild(gridGroup);
-      svg.appendChild(candleGroup);
-      svg.appendChild(lineGroup);
-      svg.appendChild(labelGroup);
+    // Layer groups — order matters for z-index
+    const gridG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const zoneG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const candleG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const lineG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const labelG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    [gridG, zoneG, candleG, lineG, labelG].forEach(g => svg.appendChild(g));
 
-      // Grid
-      for (let i = 0; i <= 4; i++) {
-        const y = 24 + (i / 4) * (H - 55);
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', 20); line.setAttribute('x2', W - 10);
-        line.setAttribute('y1', y); line.setAttribute('y2', y);
-        line.setAttribute('stroke', 'rgba(255,255,255,0.05)');
-        line.setAttribute('stroke-width', '0.5');
-        gridGroup.appendChild(line);
-      }
-
-      function drawNextCandle() {
-        const i = stepRef.current;
-        if (i >= candles.length) {
-          drawAnnotations();
-          onComplete && onComplete();
-          return;
-        }
-
-        const c = candles[i];
-        const color = c.bull ? TEAL : RED;
-        const x = xC(i);
-        const yH = yS(c.h);
-        const yL = yS(c.l);
-        const yO = yS(c.o);
-        const yC = yS(c.c);
-
-        const wick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        wick.setAttribute('x1', x); wick.setAttribute('x2', x);
-        wick.setAttribute('y1', yH); wick.setAttribute('y2', yL);
-        wick.setAttribute('stroke', color);
-        wick.setAttribute('stroke-width', '1.5');
-        candleGroup.appendChild(wick);
-
-        const bodyTop = Math.min(yO, yC);
-        const bodyH = Math.max(Math.abs(yO - yC), 2);
-        const body = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        body.setAttribute('x', x - candleW / 2);
-        body.setAttribute('y', bodyTop);
-        body.setAttribute('width', candleW);
-        body.setAttribute('height', bodyH);
-        body.setAttribute('fill', color);
-        body.setAttribute('rx', '1');
-        candleGroup.appendChild(body);
-
-        stepRef.current++;
-        animRef.current = setTimeout(drawNextCandle, 80);
-      }
-
-      function makeText(x, y, text, color, size, anchor, bold) {
-        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        txt.setAttribute('x', x);
-        txt.setAttribute('y', y);
-        txt.setAttribute('fill', color);
-        txt.setAttribute('font-size', size || '9');
-        txt.setAttribute('font-weight', bold ? '700' : '400');
-        txt.setAttribute('font-family', 'monospace');
-        txt.setAttribute('text-anchor', anchor || 'middle');
-        txt.textContent = text;
-        txt.style.opacity = '0';
-        return txt;
-      }
-
-      function makeBg(x, y, w, h, color) {
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', x - w / 2);
-        rect.setAttribute('y', y - h + 2);
-        rect.setAttribute('width', w);
-        rect.setAttribute('height', h);
-        rect.setAttribute('fill', color || 'rgba(6,11,20,0.85)');
-        rect.setAttribute('rx', '3');
-        rect.style.opacity = '0';
-        return rect;
-      }
-
-      function fadeIn(el, delay) {
-        setTimeout(() => {
-          el.style.transition = 'opacity 0.35s';
-          el.style.opacity = '1';
-        }, delay || 100);
-      }
-
-      function drawAnnotations() {
-        setTimeout(() => {
-          // ── Draw hlines first (in lineGroup, behind labels) ──
-          pattern.annotations?.forEach(ann => {
-            if (ann.type === 'hline') {
-              // Use a fixed price if provided, otherwise derive from candle
-              let y;
-              if (ann.price !== undefined) {
-                y = yS(ann.price);
-              } else if (ann.candleIdx !== undefined) {
-                const c = candles[ann.candleIdx];
-                const next = candles[ann.candleIdx + 1];
-                y = yS(Math.max(c.h, next?.h || c.h));
-              } else {
-                return;
-              }
-
-              const lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-              lineEl.setAttribute('x1', 18);
-              lineEl.setAttribute('x2', W - 12);
-              lineEl.setAttribute('y1', y);
-              lineEl.setAttribute('y2', y);
-              lineEl.setAttribute('stroke', ann.color || 'rgba(212,175,55,0.7)');
-              lineEl.setAttribute('stroke-width', '1');
-              lineEl.setAttribute('stroke-dasharray', '5,3');
-              lineEl.style.opacity = '0';
-              lineGroup.appendChild(lineEl);
-              fadeIn(lineEl, 100);
-
-              if (ann.label) {
-                const labelW = ann.label.length * 5.5 + 10;
-                const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                bg.setAttribute('x', W - 14 - labelW);
-                bg.setAttribute('y', y - 10);
-                bg.setAttribute('width', labelW);
-                bg.setAttribute('height', 12);
-                bg.setAttribute('fill', 'rgba(6,11,20,0.9)');
-                bg.setAttribute('rx', '2');
-                bg.style.opacity = '0';
-                lineGroup.appendChild(bg);
-                fadeIn(bg, 150);
-
-                const txt = makeText(W - 14, y - 1, ann.label, ann.color || GOLD, '8', 'end', true);
-                lineGroup.appendChild(txt);
-                fadeIn(txt, 150);
-              }
-            }
-          });
-
-          // ── Draw bracket lines ──
-          pattern.annotations?.forEach(ann => {
-            if (ann.type === 'bracket' && ann.start !== undefined) {
-              const x1 = xC(ann.start) - candleW;
-              const x2 = xC(ann.end) + candleW;
-              const y = H - 16;
-              const midX = (x1 + x2) / 2;
-
-              // Bracket line
-              const lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-              lineEl.setAttribute('x1', x1); lineEl.setAttribute('x2', x2);
-              lineEl.setAttribute('y1', y); lineEl.setAttribute('y2', y);
-              lineEl.setAttribute('stroke', ann.color || GOLD);
-              lineEl.setAttribute('stroke-width', '1');
-              lineEl.style.opacity = '0';
-              lineGroup.appendChild(lineEl);
-              fadeIn(lineEl, 200);
-
-              // End ticks
-              [x1, x2].forEach(tx => {
-                const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                tick.setAttribute('x1', tx); tick.setAttribute('x2', tx);
-                tick.setAttribute('y1', y - 4); tick.setAttribute('y2', y + 4);
-                tick.setAttribute('stroke', ann.color || GOLD);
-                tick.setAttribute('stroke-width', '1');
-                tick.style.opacity = '0';
-                lineGroup.appendChild(tick);
-                fadeIn(tick, 200);
-              });
-
-              // Label bg + text
-              const labelW = (ann.label?.length || 0) * 5.5 + 10;
-              const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-              bg.setAttribute('x', midX - labelW / 2);
-              bg.setAttribute('y', y + 4);
-              bg.setAttribute('width', labelW);
-              bg.setAttribute('height', 12);
-              bg.setAttribute('fill', 'rgba(6,11,20,0.9)');
-              bg.setAttribute('rx', '2');
-              bg.style.opacity = '0';
-              labelGroup.appendChild(bg);
-              fadeIn(bg, 250);
-
-              const txt = makeText(midX, y + 13, ann.label || '', ann.color || GOLD, '8', 'middle', true);
-              labelGroup.appendChild(txt);
-              fadeIn(txt, 250);
-            }
-          });
-
-          // ── Draw labels last (always on top) ──
-          pattern.annotations?.forEach((ann, annIdx) => {
-            if (ann.type === 'label' && ann.candleIdx !== undefined) {
-              const ci = ann.candleIdx;
-              const c = candles[ci];
-              if (!c) return;
-
-              const x = xC(ci);
-
-              // Find highest high and lowest low across ALL candles for safe label placement
-              const chartTop = yS(maxP - 6);  // top of chart area
-              const chartBot = H - 20;         // bottom of chart area
-
-              // Place label ABOVE the candle high with clearance
-              const candleHighY = yS(c.h);
-              const candleLowY = yS(c.l);
-
-              // Decide placement: above or below based on signal
-              const placeAbove = ann.above !== false;
-              let labelY;
-              if (placeAbove) {
-                labelY = candleHighY - 14;
-                // Make sure it doesn't go off top of chart
-                if (labelY < chartTop + 10) labelY = chartTop + 10;
-              } else {
-                labelY = candleLowY + 14;
-                if (labelY > chartBot - 4) labelY = chartBot - 4;
-              }
-
-              // Background pill
-              const labelW = (ann.text?.length || 0) * 5.5 + 10;
-              const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-              bg.setAttribute('x', x - labelW / 2);
-              bg.setAttribute('y', labelY - 9);
-              bg.setAttribute('width', labelW);
-              bg.setAttribute('height', 12);
-              bg.setAttribute('fill', 'rgba(6,11,20,0.92)');
-              bg.setAttribute('rx', '3');
-              bg.style.opacity = '0';
-              labelGroup.appendChild(bg);
-              fadeIn(bg, 150 + annIdx * 60);
-
-              // Text
-              const txt = makeText(x, labelY, ann.text || '', ann.color || GOLD, '9', 'middle', true);
-              labelGroup.appendChild(txt);
-              fadeIn(txt, 150 + annIdx * 60);
-
-              // Small tick line from label to candle
-              const tickY1 = placeAbove ? labelY + 4 : labelY - 12;
-              const tickY2 = placeAbove ? candleHighY - 2 : candleLowY + 2;
-              if (Math.abs(tickY2 - tickY1) > 4) {
-                const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                tick.setAttribute('x1', x); tick.setAttribute('x2', x);
-                tick.setAttribute('y1', tickY1); tick.setAttribute('y2', tickY2);
-                tick.setAttribute('stroke', ann.color || GOLD);
-                tick.setAttribute('stroke-width', '0.5');
-                tick.setAttribute('stroke-dasharray', '2,2');
-                tick.style.opacity = '0';
-                lineGroup.appendChild(tick);
-                fadeIn(tick, 150 + annIdx * 60);
-              }
-            }
-          });
-
-        }, 300);
-      }
-
-      drawNextCandle();
+    // Grid lines + price labels
+    for (let i = 0; i <= 5; i++) {
+      const price = minP + (i / 5) * (maxP - minP);
+      const y = yS(price);
+      const gl = mkEl('line', { x1: PAD_L, x2: W - PAD_R, y1: y, y2: y,
+        stroke: 'rgba(255,255,255,0.06)', 'stroke-width': '0.5' });
+      gridG.appendChild(gl);
+      const pt = mkEl('text', { x: PAD_L - 4, y: y + 4, fill: 'rgba(156,163,175,0.5)',
+        'font-size': '9', 'text-anchor': 'end', 'font-family': 'monospace' });
+      pt.textContent = Math.round(price);
+      gridG.appendChild(pt);
     }
 
-    return () => {
-      if (animRef.current) clearTimeout(animRef.current);
-    };
+    // Draw candles one by one
+    function drawNextCandle() {
+      const i = stepRef.current;
+      if (i >= candles.length) {
+        drawOverlays();
+        onComplete && onComplete();
+        return;
+      }
+      const c = candles[i];
+      const color = c.bull ? TEAL : RED;
+      const x = xC(i);
+      const yH = yS(c.h), yL = yS(c.l);
+      const yO = yS(c.o), yC2 = yS(c.c);
+
+      const wick = mkEl('line', { x1: x, x2: x, y1: yH, y2: yL,
+        stroke: color, 'stroke-width': '1.5' });
+      candleG.appendChild(wick);
+
+      const bTop = Math.min(yO, yC2);
+      const bH = Math.max(Math.abs(yO - yC2), 2);
+      const body = mkEl('rect', { x: x - candleW / 2, y: bTop,
+        width: candleW, height: bH, fill: color, rx: '1' });
+      candleG.appendChild(body);
+
+      stepRef.current++;
+      animRef.current = setTimeout(drawNextCandle, 65);
+    }
+
+    // After candles: draw all overlays
+    function drawOverlays() {
+      setTimeout(() => {
+        drawAutoOverlays();
+        drawAnnotations();
+      }, 200);
+    }
+
+    // Auto-detect and draw trendlines/necklines based on pattern type
+    function drawAutoOverlays() {
+      const name = (pattern.name || '').toLowerCase();
+      const signal = (pattern.signal || '').toLowerCase();
+
+      // ── Neckline for H&S, Double Top, Double Bottom, Triple Top, Triple Bottom ──
+      if (name.includes('head & shoulders') || name.includes('head and shoulders')) {
+        // Find the two neckline lows (troughs between shoulders and head)
+        const neckPrices = [candles[3], candles[7]].filter(Boolean);
+        if (neckPrices.length === 2) {
+          const y1 = yS(neckPrices[0].l);
+          const y2 = yS(neckPrices[1].l);
+          drawDashedLine(PAD_L, y1, W - PAD_R, y2, GOLD, '6,3', 'Neckline', 1500);
+        }
+      }
+
+      if (name.includes('inverse head')) {
+        const neckPrices = [candles[4], candles[8]].filter(Boolean);
+        if (neckPrices.length === 2) {
+          const y1 = yS(neckPrices[0].h);
+          const y2 = yS(neckPrices[1].h);
+          drawDashedLine(PAD_L, y1, W - PAD_R, y2, GOLD, '6,3', 'Neckline', 1500);
+        }
+      }
+
+      if (name.includes('double top')) {
+        const neckY = yS(candles[5]?.l || candles[5]?.c || 200);
+        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '6,3', 'Neckline', 1500);
+      }
+
+      if (name.includes('double bottom')) {
+        const neckY = yS(candles[6]?.h || candles[6]?.c || 210);
+        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, '6,3', 'Neckline', 1500);
+      }
+
+      if (name.includes('triple top')) {
+        const neckY = yS(candles[4]?.l || 197);
+        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '6,3', 'Neckline', 1500);
+      }
+
+      if (name.includes('triple bottom')) {
+        const neckY = yS(candles[4]?.h || 209);
+        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '6,3', 'Neckline', 1500);
+      }
+
+      // ── Trendlines for wedges ──
+      if (name.includes('rising wedge')) {
+        const x1 = xC(0), x2 = xC(candles.length - 4);
+        const upperY1 = yS(candles[0].h), upperY2 = yS(candles[7].h);
+        const lowerY1 = yS(candles[0].l), lowerY2 = yS(candles[6].l);
+        drawTrendLine(x1, upperY1, x2, upperY2, RED, '5,3', 'Resistance', 1200);
+        drawTrendLine(x1, lowerY1, x2, lowerY2, GOLD, '5,3', 'Support', 1400);
+      }
+
+      if (name.includes('falling wedge')) {
+        const x1 = xC(0), x2 = xC(candles.length - 4);
+        const upperY1 = yS(candles[0].h), upperY2 = yS(candles[6].h);
+        const lowerY1 = yS(candles[0].l), lowerY2 = yS(candles[8].l);
+        drawTrendLine(x1, upperY1, x2, upperY2, RED, '5,3', 'Resistance', 1200);
+        drawTrendLine(x1, lowerY1, x2, lowerY2, TEAL, '5,3', 'Support', 1400);
+      }
+
+      // ── Channel lines ──
+      if (name.includes('rising channel')) {
+        const x1 = xC(0), x2 = xC(candles.length - 1);
+        drawTrendLine(x1, yS(candles[0].l), x2, yS(candles[candles.length - 1].l), TEAL, '5,3', 'Support', 1200);
+        drawTrendLine(x1, yS(candles[0].h), x2, yS(candles[candles.length - 3].h), RED, '5,3', 'Resistance', 1400);
+      }
+
+      if (name.includes('falling channel')) {
+        const x1 = xC(0), x2 = xC(candles.length - 1);
+        drawTrendLine(x1, yS(candles[0].h), x2, yS(candles[candles.length - 1].h), RED, '5,3', 'Resistance', 1200);
+        drawTrendLine(x1, yS(candles[0].l), x2, yS(candles[candles.length - 3].l), TEAL, '5,3', 'Support', 1400);
+      }
+
+      // ── Flag trendlines ──
+      if (name.includes('bull flag')) {
+        const flagStart = 5, flagEnd = 9;
+        drawTrendLine(xC(flagStart), yS(candles[flagStart].h), xC(flagEnd), yS(candles[flagEnd].h), RED, '4,3', 'Flag Top', 1200);
+        drawTrendLine(xC(flagStart), yS(candles[flagStart].l), xC(flagEnd), yS(candles[flagEnd].l), TEAL, '4,3', 'Flag Bottom', 1400);
+      }
+
+      if (name.includes('bear flag')) {
+        const flagStart = 4, flagEnd = 8;
+        drawTrendLine(xC(flagStart), yS(candles[flagStart].h), xC(flagEnd), yS(candles[flagEnd].h), RED, '4,3', 'Flag Top', 1200);
+        drawTrendLine(xC(flagStart), yS(candles[flagStart].l), xC(flagEnd), yS(candles[flagEnd].l), TEAL, '4,3', 'Flag Bottom', 1400);
+      }
+
+      // ── Triangle resistance/support lines ──
+      if (name.includes('ascending triangle')) {
+        const flatY = yS(candles[3].h);
+        drawDashedLine(xC(3), flatY, xC(10), flatY, RED, '5,3', 'Resistance', 1200);
+        drawTrendLine(xC(3), yS(candles[4].l), xC(9), yS(candles[8].l), TEAL, '5,3', 'Support', 1400);
+      }
+
+      if (name.includes('descending triangle')) {
+        const flatY = yS(candles[2].l);
+        drawDashedLine(xC(2), flatY, xC(10), flatY, TEAL, '5,3', 'Support', 1200);
+        drawTrendLine(xC(2), yS(candles[1].h), xC(9), yS(candles[8].h), RED, '5,3', 'Resistance', 1400);
+      }
+
+      // ── Rectangle zones ──
+      if (name.includes('rectangle')) {
+        const topY = yS(Math.max(...candles.slice(2, 9).map(c => c.h)));
+        const botY = yS(Math.min(...candles.slice(2, 9).map(c => c.l)));
+        const zone = mkEl('rect', {
+          x: xC(2), y: topY,
+          width: xC(8) - xC(2), height: botY - topY,
+          fill: 'rgba(212,175,55,0.06)',
+          stroke: 'rgba(212,175,55,0.25)',
+          'stroke-width': '1',
+          'stroke-dasharray': '4,3',
+          rx: '3'
+        });
+        zone.style.opacity = '0';
+        zoneG.appendChild(zone);
+        fadeIn(zone, 1200);
+      }
+
+      // ── Support/Resistance hlines ──
+      if (name.includes('support bounce')) {
+        const supY = yS(Math.min(...candles.slice(4, 7).map(c => c.l)));
+        drawDashedLine(PAD_L, supY, W - PAD_R, supY, TEAL, '6,3', 'Support', 1200);
+      }
+
+      if (name.includes('resistance rejection')) {
+        const resY = yS(Math.max(...candles.slice(4, 7).map(c => c.h)));
+        drawDashedLine(PAD_L, resY, W - PAD_R, resY, RED, '6,3', 'Resistance', 1200);
+      }
+
+      // ── Stop/Target zones for any pattern ──
+      const lastCandle = candles[candles.length - 1];
+      const isBull = signal.includes('bullish');
+      const isBear = signal.includes('bearish');
+
+      if (isBull && lastCandle) {
+        const entryY = yS(lastCandle.c);
+        const stopY = yS(Math.min(...candles.map(c => c.l)) + 1);
+        const targetY = yS(Math.max(...candles.map(c => c.h)) + 8);
+
+        // Stop zone
+        drawZone(xC(candles.length - 3), stopY, xC(candles.length - 1) + candleW, entryY,
+          'rgba(239,83,80,0.12)', 'rgba(239,83,80,0.3)', 'Stop', 1800);
+        // Target zone
+        drawZone(xC(candles.length - 3), targetY, xC(candles.length - 1) + candleW, entryY - 10,
+          'rgba(38,166,154,0.12)', 'rgba(38,166,154,0.3)', 'Target', 2000);
+      }
+
+      if (isBear && lastCandle) {
+        const entryY = yS(lastCandle.c);
+        const stopY = yS(Math.max(...candles.map(c => c.h)) - 1);
+        const targetY = yS(Math.min(...candles.map(c => c.l)) - 8);
+
+        drawZone(xC(candles.length - 3), entryY, xC(candles.length - 1) + candleW, stopY,
+          'rgba(239,83,80,0.12)', 'rgba(239,83,80,0.3)', 'Stop', 1800);
+        drawZone(xC(candles.length - 3), entryY + 10, xC(candles.length - 1) + candleW, targetY,
+          'rgba(38,166,154,0.12)', 'rgba(38,166,154,0.3)', 'Target', 2000);
+      }
+    }
+
+    // Draw annotations from pattern data
+    function drawAnnotations() {
+      pattern.annotations?.forEach((ann, idx) => {
+        const delay = 800 + idx * 120;
+
+        if (ann.type === 'label' && ann.candleIdx !== undefined) {
+          const c = candles[ann.candleIdx];
+          if (!c) return;
+          const x = xC(ann.candleIdx);
+          const isBullSig = pattern.signal?.toLowerCase().includes('bullish');
+          const candleTopY = yS(c.h);
+          const candleBotY = yS(c.l);
+
+          // Place above for bullish labels at tops, below for bottoms
+          const placeAbove = candleTopY > PAD_T + 20;
+          const labelY = placeAbove ? candleTopY - 18 : candleBotY + 18;
+          const clampedY = Math.max(PAD_T + 12, Math.min(H - PAD_B - 8, labelY));
+
+          const tw = (ann.text?.length || 0) * 6 + 14;
+          const bg = mkEl('rect', {
+            x: x - tw / 2, y: clampedY - 10,
+            width: tw, height: 14,
+            fill: 'rgba(6,11,20,0.95)', rx: '3',
+            stroke: `${ann.color || GOLD}40`, 'stroke-width': '0.5'
+          });
+          bg.style.opacity = '0';
+          labelG.appendChild(bg);
+          fadeIn(bg, delay);
+
+          const txt = mkEl('text', {
+            x, y: clampedY,
+            fill: ann.color || GOLD,
+            'font-size': '10', 'font-weight': '700',
+            'font-family': 'monospace', 'text-anchor': 'middle'
+          });
+          txt.textContent = ann.text;
+          txt.style.opacity = '0';
+          labelG.appendChild(txt);
+          fadeIn(txt, delay);
+
+          // Tick line
+          const tickEnd = placeAbove ? candleTopY - 3 : candleBotY + 3;
+          const tickStart = placeAbove ? clampedY + 5 : clampedY - 13;
+          if (Math.abs(tickEnd - tickStart) > 5) {
+            const tick = mkEl('line', {
+              x1: x, x2: x, y1: tickStart, y2: tickEnd,
+              stroke: ann.color || GOLD,
+              'stroke-width': '0.5', 'stroke-dasharray': '2,2'
+            });
+            tick.style.opacity = '0';
+            lineG.appendChild(tick);
+            fadeIn(tick, delay);
+          }
+        }
+
+        if (ann.type === 'hline' && ann.candleIdx !== undefined) {
+          const c = candles[ann.candleIdx];
+          const next = candles[ann.candleIdx + 1];
+          const y = yS(Math.max(c.h, next?.h || c.h));
+          drawDashedLine(PAD_L, y, W - PAD_R, y, ann.color || GOLD, '5,3', ann.label, delay);
+        }
+
+        if (ann.type === 'bracket' && ann.start !== undefined) {
+          const x1 = xC(ann.start) - candleW / 2;
+          const x2 = xC(ann.end) + candleW / 2;
+          const y = H - PAD_B + 8;
+          const midX = (x1 + x2) / 2;
+
+          const bline = mkEl('line', { x1, x2, y1: y, y2: y,
+            stroke: ann.color || GOLD, 'stroke-width': '1' });
+          bline.style.opacity = '0';
+          lineG.appendChild(bline);
+          fadeIn(bline, delay);
+
+          [x1, x2].forEach(tx => {
+            const tick = mkEl('line', { x1: tx, x2: tx, y1: y - 4, y2: y + 4,
+              stroke: ann.color || GOLD, 'stroke-width': '1' });
+            tick.style.opacity = '0';
+            lineG.appendChild(tick);
+            fadeIn(tick, delay);
+          });
+
+          const lw = (ann.label?.length || 0) * 5.5 + 10;
+          const lbg = mkEl('rect', { x: midX - lw / 2, y: y + 4, width: lw, height: 13,
+            fill: 'rgba(6,11,20,0.95)', rx: '2' });
+          lbg.style.opacity = '0';
+          labelG.appendChild(lbg);
+          fadeIn(lbg, delay + 80);
+
+          const ltxt = mkEl('text', { x: midX, y: y + 13,
+            fill: ann.color || GOLD, 'font-size': '9', 'font-weight': '700',
+            'font-family': 'monospace', 'text-anchor': 'middle' });
+          ltxt.textContent = ann.label || '';
+          ltxt.style.opacity = '0';
+          labelG.appendChild(ltxt);
+          fadeIn(ltxt, delay + 80);
+        }
+      });
+    }
+
+    // ── Helpers ──
+    function mkEl(tag, attrs = {}) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      return el;
+    }
+
+    function fadeIn(el, delay) {
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.4s';
+        el.style.opacity = '1';
+      }, delay || 100);
+    }
+
+    function drawDashedLine(x1, y1, x2, y2, color, dash, label, delay) {
+      const line = mkEl('line', { x1, x2, y1, y2,
+        stroke: color || GOLD, 'stroke-width': '1.2',
+        'stroke-dasharray': dash || '5,3' });
+      line.style.opacity = '0';
+      lineG.appendChild(line);
+      fadeIn(line, delay);
+
+      if (label) {
+        const lw = label.length * 5.5 + 12;
+        const lbg = mkEl('rect', { x: W - PAD_R - lw, y: y1 - 10, width: lw, height: 13,
+          fill: 'rgba(6,11,20,0.92)', rx: '2' });
+        lbg.style.opacity = '0';
+        lineG.appendChild(lbg);
+        fadeIn(lbg, delay + 100);
+
+        const ltxt = mkEl('text', { x: W - PAD_R - 4, y: y1,
+          fill: color || GOLD, 'font-size': '9', 'font-weight': '700',
+          'font-family': 'monospace', 'text-anchor': 'end' });
+        ltxt.textContent = label;
+        ltxt.style.opacity = '0';
+        lineG.appendChild(ltxt);
+        fadeIn(ltxt, delay + 100);
+      }
+    }
+
+    function drawTrendLine(x1, y1, x2, y2, color, dash, label, delay) {
+      // Extend slightly beyond the candles
+      const slope = (y2 - y1) / (x2 - x1);
+      const ex1 = x1 - 10;
+      const ey1 = y1 - slope * 10;
+      const ex2 = x2 + 30;
+      const ey2 = y2 + slope * 30;
+
+      const line = mkEl('line', { x1: ex1, x2: ex2, y1: ey1, y2: ey2,
+        stroke: color || GOLD, 'stroke-width': '1.2',
+        'stroke-dasharray': dash || '5,3' });
+      line.style.opacity = '0';
+      lineG.appendChild(line);
+      fadeIn(line, delay);
+
+      if (label) {
+        const lbg = mkEl('rect', { x: ex2 - 2, y: ey2 - 11,
+          width: label.length * 5.5 + 10, height: 13,
+          fill: 'rgba(6,11,20,0.92)', rx: '2' });
+        lbg.style.opacity = '0';
+        lineG.appendChild(lbg);
+        fadeIn(lbg, delay + 100);
+
+        const ltxt = mkEl('text', { x: ex2 + 2, y: ey2 - 1,
+          fill: color || GOLD, 'font-size': '9', 'font-weight': '700',
+          'font-family': 'monospace', 'text-anchor': 'start' });
+        ltxt.textContent = label;
+        ltxt.style.opacity = '0';
+        lineG.appendChild(ltxt);
+        fadeIn(ltxt, delay + 100);
+      }
+    }
+
+    function drawZone(x1, y1, x2, y2, fill, stroke, label, delay) {
+      if (y1 > y2) [y1, y2] = [y2, y1];
+      if (y2 - y1 < 4) return;
+      const rect = mkEl('rect', { x: x1, y: y1, width: x2 - x1, height: y2 - y1,
+        fill, stroke, 'stroke-width': '0.5', rx: '3' });
+      rect.style.opacity = '0';
+      zoneG.appendChild(rect);
+      fadeIn(rect, delay);
+
+      if (label) {
+        const ltxt = mkEl('text', { x: x1 + 6, y: y1 + 10,
+          fill: '#fff', 'font-size': '8', 'font-weight': '700',
+          'font-family': 'monospace' });
+        ltxt.textContent = label;
+        ltxt.style.opacity = '0';
+        labelG.appendChild(ltxt);
+        fadeIn(ltxt, delay + 100);
+      }
+    }
+
+    drawNextCandle();
+
+    return () => { if (animRef.current) clearTimeout(animRef.current); };
   }, [playing, pattern]);
 
   return (
-    <svg
-      ref={svgRef}
-      viewBox={`0 0 ${W} ${H}`}
-      style={{ width: '100%', height: '100%', display: 'block' }}
-    />
+    <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`}
+      style={{ width: '100%', height: '100%', display: 'block', background: 'transparent' }} />
+  );
+}
+
+// ─────────────────────────────────────────────
+// PATTERN CARD — Full Professional Layout
+// ─────────────────────────────────────────────
+function PatternCard({ pattern, isExpanded, onClick }) {
+  const [playing, setPlaying] = useState(false);
+  const [done, setDone] = useState(false);
+  const [quizMode, setQuizMode] = useState(false);
+  const [quizAnswer, setQuizAnswer] = useState(null);
+  const [quizOptions, setQuizOptions] = useState([]);
+  const [activeTab, setActiveTab] = useState('overview');
+
+  useEffect(() => {
+    if (isExpanded && !playing && !done) {
+      setTimeout(() => setPlaying(true), 300);
+    }
+    if (!isExpanded) {
+      setPlaying(false);
+      setDone(false);
+      setQuizMode(false);
+      setQuizAnswer(null);
+      setActiveTab('overview');
+    }
+  }, [isExpanded]);
+
+  function handleReplay() {
+    setDone(false);
+    setPlaying(false);
+    setTimeout(() => setPlaying(true), 100);
+  }
+
+  function startQuiz() {
+    const others = ALL_PATTERNS.filter(p => p.id !== pattern.id && p.category === pattern.category);
+    const shuffled = others.sort(() => Math.random() - 0.5).slice(0, 3);
+    const opts = [pattern, ...shuffled].sort(() => Math.random() - 0.5);
+    setQuizOptions(opts);
+    setQuizAnswer(null);
+    setQuizMode(true);
+  }
+
+  const levelColor = pattern.level === 'Beginner' ? TEAL : pattern.level === 'Intermediate' ? GOLD : PURPLE;
+  const sc = pattern.signalColor || GOLD;
+
+  const TABS = ['overview', 'setup', 'advanced', 'quiz'];
+
+  return (
+    <div
+      onClick={!isExpanded ? onClick : undefined}
+      style={{
+        background: isExpanded ? '#0a0f1a' : 'rgba(255,255,255,0.03)',
+        border: `1px solid ${isExpanded ? `${sc}40` : 'rgba(255,255,255,0.08)'}`,
+        borderRadius: 14,
+        overflow: 'hidden',
+        cursor: isExpanded ? 'default' : 'pointer',
+        transition: 'all 0.2s',
+        gridColumn: isExpanded ? '1 / -1' : 'auto',
+      }}
+    >
+      {/* ── Card Header ── */}
+      <div
+        style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer',
+          background: isExpanded ? 'rgba(255,255,255,0.02)' : 'transparent' }}
+        onClick={onClick}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 8, background: `${sc}18`, border: `1px solid ${sc}40`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 13, fontWeight: 900, color: sc, fontFamily: 'monospace' }}>
+            {pattern.id}
+          </div>
+          <div>
+            <div style={{ color: '#f5f1e8', fontSize: 14, fontWeight: 700 }}>{pattern.name}</div>
+            <div style={{ display: 'flex', gap: 5, marginTop: 3, flexWrap: 'wrap' }}>
+              {[
+                { text: pattern.level, color: levelColor },
+                { text: pattern.category, color: '#9ca3af' },
+                { text: pattern.signal, color: sc },
+              ].map(tag => (
+                <span key={tag.text} style={{ background: `${tag.color}15`, border: `1px solid ${tag.color}35`,
+                  color: tag.color, fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 4, letterSpacing: 0.5 }}>
+                  {tag.text}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {isExpanded && (
+            <div style={{ color: '#9ca3af', fontSize: 11 }}>
+              <span style={{ color: sc, fontWeight: 800, fontFamily: 'monospace' }}>{pattern.confidence}</span>/10
+            </div>
+          )}
+          <div style={{ color: '#9ca3af', fontSize: 20, fontWeight: 300 }}>{isExpanded ? '−' : '+'}</div>
+        </div>
+      </div>
+
+      {/* ── Expanded Content ── */}
+      {isExpanded && (
+        <div>
+          {/* Description strip */}
+          <div style={{ padding: '10px 20px', background: 'rgba(255,255,255,0.02)',
+            borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)',
+            color: '#9ca3af', fontSize: 13, lineHeight: 1.6 }}>
+            {pattern.description}
+          </div>
+
+          {/* Action buttons */}
+          <div style={{ padding: '12px 20px', display: 'flex', gap: 8, alignItems: 'center',
+            borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            {done && (
+              <button onClick={handleReplay}
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+                  borderRadius: 8, color: '#f5f1e8', fontSize: 12, fontWeight: 700, padding: '7px 16px', cursor: 'pointer' }}>
+                ↺ Replay
+              </button>
+            )}
+            {done && (
+              <button onClick={startQuiz}
+                style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}40`,
+                  borderRadius: 8, color: GOLD, fontSize: 12, fontWeight: 700, padding: '7px 16px', cursor: 'pointer' }}>
+                ⚡ Quiz Me
+              </button>
+            )}
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+              {TABS.map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab)}
+                  style={{ background: activeTab === tab ? `${sc}20` : 'transparent',
+                    border: `1px solid ${activeTab === tab ? sc : 'rgba(255,255,255,0.1)'}`,
+                    borderRadius: 7, color: activeTab === tab ? sc : '#9ca3af',
+                    fontSize: 11, fontWeight: 700, padding: '6px 14px', cursor: 'pointer',
+                    textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Main content area */}
+          <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', minHeight: 420 }}>
+
+            {/* ── Left: Chart (large) ── */}
+            <div style={{ padding: '16px 20px', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: done ? TEAL : GOLD,
+                  boxShadow: `0 0 6px ${done ? TEAL : GOLD}` }} />
+                <span style={{ color: '#9ca3af', fontSize: 10, fontWeight: 700, letterSpacing: 1.5 }}>
+                  PATTERN ANIMATION
+                </span>
+                <span style={{ color: '#9ca3af', fontSize: 10, marginLeft: 'auto' }}>
+                  {pattern.timeframe?.join(' · ')}
+                </span>
+              </div>
+
+              <div style={{ background: '#060b14', borderRadius: 12, padding: '8px',
+                height: 340, position: 'relative', overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.06)' }}>
+                {!playing && !done && (
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', color: '#9ca3af', fontSize: 13 }}>
+                    Loading...
+                  </div>
+                )}
+                <CandleChart pattern={pattern} playing={playing} onComplete={() => setDone(true)}
+                  width={580} height={324} />
+              </div>
+
+              {/* Legend */}
+              <div style={{ display: 'flex', gap: 16, marginTop: 10, flexWrap: 'wrap' }}>
+                {[
+                  { color: TEAL, label: 'Bullish candle' },
+                  { color: RED, label: 'Bearish candle' },
+                  { color: 'rgba(38,166,154,0.4)', label: 'Target zone', border: TEAL },
+                  { color: 'rgba(239,83,80,0.4)', label: 'Stop zone', border: RED },
+                  { color: GOLD, label: 'Key level', dashed: true },
+                ].map(item => (
+                  <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    {item.dashed ? (
+                      <div style={{ width: 18, height: 0, borderTop: `2px dashed ${item.color}` }} />
+                    ) : (
+                      <div style={{ width: 10, height: 10, borderRadius: 2, background: item.color,
+                        border: item.border ? `1px solid ${item.border}` : 'none' }} />
+                    )}
+                    <span style={{ color: '#9ca3af', fontSize: 10 }}>{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Right: At a Glance ── */}
+            <div style={{ padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ color: sc, fontSize: 10, fontWeight: 800, letterSpacing: 1.5, marginBottom: 2 }}>
+                AT A GLANCE
+              </div>
+
+              {[
+                { icon: '📊', label: 'Type', value: pattern.signal },
+                { icon: '⭐', label: 'Confidence', value: `${pattern.confidence}/10` },
+                { icon: '✅', label: 'Success Rate', value: pattern.successRate },
+                { icon: '⏱', label: 'Timeframes', value: pattern.timeframe?.slice(0, 3).join(', ') },
+                { icon: '📈', label: 'Risk/Reward', value: pattern.riskReward },
+              ].map(item => (
+                <div key={item.label} style={{ background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '8px 10px' }}>
+                  <div style={{ color: '#9ca3af', fontSize: 9, fontWeight: 700, letterSpacing: 1, marginBottom: 3 }}>
+                    {item.icon} {item.label}
+                  </div>
+                  <div style={{ color: '#f5f1e8', fontSize: 11, fontWeight: 700, lineHeight: 1.4 }}>
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+                borderRadius: 8, padding: '8px 10px' }}>
+                <div style={{ color: '#9ca3af', fontSize: 9, fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>
+                  🔑 BEST INDICATORS
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                  {pattern.bestIndicators?.map(ind => (
+                    <span key={ind} style={{ background: `${sc}15`, border: `1px solid ${sc}30`,
+                      color: sc, fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 4 }}>
+                      {ind}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Tab Content ── */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '20px' }}>
+
+            {/* OVERVIEW TAB */}
+            {activeTab === 'overview' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                <InfoCard title="PSYCHOLOGY" color={PURPLE} icon="🧠">
+                  {pattern.psychology}
+                </InfoCard>
+                <InfoCard title="MARKET CONTEXT" color={BLUE} icon="🌍">
+                  {pattern.marketContext}
+                </InfoCard>
+                <InfoCard title="IDEAL LOCATION" color={GOLD} icon="📍">
+                  {pattern.idealLocation}
+                </InfoCard>
+                <InfoCard title="REQUIREMENTS" color={sc} icon="✔️">
+                  <BulletList items={pattern.requirements} />
+                </InfoCard>
+                <InfoCard title="CONFIRMATION" color={TEAL} icon="✅">
+                  <BulletList items={pattern.confirmation} />
+                </InfoCard>
+                <InfoCard title="VOLUME PROFILE" color={BLUE} icon="📊">
+                  {pattern.volumeProfile}
+                </InfoCard>
+              </div>
+            )}
+
+            {/* SETUP TAB */}
+            {activeTab === 'setup' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                <InfoCard title="→ ENTRY" color={TEAL} icon="🎯">
+                  {pattern.entry}
+                </InfoCard>
+                <InfoCard title="⚡ AGGRESSIVE ENTRY" color={TEAL} icon="⚡">
+                  {pattern.aggressiveEntry}
+                </InfoCard>
+                <InfoCard title="✓ CONSERVATIVE ENTRY" color={BLUE} icon="🛡">
+                  {pattern.conservativeEntry}
+                </InfoCard>
+                <InfoCard title="✕ STOP LOSS" color={RED} icon="🛑">
+                  {pattern.stop}
+                </InfoCard>
+                <InfoCard title="★ TARGET" color={GOLD} icon="🏆">
+                  {pattern.target}
+                </InfoCard>
+                <InfoCard title="OPTIONS PLAY" color={PURPLE} icon="📋">
+                  {pattern.optionsPlay}
+                </InfoCard>
+                <InfoCard title="INSTITUTIONAL CLUES" color={PURPLE} icon="🏦">
+                  <BulletList items={pattern.institutionalClues} />
+                </InfoCard>
+                <InfoCard title="COMMON MISTAKES" color={RED} icon="⚠️">
+                  <BulletList items={pattern.commonMistakes} />
+                </InfoCard>
+                <InfoCard title="PRO TIPS" color={TEAL} icon="💡">
+                  <BulletList items={pattern.proTips} />
+                </InfoCard>
+              </div>
+            )}
+
+            {/* ADVANCED TAB */}
+            {activeTab === 'advanced' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+                <InfoCard title="RELATED PATTERNS" color={GOLD} icon="🔗">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {pattern.relatedPatterns?.map(r => (
+                      <span key={r} style={{ background: `${GOLD}12`, border: `1px solid ${GOLD}30`,
+                        color: GOLD, fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 5 }}>
+                        {r}
+                      </span>
+                    ))}
+                  </div>
+                </InfoCard>
+                <InfoCard title="REAL-WORLD EXAMPLE" color={BLUE} icon="📌">
+                  {pattern.example}
+                </InfoCard>
+                <InfoCard title="HOMEWORK" color={PURPLE} icon="📚">
+                  {pattern.homework}
+                </InfoCard>
+                <InfoCard title="OPTIONS STRATEGY" color={TEAL} icon="📋">
+                  {pattern.optionsPlay}
+                </InfoCard>
+              </div>
+            )}
+
+            {/* QUIZ TAB */}
+            {activeTab === 'quiz' && (
+              <div style={{ maxWidth: 600 }}>
+                {!quizMode ? (
+                  <div>
+                    <InfoCard title="QUIZ QUESTION" color={GOLD} icon="❓">
+                      <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 700, color: '#f5f1e8' }}>
+                        {pattern.quiz?.question}
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                        {pattern.quiz?.choices?.map((choice, i) => (
+                          <div key={i} style={{ background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
+                            padding: '10px 12px', color: '#f5f1e8', fontSize: 12 }}>
+                            {String.fromCharCode(65 + i)}) {choice}
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ marginTop: 12, padding: '8px 12px',
+                        background: `${TEAL}12`, border: `1px solid ${TEAL}30`, borderRadius: 8,
+                        color: TEAL, fontSize: 12, fontWeight: 700 }}>
+                        ✓ Answer: {pattern.quiz?.answer}
+                      </div>
+                    </InfoCard>
+                    <button onClick={startQuiz} style={{ marginTop: 14,
+                      background: `${GOLD}15`, border: `1px solid ${GOLD}40`,
+                      borderRadius: 10, color: GOLD, fontSize: 13, fontWeight: 800,
+                      padding: '12px 24px', cursor: 'pointer', width: '100%' }}>
+                      ⚡ Start Pattern Recognition Quiz
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ color: GOLD, fontSize: 12, fontWeight: 800, letterSpacing: 1, marginBottom: 14 }}>
+                      IDENTIFY THIS PATTERN FROM THE ANIMATION ABOVE
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                      {quizOptions.map(opt => {
+                        const isCorrect = opt.id === pattern.id;
+                        const isSelected = quizAnswer === opt.id;
+                        let bg = 'rgba(255,255,255,0.04)';
+                        let border = 'rgba(255,255,255,0.1)';
+                        let color = '#f5f1e8';
+                        if (isSelected && isCorrect) { bg = 'rgba(38,166,154,0.15)'; border = `${TEAL}60`; color = TEAL; }
+                        if (isSelected && !isCorrect) { bg = 'rgba(239,83,80,0.15)'; border = `${RED}60`; color = RED; }
+                        if (quizAnswer && isCorrect) { bg = 'rgba(38,166,154,0.15)'; border = `${TEAL}60`; color = TEAL; }
+                        return (
+                          <button key={opt.id} onClick={() => setQuizAnswer(opt.id)} disabled={!!quizAnswer}
+                            style={{ background: bg, border: `1px solid ${border}`, borderRadius: 10,
+                              color, fontSize: 13, fontWeight: 700, padding: '14px 16px',
+                              cursor: quizAnswer ? 'default' : 'pointer', textAlign: 'left',
+                              transition: 'all 0.2s' }}>
+                            {opt.name}
+                            {quizAnswer && isCorrect && ' ✓'}
+                            {isSelected && !isCorrect && ' ✗'}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {quizAnswer && (
+                      <div style={{ marginTop: 12, padding: '12px 16px',
+                        background: quizAnswer === pattern.id ? 'rgba(38,166,154,0.1)' : 'rgba(239,83,80,0.1)',
+                        borderRadius: 10, color: quizAnswer === pattern.id ? TEAL : RED,
+                        fontSize: 13, fontWeight: 700 }}>
+                        {quizAnswer === pattern.id
+                          ? '✓ Correct! Great pattern recognition.'
+                          : `✗ That was ${pattern.name}. Replay the animation and study the key features.`}
+                      </div>
+                    )}
+                    <button onClick={() => { setQuizMode(false); setQuizAnswer(null); }}
+                      style={{ marginTop: 10, background: 'none', border: 'none',
+                        color: '#9ca3af', fontSize: 12, cursor: 'pointer' }}>
+                      ← Back
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Reusable info card ──
+function InfoCard({ title, color, icon, children }) {
+  return (
+    <div style={{ background: `${color}08`, border: `1px solid ${color}20`, borderRadius: 10, padding: '12px 14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+        <span style={{ fontSize: 12 }}>{icon}</span>
+        <span style={{ color, fontSize: 10, fontWeight: 800, letterSpacing: 1 }}>{title}</span>
+      </div>
+      <div style={{ color: '#d1d5db', fontSize: 12, lineHeight: 1.6 }}>{children}</div>
+    </div>
   );
 }
 
