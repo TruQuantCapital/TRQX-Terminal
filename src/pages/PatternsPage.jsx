@@ -4342,8 +4342,10 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }
   const H = height;
   const candles = pattern.candles || [];
   const allPrices = candles.flatMap(c => [c.h, c.l, c.o, c.c]);
-  const minP = Math.min(...allPrices) - 8;
-  const maxP = Math.max(...allPrices) + 8;
+  const priceRange = Math.max(...allPrices) - Math.min(...allPrices);
+  const pad = priceRange * 0.08;
+  const minP = Math.min(...allPrices) - pad;
+  const maxP = Math.max(...allPrices) + pad;
   const PAD_L = 46;
   const PAD_R = 36;
   const PAD_T = 36;
@@ -4588,7 +4590,7 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }
       const yO = yS(c.o);
       const yC2 = yS(c.c);
       const bTop = Math.min(yO, yC2);
-      const bH = Math.max(Math.abs(yO - yC2), 3);
+      const bH = Math.max(Math.abs(yO - yC2), Math.max(6, spacing * 0.18));
 
       const wick = mkEl('line', {
         x1: x,
