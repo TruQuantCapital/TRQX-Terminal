@@ -2594,8 +2594,12 @@ function enhancePattern(pattern) {
 function InfoBox({ title, children, color = GOLD }) {
   return (
     <div style={{ background: `${color}08`, border: `1px solid ${color}22`, borderRadius: 10, padding: '11px 14px' }}>
-      <div style={{ color, fontSize: 10, fontWeight: 900, letterSpacing: 1.2, marginBottom: 6 }}>{title}</div>
-      <div style={{ color: '#f5f1e8', fontSize: 12, lineHeight: 1.55 }}>{children}</div>
+      <div style={{ color, fontSize: 14, fontWeight: 900, letterSpacing: 1.5, marginBottom: 6 }}>{title}</div>
+      <div style={{
+  color: '#f5f1e8',
+  fontSize: 16,
+  lineHeight: 1.8
+}}>, lineHeight: 1.55 }}>{children}</div>
     </div>
   );
 }
@@ -2992,11 +2996,22 @@ function PatternCard({ pattern, isExpanded, onClick }) {
             {pattern.id}
           </div>
           <div>
-            <div style={{ color: '#f5f1e8', fontSize: 14, fontWeight: 700 }}>{pattern.name}</div>
+            <div style={{
+  color: '#f5f1e8',
+  fontSize: 22,
+  fontWeight: 800,
+  lineHeight: 1.3
+}}>{pattern.name}</div>
             <div style={{ display: 'flex', gap: 6, marginTop: 3 }}>
-              <span style={{ background: `${levelColor}18`, border: `1px solid ${levelColor}40`, color: levelColor, fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 4, letterSpacing: 0.5 }}>{pattern.level}</span>
-              <span style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#9ca3af', fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 4 }}>{pattern.category}</span>
-              <span style={{ background: `${pattern.signalColor}18`, border: `1px solid ${pattern.signalColor}40`, color: pattern.signalColor, fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 4 }}>{pattern.signal}</span>
+              <span style={{ background: `${levelColor}18`, border: `1px solid ${levelColor}40`, color: levelColor, fontSize: 12
+padding: '4px 10px'
+borderRadius: 6, fontWeight: 800, padding: '2px 7px', borderRadius: 4, letterSpacing: 0.5 }}>{pattern.level}</span>
+              <span style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#9ca3af', fontSize: 12
+padding: '4px 10px'
+borderRadius: 6, fontWeight: 700, padding: '2px 7px', borderRadius: 4 }}>{pattern.category}</span>
+              <span style={{ background: `${pattern.signalColor}18`, border: `1px solid ${pattern.signalColor}40`, color: pattern.signalColor, fontSize: 12
+padding: '4px 10px'
+borderRadius: 6, fontWeight: 700, padding: '2px 7px', borderRadius: 4 }}>{pattern.signal}</span>
             </div>
           </div>
         </div>
@@ -3026,10 +3041,10 @@ function PatternCard({ pattern, isExpanded, onClick }) {
                 </div>
               </div>
 
-              <div style={{ background: '#060b14', borderRadius: 10, padding: '10px', height: 200, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ background: '#060b14', borderRadius: 10, padding: '10px', height: 320, position: 'relative', overflow: 'hidden' }}>
                 {!playing && !done && (
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
-                    <div style={{ color: '#9ca3af', fontSize: 12 }}>Loading animation...</div>
+                    <div style={{ color: '#9ca3af', fontSize: 16 }}>Loading animation...</div>
                   </div>
                 )}
                 <CandleChart pattern={pattern} playing={playing} onComplete={() => setDone(true)} />
@@ -3075,7 +3090,7 @@ function PatternCard({ pattern, isExpanded, onClick }) {
             <div style={{ padding: '20px', maxHeight: 620, overflowY: 'auto' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
                 <InfoBox title="CONFIDENCE" color={pattern.signalColor}>
-                  <span style={{ fontSize: 20, fontWeight: 900, fontFamily: 'monospace' }}>{pattern.confidence}/10</span>
+                  <span style={{ fontSize: 28, fontWeight: 900, fontFamily: 'monospace' }}>{pattern.confidence}/10</span>
                 </InfoBox>
                 <InfoBox title="SUCCESS RATE" color={GOLD}>
                   {pattern.successRate}
