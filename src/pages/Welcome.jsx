@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const API_URL = import.meta.env.VITE_API_URL || "https://trqx-flow-scanner-production.up.railway.app";
 
@@ -76,41 +77,100 @@ function confetti() {
   }, 5000);
 }
 
+// All features with the canAccess feature key that gates them
 const FEATURES = [
   {
     icon: "📊",
-    title: "Options Flow Scanner",
+    title: "Flow Scanner",
     desc: "Live institutional sweeps, blocks & unusual activity in real time.",
+    featureKey: "basic_flow",
   },
   {
     icon: "⚡",
     title: "GEMX Gamma Dashboard",
     desc: "Gamma exposure levels, dealer positioning & key price levels.",
+    featureKey: "gemx",
   },
   {
     icon: "💰",
     title: "Dividend Channel",
     desc: "70 curated dividend stocks with live yields & deep dive reports.",
+    featureKey: "stock_research",
   },
   {
     icon: "🔍",
     title: "Stock Research",
     desc: "AI-powered stock verdicts, technicals & institutional analysis.",
+    featureKey: "stock_research",
   },
   {
     icon: "🎓",
     title: "Trading Academy",
     desc: "27 lessons, drills, flashcards & quizzes across 3 levels.",
+    featureKey: "academy",
+  },
+  {
+    icon: "📰",
+    title: "Market News",
+    desc: "Live market news, economic calendar & market intelligence.",
+    featureKey: "news",
   },
   {
     icon: "🤖",
     title: "AI Intelligence",
     desc: "Ask AI anything about flow, gamma, charts & trade setups.",
+    featureKey: "ai_chat",
+  },
+  {
+    icon: "📈",
+    title: "Options Flow",
+    desc: "Unusual options activity, sweeps & institutional positioning.",
+    featureKey: "options_flow",
   },
 ];
 
+// Tier display config
+const TIER_CONFIG = {
+  elite: {
+    badge: "✅ ELITE ACCESS ACTIVATED",
+    badgeBg: "rgba(34,197,94,0.15)",
+    badgeBorder: "rgba(34,197,94,0.4)",
+    badgeColor: "#22c55e",
+    subtitle: "You have full Elite access to every tool on the platform.",
+    footerText: "You have full Elite access to everything above.",
+  },
+  pro: {
+    badge: "⚡ PRO ACCESS ACTIVATED",
+    badgeBg: "rgba(168,139,250,0.15)",
+    badgeBorder: "rgba(168,139,250,0.4)",
+    badgeColor: "#a78bfa",
+    subtitle: "You have Pro access. Upgrade to Elite to unlock webhooks, API access & smart money flow.",
+    footerText: "Some features require an Elite upgrade.",
+  },
+  starter: {
+    badge: "🚀 STARTER ACCESS ACTIVATED",
+    badgeBg: "rgba(59,130,246,0.15)",
+    badgeBorder: "rgba(59,130,246,0.4)",
+    badgeColor: "#93c5fd",
+    subtitle: "You have Starter access. Upgrade to Pro or Elite to unlock live flow data, GEMX & AI tools.",
+    footerText: "Upgrade anytime to unlock more tools.",
+  },
+  free: {
+    badge: "👋 FREE PLAN ACTIVATED",
+    badgeBg: "rgba(156,163,175,0.12)",
+    badgeBorder: "rgba(156,163,175,0.3)",
+    badgeColor: "#9ca3af",
+    subtitle: "You're on the Free plan. Upgrade to access the full TRQX Capital Terminal.",
+    footerText: "Upgrade to unlock the full platform.",
+  },
+};
+
 export default function Welcome() {
   const navigate = useNavigate();
+  const { tier, canAccess } = useAuth();
+
+  const normalizedTier = (tier || "free").toLowerCase();
+  const config = TIER_CONFIG[normalizedTier] || TIER_CONFIG.free;
 
   useEffect(() => {
     confetti();
@@ -129,27 +189,27 @@ export default function Welcome() {
       position: "relative",
       overflow: "hidden",
     }}>
-      <canvas id="confetti-canvas" style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:10 }} />
+      <canvas id="confetti-canvas" style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 10 }} />
 
-      {/* Elite badge */}
+      {/* Tier badge */}
       <div style={{
-        background: "rgba(34,197,94,0.15)",
-        border: "1px solid rgba(34,197,94,0.4)",
+        background: config.badgeBg,
+        border: `1px solid ${config.badgeBorder}`,
         borderRadius: "20px",
         padding: "6px 18px",
         fontSize: "13px",
         fontWeight: 700,
-        color: "#22c55e",
+        color: config.badgeColor,
         letterSpacing: "1px",
         marginBottom: "28px",
         fontFamily: "var(--font-head)",
       }}>
-        ✅ ELITE ACCESS ACTIVATED
+        {config.badge}
       </div>
 
       {/* Hero */}
-      <div style={{ textAlign:"center", marginBottom:"36px" }}>
-        <div style={{ marginBottom:"16px" }}>
+      <div style={{ textAlign: "center", marginBottom: "36px" }}>
+        <div style={{ marginBottom: "16px" }}>
           <img
             src="https://thetrulies.com/wp-content/uploads/2026/06/ChatGPT-Image-Jun-7-2026-09_11_29-PM.png"
             alt="TRQX Crown"
@@ -172,21 +232,19 @@ export default function Welcome() {
         }}>YOU'RE IN.</h1>
         <p style={{
           color: "var(--text-dim)",
-          fontSize: "16px",
+          fontSize: "15px",
           marginTop: "12px",
-          maxWidth: "460px",
+          maxWidth: "480px",
           margin: "12px auto 0",
+          lineHeight: 1.6,
         }}>
-          Welcome to the <strong style={{ color: "var(--gold)" }}>TRQX Capital Terminal</strong>. You now have full Elite access to every tool below.
+          Welcome to the <strong style={{ color: "var(--gold)" }}>TRQX Capital Terminal</strong>.{" "}
+          {config.subtitle}
         </p>
       </div>
 
       {/* Feature Grid */}
-      <div style={{
-        width: "100%",
-        maxWidth: "680px",
-        marginBottom: "16px",
-      }}>
+      <div style={{ width: "100%", maxWidth: "700px", marginBottom: "16px" }}>
         <div style={{
           fontFamily: "var(--font-head)",
           fontSize: "11px",
@@ -194,75 +252,115 @@ export default function Welcome() {
           color: "var(--text-muted)",
           marginBottom: "14px",
           textAlign: "center",
-        }}>EVERYTHING INCLUDED IN YOUR PLAN</div>
+        }}>WHAT'S INCLUDED IN YOUR PLAN</div>
 
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(2, 1fr)",
           gap: "10px",
         }}>
-          {FEATURES.map((f, i) => (
-            <div
-              key={i}
-              onClick={() => navigate(f.route)}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "14px",
-                background: "var(--black-3)",
-                border: "1px solid rgba(201,168,76,0.15)",
-                borderRadius: "12px",
-                padding: "16px 18px",
-                cursor: "pointer",
-                transition: "border-color 0.2s, background 0.2s, box-shadow 0.2s",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = "rgba(201,168,76,0.5)";
-                e.currentTarget.style.background = "var(--black-4)";
-                e.currentTarget.style.boxShadow = "0 0 16px rgba(201,168,76,0.1)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)";
-                e.currentTarget.style.background = "var(--black-3)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            >
-              <div style={{ fontSize: "24px", minWidth: "32px", textAlign: "center", marginTop: "2px" }}>{f.icon}</div>
-              <div style={{ flex: 1 }}>
+          {FEATURES.map((f, i) => {
+            const unlocked = canAccess(f.featureKey);
+            return (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "14px",
+                  background: unlocked ? "var(--black-3)" : "rgba(255,255,255,0.02)",
+                  border: `1px solid ${unlocked ? "rgba(201,168,76,0.2)" : "rgba(255,255,255,0.06)"}`,
+                  borderRadius: "12px",
+                  padding: "16px 18px",
+                  opacity: unlocked ? 1 : 0.5,
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                {/* Lock overlay for locked features */}
+                {!unlocked && (
+                  <div style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "12px",
+                    fontSize: "12px",
+                    color: "var(--text-muted)",
+                  }}>🔒</div>
+                )}
+
                 <div style={{
-                  fontFamily: "var(--font-head)",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  color: "var(--text)",
-                  marginBottom: "4px",
-                }}>{f.title}</div>
-                <div style={{
-                  fontSize: "12px",
-                  color: "var(--text-dim)",
-                  lineHeight: 1.5,
-                }}>{f.desc}</div>
+                  fontSize: "24px",
+                  minWidth: "32px",
+                  textAlign: "center",
+                  marginTop: "2px",
+                  filter: unlocked ? "none" : "grayscale(1)",
+                }}>{f.icon}</div>
+
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    fontFamily: "var(--font-head)",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    color: unlocked ? "var(--text)" : "var(--text-dim)",
+                    marginBottom: "4px",
+                  }}>{f.title}</div>
+                  <div style={{
+                    fontSize: "12px",
+                    color: "var(--text-muted)",
+                    lineHeight: 1.5,
+                  }}>{f.desc}</div>
+                </div>
               </div>
-              <div style={{ color: "var(--gold)", fontSize: "18px", fontWeight: 700, alignSelf: "center" }}>›</div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* New to TRQX banner */}
-      <div style={{
-        width: "100%",
-        maxWidth: "680px",
-        background: "rgba(59,130,246,0.08)",
-        border: "1px solid rgba(59,130,246,0.25)",
-        borderRadius: "12px",
-        padding: "14px 20px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: "24px",
-        cursor: "pointer",
-      }}
+      {/* Upgrade banner — only show if not elite */}
+      {normalizedTier !== "elite" && (
+        <div
+          onClick={() => navigate("/pricing")}
+          style={{
+            width: "100%",
+            maxWidth: "700px",
+            background: "rgba(201,168,76,0.08)",
+            border: "1px solid rgba(201,168,76,0.25)",
+            borderRadius: "12px",
+            padding: "14px 20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "12px",
+            cursor: "pointer",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ fontSize: "20px" }}>⬆️</span>
+            <div>
+              <div style={{ color: "var(--gold)", fontSize: "13px", fontWeight: 700 }}>Unlock the full terminal</div>
+              <div style={{ color: "var(--text-dim)", fontSize: "12px" }}>Upgrade your plan to access all tools including live flow, GEMX, AI & more.</div>
+            </div>
+          </div>
+          <div style={{ color: "var(--gold)", fontSize: "18px", fontWeight: 700, flexShrink: 0 }}>›</div>
+        </div>
+      )}
+
+      {/* New to trading banner */}
+      <div
         onClick={() => navigate("/academy")}
+        style={{
+          width: "100%",
+          maxWidth: "700px",
+          background: "rgba(59,130,246,0.08)",
+          border: "1px solid rgba(59,130,246,0.25)",
+          borderRadius: "12px",
+          padding: "14px 20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "24px",
+          cursor: "pointer",
+        }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <span style={{ fontSize: "20px" }}>🌱</span>
@@ -279,7 +377,7 @@ export default function Welcome() {
         onClick={() => navigate("/dashboard")}
         style={{
           width: "100%",
-          maxWidth: "680px",
+          maxWidth: "700px",
           padding: "18px",
           background: "linear-gradient(135deg, #C9A84C, #FFD700, #C9A84C)",
           backgroundSize: "200% auto",
@@ -298,7 +396,7 @@ export default function Welcome() {
       </button>
 
       <div style={{ marginTop: "12px", fontSize: "12px", color: "var(--text-muted)" }}>
-        You have full Elite access to everything above.
+        {config.footerText}
       </div>
     </div>
   );
