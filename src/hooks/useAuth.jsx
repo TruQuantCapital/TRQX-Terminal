@@ -48,6 +48,27 @@ export function AuthProvider({ children }) {
       console.error("[auth] fetchProfile error:", error.message);
     }
     setProfile(data);
+
+    // ── Tawk.to visitor identification ──
+    const tawkTier = OWNER_EMAILS.includes(uid) ? 'Elite' : (data?.tier ?? 'Free');
+    const setTawkAttrs = () => {
+      window.Tawk_API?.setAttributes?.({
+        name: user?.user_metadata?.full_name || user?.email || 'Unknown',
+        email: user?.email || '',
+        tier: tawkTier,
+        userId: uid,
+      }, () => {});
+    };
+    if (window.Tawk_API?.setAttributes) {
+      setTawkAttrs();
+    } else {
+      const prev = window.Tawk_API?.onLoad;
+      window.Tawk_API = window.Tawk_API || {};
+      window.Tawk_API.onLoad = function () {
+        prev?.();
+        setTawkAttrs();
+      };
+    }
   }
 
   async function signIn(email, password) {
