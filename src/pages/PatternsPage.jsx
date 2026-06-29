@@ -4394,7 +4394,7 @@ const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continu
 // ─────────────────────────────────────────────
 // CANDLE ANIMATION ENGINE
 // ─────────────────────────────────────────────
-function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, hideTitle = false }) {
+function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 680, height = 340 }) {
   const svgRef = useRef(null);
   const animRef = useRef(null);
   const stepRef = useRef(0);
@@ -4406,18 +4406,20 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
   const rawMin = Math.min(...allPrices);
   const rawMax = Math.max(...allPrices);
   const priceRange = rawMax - rawMin || 20;
-  const pad = priceRange * 0.18;
+  const pad = priceRange * 0.12;
   const minP = rawMin - pad;
   const maxP = rawMax + pad;
 
-  const PAD_L = Math.max(46, W * 0.045);
-  const PAD_R = Math.max(40, W * 0.045);
-  const PAD_T = hideTitle ? 42 : Math.max(78, H * 0.13);
-  const PAD_B = Math.max(46, H * 0.08);
+// Normalize all candle prices to fill the chart dramatically
+  const normalize = (p) => rawMin + ((p - rawMin) / priceRange) * priceRange;
+  const PAD_L = 46;
+  const PAD_R = 36;
+  const PAD_T = 36;
+  const PAD_B = 42;
   const chartW = W - PAD_L - PAD_R;
   const chartH = H - PAD_T - PAD_B;
   const spacing = chartW / Math.max(candles.length, 1);
-  const candleW = Math.max(18, Math.min(58, spacing * 0.58));
+  const candleW = Math.max(18, Math.min(48, spacing * 0.65));
 
   function mkEl(tag, attrs = {}) {
     const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
@@ -4435,14 +4437,6 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
     return PAD_L + i * spacing + spacing / 2;
   }
 
-  function getBodyTop(c) {
-    return Math.min(yS(c.o), yS(c.c));
-  }
-
-  function getBodyBottom(c) {
-    return Math.max(yS(c.o), yS(c.c));
-  }
-
   useEffect(() => {
     if (!svgRef.current) return;
     const svg = svgRef.current;
@@ -4452,34 +4446,39 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
     svg.innerHTML = '';
     if (animRef.current) clearTimeout(animRef.current);
 
+    // Layer groups — order matters for z-index.
     const defs = mkEl('defs', {});
-    const bgG = mkEl('g', {});
     const gridG = mkEl('g', {});
     const zoneG = mkEl('g', {});
     const candleG = mkEl('g', {});
     const lineG = mkEl('g', {});
     const labelG = mkEl('g', {});
-    const titleG = mkEl('g', {});
-    [defs, bgG, gridG, zoneG, candleG, lineG, labelG, titleG].forEach(g => svg.appendChild(g));
 
-    const bullGradient = mkEl('linearGradient', { id: `bullGradient-${pattern.id}`, x1: '0%', y1: '0%', x2: '100%', y2: '100%' });
-    bullGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#b9ffef' }));
+    const bullGradient = mkEl('linearGradient', {
+      id: 'bullGradient',
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '100%'
+    });
+    bullGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#9fffee' }));
     bullGradient.appendChild(mkEl('stop', { offset: '45%', stopColor: TEAL }));
     bullGradient.appendChild(mkEl('stop', { offset: '100%', stopColor: '#0b5f55' }));
 
-    const bearGradient = mkEl('linearGradient', { id: `bearGradient-${pattern.id}`, x1: '0%', y1: '0%', x2: '100%', y2: '100%' });
-    bearGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#ffc1bd' }));
+    const bearGradient = mkEl('linearGradient', {
+      id: 'bearGradient',
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '100%'
+    });
+    bearGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#ffb3b3' }));
     bearGradient.appendChild(mkEl('stop', { offset: '45%', stopColor: RED }));
     bearGradient.appendChild(mkEl('stop', { offset: '100%', stopColor: '#7a1010' }));
 
-    const goldGradient = mkEl('linearGradient', { id: `goldText-${pattern.id}`, x1: '0%', y1: '0%', x2: '100%', y2: '0%' });
-    goldGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#ffef99' }));
-    goldGradient.appendChild(mkEl('stop', { offset: '45%', stopColor: GOLD }));
-    goldGradient.appendChild(mkEl('stop', { offset: '100%', stopColor: '#8a650f' }));
-
     defs.appendChild(bullGradient);
     defs.appendChild(bearGradient);
-    defs.appendChild(goldGradient);
+    [defs, gridG, zoneG, candleG, lineG, labelG].forEach(g => svg.appendChild(g));
 
     function fadeIn(el, delay = 100) {
       setTimeout(() => {
@@ -4488,170 +4487,163 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
       }, delay);
     }
 
-    function addText(text, x, y, color = GOLD, size = 13, anchor = 'middle', delay = 300, opts = {}) {
-      const safeText = String(text || '');
-      const labelWidth = Math.min(W - PAD_L - PAD_R, Math.max(48, safeText.length * size * 0.58 + 18));
-      const labelHeight = size + 11;
+    function addText(text, x, y, color = GOLD, size = 11, anchor = 'middle', delay = 300) {
+      const labelWidth = Math.max(34, text.length * size * 0.62 + 14);
+      const labelHeight = size + 9;
       const rectX = anchor === 'middle' ? x - labelWidth / 2 : anchor === 'end' ? x - labelWidth : x;
-      const bgX = Math.max(PAD_L + 4, Math.min(W - PAD_R - labelWidth - 4, rectX));
-      const bgY = Math.max(10, Math.min(H - PAD_B - labelHeight - 4, y - labelHeight + 4));
-
-      if (!opts.noBox) {
-        const bg = mkEl('rect', {
-          x: bgX,
-          y: bgY,
-          width: labelWidth,
-          height: labelHeight,
-          rx: 6,
-          fill: opts.fill || 'rgba(4,10,18,0.92)',
-          stroke: opts.stroke || `${color}66`,
-          'stroke-width': opts.strokeWidth || 0.9
-        });
-        bg.style.opacity = '0';
-        labelG.appendChild(bg);
-        fadeIn(bg, delay);
-      }
+      const bg = mkEl('rect', {
+        x: Math.max(PAD_L, Math.min(W - PAD_R - labelWidth, rectX)),
+        y: Math.max(6, Math.min(H - PAD_B - labelHeight, y - labelHeight + 3)),
+        width: labelWidth,
+        height: labelHeight,
+        rx: 5,
+        fill: 'rgba(4,10,18,0.92)',
+        stroke: `${color}55`,
+        'stroke-width': 0.75
+      });
+      bg.style.opacity = '0';
+      labelG.appendChild(bg);
+      fadeIn(bg, delay);
 
       const tx = mkEl('text', {
         x,
         y,
         fill: color,
         'font-size': size,
-        'font-weight': opts.weight || 950,
+        'font-weight': 900,
         'font-family': 'Inter, Arial, sans-serif',
         'text-anchor': anchor
       });
-      tx.textContent = safeText;
+      tx.textContent = text;
       tx.style.opacity = '0';
       labelG.appendChild(tx);
-      fadeIn(tx, delay + 50);
+      fadeIn(tx, delay + 40);
       return tx;
     }
 
     function drawLine(x1, y1, x2, y2, color = GOLD, label = '', opts = {}) {
       const line = mkEl('line', {
-        x1, y1, x2, y2,
+        x1,
+        y1,
+        x2,
+        y2,
         stroke: color,
-        'stroke-width': opts.width || 2.4,
+        'stroke-width': opts.width || 1.6,
         'stroke-dasharray': opts.dash || '',
         'stroke-linecap': 'round'
       });
       line.style.opacity = '0';
       lineG.appendChild(line);
       fadeIn(line, opts.delay || 900);
-      if (label) addText(label, opts.labelX || (x1 + x2) / 2, opts.labelY || y1 - 12, color, opts.fontSize || 13, opts.anchor || 'middle', (opts.delay || 900) + 120);
+      if (label) addText(label, opts.labelX || (x1 + x2) / 2, opts.labelY || y1 - 8, color, opts.fontSize || 11, opts.anchor || 'middle', (opts.delay || 900) + 120);
       return line;
     }
 
-    function drawArrow(x1, y1, x2, y2, color = GOLD, label = '', delay = 1000, opts = {}) {
+    function drawArrow(x1, y1, x2, y2, color = GOLD, label = '', delay = 1000) {
       const id = `arrow-${pattern.id}-${Math.random().toString(16).slice(2)}`;
-      const marker = mkEl('marker', { id, markerWidth: 14, markerHeight: 14, refX: 11, refY: 5, orient: 'auto', markerUnits: 'strokeWidth' });
-      marker.appendChild(mkEl('path', { d: 'M0,0 L0,10 L12,5 z', fill: color }));
+      const marker = mkEl('marker', {
+        id,
+        markerWidth: 8,
+        markerHeight: 8,
+        refX: 6,
+        refY: 3,
+        orient: 'auto',
+        markerUnits: 'strokeWidth'
+      });
+      marker.appendChild(mkEl('path', { d: 'M0,0 L0,6 L7,3 z', fill: color }));
       defs.appendChild(marker);
-
       const arrow = mkEl('line', {
-        x1, y1, x2, y2,
+        x1,
+        y1,
+        x2,
+        y2,
         stroke: color,
-        'stroke-width': opts.width || 3,
+        'stroke-width': 1.8,
         'stroke-linecap': 'round',
         'marker-end': `url(#${id})`
       });
       arrow.style.opacity = '0';
       lineG.appendChild(arrow);
       fadeIn(arrow, delay);
-      if (label) addText(label, x1, y1 - 10, color, opts.fontSize || 14, opts.anchor || 'middle', delay + 100);
+      if (label) addText(label, x1, y1 - 8, color, 11, 'middle', delay + 120);
     }
 
     function drawZone(x1, y1, x2, y2, fill, stroke, label, delay = 1200) {
       const top = Math.min(y1, y2);
-      const height = Math.max(6, Math.abs(y2 - y1));
+      const height = Math.abs(y2 - y1);
+      if (height < 4) return;
       const rect = mkEl('rect', {
         x: Math.min(x1, x2),
         y: top,
         width: Math.abs(x2 - x1),
         height,
-        rx: 8,
+        rx: 6,
         fill,
         stroke,
-        'stroke-width': 1.3,
-        'stroke-dasharray': '8,6'
+        'stroke-width': 0.8
       });
       rect.style.opacity = '0';
       zoneG.appendChild(rect);
       fadeIn(rect, delay);
-      if (label) addText(label, Math.min(x1, x2) + 12, top + Math.max(18, height / 2), stroke, 13, 'start', delay + 80, { fill: 'rgba(4,10,18,0.72)' });
+      if (label) addText(label, Math.min(x1, x2) + 8, top + 15, stroke, 10, 'start', delay + 80);
     }
 
     function drawBracket(start, end, label, color = GOLD, delay = 1200) {
       const x1 = xC(start) - candleW / 2;
       const x2 = xC(end) + candleW / 2;
-      const y = H - PAD_B + 17;
-      drawLine(x1, y, x2, y, color, '', { delay, width: 2 });
-      drawLine(x1, y - 10, x1, y + 6, color, '', { delay, width: 2 });
-      drawLine(x2, y - 10, x2, y + 6, color, '', { delay, width: 2 });
-      if (label) addText(label, (x1 + x2) / 2, y + 24, color, 13, 'middle', delay + 120, { noBox: true });
+      const y = H - PAD_B + 15;
+      drawLine(x1, y, x2, y, color, '', { delay, width: 1.5 });
+      drawLine(x1, y - 7, x1, y + 5, color, '', { delay, width: 1.5 });
+      drawLine(x2, y - 7, x2, y + 5, color, '', { delay, width: 1.5 });
+      if (label) addText(label, (x1 + x2) / 2, y + 19, color, 11, 'middle', delay + 120);
     }
 
     function candleLabelText(ann, c, x, delay) {
-      const labelY = Math.max(PAD_T + 22, yS(c.h) - 22 + (ann.offset || 0));
-      addText(ann.text, x, labelY, ann.color || GOLD, 12, 'middle', delay);
-      drawArrow(x, labelY + 8, x, yS(c.h) - 4, ann.color || GOLD, '', delay + 120, { width: 2.2 });
+      const labelY = Math.max(PAD_T + 16, yS(c.h) - 16 + (ann.offset || 0));
+      addText(ann.text, x, labelY, ann.color || GOLD, 10, 'middle', delay);
+      drawArrow(x, labelY + 8, x, yS(c.h) - 3, ann.color || GOLD, '', delay + 120);
     }
 
-    function drawTitle() {
-      if (hideTitle) return;
-      const title = (pattern.name || 'Pattern').toUpperCase();
-      const titleSize = Math.max(28, Math.min(70, W / Math.max(10, title.length * 0.55)));
-      const tx = mkEl('text', {
-        x: W / 2,
-        y: Math.max(44, PAD_T - 24),
-        fill: `url(#goldText-${pattern.id})`,
-        'font-size': titleSize,
-        'font-weight': 950,
-        'font-family': 'Impact, Inter, Arial Black, sans-serif',
-        'letter-spacing': 3,
-        'text-anchor': 'middle'
+    // Grid lines + price labels.
+    for (let i = 0; i <= 5; i++) {
+      const price = minP + (i / 5) * (maxP - minP);
+      const y = yS(price);
+      gridG.appendChild(mkEl('line', {
+        x1: PAD_L,
+        x2: W - PAD_R,
+        y1: y,
+        y2: y,
+        stroke: 'rgba(255,255,255,0.06)',
+        'stroke-width': 0.7
+      }));
+      const pt = mkEl('text', {
+        x: PAD_L - 8,
+        y: y + 4,
+        fill: 'rgba(203,213,225,0.55)',
+        'font-size': 10,
+        'text-anchor': 'end',
+        'font-family': 'monospace'
       });
-      tx.textContent = title;
-      tx.style.opacity = '0';
-      titleG.appendChild(tx);
-      fadeIn(tx, 100);
-
-      const lineY = Math.max(16, PAD_T - 62);
-      drawLine(PAD_L, lineY, W / 2 - 120, lineY, GOLD, '', { delay: 150, width: 1.3 });
-      drawLine(W / 2 + 120, lineY, W - PAD_R, lineY, GOLD, '', { delay: 150, width: 1.3 });
-      addText('✦', W / 2 - 150, lineY + 5, GOLD, 26, 'middle', 180, { noBox: true });
-      addText('✦', W / 2 + 150, lineY + 5, GOLD, 26, 'middle', 180, { noBox: true });
+      pt.textContent = Math.round(price);
+      gridG.appendChild(pt);
     }
 
-    // Decorative dark flash-card frame.
-    bgG.appendChild(mkEl('rect', {
-      x: 8,
-      y: 8,
-      width: W - 16,
-      height: H - 16,
-      rx: 18,
-      fill: 'rgba(0,0,0,0.18)',
-      stroke: 'rgba(212,175,55,0.16)',
-      'stroke-width': 1.2
-    }));
-
-    // Teaching-card style grid. Very subtle, not like a raw trading terminal.
-    for (let i = 0; i <= 4; i++) {
-      const y = PAD_T + (i / 4) * chartH;
-      gridG.appendChild(mkEl('line', { x1: PAD_L, x2: W - PAD_R, y1: y, y2: y, stroke: 'rgba(255,255,255,0.045)', 'stroke-width': 0.8 }));
-    }
     for (let i = 0; i <= candles.length; i += 2) {
       const x = PAD_L + i * spacing;
-      gridG.appendChild(mkEl('line', { x1: x, x2: x, y1: PAD_T, y2: H - PAD_B, stroke: 'rgba(255,255,255,0.025)', 'stroke-width': 0.8 }));
+      gridG.appendChild(mkEl('line', {
+        x1: x,
+        x2: x,
+        y1: PAD_T,
+        y2: H - PAD_B,
+        stroke: 'rgba(255,255,255,0.035)',
+        'stroke-width': 0.7
+      }));
     }
-
-    drawTitle();
 
     function drawNextCandle() {
       const i = stepRef.current;
       if (i >= candles.length) {
-        drawTeachingOverlays();
+        if (!quizMode) drawOverlays();
         onComplete && onComplete();
         return;
       }
@@ -4664,14 +4656,17 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
       const yO = yS(c.o);
       const yC2 = yS(c.c);
       const bTop = Math.min(yO, yC2);
-      const bH = Math.max(Math.abs(yO - yC2), Math.max(7, spacing * 0.16));
+      const bH = Math.max(Math.abs(yO - yC2), Math.max(6, spacing * 0.18));
 
       const wick = mkEl('line', {
-        x1: x, x2: x, y1: yH, y2: yL,
+        x1: x,
+        x2: x,
+        y1: yH,
+        y2: yL,
         stroke: color,
-        'stroke-width': Math.max(2.2, candleW * 0.08),
+        'stroke-width': 1.8,
         'stroke-linecap': 'round',
-        style: `filter: drop-shadow(0 0 7px ${color});`
+        style: `filter: drop-shadow(0 0 5px ${color});`
       });
       wick.style.opacity = '0';
       candleG.appendChild(wick);
@@ -4682,32 +4677,30 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
         y: bTop,
         width: candleW,
         height: bH,
-        fill: c.bull ? `url(#bullGradient-${pattern.id})` : `url(#bearGradient-${pattern.id})`,
+        fill: c.bull ? 'url(#bullGradient)' : 'url(#bearGradient)',
         stroke: c.bull ? '#8fffe9' : '#ffb3b3',
-        'stroke-width': 1.5,
-        rx: Math.max(4, candleW * 0.12),
-        style: `filter: drop-shadow(0 0 9px ${color}) drop-shadow(0 0 16px rgba(212,175,55,0.18));`
+        'stroke-width': 1.4,
+        rx: 4,
+        style: `filter: drop-shadow(0 0 7px ${color}) drop-shadow(0 0 12px rgba(212,175,55,0.18));`
       });
       body.style.opacity = '0';
       candleG.appendChild(body);
       fadeIn(body, 10);
 
       stepRef.current += 1;
-      animRef.current = setTimeout(drawNextCandle, 70);
+      animRef.current = setTimeout(drawNextCandle, 65);
     }
 
-    function drawTeachingOverlays() {
-      if (hideTitle) return;
-
+    function drawOverlays() {
       const name = (pattern.name || '').toLowerCase();
       const signal = (pattern.signal || '').toLowerCase();
       const bullish = signal.includes('bullish');
       const bearish = signal.includes('bearish');
-      const delay = 550;
+      const delay = 500;
 
-      // Original hand-authored annotations still appear.
+      // Every pattern still uses its original labels/brackets/arrows.
       pattern.annotations?.forEach((ann, idx) => {
-        const d = delay + idx * 170;
+        const d = delay + idx * 160;
         if (ann.type === 'label' && ann.candleIdx !== undefined) {
           const c = candles[ann.candleIdx];
           if (!c) return;
@@ -4720,48 +4713,39 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
           const c = candles[ann.candleIdx];
           if (!c) return;
           const y = bullish ? yS(c.l) : yS(c.h);
-          drawLine(PAD_L, y, W - PAD_R, y, ann.color || GOLD, ann.label || 'Key Level', { dash: '9,7', delay: d, fontSize: 13 });
+          drawLine(PAD_L, y, W - PAD_R, y, ann.color || GOLD, ann.label || 'Key Level', { dash: '7,5', delay: d });
         }
         if (ann.type === 'arrow' && ann.candleIdx !== undefined) {
           const c = candles[ann.candleIdx];
           if (!c) return;
           const x = xC(ann.candleIdx);
           const up = ann.direction === 'up';
-          drawArrow(x - 45, up ? yS(c.l) + 42 : yS(c.h) - 42, x - 5, up ? yS(c.l) + 3 : yS(c.h) - 3, ann.color || (up ? TEAL : RED), up ? 'Reversal up' : 'Reversal down', d);
+          drawArrow(x, up ? yS(c.l) + 30 : yS(c.h) - 30, x, up ? yS(c.l) + 3 : yS(c.h) - 3, ann.color || (up ? TEAL : RED), up ? 'Buyers step in' : 'Sellers reject', d);
         }
       });
 
-      // Child-simple visual story: one obvious level/zone, one obvious move, one obvious result.
+      // Automatic child-simple teaching overlays for common pattern families.
       if (name.includes('engulfing')) {
-        const idx = Math.max(1, candles.findIndex((c, i) => i > 0 && c.bull !== candles[i - 1].bull && Math.abs(c.c - c.o) >= Math.abs(candles[i - 1].c - candles[i - 1].o)));
+        const idx = Math.max(1, candles.findIndex((c, i) => i > 0 && Math.abs(c.c - c.o) > Math.abs(candles[i - 1].c - candles[i - 1].o) && c.bull !== candles[i - 1].bull));
         const prev = Math.max(0, idx - 1);
         drawBracket(prev, idx, 'Pattern', GOLD, 900);
-        const c = candles[idx] || candles[candles.length - 1];
-        addText(c.bull ? 'Big green candle swallows the red candle' : 'Big red candle swallows the green candle', xC(idx), yS(c.h) - 26, c.bull ? TEAL : RED, 14, 'middle', 950);
-        drawArrow(xC(idx), yS(c.h) - 10, xC(idx), yS(c.h) + 16, c.bull ? TEAL : RED, '', 1050);
+        addText(candles[idx]?.bull ? 'Big green candle swallows the red candle' : 'Big red candle swallows the green candle', xC(idx), yS(candles[idx]?.h || maxP) - 26, candles[idx]?.bull ? TEAL : RED, 11, 'middle', 950);
+        drawArrow(xC(idx), yS(candles[idx]?.h || maxP) - 12, xC(idx), yS(candles[idx]?.h || maxP) + 6, candles[idx]?.bull ? TEAL : RED, '', 1050);
       }
 
-      if (name.includes('hammer') || name.includes('dragonfly')) {
-        const idx = candles.findIndex(c => (Math.min(c.o, c.c) - c.l) > Math.max(2, Math.abs(c.o - c.c)) * 2);
+      if (name.includes('hammer')) {
+        const idx = candles.findIndex(c => Math.abs(c.l - Math.min(c.o, c.c)) > Math.abs(c.o - c.c) * 2);
         if (idx >= 0) {
-          addText('Long lower wick = sellers failed', xC(idx), yS(c.l) + 34, TEAL, 14, 'middle', 900);
-          drawArrow(xC(idx) - 55, yS(c.l) + 26, xC(idx) - 8, yS(c.l) + 3, TEAL, '', 1000);
+          addText('Long wick = sellers got rejected', xC(idx), yS(candles[idx].l) + 28, TEAL, 11, 'middle', 900);
+          drawArrow(xC(idx), yS(candles[idx].l) + 15, xC(idx), yS(candles[idx].l) + 3, TEAL, '', 1000);
         }
       }
 
       if (name.includes('shooting star') || name.includes('gravestone')) {
-        const idx = candles.findIndex(c => (c.h - Math.max(c.o, c.c)) > Math.max(2, Math.abs(c.o - c.c)) * 2);
+        const idx = candles.findIndex(c => Math.abs(c.h - Math.max(c.o, c.c)) > Math.abs(c.o - c.c) * 2);
         if (idx >= 0) {
-          addText('Long upper wick = buyers rejected', xC(idx), yS(c.h) - 28, RED, 14, 'middle', 900);
-          drawArrow(xC(idx) + 55, yS(c.h) - 20, xC(idx) + 8, yS(c.h) + 4, RED, '', 1000);
-        }
-      }
-
-      if (name.includes('doji') || name.includes('spinning') || name.includes('high wave')) {
-        const idx = candles.findIndex(c => Math.abs(c.o - c.c) <= Math.max(1, (c.h - c.l) * 0.12));
-        if (idx >= 0) {
-          addText('Tiny body = nobody won yet', xC(idx), yS(c.h) - 28, GOLD, 14, 'middle', 900);
-          drawLine(xC(idx) - candleW * 1.2, yS(c.o), xC(idx) + candleW * 1.2, yS(c.o), GOLD, 'Open ≈ Close', { delay: 1000, dash: '6,4', fontSize: 12 });
+          addText('Long top wick = buyers got rejected', xC(idx), yS(candles[idx].h) - 22, RED, 11, 'middle', 900);
+          drawArrow(xC(idx), yS(candles[idx].h) - 8, xC(idx), yS(candles[idx].h) + 6, RED, '', 1000);
         }
       }
 
@@ -4769,55 +4753,60 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
         const highs = candles.map(c => c.h);
         const resistance = Math.max(...highs.slice(0, Math.max(3, candles.length - 2)));
         const resistanceY = yS(resistance);
-        drawLine(PAD_L, resistanceY, W - PAD_R, resistanceY, RED, 'RESISTANCE LEVEL', { dash: '10,8', delay: 800, labelY: resistanceY - 14, fontSize: 15 });
+        drawLine(PAD_L, resistanceY, W - PAD_R, resistanceY, RED, 'Resistance — sellers defend here', { dash: '7,5', delay: 800, labelY: resistanceY - 10 });
         candles.forEach((c, i) => {
-          if (c.h >= resistance - priceRange * 0.08 && i < candles.length - 1) addText(name.includes('triple') ? `TOP` : 'TOP', xC(i), yS(c.h) - 20, RED, 13, 'middle', 1000 + i * 80);
+          if (c.h >= resistance - 3 && i < candles.length - 1) addText(name.includes('triple') ? `Top ${Math.min(i + 1, 3)}` : 'Top', xC(i), yS(c.h) - 18, RED, 10, 'middle', 1000 + i * 80);
         });
-        const neck = Math.min(...candles.slice(2, -1).map(c => c.l)) + priceRange * 0.05;
+        const lows = candles.slice(2, -1).map(c => c.l);
+        const neck = Math.min(...lows) + 2;
         const neckY = yS(neck);
-        drawLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, 'NECKLINE / SUPPORT', { dash: '10,8', delay: 1100, labelY: neckY + 22, fontSize: 15 });
-        drawArrow(W - PAD_R - 160, neckY - 52, W - PAD_R - 75, neckY + 8, RED, 'Breakdown', 1300, { fontSize: 14 });
+        drawLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, 'Neckline / support', { dash: '7,5', delay: 1100, labelY: neckY + 16 });
+        drawArrow(W - PAD_R - 90, neckY - 28, W - PAD_R - 45, neckY + 4, RED, 'Break below support', 1300);
       }
 
       if (name.includes('double bottom') || name.includes('triple bottom') || name.includes('inverse head')) {
         const lows = candles.map(c => c.l);
         const support = Math.min(...lows.slice(0, Math.max(3, candles.length - 2)));
         const supportY = yS(support);
-        drawLine(PAD_L, supportY, W - PAD_R, supportY, TEAL, 'SUPPORT LEVEL', { dash: '10,8', delay: 800, labelY: supportY + 22, fontSize: 15 });
+        drawLine(PAD_L, supportY, W - PAD_R, supportY, TEAL, 'Support — buyers defend here', { dash: '7,5', delay: 800, labelY: supportY + 16 });
         candles.forEach((c, i) => {
-          if (c.l <= support + priceRange * 0.08 && i < candles.length - 1) addText(name.includes('triple') ? `BOTTOM` : 'BOTTOM', xC(i), yS(c.l) + 28, TEAL, 13, 'middle', 1000 + i * 80);
+          if (c.l <= support + 3 && i < candles.length - 1) addText(name.includes('triple') ? `Bottom ${Math.min(i + 1, 3)}` : 'Bottom', xC(i), yS(c.l) + 22, TEAL, 10, 'middle', 1000 + i * 80);
         });
-        const neck = Math.max(...candles.slice(2, -1).map(c => c.h)) - priceRange * 0.05;
+        const highs = candles.slice(2, -1).map(c => c.h);
+        const neck = Math.max(...highs) - 2;
         const neckY = yS(neck);
-        drawLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, 'NECKLINE / BREAKOUT LEVEL', { dash: '10,8', delay: 1100, labelY: neckY - 14, fontSize: 15 });
-        drawArrow(W - PAD_R - 160, neckY + 52, W - PAD_R - 75, neckY - 8, TEAL, 'Breakout', 1300, { fontSize: 14 });
+        drawLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, 'Neckline / breakout level', { dash: '7,5', delay: 1100, labelY: neckY - 10 });
+        drawArrow(W - PAD_R - 90, neckY + 28, W - PAD_R - 45, neckY - 4, TEAL, 'Break above resistance', 1300);
       }
 
-      if (name.includes('flag') || name.includes('pennant') || name.includes('triangle') || name.includes('wedge') || name.includes('channel')) {
-        const first = name.includes('flag') || name.includes('pennant') ? Math.min(3, candles.length - 6) : 0;
-        const last = Math.max(first + 2, candles.length - 3);
-        const upperStart = yS(candles[first]?.h || maxP);
-        const upperEnd = yS(candles[last]?.h || maxP);
-        const lowerStart = yS(candles[first]?.l || minP);
-        const lowerEnd = yS(candles[last]?.l || minP);
-        drawLine(xC(first), upperStart, xC(last), upperEnd, '#c45cff', 'Upper trendline', { dash: '10,7', delay: 900, fontSize: 13 });
-        drawLine(xC(first), lowerStart, xC(last), lowerEnd, '#c45cff', 'Lower trendline', { dash: '10,7', delay: 1050, labelY: lowerEnd + 20, fontSize: 13 });
-        const arrowColor = bullish ? TEAL : RED;
-        const arrowStartY = yS(candles[candles.length - 2]?.c || candles[candles.length - 1]?.c);
-        const arrowEndY = bullish ? Math.max(PAD_T + 8, arrowStartY - chartH * 0.22) : Math.min(H - PAD_B - 8, arrowStartY + chartH * 0.22);
-        drawArrow(xC(candles.length - 3), arrowStartY, xC(candles.length - 1), arrowEndY, arrowColor, bullish ? 'Breakout' : 'Breakdown', 1300, { width: 4, fontSize: 15 });
+      if (name.includes('triangle') || name.includes('wedge') || name.includes('pennant') || name.includes('flag')) {
+        const first = 0;
+        const last = Math.max(1, candles.length - 3);
+        const upperStart = yS(candles[first].h);
+        const upperEnd = yS(candles[last].h);
+        const lowerStart = yS(candles[first].l);
+        const lowerEnd = yS(candles[last].l);
+        drawLine(xC(first), upperStart, xC(last), upperEnd, RED, 'Resistance line', { dash: '6,4', delay: 900 });
+        drawLine(xC(first), lowerStart, xC(last), lowerEnd, TEAL, 'Support line', { dash: '6,4', delay: 1050, labelY: lowerEnd + 14 });
+        const lastC = candles[candles.length - 2] || candles[candles.length - 1];
+        drawArrow(xC(candles.length - 3), yS(lastC.c), xC(candles.length - 1), yS(lastC.c), bullish ? TEAL : RED, bullish ? 'Breakout' : 'Breakdown', 1300);
       }
 
       if (name.includes('cup')) {
-        addText('Rounded cup = slow accumulation', xC(Math.floor(candles.length / 2)), H - PAD_B - 18, GOLD, 15, 'middle', 900);
-        drawArrow(xC(candles.length - 5), yS(candles[candles.length - 5].h) - 28, xC(candles.length - 2), yS(candles[candles.length - 2].h) - 4, GOLD, 'Handle', 1100, { fontSize: 14 });
+        addText('Rounded cup', xC(Math.floor(candles.length / 2)), H - PAD_B - 18, GOLD, 12, 'middle', 900);
+        drawArrow(xC(candles.length - 4), yS(candles[candles.length - 4].h) - 20, xC(candles.length - 2), yS(candles[candles.length - 2].h) - 2, GOLD, 'Handle', 1100);
       }
 
-      const lastC = candles[candles.length - 1];
-      if (lastC) {
-        const resultColor = bullish ? TEAL : bearish ? RED : GOLD;
-        const resultY = yS(lastC.c);
-        drawArrow(Math.max(PAD_L + 80, xC(candles.length - 3)), resultY, Math.min(W - PAD_R - 20, xC(candles.length - 1) + 60), bullish ? resultY - 54 : bearish ? resultY + 54 : resultY, resultColor, bullish ? 'Result: buyers win' : bearish ? 'Result: sellers win' : 'Wait for confirmation', 1600, { width: 3.4, fontSize: 14 });
+      if (bearish) {
+        const entryY = yS(candles[candles.length - 3]?.c || minP);
+        drawZone(W - PAD_R - 145, entryY - 30, W - PAD_R - 15, entryY - 4, 'rgba(239,83,80,0.11)', 'rgba(239,83,80,0.45)', 'Stop zone', 1600);
+        drawZone(W - PAD_R - 145, entryY + 5, W - PAD_R - 15, Math.min(H - PAD_B, entryY + 48), 'rgba(38,166,154,0.10)', 'rgba(38,166,154,0.35)', 'Target zone', 1750);
+      }
+
+      if (bullish) {
+        const entryY = yS(candles[candles.length - 3]?.c || maxP);
+        drawZone(W - PAD_R - 145, Math.max(PAD_T, entryY - 48), W - PAD_R - 15, entryY - 5, 'rgba(38,166,154,0.10)', 'rgba(38,166,154,0.35)', 'Target zone', 1600);
+        drawZone(W - PAD_R - 145, entryY + 5, W - PAD_R - 15, entryY + 30, 'rgba(239,83,80,0.11)', 'rgba(239,83,80,0.45)', 'Stop zone', 1750);
       }
     }
 
@@ -4826,7 +4815,7 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
     return () => {
       if (animRef.current) clearTimeout(animRef.current);
     };
-  }, [playing, pattern, hideTitle]);
+  }, [playing, pattern, quizMode]);
 
   return (
     <svg
@@ -4842,154 +4831,6 @@ function CandleChart({ pattern, playing, onComplete, width = 680, height = 340, 
   );
 }
 
-
-function getTeachingBreakdown(pattern) {
-  const name = (pattern?.name || '').toLowerCase();
-  const signal = (pattern?.signal || '').toLowerCase();
-  const bullish = signal.includes('bullish');
-  const bearish = signal.includes('bearish');
-
-  let patternText = pattern?.description || 'Identify the shape, location, and confirmation.';
-  let signalText = pattern?.entry || 'Wait for confirmation before acting.';
-  let resultText = pattern?.target || 'The move follows the confirmed direction.';
-
-  if (name.includes('engulfing')) {
-    patternText = bullish
-      ? 'A big green candle completely swallows the prior red candle.'
-      : 'A big red candle completely swallows the prior green candle.';
-    signalText = bullish
-      ? 'Buyers took control after sellers were in charge.'
-      : 'Sellers took control after buyers were in charge.';
-    resultText = bullish
-      ? 'Price often reverses upward after confirmation.'
-      : 'Price often reverses downward after confirmation.';
-  } else if (name.includes('hammer')) {
-    patternText = 'Price drops hard, then snaps back up before the candle closes.';
-    signalText = 'The long lower wick says sellers pushed down but buyers rejected it.';
-    resultText = 'If the next candle confirms, buyers may start a reversal.';
-  } else if (name.includes('shooting star') || name.includes('gravestone')) {
-    patternText = 'Price pushes higher, then gets shoved back down before the close.';
-    signalText = 'The long upper wick says buyers tried but sellers rejected them.';
-    resultText = 'If the next candle confirms, price may reverse lower.';
-  } else if (name.includes('doji') || name.includes('spinning') || name.includes('high wave')) {
-    patternText = 'The candle shows a fight where neither side clearly wins.';
-    signalText = 'Wait. The next strong candle tells you who wins the battle.';
-    resultText = 'Do not guess direction until confirmation appears.';
-  } else if (name.includes('flag')) {
-    patternText = bullish
-      ? 'A strong up move rests inside a small downward channel.'
-      : 'A strong down move rests inside a small upward channel.';
-    signalText = bullish
-      ? 'Breakout above the upper flag line.'
-      : 'Breakdown below the lower flag line.';
-    resultText = bullish
-      ? 'Trend usually continues higher.'
-      : 'Trend usually continues lower.';
-  } else if (name.includes('pennant')) {
-    patternText = 'Price squeezes into a small triangle after a strong move.';
-    signalText = bullish ? 'Break above the pennant shows buyers won.' : 'Break below the pennant shows sellers won.';
-    resultText = 'The prior trend often continues after the squeeze breaks.';
-  } else if (name.includes('triangle')) {
-    patternText = bullish
-      ? 'Buyers keep stepping in higher while resistance holds flat.'
-      : 'Sellers keep stepping in lower while support holds flat.';
-    signalText = bullish ? 'Break above resistance.' : 'Break below support.';
-    resultText = bullish ? 'Breakout can start a continuation higher.' : 'Breakdown can start continuation lower.';
-  } else if (name.includes('double top') || name.includes('triple top')) {
-    patternText = 'Price hits resistance multiple times and cannot break through.';
-    signalText = 'The pattern confirms when price breaks below the neckline/support.';
-    resultText = 'Failed buyers can fuel a bearish reversal.';
-  } else if (name.includes('double bottom') || name.includes('triple bottom')) {
-    patternText = 'Price hits support multiple times and cannot break lower.';
-    signalText = 'The pattern confirms when price breaks above neckline/resistance.';
-    resultText = 'Failed sellers can fuel a bullish reversal.';
-  } else if (name.includes('cup')) {
-    patternText = 'Price forms a rounded bowl, then a small handle pullback.';
-    signalText = 'Breakout above the handle shows buyers are back in control.';
-    resultText = 'The rounded base can launch a continuation move.';
-  } else if (name.includes('harami')) {
-    patternText = 'A small candle is trapped inside the prior large candle.';
-    signalText = 'Momentum is slowing. Wait for a break of the small candle.';
-    resultText = 'Confirmation decides whether a reversal starts.';
-  } else if (name.includes('tweezer')) {
-    patternText = bullish ? 'Two candles defend the same low.' : 'Two candles reject the same high.';
-    signalText = bullish ? 'Buyers protected support twice.' : 'Sellers protected resistance twice.';
-    resultText = bullish ? 'A break higher can start reversal up.' : 'A break lower can start reversal down.';
-  }
-
-  return { patternText, signalText, resultText };
-}
-
-function TeachingBreakdown({ pattern, quizMode = false }) {
-  if (quizMode) {
-    return (
-      <div style={{
-        marginTop: 12,
-        border: `1px solid ${GOLD}44`,
-        background: 'rgba(212,175,55,0.07)',
-        borderRadius: 14,
-        padding: '16px 18px',
-        color: '#f8fafc',
-        fontSize: 18,
-        lineHeight: 1.55,
-        fontWeight: 850,
-        textAlign: 'center'
-      }}>
-        Study only the candles, arrows, zones, and structure. What pattern is this?
-      </div>
-    );
-  }
-
-  const t = getTeachingBreakdown(pattern);
-  const sc = pattern.signalColor || GOLD;
-
-  const rowStyle = {
-    display: 'grid',
-    gridTemplateColumns: '54px 130px 1fr',
-    gap: 14,
-    alignItems: 'center',
-    color: '#f8fafc',
-    fontSize: 20,
-    lineHeight: 1.35
-  };
-
-  return (
-    <div style={{
-      marginTop: 14,
-      borderTop: `1px solid ${GOLD}55`,
-      paddingTop: 18,
-      display: 'grid',
-      gap: 16
-    }}>
-      <div style={rowStyle}>
-        <div style={{ color: GOLD, fontSize: 34, textAlign: 'center' }}>◎</div>
-        <div style={{ color: GOLD, fontSize: 24, fontWeight: 950 }}>PATTERN:</div>
-        <div>{t.patternText}</div>
-      </div>
-      <div style={rowStyle}>
-        <div style={{ color: GOLD, fontSize: 34, textAlign: 'center' }}>👥</div>
-        <div style={{ color: GOLD, fontSize: 24, fontWeight: 950 }}>SIGNAL:</div>
-        <div>{t.signalText}</div>
-      </div>
-      <div style={rowStyle}>
-        <div style={{ color: GOLD, fontSize: 34, textAlign: 'center' }}>↗</div>
-        <div style={{ color: GOLD, fontSize: 24, fontWeight: 950 }}>RESULT:</div>
-        <div>{t.resultText}</div>
-      </div>
-      <div style={{
-        border: `1px solid ${sc}3d`,
-        background: `${sc}0d`,
-        borderRadius: 12,
-        padding: '12px 14px',
-        color: '#cbd5e1',
-        fontSize: 15,
-        lineHeight: 1.55
-      }}>
-        <strong style={{ color: sc }}>Simple rule:</strong> locate the pattern first, then wait for confirmation. Do not trade the name alone.
-      </div>
-    </div>
-  );
-}
 
 // ─────────────────────────────────────────────
 // PATTERN CARD — Full Professional Layout
@@ -5007,6 +4848,8 @@ function PatternCard({
 }) {
   const [playing, setPlaying] = useState(false);
   const [done, setDone] = useState(false);
+  const [multipleChoiceMode, setMultipleChoiceMode] = useState(false);
+  
   useEffect(() => {
     if (isExpanded && !playing && !done) {
       setTimeout(() => setPlaying(true), 250);
@@ -5014,6 +4857,8 @@ function PatternCard({
     if (!isExpanded) {
       setPlaying(false);
       setDone(false);
+      setMultipleChoiceMode(false);
+      
     }
   }, [isExpanded, playing, done]);
 
@@ -5132,7 +4977,7 @@ function PatternCard({
             <Panel title="PATTERN ANIMATION" icon="▰" color={sc}>
               <div
                 style={{
-                  height: singleMode ? 'min(76vh, 820px)' : 420,
+                  height: singleMode ? 'min(62vh, 640px)' : 390,
                   borderRadius: 14,
                   background:
                     'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px), radial-gradient(circle at 50% 15%, rgba(212,175,55,0.08), transparent 35%), #050b14',
@@ -5144,9 +4989,17 @@ function PatternCard({
                   justifyContent: 'center',
                 }}
               >
-                <CandleChart pattern={pattern} playing={playing} onComplete={() => setDone(true)} width={singleMode ? 1320 : 920} height={singleMode ? 780 : 420} hideTitle={quizMode} />
+                <CandleChart pattern={pattern} playing={playing} quizMode={quizMode} onComplete={() => setDone(true)} width={singleMode ? 1200 : 920} height={singleMode ? 620 : 380} />
               </div>
-              <TeachingBreakdown pattern={pattern} quizMode={quizMode} />
+              <div style={{ marginTop: 10, border: `1px solid ${sc}40`, background: `${sc}0f`, color: '#dbeafe', borderRadius: 10, padding: '10px 12px', fontSize: 14, lineHeight: 1.55 }}>
+                {quizMode ? (
+                  <strong style={{ color: GOLD }}>Study the chart only. What pattern is this?</strong>
+                ) : (
+                  <>
+                    <strong style={{ color: sc }}>How it works:</strong> {pattern.description}
+                  </>
+                )}
+              </div>
             </Panel>
 
             {!quizMode && (
@@ -5199,7 +5052,36 @@ function PatternCard({
           </div>
           )}
 
-
+          {multipleChoiceMode && (
+            <div style={{ marginTop: 14, border: `1px solid ${GOLD}40`, background: 'rgba(212,175,55,0.06)', borderRadius: 14, padding: 16 }}>
+              <div style={{ color: GOLD, fontSize: 14, fontWeight: 950, letterSpacing: 1.4, marginBottom: 12 }}>PATTERN RECOGNITION QUIZ</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 10 }}>
+                {quizOptions.map(opt => {
+                  const isCorrect = opt.id === pattern.id;
+                  const isSelected = quizAnswer === opt.id;
+                  let bg = 'rgba(255,255,255,0.04)';
+                  let border = 'rgba(255,255,255,0.12)';
+                  let color = '#f8fafc';
+                  if (isSelected && isCorrect) { bg = 'rgba(38,166,154,0.16)'; border = `${TEAL}70`; color = TEAL; }
+                  if (isSelected && !isCorrect) { bg = 'rgba(239,83,80,0.16)'; border = `${RED}70`; color = RED; }
+                  if (quizAnswer && isCorrect) { bg = 'rgba(38,166,154,0.16)'; border = `${TEAL}70`; color = TEAL; }
+                  return (
+                    <button
+                      key={opt.id}
+                      style={{ background: bg, border: `1px solid ${border}`, borderRadius: 10, color, fontSize: 14, fontWeight: 850, padding: '13px 14px', cursor: quizAnswer ? 'default' : 'pointer', textAlign: 'left' }}
+                    >
+                      {opt.name}{quizAnswer && isCorrect ? ' ✓' : ''}{isSelected && !isCorrect ? ' ✗' : ''}
+                    </button>
+                  );
+                })}
+              </div>
+              {quizAnswer && (
+                <div style={{ marginTop: 12, padding: '12px 14px', borderRadius: 10, color: quizAnswer === pattern.id ? TEAL : RED, background: quizAnswer === pattern.id ? 'rgba(38,166,154,0.10)' : 'rgba(239,83,80,0.10)', fontSize: 14, fontWeight: 800 }}>
+                  {quizAnswer === pattern.id ? '✓ Correct. Pattern recognition confirmed.' : `✗ Incorrect. This pattern is ${pattern.name}. Replay the animation and focus on the defining structure.`}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -5267,7 +5149,6 @@ export default function PatternsPage() {
   const [level, setLevel] = useState('All');
   const [signal, setSignal] = useState('All');
   const [expanded, setExpanded] = useState(null);
-  const [cardQuizMode, setCardQuizMode] = useState(false);
   const [pageMode, setPageMode] = useState('library'); // 'library' | 'quiz'
 
   // ── Quiz Session State ──
@@ -5379,21 +5260,19 @@ export default function PatternsPage() {
   const currentIndex = filtered.findIndex(p => p.id === expanded);
   const selectedPattern = filtered.find(p => p.id === expanded);
 
-  function openPattern(id) { setExpanded(id); setCardQuizMode(false); }
-  function closePattern() { setExpanded(null); setCardQuizMode(false); }
+  function openPattern(id) { setExpanded(id); }
+  function closePattern() { setExpanded(null); }
 
   function goNext() {
     if (!filtered.length) return;
     const idx = currentIndex === -1 ? 0 : currentIndex;
     setExpanded(filtered[(idx + 1) % filtered.length].id);
-    setCardQuizMode(false);
   }
 
   function goPrev() {
     if (!filtered.length) return;
     const idx = currentIndex === -1 ? 0 : currentIndex;
     setExpanded(filtered[(idx - 1 + filtered.length) % filtered.length].id);
-    setCardQuizMode(false);
   }
 
   const currentQuizPattern = quizPool[quizIndex];
@@ -5467,11 +5346,11 @@ export default function PatternsPage() {
                 pattern={selectedPattern}
                 isExpanded={true}
                 singleMode={true}
-                quizMode={cardQuizMode}
+                quizMode={false}
                 onClick={closePattern}
                 onNext={goNext}
                 onPrev={goPrev}
-                onToggleQuiz={() => setCardQuizMode(v => !v)}
+                onToggleQuiz={() => {}}
               />
             </div>
           ) : (
@@ -5657,6 +5536,7 @@ export default function PatternsPage() {
                   <CandleChart
                     pattern={{ ...currentQuizPattern, annotations: [] }}
                     playing={quizPlaying}
+                    quizMode={true}
                     onComplete={() => setQuizDone(true)}
                     width={900}
                     height={344}
