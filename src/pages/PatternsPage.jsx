@@ -4802,18 +4802,7 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
         addText('Rounded cup', xC(Math.floor(candles.length / 2)), H - PAD_B - 18, GOLD, 12, 'middle', 900);
         drawArrow(xC(candles.length - 4), yS(candles[candles.length - 4].h) - 20, xC(candles.length - 2), yS(candles[candles.length - 2].h) - 2, GOLD, 'Handle', 1100);
       }
-
-      if (bearish) {
-        const entryY = yS(candles[candles.length - 3]?.c || minP);
-        drawZone(W - PAD_R - 145, entryY - 30, W - PAD_R - 15, entryY - 4, 'rgba(239,83,80,0.11)', 'rgba(239,83,80,0.45)', 'Stop zone', 1600);
-        drawZone(W - PAD_R - 145, entryY + 5, W - PAD_R - 15, Math.min(H - PAD_B, entryY + 48), 'rgba(38,166,154,0.10)', 'rgba(38,166,154,0.35)', 'Target zone', 1750);
-      }
-
-      if (bullish) {
-        const entryY = yS(candles[candles.length - 3]?.c || maxP);
-        drawZone(W - PAD_R - 145, Math.max(PAD_T, entryY - 48), W - PAD_R - 15, entryY - 5, 'rgba(38,166,154,0.10)', 'rgba(38,166,154,0.35)', 'Target zone', 1600);
-        drawZone(W - PAD_R - 145, entryY + 5, W - PAD_R - 15, entryY + 30, 'rgba(239,83,80,0.11)', 'rgba(239,83,80,0.45)', 'Stop zone', 1750);
-      }
+   
     }
 
     drawNextCandle();
