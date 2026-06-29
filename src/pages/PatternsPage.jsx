@@ -10,2402 +10,2338 @@ const BLUE = "#3b82f6";
 // PATTERN DATA — Batch 1 (Patterns 1-28)
 // ─────────────────────────────────────────────
 const PATTERNS = [
+  // ── LEVEL I: Single Candle Bullish ──
   {
     id: 1, name: "Bullish Engulfing", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
+    category: "Single Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
     description: "A large bullish candle completely engulfs the previous bearish candle. Signals that buyers have overwhelmed sellers and a reversal is likely.",
     entry: "Open of next candle after the engulfing pattern forms",
     stop: "Below the low of the engulfing candle",
     target: "1.5-2x the height of the pattern",
     candles: [
-      // Downtrend establishing context
-      {o:240,c:232,h:242,l:230,bull:false},
-      {o:232,c:224,h:234,l:222,bull:false},
-      {o:224,c:216,h:226,l:214,bull:false},
-      {o:216,c:208,h:218,l:206,bull:false},
-      {o:208,c:200,h:210,l:198,bull:false},
-      // Small bearish candle — the one that gets engulfed
-      {o:200,c:194,h:202,l:192,bull:false},
-      // THE ENGULFING — opens well below prev close, closes well above prev open
-      {o:190,c:204,h:206,l:188,bull:true},
-      // Confirmation and continuation up
-      {o:204,c:212,h:214,l:202,bull:true},
-      {o:212,c:220,h:222,l:210,bull:true},
-      {o:220,c:228,h:230,l:218,bull:true},
+      {o:210,c:205,h:212,l:203,bull:false},
+      {o:208,c:215,h:207,l:217,bull:true},
+      {o:203,c:200,h:204,l:198,bull:false},
+      {o:201,c:198,h:202,l:196,bull:false},
+      {o:199,c:195,h:200,l:193,bull:false},
+      {o:196,c:192,h:197,l:190,bull:false},
+      {o:193,c:189,h:194,l:187,bull:false},
+      // Engulfing pattern
+      {o:190,c:185,h:191,l:183,bull:false},
+      {o:183,c:193,h:182,l:195,bull:true},
+      // Continuation
+      {o:193,c:198,h:192,l:200,bull:true},
+      {o:198,c:204,h:197,l:206,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:5,offset:-18,text:'Small Bearish',color:RED},
-      {type:'label',candleIdx:6,offset:-18,text:'ENGULFS IT ↑',color:TEAL},
-      {type:'bracket',start:5,end:6,label:'Engulfing Pattern'},
+      {type:'label', candleIdx:7, offset:-18, text:'Bearish', color:'#ef5350'},
+      {type:'label', candleIdx:8, offset:-18, text:'Engulfing', color:TEAL},
+      {type:'bracket', start:7, end:8, label:'Pattern'},
     ]
   },
   {
     id: 2, name: "Hammer", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "A candle with a small body at the top and a long lower wick (at least 2x the body). Signals buyers violently rejected lower prices — reversal likely.",
+    category: "Single Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "A candle with a small body at the top and a long lower wick (2x+ the body). Signals buyers rejected lower prices and a reversal may follow.",
     entry: "Above the high of the hammer candle",
-    stop: "Below the tip of the hammer wick",
+    stop: "Below the low of the hammer wick",
     target: "Previous swing high",
     candles: [
-      // Downtrend
-      {o:240,c:230,h:242,l:228,bull:false},
-      {o:230,c:220,h:232,l:218,bull:false},
-      {o:220,c:210,h:222,l:208,bull:false},
-      {o:210,c:200,h:212,l:198,bull:false},
-      {o:200,c:192,h:202,l:190,bull:false},
-      // THE HAMMER — tiny body at top, wick is 3x body going way down
-      {o:192,c:195,h:196,l:174,bull:true},
-      // Confirmation — strong green candle
-      {o:195,c:206,h:208,l:194,bull:true},
-      {o:206,c:216,h:218,l:204,bull:true},
-      {o:216,c:226,h:228,l:214,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:205,h:211,l:203,bull:false},
+      {o:205,c:200,h:206,l:198,bull:false},
+      {o:200,c:196,h:201,l:194,bull:false},
+      {o:196,c:193,h:197,l:191,bull:false},
+      // Hammer
+      {o:193,c:195,h:196,l:183,bull:true},
+      // Continuation
+      {o:195,c:200,h:194,l:202,bull:true},
+      {o:200,c:206,h:199,l:208,bull:true},
+      {o:206,c:210,h:205,l:212,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:5,offset:-35,text:'← Long wick = rejection',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'Confirmed ✓',color:GOLD},
+      {type:'label', candleIdx:5, offset:-25, text:'Hammer', color:TEAL},
+      {type:'arrow', candleIdx:5, direction:'up'},
     ]
   },
   {
     id: 3, name: "Inverted Hammer", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Small body at bottom, long upper wick at the BOTTOM of a downtrend. Bulls tried to push higher — sellers pushed back but couldn't close low. Needs confirmation.",
-    entry: "Above the high of the next bullish confirmation candle",
+    category: "Single Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Small body at the bottom with a long upper wick. Appears at the bottom of a downtrend. Signals buyers tried to push higher — confirmation needed.",
+    entry: "Above the high of the next bullish candle",
     stop: "Below the low of the inverted hammer",
     target: "Previous swing high",
     candles: [
-      {o:240,c:230,h:242,l:228,bull:false},
-      {o:230,c:220,h:232,l:218,bull:false},
-      {o:220,c:210,h:222,l:208,bull:false},
-      {o:210,c:200,h:212,l:198,bull:false},
-      {o:200,c:192,h:202,l:190,bull:false},
-      // INVERTED HAMMER — tiny body at bottom, long upper wick
-      {o:190,c:192,h:208,l:189,bull:true},
-      // Confirmation needed
-      {o:192,c:202,h:204,l:191,bull:true},
-      {o:202,c:213,h:215,l:200,bull:true},
-      {o:213,c:222,h:224,l:211,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:205,h:211,l:203,bull:false},
+      {o:205,c:200,h:206,l:198,bull:false},
+      {o:200,c:195,h:201,l:193,bull:false},
+      // Inverted hammer
+      {o:195,c:193,h:205,l:192,bull:false},
+      // Confirmation
+      {o:193,c:199,h:192,l:201,bull:true},
+      {o:199,c:205,h:198,l:207,bull:true},
+      {o:205,c:210,h:204,l:212,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:5,offset:-32,text:'Upper wick = bulls tried',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'Confirm needed ✓',color:GOLD},
+      {type:'label', candleIdx:4, offset:-25, text:'Inv. Hammer', color:TEAL},
+      {type:'label', candleIdx:5, offset:-18, text:'Confirm', color:GOLD},
     ]
   },
   {
     id: 4, name: "Dragonfly Doji", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Open AND close are at the very TOP of the candle with a massive lower wick. Bulls completely rejected the selloff. One of the strongest single-candle reversals.",
+    category: "Single Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Open and close are at the high of the candle with a very long lower wick. Strong rejection of lower prices. One of the most powerful single-candle reversals.",
     entry: "Above the high of the dragonfly doji",
-    stop: "Below the tip of the long lower wick",
-    target: "1.5-2x the wick length projected upward",
+    stop: "Below the low of the long wick",
+    target: "1.5-2x the wick length above entry",
     candles: [
-      {o:240,c:230,h:242,l:228,bull:false},
-      {o:230,c:220,h:232,l:218,bull:false},
-      {o:220,c:210,h:222,l:208,bull:false},
-      {o:210,c:200,h:212,l:198,bull:false},
-      // DRAGONFLY — open = close at top, massive lower wick
-      {o:198,c:198,h:199,l:176,bull:true},
-      // Strong reversal follows
-      {o:198,c:210,h:212,l:197,bull:true},
-      {o:210,c:222,h:224,l:208,bull:true},
-      {o:222,c:232,h:234,l:220,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:204,h:211,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
+      {o:198,c:193,h:199,l:191,bull:false},
+      // Dragonfly doji
+      {o:193,c:193,h:194,l:180,bull:true},
+      {o:193,c:199,h:192,l:201,bull:true},
+      {o:199,c:206,h:198,l:208,bull:true},
+      {o:206,c:212,h:205,l:214,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-38,text:'Open = Close at top',color:TEAL},
-      {type:'label',candleIdx:4,offset:-52,text:'Massive lower wick ↓',color:GOLD},
+      {type:'label', candleIdx:4, offset:-28, text:'Dragonfly', color:TEAL},
+      {type:'arrow', candleIdx:4, direction:'up'},
     ]
   },
   {
     id: 5, name: "Bullish Marubozu", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "A full bullish candle with NO wicks at all. Opens at the absolute low, closes at the absolute high. Total buyer domination from open to close. Pure momentum.",
-    entry: "Open of the very next candle",
-    stop: "Below the open of the Marubozu (no mercy zone)",
-    target: "Measured move equal to the Marubozu body length",
+    category: "Single Candle", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "A full bullish candle with no wicks. Opens at the low and closes at the high. Shows total buyer dominance — no hesitation. Strong momentum signal.",
+    entry: "Open of next candle",
+    stop: "Below the open of the marubozu",
+    target: "Measured move equal to marubozu length",
     candles: [
-      // Base — slight consolidation before
-      {o:190,c:194,h:196,l:189,bull:true},
-      {o:194,c:198,h:200,l:193,bull:true},
-      {o:198,c:195,h:200,l:194,bull:false},
-      {o:195,c:199,h:201,l:194,bull:true},
-      // THE MARUBOZU — open=low, close=high, ZERO wicks
-      {o:197,c:218,h:218,l:197,bull:true},
-      // Continuation momentum
-      {o:218,c:226,h:228,l:217,bull:true},
-      {o:226,c:234,h:236,l:225,bull:true},
-      {o:234,c:240,h:242,l:233,bull:true},
+      {o:195,c:198,h:196,l:199,bull:true},
+      {o:198,c:202,h:199,l:203,bull:true},
+      {o:202,c:200,h:203,l:201,bull:false},
+      {o:200,c:204,h:201,l:205,bull:true},
+      // Marubozu
+      {o:200,c:212,h:200,l:212,bull:true},
+      {o:212,c:218,h:211,l:220,bull:true},
+      {o:218,c:222,h:217,l:224,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'NO wicks — pure power',color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Marubozu', color:TEAL},
     ]
   },
   {
     id: 6, name: "Piercing Pattern", level: "Beginner",
-    category: "Single Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "After a large bearish candle, the next candle opens BELOW the low then closes above the MIDPOINT of the bearish candle. Buyers pierced through seller territory.",
+    category: "Single Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "After a bearish candle, the next candle opens below the low and closes above the midpoint of the previous candle. Signals buyers are stepping in strongly.",
     entry: "Above the high of the piercing candle",
     stop: "Below the low of the piercing candle",
-    target: "Top of the prior bearish candle and beyond",
+    target: "Previous swing high",
     candles: [
-      {o:238,c:228,h:240,l:226,bull:false},
-      {o:228,c:218,h:230,l:216,bull:false},
-      {o:218,c:208,h:220,l:206,bull:false},
-      {o:208,c:198,h:210,l:196,bull:false},
-      // Large bearish candle
-      {o:200,c:184,h:202,l:182,bull:false},
-      // PIERCING — opens below low (182), closes above midpoint (192)
-      {o:180,c:194,h:196,l:179,bull:true},
-      {o:194,c:204,h:206,l:193,bull:true},
-      {o:204,c:214,h:216,l:203,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:205,h:211,l:203,bull:false},
+      {o:205,c:200,h:206,l:198,bull:false},
+      {o:200,c:194,h:201,l:192,bull:false},
+      // Piercing pattern
+      {o:194,c:188,h:195,l:186,bull:false},
+      {o:185,c:192,h:184,l:194,bull:true},
+      {o:192,c:198,h:191,l:200,bull:true},
+      {o:198,c:204,h:197,l:206,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'Large bearish',color:RED},
-      {type:'label',candleIdx:5,offset:-18,text:'Pierces midpoint ↑',color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Bearish', color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Piercing', color:TEAL},
     ]
   },
+
+  // ── LEVEL I: Single Candle Bearish ──
   {
     id: 7, name: "Bearish Engulfing", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "A large bearish candle completely engulfs the previous bullish candle. Sellers overwhelmed buyers in one candle. Strong reversal signal at the top of an uptrend.",
-    entry: "Open of the next candle after engulfing forms",
+    category: "Single Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "A large bearish candle completely engulfs the previous bullish candle. Signals sellers have overwhelmed buyers and a reversal lower is likely.",
+    entry: "Open of next candle after engulfing forms",
     stop: "Above the high of the engulfing candle",
-    target: "1.5-2x the pattern height below entry",
+    target: "1.5-2x the height of the pattern below entry",
     candles: [
-      // Uptrend
-      {o:180,c:190,h:192,l:178,bull:true},
-      {o:190,c:200,h:202,l:188,bull:true},
-      {o:200,c:210,h:212,l:198,bull:true},
-      {o:210,c:220,h:222,l:208,bull:true},
-      {o:220,c:230,h:232,l:218,bull:true},
-      // Small bullish before engulfing
-      {o:230,c:236,h:238,l:228,bull:true},
-      // THE ENGULFING — opens above, closes well below small bullish open
-      {o:238,c:224,h:240,l:222,bull:false},
-      // Continuation down
-      {o:224,c:214,h:226,l:212,bull:false},
-      {o:214,c:204,h:216,l:202,bull:false},
-      {o:204,c:194,h:206,l:192,bull:false},
+      {o:190,c:195,h:189,l:197,bull:true},
+      {o:195,c:200,h:194,l:202,bull:true},
+      {o:200,c:205,h:199,l:207,bull:true},
+      {o:205,c:210,h:204,l:212,bull:true},
+      {o:210,c:215,h:209,l:217,bull:true},
+      // Engulfing
+      {o:215,c:218,h:214,l:220,bull:true},
+      {o:220,c:210,h:221,l:208,bull:false},
+      // Continuation
+      {o:210,c:204,h:211,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:5,offset:-18,text:'Small bullish',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'ENGULFS IT ↓',color:RED},
-      {type:'bracket',start:5,end:6,label:'Engulfing Pattern'},
+      {type:'label', candleIdx:5, offset:-18, text:'Bullish', color:TEAL},
+      {type:'label', candleIdx:6, offset:-18, text:'Engulfing', color:RED},
+      {type:'bracket', start:5, end:6, label:'Pattern'},
     ]
   },
   {
     id: 8, name: "Shooting Star", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "Small body at the BOTTOM with a long upper wick at the TOP of an uptrend. Buyers pushed hard but got completely rejected. Sellers took over by close.",
-    entry: "Below the low of the shooting star candle",
-    stop: "Above the tip of the upper wick",
+    category: "Single Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Small body at the bottom with a long upper wick at the TOP of an uptrend. Signals buyers were rejected at higher prices. Strong reversal signal.",
+    entry: "Below the low of the shooting star",
+    stop: "Above the high of the upper wick",
     target: "Previous swing low",
     candles: [
-      // Uptrend
-      {o:180,c:190,h:192,l:178,bull:true},
-      {o:190,c:200,h:202,l:188,bull:true},
-      {o:200,c:210,h:212,l:198,bull:true},
-      {o:210,c:220,h:222,l:208,bull:true},
-      // SHOOTING STAR — tiny body at bottom, upper wick 3x body
-      {o:220,c:218,h:238,l:217,bull:false},
-      // Sellers confirm
-      {o:218,c:208,h:220,l:206,bull:false},
-      {o:208,c:198,h:210,l:196,bull:false},
-      {o:198,c:188,h:200,l:186,bull:false},
+      {o:190,c:195,h:189,l:197,bull:true},
+      {o:195,c:200,h:194,l:202,bull:true},
+      {o:200,c:206,h:199,l:208,bull:true},
+      {o:206,c:212,h:205,l:214,bull:true},
+      // Shooting star
+      {o:212,c:210,h:209,l:222,bull:false},
+      // Continuation
+      {o:210,c:204,h:211,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
+      {o:198,c:192,h:199,l:190,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-35,text:'Buyers rejected hard ↑',color:RED},
-      {type:'label',candleIdx:4,offset:-20,text:'Tiny body at bottom',color:GOLD},
+      {type:'label', candleIdx:4, offset:-25, text:'Shooting Star', color:RED},
+      {type:'arrow', candleIdx:4, direction:'down'},
     ]
   },
   {
     id: 9, name: "Hanging Man", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "Same shape as Hammer but at the TOP of an uptrend. Small body at top, long lower wick. Sellers tested much lower prices — a warning that bears are waking up.",
-    entry: "Below the low of the confirmation bearish candle",
+    category: "Single Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Same shape as hammer but appears at the TOP of an uptrend. Small body, long lower wick. Sellers tested lower prices — warning sign that trend may reverse.",
+    entry: "Below the low of the next bearish confirmation candle",
     stop: "Above the high of the hanging man",
     target: "Previous swing low",
     candles: [
-      // Uptrend
-      {o:180,c:190,h:192,l:178,bull:true},
-      {o:190,c:200,h:202,l:188,bull:true},
-      {o:200,c:210,h:212,l:198,bull:true},
-      {o:210,c:220,h:222,l:208,bull:true},
-      // HANGING MAN — small body at top, long lower wick
-      {o:220,c:222,h:223,l:204,bull:true},
-      // Bearish confirmation
-      {o:222,c:212,h:224,l:210,bull:false},
-      {o:212,c:202,h:214,l:200,bull:false},
-      {o:202,c:192,h:204,l:190,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:214,h:207,l:216,bull:true},
+      // Hanging man
+      {o:214,c:216,h:213,l:206,bull:true},
+      // Confirmation & continuation
+      {o:216,c:210,h:217,l:208,bull:false},
+      {o:210,c:204,h:211,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-32,text:'Bears tested low ↓',color:RED},
-      {type:'label',candleIdx:5,offset:-18,text:'Confirm bearish ✓',color:GOLD},
+      {type:'label', candleIdx:4, offset:-25, text:'Hanging Man', color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Confirm', color:GOLD},
     ]
   },
   {
     id: 10, name: "Gravestone Doji", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "Open AND close at the BOTTOM with a massive upper wick. Bears completely rejected the rally. Mirror image of the Dragonfly Doji — one of the strongest top signals.",
+    category: "Single Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Open and close at the LOW with a long upper wick. Strong rejection of higher prices at the top of a trend. Mirror opposite of dragonfly doji.",
     entry: "Below the low of the gravestone doji",
-    stop: "Above the tip of the upper wick",
-    target: "1.5-2x the wick length projected downward",
+    stop: "Above the high of the upper wick",
+    target: "1.5-2x the wick length below entry",
     candles: [
-      // Uptrend
-      {o:180,c:190,h:192,l:178,bull:true},
-      {o:190,c:200,h:202,l:188,bull:true},
-      {o:200,c:210,h:212,l:198,bull:true},
-      {o:210,c:220,h:222,l:208,bull:true},
-      // GRAVESTONE — open = close at bottom, massive upper wick
-      {o:220,c:220,h:240,l:219,bull:false},
-      // Strong reversal follows
-      {o:220,c:210,h:222,l:208,bull:false},
-      {o:210,c:200,h:212,l:198,bull:false},
-      {o:200,c:190,h:202,l:188,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:214,h:207,l:216,bull:true},
+      // Gravestone doji
+      {o:214,c:214,h:213,l:226,bull:false},
+      {o:214,c:208,h:215,l:206,bull:false},
+      {o:208,c:202,h:209,l:200,bull:false},
+      {o:202,c:196,h:203,l:194,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-38,text:'Open = Close at bottom',color:RED},
-      {type:'label',candleIdx:4,offset:-52,text:'Massive upper wick ↑',color:GOLD},
+      {type:'label', candleIdx:4, offset:-25, text:'Gravestone', color:RED},
+      {type:'arrow', candleIdx:4, direction:'down'},
     ]
   },
   {
     id: 11, name: "Bearish Marubozu", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Continuation", signalColor: RED,
-    description: "Full bearish candle with NO wicks. Opens at the absolute high, closes at the absolute low. Total seller domination from open to close. Pure bearish momentum.",
-    entry: "Open of the very next candle",
-    stop: "Above the open of the Marubozu",
-    target: "Measured move equal to the Marubozu body length below",
+    category: "Single Candle", signal: "Bearish Continuation",
+    signalColor: RED,
+    description: "Full bearish candle with no wicks. Opens at the high and closes at the low. Complete seller dominance. Strong momentum continuation signal.",
+    entry: "Open of next candle",
+    stop: "Above the open of the marubozu",
+    target: "Measured move equal to marubozu length below",
     candles: [
-      {o:240,c:236,h:242,l:234,bull:false},
-      {o:236,c:232,h:238,l:230,bull:false},
-      {o:232,c:236,h:238,l:231,bull:true},
-      {o:236,c:232,h:238,l:230,bull:false},
-      // THE MARUBOZU — open=high, close=low, ZERO wicks
-      {o:234,c:212,h:234,l:212,bull:false},
-      // Continuation momentum
-      {o:212,c:204,h:214,l:202,bull:false},
-      {o:204,c:196,h:206,l:194,bull:false},
-      {o:196,c:188,h:198,l:186,bull:false},
+      {o:215,c:212,h:216,l:211,bull:false},
+      {o:212,c:208,h:213,l:207,bull:false},
+      {o:208,c:210,h:207,l:211,bull:true},
+      {o:210,c:206,h:211,l:205,bull:false},
+      // Marubozu
+      {o:214,c:202,h:214,l:202,bull:false},
+      {o:202,c:196,h:203,l:194,bull:false},
+      {o:196,c:190,h:197,l:188,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'NO wicks — pure seller power',color:RED},
+      {type:'label', candleIdx:4, offset:-18, text:'Marubozu', color:RED},
     ]
   },
   {
     id: 12, name: "Dark Cloud Cover", level: "Beginner",
-    category: "Single Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "After a large bullish candle, the next opens ABOVE the high then closes below the MIDPOINT of the bullish candle. Sellers invaded buyer territory. Bearish reversal incoming.",
+    category: "Single Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "After a bullish candle, the next opens above the high and closes below the midpoint of the previous candle. Sellers are gaining control.",
     entry: "Below the low of the dark cloud candle",
     stop: "Above the high of the dark cloud candle",
-    target: "Bottom of the prior bullish candle and beyond",
+    target: "Previous swing low",
     candles: [
-      {o:180,c:190,h:192,l:178,bull:true},
-      {o:190,c:200,h:202,l:188,bull:true},
-      {o:200,c:210,h:212,l:198,bull:true},
-      // Large bullish candle
-      {o:208,c:226,h:228,l:206,bull:true},
-      // DARK CLOUD — opens above high (230), closes below midpoint (217)
-      {o:230,c:215,h:231,l:213,bull:false},
-      {o:215,c:205,h:217,l:203,bull:false},
-      {o:205,c:195,h:207,l:193,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      // Dark cloud
+      {o:208,c:214,h:207,l:216,bull:true},
+      {o:217,c:209,h:218,l:207,bull:false},
+      {o:209,c:203,h:210,l:201,bull:false},
+      {o:203,c:197,h:204,l:195,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Large bullish',color:TEAL},
-      {type:'label',candleIdx:4,offset:-18,text:'Closes below midpoint ↓',color:RED},
+      {type:'label', candleIdx:3, offset:-18, text:'Bullish', color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Dark Cloud', color:RED},
     ]
   },
+
+  // ── LEVEL I: Neutral ──
   {
     id: 13, name: "Doji", level: "Beginner",
-    category: "Single Candle", signal: "Indecision", signalColor: GOLD,
-    description: "Open and close at virtually the same price with wicks above and below. Perfect equilibrium between buyers and sellers. The CONTEXT tells you the next direction.",
-    entry: "Wait for the confirmation candle — do not trade the Doji itself",
-    stop: "Beyond the Doji wick in the opposite direction of your trade",
-    target: "Based on trend direction and confirmation candle",
+    category: "Single Candle", signal: "Indecision",
+    signalColor: GOLD,
+    description: "Open and close are at virtually the same price. Buyers and sellers are in perfect equilibrium. Signals indecision — context determines direction.",
+    entry: "Wait for confirmation candle",
+    stop: "Below the low (bullish setup) or above the high (bearish)",
+    target: "Based on confirmation candle direction",
     candles: [
-      {o:200,c:207,h:209,l:198,bull:true},
-      {o:207,c:214,h:216,l:205,bull:true},
-      {o:214,c:210,h:216,l:208,bull:false},
-      // DOJI — open very nearly equals close
-      {o:210,c:210,h:220,l:200,bull:true},
-      // Resolution — bullish in this context
-      {o:210,c:218,h:220,l:209,bull:true},
-      {o:218,c:226,h:228,l:217,bull:true},
-      {o:226,c:234,h:236,l:225,bull:true},
+      {o:202,c:206,h:201,l:208,bull:true},
+      {o:206,c:210,h:205,l:212,bull:true},
+      {o:210,c:208,h:211,l:209,bull:false},
+      // Doji
+      {o:208,c:208,h:206,l:214,bull:true},
+      {o:208,c:214,h:207,l:216,bull:true},
+      {o:214,c:218,h:213,l:220,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-32,text:'Open ≈ Close',color:GOLD},
-      {type:'label',candleIdx:3,offset:-45,text:'Indecision ⚡',color:GOLD},
-      {type:'label',candleIdx:4,offset:-18,text:'Context decides →',color:TEAL},
+      {type:'label', candleIdx:3, offset:-25, text:'Doji', color:GOLD},
     ]
   },
   {
     id: 14, name: "Long-Legged Doji", level: "Beginner",
-    category: "Single Candle", signal: "Indecision", signalColor: GOLD,
-    description: "A Doji with extremely long wicks on BOTH sides. Both bulls and bears fought intensely but ended in a draw. Massive volatility signal — a big move is coming.",
-    entry: "Wait for a strong breakout candle above or below the Doji range",
-    stop: "Opposite end of the Doji wick range",
-    target: "Equal to the total wick length in the breakout direction",
+    category: "Single Candle", signal: "Indecision",
+    signalColor: GOLD,
+    description: "A doji with very long upper and lower wicks. Extreme indecision — both bulls and bears fought hard but neither won. Major volatility signal.",
+    entry: "Wait for strong confirmation candle",
+    stop: "Outside the entire wick range",
+    target: "Based on breakout direction",
     candles: [
-      {o:200,c:207,h:209,l:198,bull:true},
-      {o:207,c:214,h:216,l:205,bull:true},
-      {o:214,c:210,h:216,l:208,bull:false},
-      // LONG-LEGGED DOJI — equal open/close, extreme wicks both ways
-      {o:210,c:210,h:230,l:190,bull:true},
-      {o:210,c:218,h:220,l:209,bull:true},
-      {o:218,c:228,h:230,l:217,bull:true},
-      {o:228,c:236,h:238,l:227,bull:true},
+      {o:202,c:206,h:201,l:208,bull:true},
+      {o:206,c:210,h:205,l:212,bull:true},
+      {o:210,c:208,h:211,l:209,bull:false},
+      // Long-legged doji
+      {o:208,c:208,h:200,l:218,bull:true},
+      {o:208,c:214,h:207,l:216,bull:true},
+      {o:214,c:218,h:213,l:220,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-42,text:'Epic battle — no winner',color:GOLD},
-      {type:'label',candleIdx:4,offset:-18,text:'Breakout incoming ⚡',color:TEAL},
+      {type:'label', candleIdx:3, offset:-30, text:'Long-Legged Doji', color:GOLD},
     ]
   },
   {
     id: 15, name: "Spinning Top", level: "Beginner",
-    category: "Single Candle", signal: "Indecision", signalColor: GOLD,
-    description: "Small body in the middle with equal-length wicks above and below. Market is pausing and deciding. Often signals trend continuation after a brief rest.",
-    entry: "Wait for the next candle to break above the high or below the low",
-    stop: "Opposite end of the spinning top",
-    target: "Prior trend continuation — measured move",
+    category: "Single Candle", signal: "Indecision",
+    signalColor: GOLD,
+    description: "Small body with upper and lower wicks of roughly equal length. Shows balance between buyers and sellers. Often signals a pause before continuation or reversal.",
+    entry: "Wait for next candle direction",
+    stop: "Outside the wick range",
+    target: "Based on next candle",
     candles: [
-      {o:198,c:206,h:208,l:196,bull:true},
-      {o:206,c:214,h:216,l:204,bull:true},
-      {o:214,c:210,h:216,l:208,bull:false},
-      // SPINNING TOP — small body, equal upper and lower wicks
-      {o:210,c:214,h:222,l:202,bull:true},
-      // Continuation
-      {o:214,c:222,h:224,l:213,bull:true},
-      {o:222,c:230,h:232,l:221,bull:true},
-      {o:230,c:238,h:240,l:229,bull:true},
+      {o:200,c:205,h:199,l:207,bull:true},
+      {o:205,c:210,h:204,l:212,bull:true},
+      {o:210,c:208,h:211,l:209,bull:false},
+      // Spinning top
+      {o:208,c:210,h:204,l:214,bull:true},
+      {o:210,c:216,h:209,l:218,bull:true},
+      {o:216,c:220,h:215,l:222,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-30,text:'Small body = pause',color:GOLD},
-      {type:'label',candleIdx:4,offset:-18,text:'Trend resumes →',color:TEAL},
+      {type:'label', candleIdx:3, offset:-25, text:'Spinning Top', color:GOLD},
     ]
   },
   {
     id: 16, name: "High Wave Candle", level: "Beginner",
-    category: "Single Candle", signal: "Indecision", signalColor: GOLD,
-    description: "Extreme Spinning Top — tiny body with very long wicks in BOTH directions. The market violently moved up AND down but closed nearly where it opened. Maximum uncertainty.",
-    entry: "Only after an extremely strong breakout candle — not before",
-    stop: "Beyond the full wick range",
-    target: "Equal to the wick length in the confirmed direction",
+    category: "Single Candle", signal: "Indecision",
+    signalColor: GOLD,
+    description: "Extreme version of the spinning top with very long wicks on both sides and a tiny body. Shows massive uncertainty and volatility. Often precedes a major move.",
+    entry: "Wait for breakout from the wick range",
+    stop: "Opposite end of the wick",
+    target: "Equal to the wick length in breakout direction",
     candles: [
-      {o:205,c:212,h:214,l:203,bull:true},
-      {o:212,c:218,h:220,l:210,bull:true},
-      {o:218,c:214,h:220,l:212,bull:false},
-      // HIGH WAVE — tiny body, extreme wicks both ways
-      {o:214,c:215,h:236,l:194,bull:true},
-      // Breakout after the chaos
-      {o:215,c:224,h:226,l:214,bull:true},
-      {o:224,c:234,h:236,l:223,bull:true},
-      {o:234,c:242,h:244,l:233,bull:true},
+      {o:205,c:210,h:204,l:212,bull:true},
+      {o:210,c:208,h:211,l:209,bull:false},
+      {o:208,c:212,h:207,l:214,bull:true},
+      // High wave
+      {o:210,c:211,h:200,l:222,bull:true},
+      {o:211,c:217,h:210,l:219,bull:true},
+      {o:217,c:222,h:216,l:224,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-45,text:'Extreme volatility',color:GOLD},
-      {type:'label',candleIdx:3,offset:-58,text:'Tiny body inside chaos',color:GOLD},
+      {type:'label', candleIdx:3, offset:-32, text:'High Wave', color:GOLD},
     ]
   },
+
+  // ── LEVEL II: Multi-Candle Bullish Reversal ──
   {
     id: 17, name: "Morning Star", level: "Beginner",
-    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "3-candle bottom reversal: (1) Large bearish candle, (2) Small star candle gaps down — indecision at the low, (3) Large bullish closes above the midpoint of candle 1. Dawn after darkness.",
-    entry: "Above the close of the third (bullish) candle",
-    stop: "Below the low of the middle star candle",
-    target: "Back to the top of candle 1 and beyond",
+    category: "Multi Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Three-candle pattern: large bearish candle, small indecision candle (gaps down), large bullish candle closing above the midpoint of candle 1. Strong bottom signal.",
+    entry: "Above the close of the third candle",
+    stop: "Below the low of the small middle candle",
+    target: "Previous swing high",
     candles: [
-      {o:240,c:230,h:242,l:228,bull:false},
-      {o:230,c:220,h:232,l:218,bull:false},
-      {o:220,c:210,h:222,l:208,bull:false},
-      {o:210,c:200,h:212,l:198,bull:false},
-      // CANDLE 1 — large bearish
-      {o:202,c:186,h:204,l:184,bull:false},
-      // CANDLE 2 — small star, gaps down, shows indecision
-      {o:183,c:184,h:187,l:181,bull:true},
-      // CANDLE 3 — large bullish, closes above midpoint of candle 1
-      {o:184,c:198,h:200,l:183,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:204,h:211,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
+      {o:198,c:193,h:199,l:191,bull:false},
+      // Morning star 3 candles
+      {o:193,c:187,h:194,l:185,bull:false},
+      {o:185,c:186,h:183,l:188,bull:true},
+      {o:184,c:193,h:183,l:195,bull:true},
       // Continuation
-      {o:198,c:208,h:210,l:197,bull:true},
-      {o:208,c:218,h:220,l:207,bull:true},
+      {o:193,c:199,h:192,l:201,bull:true},
+      {o:199,c:205,h:198,l:207,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'① Big bearish',color:RED},
-      {type:'label',candleIdx:5,offset:-22,text:'② Star',color:GOLD},
-      {type:'label',candleIdx:6,offset:-18,text:'③ Big bullish',color:TEAL},
-      {type:'bracket',start:4,end:6,label:'Morning Star'},
+      {type:'label', candleIdx:4, offset:-18, text:'Bearish', color:RED},
+      {type:'label', candleIdx:5, offset:-20, text:'Star', color:GOLD},
+      {type:'label', candleIdx:6, offset:-18, text:'Bullish', color:TEAL},
+      {type:'bracket', start:4, end:6, label:'Morning Star'},
     ]
   },
   {
     id: 18, name: "Morning Doji Star", level: "Intermediate",
-    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Like the Morning Star but the middle candle is a Doji — perfect standoff at the bottom. Even stronger signal because the indecision is absolute before the bullish surge.",
+    category: "Multi Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Like the morning star but the middle candle is a doji. Even stronger signal because the doji shows a complete standoff between buyers and sellers at the bottom.",
     entry: "Above the close of the third candle",
-    stop: "Below the low of the Doji",
+    stop: "Below the low of the doji",
     target: "Previous swing high",
     candles: [
-      {o:240,c:230,h:242,l:228,bull:false},
-      {o:230,c:219,h:232,l:217,bull:false},
-      {o:219,c:208,h:221,l:206,bull:false},
-      {o:208,c:196,h:210,l:194,bull:false},
-      // CANDLE 1 — large bearish
-      {o:198,c:182,h:200,l:180,bull:false},
-      // CANDLE 2 — DOJI, open = close exactly
-      {o:180,c:180,h:184,l:176,bull:true},
-      // CANDLE 3 — strong bullish confirmation
-      {o:181,c:196,h:198,l:180,bull:true},
-      {o:196,c:208,h:210,l:195,bull:true},
-      {o:208,c:220,h:222,l:207,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:204,h:211,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
+      {o:198,c:192,h:199,l:190,bull:false},
+      // Morning doji star
+      {o:192,c:186,h:193,l:184,bull:false},
+      {o:184,c:184,h:182,l:187,bull:true},
+      {o:183,c:192,h:182,l:194,bull:true},
+      {o:192,c:198,h:191,l:200,bull:true},
+      {o:198,c:204,h:197,l:206,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'① Large bearish',color:RED},
-      {type:'label',candleIdx:5,offset:-28,text:'② Doji = perfect standoff',color:GOLD},
-      {type:'label',candleIdx:6,offset:-18,text:'③ Bullish surge',color:TEAL},
-      {type:'bracket',start:4,end:6,label:'Morning Doji Star'},
+      {type:'label', candleIdx:4, offset:-18, text:'Bearish', color:RED},
+      {type:'label', candleIdx:5, offset:-22, text:'Doji', color:GOLD},
+      {type:'label', candleIdx:6, offset:-18, text:'Bullish', color:TEAL},
+      {type:'bracket', start:4, end:6, label:'Morning Doji Star'},
     ]
   },
   {
     id: 19, name: "Three White Soldiers", level: "Beginner",
-    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Three consecutive large bullish candles, each opening INSIDE the prior body and closing at a new high. An army of buyers marching higher. One of the most powerful reversal signals.",
-    entry: "Open of the candle after the third soldier",
+    category: "Multi Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Three consecutive large bullish candles, each opening within the previous body and closing higher. Signals a powerful shift from sellers to buyers.",
+    entry: "Open of candle after the third soldier",
     stop: "Below the low of the first soldier",
-    target: "Measured move equal to the three-candle total range",
+    target: "Measured move equal to the three-candle range",
     candles: [
-      {o:240,c:230,h:242,l:228,bull:false},
-      {o:230,c:220,h:232,l:218,bull:false},
-      {o:220,c:210,h:222,l:208,bull:false},
-      {o:210,c:200,h:212,l:198,bull:false},
-      // THREE SOLDIERS — each large, each opens inside prev, each closes higher
-      {o:198,c:212,h:214,l:197,bull:true},
-      {o:208,c:222,h:224,l:207,bull:true},
-      {o:218,c:234,h:236,l:217,bull:true},
-      // Result — strong uptrend
-      {o:234,c:242,h:244,l:233,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:205,h:211,l:203,bull:false},
+      {o:205,c:200,h:206,l:198,bull:false},
+      {o:200,c:194,h:201,l:192,bull:false},
+      // Three white soldiers
+      {o:194,c:200,h:193,l:202,bull:true},
+      {o:199,c:206,h:198,l:208,bull:true},
+      {o:205,c:213,h:204,l:215,bull:true},
+      {o:213,c:218,h:212,l:220,bull:true},
+      {o:218,c:222,h:217,l:224,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'Soldier 1 ↑',color:TEAL},
-      {type:'label',candleIdx:5,offset:-18,text:'Soldier 2 ↑',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'Soldier 3 ↑',color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Soldier 1', color:TEAL},
+      {type:'label', candleIdx:5, offset:-18, text:'Soldier 2', color:TEAL},
+      {type:'label', candleIdx:6, offset:-18, text:'Soldier 3', color:TEAL},
     ]
   },
   {
     id: 20, name: "Bullish Harami", level: "Beginner",
-    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "A small bullish candle whose ENTIRE body fits inside the prior large bearish candle. Harami means 'pregnant' in Japanese. The small candle is the baby — momentum is slowing.",
-    entry: "Above the high of the small inside candle",
-    stop: "Below the low of the large bearish mother candle",
+    category: "Multi Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "A small bullish candle completely contained within the body of the previous large bearish candle. Signals momentum is slowing — watch for confirmation.",
+    entry: "Above the high of the small bullish candle",
+    stop: "Below the low of the large bearish candle",
     target: "Previous swing high",
     candles: [
-      {o:240,c:230,h:242,l:228,bull:false},
-      {o:230,c:220,h:232,l:218,bull:false},
-      {o:220,c:210,h:222,l:208,bull:false},
-      // LARGE BEARISH MOTHER CANDLE
-      {o:212,c:192,h:214,l:190,bull:false},
-      // SMALL BULLISH BABY — body entirely inside mother
-      {o:195,c:202,h:204,l:194,bull:true},
-      // Confirmation and breakout
-      {o:202,c:212,h:214,l:201,bull:true},
-      {o:212,c:222,h:224,l:211,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:204,h:211,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
+      // Harami
+      {o:198,c:190,h:199,l:188,bull:false},
+      {o:191,c:194,h:190,l:196,bull:true},
+      // Confirmation
+      {o:194,c:200,h:193,l:202,bull:true},
+      {o:200,c:206,h:199,l:208,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Large mother candle',color:RED},
-      {type:'label',candleIdx:4,offset:-18,text:'Baby inside ↑',color:TEAL},
-      {type:'bracket',start:3,end:4,label:'Harami'},
+      {type:'label', candleIdx:3, offset:-18, text:'Large Bearish', color:RED},
+      {type:'label', candleIdx:4, offset:-18, text:'Small Inside', color:TEAL},
+      {type:'bracket', start:3, end:4, label:'Harami'},
     ]
   },
   {
     id: 21, name: "Tweezer Bottom", level: "Intermediate",
-    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Two candles with the EXACT same low — first bearish, then bullish. Price tested the same level twice and buyers defended it both times. Double confirmation of support.",
-    entry: "Above the high of the second (bullish) candle",
-    stop: "Below the shared low — if it breaks, the setup is invalid",
+    category: "Multi Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Two candles with identical or very similar lows — one bearish, one bullish. Shows price tested a level twice and buyers defended it both times.",
+    entry: "Above the high of the second candle",
+    stop: "Below the shared low",
     target: "Previous swing high",
     candles: [
-      {o:240,c:230,h:242,l:228,bull:false},
-      {o:230,c:220,h:232,l:218,bull:false},
-      {o:220,c:210,h:222,l:208,bull:false},
-      {o:210,c:200,h:212,l:198,bull:false},
-      // TWEEZER — identical lows at 188
-      {o:202,c:190,h:204,l:188,bull:false},
-      {o:190,c:202,h:204,l:188,bull:true},
-      // Buyers confirmed
-      {o:202,c:212,h:214,l:201,bull:true},
-      {o:212,c:222,h:224,l:211,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:204,h:211,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
+      // Tweezer bottom
+      {o:198,c:193,h:199,l:189,bull:false},
+      {o:190,c:196,h:189,l:189,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-28,text:'Same low = support',color:GOLD},
-      {type:'label',candleIdx:5,offset:-28,text:'Defended again ✓',color:TEAL},
-      {type:'hline',candleIdx:4,label:'Support Level'},
+      {type:'label', candleIdx:3, offset:-22, text:'Same Low', color:GOLD},
+      {type:'label', candleIdx:4, offset:-22, text:'Same Low', color:GOLD},
+      {type:'hline', candleIdx:3, label:'Support'},
     ]
   },
   {
     id: 22, name: "Abandoned Baby Bottom", level: "Advanced",
-    category: "Multi Candle", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "RARE: Large bearish → Doji that GAPS below with space on both sides → Large bullish that GAPS above. The Doji is completely isolated — abandoned. Extremely high accuracy bottom signal.",
-    entry: "Above the close of the third (bullish) candle",
-    stop: "Below the low of the isolated Doji",
-    target: "Full recovery to the top of candle 1 and beyond",
+    category: "Multi Candle", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Rare three-candle pattern: bearish candle, then a doji that gaps below it, then a bullish candle that gaps above the doji. Very high accuracy reversal signal.",
+    entry: "Above the close of the third candle",
+    stop: "Below the low of the doji",
+    target: "Previous swing high — full reversal expected",
     candles: [
-      {o:240,c:228,h:242,l:226,bull:false},
-      {o:228,c:216,h:230,l:214,bull:false},
-      {o:216,c:204,h:218,l:202,bull:false},
-      // CANDLE 1 — large bearish
-      {o:206,c:190,h:208,l:188,bull:false},
-      // CANDLE 2 — DOJI, completely isolated with gaps
-      {o:185,c:185,h:187,l:183,bull:true},
-      // CANDLE 3 — large bullish, gaps up from Doji
-      {o:190,c:206,h:208,l:189,bull:true},
-      {o:206,c:218,h:220,l:205,bull:true},
-      {o:218,c:230,h:232,l:217,bull:true},
+      {o:215,c:210,h:216,l:208,bull:false},
+      {o:210,c:204,h:211,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
+      // Abandoned baby
+      {o:198,c:192,h:199,l:190,bull:false},
+      {o:189,c:189,h:188,l:191,bull:true},
+      {o:192,c:200,h:191,l:202,bull:true},
+      {o:200,c:207,h:199,l:209,bull:true},
+      {o:207,c:213,h:206,l:215,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'① Bearish',color:RED},
-      {type:'label',candleIdx:4,offset:-28,text:'② Isolated Doji',color:GOLD},
-      {type:'label',candleIdx:5,offset:-18,text:'③ Bullish gap up',color:TEAL},
+      {type:'label', candleIdx:3, offset:-18, text:'Bearish', color:RED},
+      {type:'label', candleIdx:4, offset:-22, text:'Gap Doji', color:GOLD},
+      {type:'label', candleIdx:5, offset:-18, text:'Gap Up', color:TEAL},
     ]
   },
+
+  // ── LEVEL II: Multi-Candle Bearish Reversal ──
   {
     id: 23, name: "Evening Star", level: "Beginner",
-    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "3-candle top reversal: (1) Large bullish, (2) Small star gaps up — indecision at the high, (3) Large bearish closes below midpoint of candle 1. The party is over.",
-    entry: "Below the close of the third (bearish) candle",
-    stop: "Above the high of the middle star candle",
-    target: "Back to the bottom of candle 1 and below",
+    category: "Multi Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Three-candle pattern: large bullish candle, small indecision candle (gaps up), large bearish candle closing below the midpoint of candle 1. Strong top signal.",
+    entry: "Below the close of the third candle",
+    stop: "Above the high of the small middle candle",
+    target: "Previous swing low",
     candles: [
-      {o:180,c:192,h:194,l:178,bull:true},
-      {o:192,c:204,h:206,l:190,bull:true},
-      {o:204,c:216,h:218,l:202,bull:true},
-      {o:216,c:228,h:230,l:214,bull:true},
-      // CANDLE 1 — large bullish
-      {o:226,c:242,h:244,l:224,bull:true},
-      // CANDLE 2 — small star, gaps up, indecision
-      {o:244,c:245,h:248,l:242,bull:true},
-      // CANDLE 3 — large bearish, closes below midpoint of candle 1
-      {o:244,c:228,h:246,l:226,bull:false},
-      // Continuation down
-      {o:228,c:216,h:230,l:214,bull:false},
-      {o:216,c:204,h:218,l:202,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      // Evening star
+      {o:208,c:215,h:207,l:217,bull:true},
+      {o:217,c:218,h:216,l:220,bull:true},
+      {o:220,c:211,h:221,l:209,bull:false},
+      {o:211,c:204,h:212,l:202,bull:false},
+      {o:204,c:198,h:205,l:196,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'① Big bullish',color:TEAL},
-      {type:'label',candleIdx:5,offset:-22,text:'② Star',color:GOLD},
-      {type:'label',candleIdx:6,offset:-18,text:'③ Big bearish',color:RED},
-      {type:'bracket',start:4,end:6,label:'Evening Star'},
+      {type:'label', candleIdx:3, offset:-18, text:'Bullish', color:TEAL},
+      {type:'label', candleIdx:4, offset:-20, text:'Star', color:GOLD},
+      {type:'label', candleIdx:5, offset:-18, text:'Bearish', color:RED},
+      {type:'bracket', start:3, end:5, label:'Evening Star'},
     ]
   },
   {
     id: 24, name: "Evening Doji Star", level: "Intermediate",
-    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "Like the Evening Star but the middle candle is a perfect Doji — total indecision at the peak. Even stronger signal than regular Evening Star. Sellers take complete control after.",
+    category: "Multi Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Like the evening star but the middle candle is a doji. Stronger signal — perfect indecision at the top before sellers take control.",
     entry: "Below the close of the third candle",
-    stop: "Above the high of the Doji",
+    stop: "Above the high of the doji",
     target: "Previous swing low",
     candles: [
-      {o:180,c:192,h:194,l:178,bull:true},
-      {o:192,c:204,h:206,l:190,bull:true},
-      {o:204,c:216,h:218,l:202,bull:true},
-      // CANDLE 1 — large bullish
-      {o:214,c:230,h:232,l:212,bull:true},
-      // CANDLE 2 — DOJI at top, open = close exactly
-      {o:232,c:232,h:236,l:228,bull:true},
-      // CANDLE 3 — powerful bearish reversal
-      {o:231,c:215,h:233,l:213,bull:false},
-      {o:215,c:203,h:217,l:201,bull:false},
-      {o:203,c:191,h:205,l:189,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      // Evening doji star
+      {o:208,c:214,h:207,l:216,bull:true},
+      {o:216,c:216,h:215,l:219,bull:true},
+      {o:218,c:209,h:219,l:207,bull:false},
+      {o:209,c:203,h:210,l:201,bull:false},
+      {o:203,c:197,h:204,l:195,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'① Large bullish',color:TEAL},
-      {type:'label',candleIdx:4,offset:-28,text:'② Doji = peak indecision',color:GOLD},
-      {type:'label',candleIdx:5,offset:-18,text:'③ Sellers surge',color:RED},
-      {type:'bracket',start:3,end:5,label:'Evening Doji Star'},
+      {type:'label', candleIdx:3, offset:-18, text:'Bullish', color:TEAL},
+      {type:'label', candleIdx:4, offset:-22, text:'Doji', color:GOLD},
+      {type:'label', candleIdx:5, offset:-18, text:'Bearish', color:RED},
+      {type:'bracket', start:3, end:5, label:'Evening Doji Star'},
     ]
   },
   {
     id: 25, name: "Three Black Crows", level: "Beginner",
-    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "Three consecutive large bearish candles, each opening INSIDE the prior body and closing at a new low. Mirror of Three White Soldiers. Sellers are in complete control.",
+    category: "Multi Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Three consecutive large bearish candles, each opening within the previous body and closing lower. Mirror of Three White Soldiers. Strong bearish reversal.",
     entry: "Open of candle after the third crow",
     stop: "Above the high of the first crow",
-    target: "Measured move equal to the three-candle total range below",
+    target: "Measured move equal to the three-candle range below",
     candles: [
-      {o:180,c:192,h:194,l:178,bull:true},
-      {o:192,c:204,h:206,l:190,bull:true},
-      {o:204,c:216,h:218,l:202,bull:true},
-      {o:216,c:228,h:230,l:214,bull:true},
-      // THREE BLACK CROWS — each large, each opens inside prev, each new low
-      {o:228,c:214,h:230,l:212,bull:false},
-      {o:217,c:202,h:219,l:200,bull:false},
-      {o:205,c:189,h:207,l:187,bull:false},
-      // Result — strong downtrend
-      {o:189,c:180,h:191,l:178,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:214,h:207,l:216,bull:true},
+      // Three black crows
+      {o:214,c:208,h:215,l:206,bull:false},
+      {o:209,c:202,h:210,l:200,bull:false},
+      {o:203,c:195,h:204,l:193,bull:false},
+      {o:195,c:190,h:196,l:188,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'Crow 1 ↓',color:RED},
-      {type:'label',candleIdx:5,offset:-18,text:'Crow 2 ↓',color:RED},
-      {type:'label',candleIdx:6,offset:-18,text:'Crow 3 ↓',color:RED},
+      {type:'label', candleIdx:4, offset:-18, text:'Crow 1', color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Crow 2', color:RED},
+      {type:'label', candleIdx:6, offset:-18, text:'Crow 3', color:RED},
     ]
   },
   {
     id: 26, name: "Bearish Harami", level: "Beginner",
-    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "A small bearish candle whose entire body is INSIDE the prior large bullish candle. Upward momentum is stalling. The baby bearish candle signals a change of power.",
-    entry: "Below the low of the small inside candle",
-    stop: "Above the high of the large bullish mother candle",
+    category: "Multi Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "A small bearish candle completely contained within the body of the previous large bullish candle. Signals upward momentum is slowing. Watch for confirmation.",
+    entry: "Below the low of the small bearish candle",
+    stop: "Above the high of the large bullish candle",
     target: "Previous swing low",
     candles: [
-      {o:180,c:192,h:194,l:178,bull:true},
-      {o:192,c:204,h:206,l:190,bull:true},
-      {o:204,c:216,h:218,l:202,bull:true},
-      // LARGE BULLISH MOTHER CANDLE
-      {o:214,c:234,h:236,l:212,bull:true},
-      // SMALL BEARISH BABY — body inside mother
-      {o:230,c:222,h:232,l:220,bull:false},
-      // Confirmation and breakdown
-      {o:222,c:212,h:224,l:210,bull:false},
-      {o:212,c:202,h:214,l:200,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      // Harami
+      {o:208,c:216,h:207,l:218,bull:true},
+      {o:215,c:212,h:216,l:211,bull:false},
+      // Continuation
+      {o:212,c:206,h:213,l:204,bull:false},
+      {o:206,c:200,h:207,l:198,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Large mother candle',color:TEAL},
-      {type:'label',candleIdx:4,offset:-18,text:'Baby inside ↓',color:RED},
-      {type:'bracket',start:3,end:4,label:'Harami'},
+      {type:'label', candleIdx:3, offset:-18, text:'Large Bullish', color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Small Inside', color:RED},
+      {type:'bracket', start:3, end:4, label:'Harami'},
     ]
   },
   {
     id: 27, name: "Tweezer Top", level: "Intermediate",
-    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "Two candles with the EXACT same high — first bullish, then bearish. Price tested the same resistance level twice and sellers defended it both times. Resistance confirmed.",
-    entry: "Below the low of the second (bearish) candle",
-    stop: "Above the shared high — if it breaks, setup is invalid",
+    category: "Multi Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Two candles with identical or very similar highs — one bullish, one bearish. Price tested a resistance level twice and sellers defended it both times.",
+    entry: "Below the low of the second candle",
+    stop: "Above the shared high",
     target: "Previous swing low",
     candles: [
-      {o:180,c:192,h:194,l:178,bull:true},
-      {o:192,c:204,h:206,l:190,bull:true},
-      {o:204,c:216,h:218,l:202,bull:true},
-      {o:216,c:228,h:230,l:214,bull:true},
-      // TWEEZER — identical highs at 238
-      {o:226,c:236,h:238,l:224,bull:true},
-      {o:236,c:224,h:238,l:222,bull:false},
-      // Sellers confirmed
-      {o:224,c:214,h:226,l:212,bull:false},
-      {o:214,c:204,h:216,l:202,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      // Tweezer top
+      {o:208,c:214,h:207,l:218,bull:true},
+      {o:217,c:211,h:218,l:209,bull:false},
+      {o:211,c:205,h:212,l:203,bull:false},
+      {o:205,c:199,h:206,l:197,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-25,text:'Same high = resistance',color:GOLD},
-      {type:'label',candleIdx:5,offset:-25,text:'Rejected again ✓',color:RED},
-      {type:'hline',candleIdx:4,label:'Resistance Level'},
+      {type:'label', candleIdx:3, offset:-22, text:'Same High', color:GOLD},
+      {type:'label', candleIdx:4, offset:-22, text:'Same High', color:GOLD},
+      {type:'hline', candleIdx:3, label:'Resistance'},
     ]
   },
   {
     id: 28, name: "Abandoned Baby Top", level: "Advanced",
-    category: "Multi Candle", signal: "Bearish Reversal", signalColor: RED,
-    description: "RARE: Large bullish → Doji that GAPS above with space on both sides → Large bearish that GAPS below. The Doji is completely isolated — abandoned at the top. Extremely high accuracy.",
-    entry: "Below the close of the third (bearish) candle",
-    stop: "Above the high of the isolated Doji",
-    target: "Full decline to the bottom of candle 1 and beyond",
+    category: "Multi Candle", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Rare three-candle pattern: bullish candle, then a doji that gaps above it, then a bearish candle that gaps below the doji. Very high accuracy top reversal.",
+    entry: "Below the close of the third candle",
+    stop: "Above the high of the doji",
+    target: "Previous swing low — full reversal expected",
     candles: [
-      {o:180,c:194,h:196,l:178,bull:true},
-      {o:194,c:208,h:210,l:192,bull:true},
-      {o:208,c:222,h:224,l:206,bull:true},
-      // CANDLE 1 — large bullish
-      {o:220,c:236,h:238,l:218,bull:true},
-      // CANDLE 2 — DOJI completely isolated, gaps above
-      {o:240,c:240,h:243,l:237,bull:true},
-      // CANDLE 3 — large bearish, gaps below Doji
-      {o:236,c:220,h:238,l:218,bull:false},
-      {o:220,c:206,h:222,l:204,bull:false},
-      {o:206,c:192,h:208,l:190,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      // Abandoned baby top
+      {o:208,c:215,h:207,l:217,bull:true},
+      {o:218,c:218,h:217,l:220,bull:true},
+      {o:216,c:208,h:217,l:206,bull:false},
+      {o:208,c:201,h:209,l:199,bull:false},
+      {o:201,c:195,h:202,l:193,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'① Bullish',color:TEAL},
-      {type:'label',candleIdx:4,offset:-28,text:'② Isolated Doji',color:GOLD},
-      {type:'label',candleIdx:5,offset:-18,text:'③ Bearish gap down',color:RED},
+      {type:'label', candleIdx:3, offset:-18, text:'Bullish', color:TEAL},
+      {type:'label', candleIdx:4, offset:-22, text:'Gap Doji', color:GOLD},
+      {type:'label', candleIdx:5, offset:-18, text:'Gap Down', color:RED},
     ]
   },
 ];
+
 // ─────────────────────────────────────────────
 // BATCH 2 — Patterns 29-84
 // ─────────────────────────────────────────────
 const BATCH2 = [
-  // ── Bullish Continuation Chart Patterns ──
+  // ── LEVEL III: Bullish Continuation ──
   {
     id: 29, name: "Bull Flag", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "A strong bullish impulse (the flagpole) followed by a tight downward consolidation (the flag). Sellers try to push back but fail. Breakout above the flag signals trend continuation.",
-    entry: "Break above the upper flag trendline with volume",
+    category: "Chart Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "A strong bullish impulse (the flagpole) followed by a tight downward consolidation (the flag). Signals the trend is pausing before continuing higher.",
+    entry: "Break above the upper flag trendline",
     stop: "Below the lower flag trendline",
-    target: "Flagpole length added to the breakout point",
+    target: "Flagpole length added to breakout point",
     candles: [
-      // FLAGPOLE — explosive move up
-      {o:180,c:194,h:196,l:178,bull:true},
-      {o:194,c:210,h:212,l:192,bull:true},
-      {o:210,c:226,h:228,l:208,bull:true},
-      {o:226,c:240,h:242,l:224,bull:true},
-      // FLAG — tight downward consolidation, lower highs/lows
-      {o:240,c:234,h:242,l:232,bull:false},
-      {o:234,c:228,h:236,l:226,bull:false},
-      {o:228,c:232,h:234,l:226,bull:true},
-      {o:232,c:226,h:234,l:224,bull:false},
-      {o:226,c:230,h:232,l:224,bull:true},
-      // BREAKOUT — explodes above flag
-      {o:230,c:244,h:246,l:228,bull:true},
-      {o:244,c:256,h:258,l:242,bull:true},
-      {o:256,c:266,h:268,l:254,bull:true},
+      {o:185,c:188,h:184,l:190,bull:true},
+      {o:188,c:192,h:187,l:194,bull:true},
+      // Flagpole
+      {o:192,c:200,h:191,l:202,bull:true},
+      {o:200,c:210,h:199,l:212,bull:true},
+      {o:210,c:220,h:209,l:222,bull:true},
+      // Flag consolidation
+      {o:220,c:217,h:221,l:216,bull:false},
+      {o:217,c:214,h:218,l:213,bull:false},
+      {o:214,c:216,h:213,l:217,bull:true},
+      {o:216,c:213,h:217,l:212,bull:false},
+      {o:213,c:215,h:212,l:216,bull:true},
+      // Breakout
+      {o:215,c:222,h:214,l:224,bull:true},
+      {o:222,c:230,h:221,l:232,bull:true},
+      {o:230,c:236,h:229,l:238,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Flagpole ↑',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'Flag — tight consolidation',color:GOLD},
-      {type:'label',candleIdx:9,offset:-18,text:'Breakout! ↑',color:TEAL},
+      {type:'label', candleIdx:3, offset:-18, text:'Flagpole', color:TEAL},
+      {type:'label', candleIdx:7, offset:-18, text:'Flag', color:GOLD},
+      {type:'label', candleIdx:11, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 30, name: "Bull Pennant", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "Like a Bull Flag but the consolidation forms a symmetrical triangle (pennant) — converging trendlines, tightening range. Energy coiling before the next explosive move up.",
+    category: "Chart Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "Like a bull flag but the consolidation forms a symmetrical triangle (pennant) instead of a channel. Signals a brief pause before the trend resumes higher.",
     entry: "Break above the upper pennant trendline",
     stop: "Below the lower pennant trendline",
     target: "Flagpole length added to breakout point",
     candles: [
-      // FLAGPOLE
-      {o:180,c:196,h:198,l:178,bull:true},
-      {o:196,c:214,h:216,l:194,bull:true},
-      {o:214,c:230,h:232,l:212,bull:true},
-      // PENNANT — converging, each swing smaller
-      {o:230,c:222,h:232,l:220,bull:false},
-      {o:222,c:228,h:230,l:220,bull:true},
-      {o:228,c:222,h:229,l:221,bull:false},
-      {o:222,c:226,h:227,l:221,bull:true},
-      {o:226,c:223,h:227,l:222,bull:false},
-      {o:223,c:225,h:226,l:222,bull:true},
-      // BREAKOUT
-      {o:225,c:240,h:242,l:224,bull:true},
-      {o:240,c:254,h:256,l:238,bull:true},
-      {o:254,c:264,h:266,l:252,bull:true},
+      {o:185,c:190,h:184,l:192,bull:true},
+      {o:190,c:198,h:189,l:200,bull:true},
+      // Flagpole
+      {o:198,c:208,h:197,l:210,bull:true},
+      {o:208,c:218,h:207,l:220,bull:true},
+      // Pennant
+      {o:218,c:214,h:219,l:213,bull:false},
+      {o:214,c:217,h:213,l:218,bull:true},
+      {o:217,c:214,h:217,l:215,bull:false},
+      {o:214,c:216,h:214,l:217,bull:true},
+      {o:216,c:215,h:216,l:216,bull:false},
+      // Breakout
+      {o:215,c:224,h:214,l:226,bull:true},
+      {o:224,c:232,h:223,l:234,bull:true},
+      {o:232,c:238,h:231,l:240,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Flagpole ↑',color:TEAL},
-      {type:'label',candleIdx:5,offset:-18,text:'Pennant — converging',color:GOLD},
-      {type:'label',candleIdx:9,offset:-18,text:'Breakout! ↑',color:TEAL},
+      {type:'label', candleIdx:3, offset:-18, text:'Flagpole', color:TEAL},
+      {type:'label', candleIdx:6, offset:-18, text:'Pennant', color:GOLD},
+      {type:'label', candleIdx:10, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 31, name: "Ascending Triangle", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "Flat resistance at the top with rising lows. Buyers are getting more aggressive — each pullback stops higher than the last. Sellers hold the line until they can't. Breakout inevitable.",
-    entry: "Break above the flat resistance level with volume",
+    category: "Chart Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "Flat resistance at the top with rising lows forming an ascending trendline below. Buyers are getting more aggressive each swing. Breakout above resistance expected.",
+    entry: "Break above the flat resistance level",
     stop: "Below the most recent higher low",
-    target: "Triangle height added to breakout point",
+    target: "Height of the triangle added to breakout",
     candles: [
-      // Approach to resistance
-      {o:188,c:198,h:200,l:186,bull:true},
-      {o:198,c:208,h:210,l:196,bull:true},
-      // HIT RESISTANCE at 216
-      {o:208,c:216,h:218,l:206,bull:true},
-      {o:216,c:206,h:217,l:204,bull:false},
-      // HIGHER LOW 1
-      {o:206,c:200,h:207,l:198,bull:false},
-      {o:200,c:210,h:212,l:199,bull:true},
-      // HIT RESISTANCE again
-      {o:210,c:216,h:218,l:208,bull:true},
-      {o:216,c:208,h:217,l:206,bull:false},
-      // HIGHER LOW 2 — higher than first
-      {o:208,c:204,h:209,l:203,bull:false},
-      {o:204,c:214,h:216,l:203,bull:true},
-      // BREAKOUT above resistance
-      {o:214,c:226,h:228,l:213,bull:true},
-      {o:226,c:238,h:240,l:225,bull:true},
-      {o:238,c:248,h:250,l:237,bull:true},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:206,h:201,l:207,bull:true},
+      // Resistance test 1
+      {o:206,c:210,h:205,l:210,bull:true},
+      {o:210,c:205,h:210,l:204,bull:false},
+      {o:205,c:200,h:206,l:199,bull:false},
+      // Higher low
+      {o:200,c:205,h:199,l:206,bull:true},
+      // Resistance test 2
+      {o:205,c:210,h:204,l:210,bull:true},
+      {o:210,c:206,h:210,l:205,bull:false},
+      // Higher low 2
+      {o:206,c:209,h:205,l:210,bull:true},
+      // Breakout
+      {o:209,c:216,h:208,l:218,bull:true},
+      {o:216,c:222,h:215,l:224,bull:true},
+      {o:222,c:228,h:221,l:230,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Resistance',color:RED},
-      {type:'label',candleIdx:6,offset:-18,text:'Resistance again',color:RED},
-      {type:'label',candleIdx:8,offset:-22,text:'Higher low ↑',color:TEAL},
-      {type:'label',candleIdx:10,offset:-18,text:'Breakout! ↑',color:TEAL},
-      {type:'hline',candleIdx:2,label:'Flat Resistance'},
+      {type:'label', candleIdx:3, offset:-18, text:'Resistance', color:RED},
+      {type:'label', candleIdx:7, offset:-18, text:'Resistance', color:RED},
+      {type:'label', candleIdx:10, offset:-18, text:'Breakout', color:TEAL},
+      {type:'hline', candleIdx:3, label:'Flat Top'},
     ]
   },
   {
     id: 32, name: "Cup and Handle", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "A rounded bowl (the cup) followed by a small downward drift (the handle). The cup shows gradual accumulation. The handle is a final shakeout before the breakout. Very reliable pattern.",
-    entry: "Break above the handle's upper resistance",
-    stop: "Below the handle's lowest point",
-    target: "Cup depth added to the breakout point",
+    category: "Chart Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "A rounded bottom (cup) followed by a small downward consolidation (handle). One of the most reliable bullish continuation patterns for swing trades.",
+    entry: "Break above the handle's upper trendline",
+    stop: "Below the handle's low",
+    target: "Cup depth added to breakout point",
     candles: [
-      // LEFT RIM of cup
-      {o:228,c:220,h:230,l:218,bull:false},
-      {o:220,c:212,h:222,l:210,bull:false},
-      // CUP BOTTOM — gradual rounding
-      {o:212,c:206,h:214,l:204,bull:false},
-      {o:206,c:202,h:208,l:200,bull:false},
-      {o:202,c:200,h:204,l:198,bull:false},
-      {o:200,c:202,h:204,l:199,bull:true},
-      {o:202,c:206,h:208,l:201,bull:true},
-      {o:206,c:212,h:214,l:205,bull:true},
-      {o:212,c:220,h:222,l:211,bull:true},
-      // RIGHT RIM — back to prior high
-      {o:220,c:228,h:230,l:219,bull:true},
-      // HANDLE — small pullback
-      {o:228,c:222,h:230,l:220,bull:false},
-      {o:222,c:218,h:224,l:217,bull:false},
-      {o:218,c:222,h:224,l:217,bull:true},
-      // BREAKOUT
-      {o:222,c:236,h:238,l:221,bull:true},
-      {o:236,c:248,h:250,l:235,bull:true},
+      {o:215,c:212,h:216,l:211,bull:false},
+      {o:212,c:207,h:213,l:206,bull:false},
+      // Cup bottom
+      {o:207,c:203,h:208,l:202,bull:false},
+      {o:203,c:200,h:204,l:199,bull:false},
+      {o:200,c:202,h:199,l:203,bull:true},
+      {o:202,c:205,h:201,l:206,bull:true},
+      {o:205,c:208,h:204,l:209,bull:true},
+      {o:208,c:212,h:207,l:213,bull:true},
+      {o:212,c:215,h:211,l:216,bull:true},
+      // Handle
+      {o:215,c:212,h:216,l:211,bull:false},
+      {o:212,c:210,h:213,l:209,bull:false},
+      {o:210,c:212,h:209,l:213,bull:true},
+      // Breakout
+      {o:212,c:219,h:211,l:221,bull:true},
+      {o:219,c:225,h:218,l:227,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-22,text:'Cup bottom',color:GOLD},
-      {type:'label',candleIdx:11,offset:-22,text:'Handle',color:GOLD},
-      {type:'label',candleIdx:13,offset:-18,text:'Breakout! ↑',color:TEAL},
+      {type:'label', candleIdx:3, offset:-20, text:'Cup', color:GOLD},
+      {type:'label', candleIdx:10, offset:-18, text:'Handle', color:GOLD},
+      {type:'label', candleIdx:12, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 33, name: "Rectangle Breakout", level: "Beginner",
-    category: "Chart Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "Price bounces between flat support and flat resistance — a rectangle zone. Buyers and sellers are equal inside the box. When price breaks ABOVE resistance with volume, bulls win.",
-    entry: "Close above the rectangle resistance with volume expansion",
-    stop: "Below the rectangle support",
-    target: "Rectangle height added to the breakout point",
+    category: "Chart Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "Price consolidates between two horizontal levels (support and resistance) forming a rectangle. A breakout above resistance signals continuation of the prior uptrend.",
+    entry: "Close above the rectangle's upper resistance",
+    stop: "Below the rectangle's lower support",
+    target: "Rectangle height added to breakout point",
     candles: [
-      // Approach
-      {o:186,c:196,h:198,l:184,bull:true},
-      {o:196,c:206,h:208,l:194,bull:true},
-      // INSIDE RECTANGLE — bouncing between 206 support and 220 resistance
-      {o:206,c:218,h:220,l:204,bull:true},
-      {o:218,c:208,h:221,l:206,bull:false},
-      {o:208,c:218,h:220,l:206,bull:true},
-      {o:218,c:207,h:220,l:205,bull:false},
-      {o:207,c:219,h:220,l:206,bull:true},
-      {o:219,c:208,h:221,l:206,bull:false},
-      {o:208,c:218,h:220,l:207,bull:true},
-      {o:218,c:207,h:220,l:205,bull:false},
-      // BREAKOUT above resistance
-      {o:207,c:224,h:226,l:206,bull:true},
-      {o:224,c:236,h:238,l:223,bull:true},
-      {o:236,c:246,h:248,l:235,bull:true},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      // Rectangle top
+      {o:202,c:208,h:201,l:209,bull:true},
+      {o:208,c:204,h:209,l:203,bull:false},
+      {o:204,c:198,h:205,l:197,bull:false},
+      // Rectangle bottom
+      {o:198,c:202,h:197,l:203,bull:true},
+      {o:202,c:208,h:201,l:209,bull:true},
+      {o:208,c:203,h:209,l:202,bull:false},
+      {o:203,c:198,h:204,l:197,bull:false},
+      {o:198,c:203,h:197,l:204,bull:true},
+      // Breakout
+      {o:203,c:212,h:202,l:214,bull:true},
+      {o:212,c:220,h:211,l:222,bull:true},
+      {o:220,c:226,h:219,l:228,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Resistance 220',color:RED},
-      {type:'label',candleIdx:4,offset:-22,text:'Support 206',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'Rectangle zone',color:GOLD},
-      {type:'label',candleIdx:10,offset:-18,text:'BREAKOUT ↑',color:TEAL},
+      {type:'label', candleIdx:2, offset:-18, text:'Resistance', color:RED},
+      {type:'label', candleIdx:4, offset:-18, text:'Support', color:TEAL},
+      {type:'label', candleIdx:10, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 34, name: "Rising Channel", level: "Beginner",
-    category: "Chart Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "Price moves higher within two parallel upward-sloping trendlines. Buy near the LOWER channel line (support), take profits near the UPPER channel line (resistance). Ride the trend.",
+    category: "Chart Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "Price moves higher within two parallel upward-sloping trendlines. Buy near the lower channel line, take profits near the upper channel line.",
     entry: "Bounce off the lower channel trendline",
-    stop: "Close below the lower channel line",
+    stop: "Below the lower channel line",
     target: "Upper channel trendline",
     candles: [
-      {o:184,c:192,h:194,l:182,bull:true},
-      {o:192,c:200,h:202,l:190,bull:true},
-      {o:200,c:210,h:212,l:198,bull:true},
-      // HITS UPPER CHANNEL, pulls back
-      {o:210,c:218,h:220,l:208,bull:true},
-      {o:218,c:210,h:220,l:208,bull:false},
-      // BOUNCES LOWER CHANNEL
-      {o:210,c:206,h:212,l:204,bull:false},
-      {o:206,c:216,h:218,l:204,bull:true},
-      {o:216,c:226,h:228,l:214,bull:true},
-      // HITS UPPER CHANNEL again, pulls back
-      {o:226,c:232,h:234,l:224,bull:true},
-      {o:232,c:224,h:234,l:222,bull:false},
-      // BOUNCES LOWER CHANNEL — buy zone
-      {o:224,c:220,h:226,l:218,bull:false},
-      {o:220,c:232,h:234,l:218,bull:true},
-      {o:232,c:242,h:244,l:230,bull:true},
+      {o:190,c:194,h:189,l:196,bull:true},
+      {o:194,c:198,h:193,l:200,bull:true},
+      {o:198,c:202,h:197,l:204,bull:true},
+      {o:202,c:206,h:201,l:208,bull:true},
+      {o:206,c:203,h:207,l:202,bull:false},
+      {o:203,c:207,h:202,l:209,bull:true},
+      {o:207,c:211,h:206,l:213,bull:true},
+      {o:211,c:215,h:210,l:217,bull:true},
+      {o:215,c:212,h:216,l:211,bull:false},
+      {o:212,c:216,h:211,l:218,bull:true},
+      {o:216,c:220,h:215,l:222,bull:true},
+      {o:220,c:224,h:219,l:226,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:5,offset:-22,text:'Buy zone ↑',color:TEAL},
-      {type:'label',candleIdx:7,offset:-18,text:'Upper channel',color:RED},
-      {type:'label',candleIdx:10,offset:-22,text:'Buy zone ↑',color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Buy zone', color:TEAL},
+      {type:'label', candleIdx:7, offset:-18, text:'Target', color:GOLD},
     ]
   },
-  // ── Bearish Continuation ──
+
+  // ── LEVEL III: Bearish Continuation ──
   {
     id: 35, name: "Bear Flag", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bearish Continuation", signalColor: RED,
-    description: "A strong bearish impulse (flagpole) followed by a tight upward consolidation (flag). Bulls try to bounce but can't sustain it. Breakdown below the flag signals trend continuation lower.",
+    category: "Chart Pattern", signal: "Bearish Continuation",
+    signalColor: RED,
+    description: "A strong bearish impulse (flagpole) followed by a tight upward consolidation (flag). Signals the downtrend is pausing before continuing lower.",
     entry: "Break below the lower flag trendline",
     stop: "Above the upper flag trendline",
     target: "Flagpole length subtracted from breakdown point",
     candles: [
-      // FLAGPOLE — explosive drop
-      {o:260,c:246,h:262,l:244,bull:false},
-      {o:246,c:230,h:248,l:228,bull:false},
-      {o:230,c:214,h:232,l:212,bull:false},
-      {o:214,c:200,h:216,l:198,bull:false},
-      // FLAG — tight upward drift, higher highs/lows but weak
-      {o:200,c:206,h:208,l:198,bull:true},
-      {o:206,c:212,h:214,l:204,bull:true},
-      {o:212,c:208,h:214,l:206,bull:false},
-      {o:208,c:214,h:216,l:206,bull:true},
-      {o:214,c:210,h:216,l:208,bull:false},
-      // BREAKDOWN
-      {o:210,c:196,h:212,l:194,bull:false},
-      {o:196,c:182,h:198,l:180,bull:false},
-      {o:182,c:170,h:184,l:168,bull:false},
+      {o:220,c:216,h:221,l:215,bull:false},
+      {o:216,c:210,h:217,l:209,bull:false},
+      // Flagpole
+      {o:210,c:200,h:211,l:199,bull:false},
+      {o:200,c:190,h:201,l:189,bull:false},
+      // Flag consolidation
+      {o:190,c:193,h:189,l:194,bull:true},
+      {o:193,c:196,h:192,l:197,bull:true},
+      {o:196,c:193,h:197,l:192,bull:false},
+      {o:193,c:195,h:192,l:196,bull:true},
+      {o:195,c:193,h:196,l:192,bull:false},
+      // Breakdown
+      {o:193,c:185,h:194,l:184,bull:false},
+      {o:185,c:177,h:186,l:176,bull:false},
+      {o:177,c:171,h:178,l:170,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Flagpole ↓',color:RED},
-      {type:'label',candleIdx:6,offset:-18,text:'Flag — weak bounce',color:GOLD},
-      {type:'label',candleIdx:9,offset:-18,text:'Breakdown! ↓',color:RED},
+      {type:'label', candleIdx:3, offset:-18, text:'Flagpole', color:RED},
+      {type:'label', candleIdx:6, offset:-18, text:'Flag', color:GOLD},
+      {type:'label', candleIdx:10, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 36, name: "Bear Pennant", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bearish Continuation", signalColor: RED,
-    description: "Like a Bear Flag but the consolidation forms a converging triangle. Range tightens after the drop. Sellers regrouping before the next leg down. Breakdown is imminent.",
+    category: "Chart Pattern", signal: "Bearish Continuation",
+    signalColor: RED,
+    description: "Like a bear flag but the consolidation forms a converging triangle. Signals a brief pause in a downtrend before continuation lower.",
     entry: "Break below the lower pennant trendline",
     stop: "Above the upper pennant trendline",
-    target: "Flagpole length subtracted from breakdown",
+    target: "Flagpole length subtracted from breakdown point",
     candles: [
-      // FLAGPOLE
-      {o:260,c:244,h:262,l:242,bull:false},
-      {o:244,c:228,h:246,l:226,bull:false},
-      {o:228,c:212,h:230,l:210,bull:false},
-      // PENNANT — converging swings
-      {o:212,c:220,h:222,l:210,bull:true},
-      {o:220,c:214,h:221,l:212,bull:false},
-      {o:214,c:220,h:221,l:213,bull:true},
       {o:220,c:215,h:221,l:214,bull:false},
-      {o:215,c:219,h:220,l:214,bull:true},
-      {o:219,c:216,h:220,l:215,bull:false},
-      // BREAKDOWN
-      {o:216,c:202,h:218,l:200,bull:false},
-      {o:202,c:188,h:204,l:186,bull:false},
-      {o:188,c:176,h:190,l:174,bull:false},
+      {o:215,c:208,h:216,l:207,bull:false},
+      // Flagpole
+      {o:208,c:198,h:209,l:197,bull:false},
+      // Pennant
+      {o:198,c:202,h:197,l:203,bull:true},
+      {o:202,c:199,h:203,l:198,bull:false},
+      {o:199,c:201,h:198,l:202,bull:true},
+      {o:201,c:199,h:201,l:200,bull:false},
+      {o:199,c:200,h:199,l:201,bull:true},
+      // Breakdown
+      {o:200,c:192,h:201,l:191,bull:false},
+      {o:192,c:184,h:193,l:183,bull:false},
+      {o:184,c:178,h:185,l:177,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Flagpole ↓',color:RED},
-      {type:'label',candleIdx:5,offset:-18,text:'Pennant — converging',color:GOLD},
-      {type:'label',candleIdx:9,offset:-18,text:'Breakdown! ↓',color:RED},
+      {type:'label', candleIdx:2, offset:-18, text:'Flagpole', color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Pennant', color:GOLD},
+      {type:'label', candleIdx:9, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 37, name: "Descending Triangle", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bearish Continuation", signalColor: RED,
-    description: "Flat support at the bottom with lower highs forming a descending line. Sellers are getting more aggressive each bounce. Buyers hold the floor until they can't. Breakdown inevitable.",
-    entry: "Break below the flat support with volume",
+    category: "Chart Pattern", signal: "Bearish Continuation",
+    signalColor: RED,
+    description: "Flat support at the bottom with lower highs forming a descending trendline. Sellers are getting more aggressive. Breakdown below support expected.",
+    entry: "Break below the flat support level",
     stop: "Above the most recent lower high",
     target: "Triangle height subtracted from breakdown",
     candles: [
-      // Approach to support
-      {o:248,c:238,h:250,l:236,bull:false},
-      {o:238,c:228,h:240,l:226,bull:false},
-      // HIT SUPPORT at 218
-      {o:228,c:220,h:230,l:218,bull:false},
-      {o:220,c:228,h:230,l:218,bull:true},
-      // LOWER HIGH 1
-      {o:228,c:234,h:236,l:226,bull:true},
-      {o:234,c:224,h:235,l:222,bull:false},
-      // HIT SUPPORT again
-      {o:224,c:220,h:226,l:218,bull:false},
-      {o:220,c:228,h:230,l:218,bull:true},
-      // LOWER HIGH 2
-      {o:228,c:230,h:231,l:226,bull:true},
-      {o:230,c:220,h:231,l:218,bull:false},
-      // BREAKDOWN below support
-      {o:220,c:208,h:222,l:206,bull:false},
-      {o:208,c:196,h:210,l:194,bull:false},
-      {o:196,c:184,h:198,l:182,bull:false},
+      {o:215,c:210,h:216,l:209,bull:false},
+      {o:210,c:205,h:211,l:204,bull:false},
+      // Support test 1
+      {o:205,c:200,h:206,l:200,bull:false},
+      {o:200,c:205,h:199,l:206,bull:true},
+      // Lower high
+      {o:205,c:208,h:204,l:209,bull:true},
+      {o:208,c:204,h:209,l:203,bull:false},
+      // Support test 2
+      {o:204,c:200,h:205,l:200,bull:false},
+      {o:200,c:204,h:199,l:205,bull:true},
+      // Lower high 2
+      {o:204,c:206,h:203,l:207,bull:true},
+      {o:206,c:200,h:207,l:200,bull:false},
+      // Breakdown
+      {o:200,c:193,h:201,l:192,bull:false},
+      {o:193,c:186,h:194,l:185,bull:false},
+      {o:186,c:180,h:187,l:179,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-22,text:'Support 218',color:TEAL},
-      {type:'label',candleIdx:4,offset:-18,text:'Lower high ↓',color:RED},
-      {type:'label',candleIdx:8,offset:-18,text:'Lower high ↓',color:RED},
-      {type:'label',candleIdx:10,offset:-18,text:'BREAKDOWN ↓',color:RED},
-      {type:'hline',candleIdx:2,label:'Flat Support'},
+      {type:'label', candleIdx:2, offset:-18, text:'Support', color:TEAL},
+      {type:'label', candleIdx:6, offset:-18, text:'Support', color:TEAL},
+      {type:'label', candleIdx:10, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 38, name: "Rectangle Breakdown", level: "Beginner",
-    category: "Chart Pattern", signal: "Bearish Continuation", signalColor: RED,
-    description: "Price consolidates between flat support and resistance after a downtrend. When price breaks BELOW support with volume, sellers win and the downtrend resumes.",
-    entry: "Close below the rectangle support with volume",
-    stop: "Above the rectangle resistance",
+    category: "Chart Pattern", signal: "Bearish Continuation",
+    signalColor: RED,
+    description: "Price consolidates in a rectangle after a downtrend. A break below support signals the downtrend is resuming. Mirror of the rectangle breakout.",
+    entry: "Close below the rectangle's lower support",
+    stop: "Above the rectangle's upper resistance",
     target: "Rectangle height subtracted from breakdown",
     candles: [
-      // Approach
-      {o:258,c:248,h:260,l:246,bull:false},
-      {o:248,c:238,h:250,l:236,bull:false},
-      // INSIDE RECTANGLE — bouncing between 224 support and 238 resistance
-      {o:238,c:226,h:240,l:224,bull:false},
-      {o:226,c:236,h:238,l:224,bull:true},
-      {o:236,c:225,h:238,l:224,bull:false},
-      {o:225,c:236,h:238,l:224,bull:true},
-      {o:236,c:226,h:238,l:224,bull:false},
-      {o:226,c:235,h:238,l:224,bull:true},
-      {o:235,c:225,h:237,l:224,bull:false},
-      // BREAKDOWN below support
-      {o:225,c:210,h:226,l:208,bull:false},
-      {o:210,c:196,h:212,l:194,bull:false},
-      {o:196,c:184,h:198,l:182,bull:false},
+      {o:220,c:214,h:221,l:213,bull:false},
+      {o:214,c:208,h:215,l:207,bull:false},
+      // Rectangle
+      {o:208,c:202,h:209,l:201,bull:false},
+      {o:202,c:208,h:201,l:209,bull:true},
+      {o:208,c:202,h:209,l:201,bull:false},
+      {o:202,c:207,h:201,l:208,bull:true},
+      {o:207,c:202,h:208,l:201,bull:false},
+      {o:202,c:207,h:201,l:208,bull:true},
+      {o:207,c:201,h:208,l:200,bull:false},
+      // Breakdown
+      {o:201,c:193,h:202,l:192,bull:false},
+      {o:193,c:185,h:194,l:184,bull:false},
+      {o:185,c:179,h:186,l:178,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Resistance 238',color:RED},
-      {type:'label',candleIdx:4,offset:-22,text:'Support 224',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'Rectangle zone',color:GOLD},
-      {type:'label',candleIdx:9,offset:-18,text:'BREAKDOWN ↓',color:RED},
+      {type:'label', candleIdx:2, offset:-18, text:'Resistance', color:RED},
+      {type:'label', candleIdx:3, offset:-18, text:'Support', color:TEAL},
+      {type:'label', candleIdx:9, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 39, name: "Falling Channel", level: "Beginner",
-    category: "Chart Pattern", signal: "Bearish Continuation", signalColor: RED,
-    description: "Price moves lower within two parallel downward-sloping trendlines. Sell near the UPPER channel line (resistance), take profits near the LOWER channel line (support). Ride the downtrend.",
+    category: "Chart Pattern", signal: "Bearish Continuation",
+    signalColor: RED,
+    description: "Price moves lower within two parallel downward-sloping trendlines. Sell near the upper channel line, take profits near the lower channel line.",
     entry: "Rejection from the upper channel trendline",
-    stop: "Close above the upper channel line",
+    stop: "Above the upper channel line",
     target: "Lower channel trendline",
     candles: [
-      {o:256,c:248,h:258,l:246,bull:false},
-      {o:248,c:240,h:250,l:238,bull:false},
-      {o:240,c:232,h:242,l:230,bull:false},
-      // HITS LOWER CHANNEL, bounces
-      {o:232,c:224,h:234,l:222,bull:false},
-      {o:224,c:232,h:234,l:222,bull:true},
-      // HITS UPPER CHANNEL — sell zone
-      {o:232,c:236,h:238,l:230,bull:true},
-      {o:236,c:228,h:238,l:226,bull:false},
-      {o:228,c:220,h:230,l:218,bull:false},
-      // HITS LOWER CHANNEL, bounces
-      {o:220,c:212,h:222,l:210,bull:false},
-      {o:212,c:220,h:222,l:210,bull:true},
-      // HITS UPPER CHANNEL — sell zone again
-      {o:220,c:224,h:226,l:218,bull:true},
-      {o:224,c:214,h:226,l:212,bull:false},
-      {o:214,c:204,h:216,l:202,bull:false},
+      {o:220,c:216,h:221,l:215,bull:false},
+      {o:216,c:212,h:217,l:211,bull:false},
+      {o:212,c:208,h:213,l:207,bull:false},
+      {o:208,c:211,h:207,l:212,bull:true},
+      {o:211,c:207,h:212,l:206,bull:false},
+      {o:207,c:203,h:208,l:202,bull:false},
+      {o:203,c:206,h:202,l:207,bull:true},
+      {o:206,c:202,h:207,l:201,bull:false},
+      {o:202,c:198,h:203,l:197,bull:false},
+      {o:198,c:201,h:197,l:202,bull:true},
+      {o:201,c:197,h:202,l:196,bull:false},
+      {o:197,c:193,h:198,l:192,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:5,offset:-18,text:'Sell zone ↓',color:RED},
-      {type:'label',candleIdx:8,offset:-22,text:'Lower channel',color:TEAL},
-      {type:'label',candleIdx:10,offset:-18,text:'Sell zone ↓',color:RED},
+      {type:'label', candleIdx:3, offset:-18, text:'Sell zone', color:RED},
+      {type:'label', candleIdx:8, offset:-18, text:'Target', color:GOLD},
     ]
   },
+
   // ── Reversal Chart Patterns: Bullish ──
   {
     id: 40, name: "Double Bottom", level: "Beginner",
-    category: "Chart Pattern", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Two lows at the SAME price level — classic W shape. Price tested support twice and buyers defended it both times. Break above the middle peak (neckline) confirms the reversal.",
-    entry: "Break above the neckline (middle peak) with volume",
+    category: "Chart Pattern", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Two lows at approximately the same price level separated by a rally. Classic W-shape. Break above the middle peak (neckline) confirms the reversal.",
+    entry: "Break above the neckline (middle peak)",
     stop: "Below the second bottom",
     target: "Distance from bottom to neckline, added to breakout",
     candles: [
-      // Downtrend into first bottom
-      {o:248,c:238,h:250,l:236,bull:false},
-      {o:238,c:226,h:240,l:224,bull:false},
-      // FIRST BOTTOM at 214
-      {o:226,c:216,h:228,l:214,bull:false},
-      {o:216,c:214,h:218,l:212,bull:false},
-      {o:214,c:222,h:224,l:213,bull:true},
-      // RALLY TO NECKLINE at 234
-      {o:222,c:230,h:232,l:220,bull:true},
-      {o:230,c:234,h:236,l:228,bull:true},
-      // PULLBACK TO SECOND BOTTOM — same level 214
-      {o:234,c:224,h:236,l:222,bull:false},
-      {o:224,c:216,h:226,l:214,bull:false},
-      {o:216,c:214,h:218,l:212,bull:false},
-      {o:214,c:224,h:226,l:213,bull:true},
-      // BREAK ABOVE NECKLINE
-      {o:224,c:238,h:240,l:222,bull:true},
-      {o:238,c:250,h:252,l:236,bull:true},
-      {o:250,c:260,h:262,l:248,bull:true},
+      {o:215,c:210,h:216,l:209,bull:false},
+      {o:210,c:204,h:211,l:203,bull:false},
+      // First bottom
+      {o:204,c:198,h:205,l:197,bull:false},
+      {o:198,c:194,h:199,l:193,bull:false},
+      {o:194,c:199,h:193,l:200,bull:true},
+      // Rally to neckline
+      {o:199,c:206,h:198,l:207,bull:true},
+      {o:206,c:210,h:205,l:211,bull:true},
+      // Second bottom
+      {o:210,c:204,h:211,l:203,bull:false},
+      {o:204,c:198,h:205,l:197,bull:false},
+      {o:198,c:195,h:199,l:194,bull:false},
+      {o:195,c:200,h:194,l:201,bull:true},
+      // Breakout
+      {o:200,c:208,h:199,l:210,bull:true},
+      {o:208,c:216,h:207,l:218,bull:true},
+      {o:216,c:222,h:215,l:224,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-25,text:'Bottom 1',color:TEAL},
-      {type:'label',candleIdx:9,offset:-25,text:'Bottom 2',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'Neckline',color:GOLD},
-      {type:'label',candleIdx:11,offset:-18,text:'BREAKOUT ↑',color:TEAL},
-      {type:'hline',candleIdx:6,label:'Neckline'},
+      {type:'label', candleIdx:3, offset:-22, text:'Bottom 1', color:TEAL},
+      {type:'label', candleIdx:9, offset:-22, text:'Bottom 2', color:TEAL},
+      {type:'label', candleIdx:6, offset:-18, text:'Neckline', color:GOLD},
+      {type:'label', candleIdx:12, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 41, name: "Triple Bottom", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Three lows at the SAME price level. Even stronger than Double Bottom — buyers defended the same level THREE times. Sellers completely exhausted. Break above resistance = powerful reversal.",
+    category: "Chart Pattern", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Three lows at approximately the same level. Even stronger than a double bottom — price tested support three times and buyers defended it each time.",
     entry: "Break above the resistance connecting the two peaks",
     stop: "Below the third bottom",
     target: "Distance from bottom to resistance, added to breakout",
     candles: [
-      {o:248,c:236,h:250,l:234,bull:false},
-      // BOTTOM 1 at 220
-      {o:236,c:222,h:238,l:220,bull:false},
-      {o:222,c:220,h:224,l:218,bull:false},
-      {o:220,c:228,h:230,l:219,bull:true},
-      {o:228,c:234,h:236,l:226,bull:true},
-      // BOTTOM 2 at 220
-      {o:234,c:222,h:236,l:220,bull:false},
-      {o:222,c:220,h:224,l:218,bull:false},
-      {o:220,c:228,h:230,l:219,bull:true},
-      {o:228,c:234,h:236,l:226,bull:true},
-      // BOTTOM 3 at 220
-      {o:234,c:222,h:236,l:220,bull:false},
-      {o:222,c:220,h:224,l:218,bull:false},
-      {o:220,c:230,h:232,l:219,bull:true},
-      // BREAKOUT above 234 resistance
-      {o:230,c:244,h:246,l:229,bull:true},
-      {o:244,c:256,h:258,l:243,bull:true},
+      {o:214,c:208,h:215,l:207,bull:false},
+      // Bottom 1
+      {o:208,c:202,h:209,l:201,bull:false},
+      {o:202,c:198,h:203,l:197,bull:false},
+      {o:198,c:203,h:197,l:204,bull:true},
+      {o:203,c:208,h:202,l:209,bull:true},
+      // Bottom 2
+      {o:208,c:202,h:209,l:201,bull:false},
+      {o:202,c:198,h:203,l:197,bull:false},
+      {o:198,c:204,h:197,l:205,bull:true},
+      {o:204,c:209,h:203,l:210,bull:true},
+      // Bottom 3
+      {o:209,c:202,h:210,l:201,bull:false},
+      {o:202,c:198,h:203,l:197,bull:false},
+      {o:198,c:205,h:197,l:206,bull:true},
+      // Breakout
+      {o:205,c:213,h:204,l:215,bull:true},
+      {o:213,c:220,h:212,l:222,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-25,text:'Bot 1',color:TEAL},
-      {type:'label',candleIdx:6,offset:-25,text:'Bot 2',color:TEAL},
-      {type:'label',candleIdx:10,offset:-25,text:'Bot 3',color:TEAL},
-      {type:'label',candleIdx:12,offset:-18,text:'BREAKOUT ↑',color:TEAL},
-      {type:'hline',candleIdx:4,label:'Resistance'},
+      {type:'label', candleIdx:2, offset:-22, text:'Bot 1', color:TEAL},
+      {type:'label', candleIdx:6, offset:-22, text:'Bot 2', color:TEAL},
+      {type:'label', candleIdx:10, offset:-22, text:'Bot 3', color:TEAL},
+      {type:'label', candleIdx:12, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 42, name: "Inverse Head & Shoulders", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Upside-down H&S: left shoulder, DEEPER head, right shoulder at same level. The head is the final exhaustion of sellers. Neckline break = major bullish reversal. Very reliable.",
-    entry: "Break above the neckline with volume",
+    category: "Chart Pattern", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "An upside-down head and shoulders: left shoulder, deeper head, right shoulder at same level as left. Neckline break signals a major bullish reversal.",
+    entry: "Break above the neckline",
     stop: "Below the right shoulder low",
     target: "Distance from head to neckline, added to breakout",
     candles: [
-      {o:248,c:238,h:250,l:236,bull:false},
-      {o:238,c:228,h:240,l:226,bull:false},
-      // LEFT SHOULDER bottom at 220
-      {o:228,c:222,h:230,l:220,bull:false},
-      {o:222,c:228,h:230,l:220,bull:true},
-      {o:228,c:234,h:236,l:226,bull:true},
-      // HEAD — goes much deeper to 208
-      {o:234,c:224,h:236,l:222,bull:false},
-      {o:224,c:212,h:226,l:210,bull:false},
-      {o:212,c:208,h:214,l:206,bull:false},
-      {o:208,c:218,h:220,l:207,bull:true},
-      {o:218,c:228,h:230,l:216,bull:true},
-      {o:228,c:234,h:236,l:226,bull:true},
-      // RIGHT SHOULDER — same as left, 220
-      {o:234,c:224,h:236,l:222,bull:false},
-      {o:224,c:220,h:226,l:219,bull:false},
-      {o:220,c:228,h:230,l:219,bull:true},
-      // NECKLINE BREAK
-      {o:228,c:240,h:242,l:227,bull:true},
-      {o:240,c:252,h:254,l:239,bull:true},
+      {o:215,c:210,h:216,l:209,bull:false},
+      {o:210,c:205,h:211,l:204,bull:false},
+      // Left shoulder bottom
+      {o:205,c:200,h:206,l:199,bull:false},
+      {o:200,c:204,h:199,l:205,bull:true},
+      {o:204,c:208,h:203,l:209,bull:true},
+      // Head bottom (deeper)
+      {o:208,c:202,h:209,l:201,bull:false},
+      {o:202,c:195,h:203,l:194,bull:false},
+      {o:195,c:200,h:194,l:201,bull:true},
+      {o:200,c:207,h:199,l:208,bull:true},
+      // Right shoulder bottom
+      {o:207,c:202,h:208,l:201,bull:false},
+      {o:202,c:198,h:203,l:197,bull:false},
+      {o:198,c:204,h:197,l:205,bull:true},
+      // Neckline breakout
+      {o:204,c:212,h:203,l:214,bull:true},
+      {o:212,c:220,h:211,l:222,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-25,text:'L Shoulder',color:GOLD},
-      {type:'label',candleIdx:7,offset:-28,text:'Head (deepest)',color:GOLD},
-      {type:'label',candleIdx:12,offset:-25,text:'R Shoulder',color:GOLD},
-      {type:'label',candleIdx:14,offset:-18,text:'Breakout ↑',color:TEAL},
-      {type:'hline',candleIdx:4,label:'Neckline'},
+      {type:'label', candleIdx:2, offset:-22, text:'L Shoulder', color:GOLD},
+      {type:'label', candleIdx:6, offset:-25, text:'Head', color:GOLD},
+      {type:'label', candleIdx:10, offset:-22, text:'R Shoulder', color:GOLD},
+      {type:'label', candleIdx:12, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 43, name: "Rounded Bottom", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "A slow, gradual curve from downtrend to uptrend — like a bowl or saucer. Selling pressure exhausts over time and buying gradually takes over. Signals a major long-term reversal.",
+    category: "Chart Pattern", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "A gradual, curved bottoming pattern. Selling pressure slowly exhausts and buying gradually takes over. Signals a major long-term reversal is underway.",
     entry: "Break above the resistance at the start of the curve",
-    stop: "Below the lowest point of the bowl",
-    target: "Depth of the bowl added to breakout",
+    stop: "Below the lowest point of the rounded bottom",
+    target: "Depth of the bowl added to breakout point",
     candles: [
-      // Gradual decline
-      {o:240,c:234,h:242,l:232,bull:false},
-      {o:234,c:228,h:236,l:226,bull:false},
-      {o:228,c:222,h:230,l:220,bull:false},
-      {o:222,c:218,h:224,l:216,bull:false},
-      {o:218,c:214,h:220,l:212,bull:false},
-      // BOWL BOTTOM — very gradual
-      {o:214,c:212,h:216,l:210,bull:false},
-      {o:212,c:212,h:214,l:210,bull:true},
-      {o:212,c:214,h:216,l:211,bull:true},
-      {o:214,c:218,h:220,l:213,bull:true},
-      {o:218,c:222,h:224,l:217,bull:true},
-      {o:222,c:228,h:230,l:221,bull:true},
-      {o:228,c:234,h:236,l:227,bull:true},
-      {o:234,c:240,h:242,l:233,bull:true},
-      // BREAKOUT
-      {o:240,c:250,h:252,l:239,bull:true},
-      {o:250,c:260,h:262,l:249,bull:true},
+      {o:215,c:211,h:216,l:210,bull:false},
+      {o:211,c:207,h:212,l:206,bull:false},
+      {o:207,c:204,h:208,l:203,bull:false},
+      {o:204,c:202,h:205,l:201,bull:false},
+      {o:202,c:200,h:203,l:199,bull:false},
+      {o:200,c:201,h:199,l:202,bull:true},
+      {o:201,c:203,h:200,l:204,bull:true},
+      {o:203,c:206,h:202,l:207,bull:true},
+      {o:206,c:209,h:205,l:210,bull:true},
+      {o:209,c:213,h:208,l:214,bull:true},
+      {o:213,c:216,h:212,l:217,bull:true},
+      // Breakout
+      {o:216,c:222,h:215,l:224,bull:true},
+      {o:222,c:228,h:221,l:230,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:6,offset:-25,text:'Bowl bottom',color:GOLD},
-      {type:'label',candleIdx:13,offset:-18,text:'Breakout ↑',color:TEAL},
+      {type:'label', candleIdx:4, offset:-22, text:'Bowl', color:GOLD},
+      {type:'label', candleIdx:11, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 44, name: "Falling Wedge", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Two CONVERGING downward trendlines — lower highs and lower lows, but the range is tightening. Sellers losing steam. Despite looking bearish, the breakout is UPWARD. Surprise reversal.",
+    category: "Chart Pattern", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Two downward-sloping converging trendlines with lower highs and lower lows. Despite the downtrend appearance, a break above the upper trendline signals a bullish reversal.",
     entry: "Break above the upper falling trendline",
     stop: "Below the most recent low within the wedge",
     target: "Height of the wedge added to breakout point",
     candles: [
-      // FALLING WEDGE — converging, shrinking range
-      {o:250,c:238,h:252,l:236,bull:false},
-      {o:238,c:244,h:246,l:236,bull:true},
-      {o:244,c:234,h:246,l:232,bull:false},
-      {o:234,c:240,h:241,l:232,bull:true},
-      {o:240,c:232,h:241,l:230,bull:false},
-      {o:232,c:237,h:238,l:230,bull:true},
-      {o:237,c:230,h:238,l:229,bull:false},
-      {o:230,c:234,h:235,l:229,bull:true},
-      {o:234,c:229,h:235,l:228,bull:false},
-      {o:229,c:232,h:233,l:228,bull:true},
-      // BREAKOUT UP — surprise!
-      {o:232,c:244,h:246,l:231,bull:true},
-      {o:244,c:256,h:258,l:243,bull:true},
-      {o:256,c:266,h:268,l:255,bull:true},
+      {o:220,c:215,h:221,l:214,bull:false},
+      {o:215,c:210,h:216,l:209,bull:false},
+      {o:210,c:212,h:209,l:213,bull:true},
+      {o:212,c:207,h:213,l:206,bull:false},
+      {o:207,c:203,h:208,l:202,bull:false},
+      {o:203,c:205,h:202,l:206,bull:true},
+      {o:205,c:201,h:206,l:200,bull:false},
+      {o:201,c:199,h:202,l:198,bull:false},
+      {o:199,c:201,h:198,l:202,bull:true},
+      {o:201,c:199,h:202,l:198,bull:false},
+      // Breakout
+      {o:199,c:207,h:198,l:209,bull:true},
+      {o:207,c:215,h:206,l:217,bull:true},
+      {o:215,c:221,h:214,l:223,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Lower high',color:RED},
-      {type:'label',candleIdx:6,offset:-18,text:'Converging ↓',color:GOLD},
-      {type:'label',candleIdx:10,offset:-18,text:'Surprise breakout ↑',color:TEAL},
+      {type:'label', candleIdx:3, offset:-18, text:'Falling Wedge', color:GOLD},
+      {type:'label', candleIdx:10, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 45, name: "Adam & Eve Bottom", level: "Advanced",
-    category: "Chart Pattern", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "A sharp V-shaped bottom (Adam) followed by a wider rounded bottom (Eve) at a similar level. Adam = panic selling spike. Eve = gradual exhaustion. Together = powerful institutional accumulation signal.",
-    entry: "Break above the neckline between Adam and Eve",
+    category: "Chart Pattern", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "A sharp V-shaped bottom (Adam) followed by a wider, rounded bottom (Eve) at a similar level. The combination signals strong institutional buying interest.",
+    entry: "Break above the neckline connecting the peaks between Adam and Eve",
     stop: "Below the lower of the two bottoms",
     target: "Depth of the pattern added to breakout",
     candles: [
-      {o:248,c:238,h:250,l:236,bull:false},
-      {o:238,c:226,h:240,l:224,bull:false},
-      // ADAM — sharp V spike down
-      {o:226,c:212,h:228,l:210,bull:false},
-      {o:212,c:208,h:214,l:206,bull:false},
-      {o:208,c:220,h:222,l:207,bull:true},
-      {o:220,c:232,h:234,l:218,bull:true},
-      // NECKLINE area
-      {o:232,c:238,h:240,l:230,bull:true},
-      // EVE — wide rounded bottom
-      {o:238,c:228,h:240,l:226,bull:false},
-      {o:228,c:218,h:230,l:216,bull:false},
-      {o:218,c:212,h:220,l:210,bull:false},
-      {o:212,c:216,h:218,l:210,bull:true},
-      {o:216,c:224,h:226,l:215,bull:true},
-      {o:224,c:232,h:234,l:223,bull:true},
-      // BREAKOUT
-      {o:232,c:246,h:248,l:231,bull:true},
-      {o:246,c:258,h:260,l:245,bull:true},
+      {o:214,c:208,h:215,l:207,bull:false},
+      {o:208,c:201,h:209,l:200,bull:false},
+      // Adam - sharp V
+      {o:201,c:195,h:202,l:194,bull:false},
+      {o:195,c:201,h:194,l:202,bull:true},
+      {o:201,c:208,h:200,l:209,bull:true},
+      // Rally between
+      {o:208,c:212,h:207,l:213,bull:true},
+      // Eve - rounded
+      {o:212,c:207,h:213,l:206,bull:false},
+      {o:207,c:203,h:208,l:202,bull:false},
+      {o:203,c:201,h:204,l:200,bull:false},
+      {o:201,c:204,h:200,l:205,bull:true},
+      {o:204,c:208,h:203,l:209,bull:true},
+      // Breakout
+      {o:208,c:216,h:207,l:218,bull:true},
+      {o:216,c:223,h:215,l:225,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-25,text:'Adam (sharp)',color:GOLD},
-      {type:'label',candleIdx:9,offset:-25,text:'Eve (rounded)',color:GOLD},
-      {type:'label',candleIdx:13,offset:-18,text:'Breakout ↑',color:TEAL},
-      {type:'hline',candleIdx:6,label:'Neckline'},
+      {type:'label', candleIdx:2, offset:-22, text:'Adam', color:GOLD},
+      {type:'label', candleIdx:8, offset:-22, text:'Eve', color:GOLD},
+      {type:'label', candleIdx:11, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
+
   // ── Reversal Chart Patterns: Bearish ──
   {
     id: 46, name: "Double Top", level: "Beginner",
-    category: "Chart Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "Two highs at the SAME price level — classic M shape. Price tested resistance twice and sellers defended it both times. Break below the middle low (neckline) confirms the reversal.",
-    entry: "Break below the neckline (middle low) with volume",
+    category: "Chart Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Two highs at approximately the same price level separated by a pullback. Classic M-shape. Break below the middle low (neckline) confirms the reversal.",
+    entry: "Break below the neckline (middle low)",
     stop: "Above the second top",
     target: "Distance from top to neckline, subtracted from breakdown",
     candles: [
-      // Uptrend into first top
-      {o:188,c:200,h:202,l:186,bull:true},
-      {o:200,c:212,h:214,l:198,bull:true},
-      // FIRST TOP at 226
-      {o:212,c:222,h:226,l:210,bull:true},
-      {o:222,c:226,h:228,l:220,bull:true},
-      {o:226,c:218,h:228,l:216,bull:false},
-      // PULLBACK TO NECKLINE at 212
-      {o:218,c:212,h:220,l:210,bull:false},
-      {o:212,c:218,h:220,l:210,bull:true},
-      // SECOND TOP — same level 226
-      {o:218,c:226,h:228,l:216,bull:true},
-      {o:226,c:222,h:228,l:220,bull:false},
-      {o:222,c:212,h:224,l:210,bull:false},
-      // BREAK BELOW NECKLINE
-      {o:212,c:200,h:214,l:198,bull:false},
-      {o:200,c:188,h:202,l:186,bull:false},
-      {o:188,c:178,h:190,l:176,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      // First top
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:212,h:207,l:213,bull:true},
+      {o:212,c:207,h:213,l:206,bull:false},
+      // Pullback to neckline
+      {o:207,c:202,h:208,l:201,bull:false},
+      {o:202,c:206,h:201,l:207,bull:true},
+      // Second top
+      {o:206,c:212,h:205,l:213,bull:true},
+      {o:212,c:207,h:213,l:206,bull:false},
+      {o:207,c:202,h:208,l:201,bull:false},
+      // Breakdown
+      {o:202,c:194,h:203,l:193,bull:false},
+      {o:194,c:186,h:195,l:185,bull:false},
+      {o:186,c:180,h:187,l:179,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Top 1',color:RED},
-      {type:'label',candleIdx:7,offset:-18,text:'Top 2',color:RED},
-      {type:'label',candleIdx:5,offset:-22,text:'Neckline',color:GOLD},
-      {type:'label',candleIdx:10,offset:-18,text:'BREAKDOWN ↓',color:RED},
-      {type:'hline',candleIdx:5,label:'Neckline'},
+      {type:'label', candleIdx:3, offset:-18, text:'Top 1', color:RED},
+      {type:'label', candleIdx:7, offset:-18, text:'Top 2', color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Neckline', color:GOLD},
+      {type:'label', candleIdx:10, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 47, name: "Triple Top", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "Three highs at the SAME price — resistance tested and rejected THREE times. Buyers completely exhausted. Each failed attempt shows sellers getting stronger. Breakdown is powerful.",
+    category: "Chart Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Three highs at approximately the same level. Even stronger than a double top — price tested resistance three times and sellers defended it each time.",
     entry: "Break below the support connecting the two lows",
     stop: "Above the third top",
     target: "Distance from top to support, subtracted from breakdown",
     candles: [
-      {o:188,c:200,h:202,l:186,bull:true},
-      // TOP 1 at 218
-      {o:200,c:214,h:218,l:198,bull:true},
-      {o:214,c:218,h:220,l:212,bull:true},
-      {o:218,c:210,h:220,l:208,bull:false},
-      {o:210,c:206,h:212,l:204,bull:false},
-      // TOP 2 at 218
-      {o:206,c:214,h:218,l:204,bull:true},
-      {o:214,c:218,h:220,l:212,bull:true},
-      {o:218,c:208,h:220,l:206,bull:false},
-      {o:208,c:204,h:210,l:202,bull:false},
-      // TOP 3 at 218
-      {o:204,c:212,h:218,l:202,bull:true},
-      {o:212,c:218,h:220,l:210,bull:true},
-      {o:218,c:206,h:220,l:204,bull:false},
-      // BREAKDOWN
-      {o:206,c:194,h:208,l:192,bull:false},
-      {o:194,c:182,h:196,l:180,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      // Top 1
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:208,bull:true},
+      {o:208,c:202,h:208,l:201,bull:false},
+      {o:202,c:198,h:203,l:197,bull:false},
+      // Top 2
+      {o:198,c:204,h:197,l:205,bull:true},
+      {o:204,c:208,h:203,l:208,bull:true},
+      {o:208,c:202,h:208,l:201,bull:false},
+      {o:202,c:197,h:203,l:196,bull:false},
+      // Top 3
+      {o:197,c:203,h:196,l:204,bull:true},
+      {o:203,c:208,h:202,l:208,bull:true},
+      {o:208,c:201,h:208,l:200,bull:false},
+      // Breakdown
+      {o:201,c:193,h:202,l:192,bull:false},
+      {o:193,c:186,h:194,l:185,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Top 1',color:RED},
-      {type:'label',candleIdx:6,offset:-18,text:'Top 2',color:RED},
-      {type:'label',candleIdx:10,offset:-18,text:'Top 3',color:RED},
-      {type:'label',candleIdx:12,offset:-18,text:'BREAKDOWN ↓',color:RED},
-      {type:'hline',candleIdx:2,label:'Resistance'},
+      {type:'label', candleIdx:2, offset:-18, text:'Top 1', color:RED},
+      {type:'label', candleIdx:6, offset:-18, text:'Top 2', color:RED},
+      {type:'label', candleIdx:10, offset:-18, text:'Top 3', color:RED},
+      {type:'label', candleIdx:12, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 48, name: "Head & Shoulders", level: "Beginner",
-    category: "Chart Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "Left shoulder → Higher head → Right shoulder at same height as left. The head is the final push by bulls — then they fail. Neckline break confirms sellers are in control. Classic reversal.",
-    entry: "Break below the neckline with volume",
+    category: "Chart Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Left shoulder, higher head, right shoulder at same level as left — all above the neckline. Break below neckline signals a major bearish reversal.",
+    entry: "Break below the neckline",
     stop: "Above the right shoulder high",
     target: "Distance from head to neckline, subtracted from breakdown",
     candles: [
-      {o:188,c:200,h:202,l:186,bull:true},
-      {o:200,c:210,h:212,l:198,bull:true},
-      // LEFT SHOULDER top at 220
-      {o:210,c:218,h:222,l:208,bull:true},
-      {o:218,c:220,h:222,l:216,bull:true},
-      {o:220,c:212,h:222,l:210,bull:false},
-      {o:212,c:208,h:214,l:206,bull:false},
-      // HEAD — goes higher to 234
-      {o:208,c:220,h:222,l:206,bull:true},
-      {o:220,c:232,h:236,l:218,bull:true},
-      {o:232,c:234,h:236,l:230,bull:true},
-      {o:234,c:222,h:236,l:220,bull:false},
-      {o:222,c:210,h:224,l:208,bull:false},
-      // RIGHT SHOULDER — same as left, 220
-      {o:210,c:220,h:222,l:208,bull:true},
-      {o:220,c:218,h:222,l:216,bull:false},
-      {o:218,c:208,h:220,l:206,bull:false},
-      // NECKLINE BREAK
-      {o:208,c:196,h:210,l:194,bull:false},
-      {o:196,c:184,h:198,l:182,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      // Left shoulder
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:204,h:209,l:203,bull:false},
+      {o:204,c:207,h:203,l:208,bull:true},
+      // Head
+      {o:207,c:214,h:206,l:216,bull:true},
+      {o:214,c:208,h:215,l:207,bull:false},
+      {o:208,c:206,h:209,l:205,bull:false},
+      // Right shoulder
+      {o:206,c:210,h:205,l:211,bull:true},
+      {o:210,c:206,h:211,l:205,bull:false},
+      {o:206,c:202,h:207,l:201,bull:false},
+      // Breakdown
+      {o:202,c:194,h:203,l:193,bull:false},
+      {o:194,c:186,h:195,l:185,bull:false},
+      {o:186,c:180,h:187,l:179,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'L Shoulder',color:GOLD},
-      {type:'label',candleIdx:8,offset:-18,text:'Head (highest)',color:GOLD},
-      {type:'label',candleIdx:12,offset:-18,text:'R Shoulder',color:GOLD},
-      {type:'label',candleIdx:14,offset:-18,text:'Breakdown ↓',color:RED},
-      {type:'hline',candleIdx:5,label:'Neckline'},
+      {type:'label', candleIdx:2, offset:-18, text:'L Shoulder', color:GOLD},
+      {type:'label', candleIdx:5, offset:-18, text:'Head', color:GOLD},
+      {type:'label', candleIdx:8, offset:-18, text:'R Shoulder', color:GOLD},
+      {type:'label', candleIdx:11, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 49, name: "Rounded Top", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "A slow gradual curve from uptrend to downtrend — like a dome or arch. Buying pressure slowly exhausts and selling gradually takes over. Signals a major long-term top.",
+    category: "Chart Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "A gradual, curved topping pattern. Buying pressure slowly exhausts and selling gradually takes over. Signals a major long-term bearish reversal.",
     entry: "Break below the support at the start of the curve",
-    stop: "Above the highest point of the dome",
+    stop: "Above the highest point of the rounded top",
     target: "Height of the dome subtracted from breakdown",
     candles: [
-      // Gradual rise
-      {o:196,c:202,h:204,l:194,bull:true},
-      {o:202,c:208,h:210,l:200,bull:true},
-      {o:208,c:214,h:216,l:206,bull:true},
-      {o:214,c:220,h:222,l:212,bull:true},
-      {o:220,c:224,h:226,l:218,bull:true},
-      // DOME TOP — gradual
-      {o:224,c:226,h:228,l:222,bull:true},
-      {o:226,c:226,h:228,l:224,bull:false},
-      {o:226,c:224,h:228,l:222,bull:false},
-      {o:224,c:220,h:226,l:218,bull:false},
-      {o:220,c:214,h:222,l:212,bull:false},
-      {o:214,c:208,h:216,l:206,bull:false},
-      {o:208,c:202,h:210,l:200,bull:false},
-      {o:202,c:196,h:204,l:194,bull:false},
-      // BREAKDOWN
-      {o:196,c:184,h:198,l:182,bull:false},
-      {o:184,c:172,h:186,l:170,bull:false},
+      {o:195,c:199,h:194,l:200,bull:true},
+      {o:199,c:203,h:198,l:204,bull:true},
+      {o:203,c:206,h:202,l:207,bull:true},
+      {o:206,c:208,h:205,l:209,bull:true},
+      {o:208,c:210,h:207,l:211,bull:true},
+      {o:210,c:209,h:211,l:210,bull:false},
+      {o:209,c:207,h:210,l:208,bull:false},
+      {o:207,c:204,h:208,l:205,bull:false},
+      {o:204,c:201,h:205,l:202,bull:false},
+      {o:201,c:198,h:202,l:199,bull:false},
+      {o:198,c:195,h:199,l:196,bull:false},
+      // Breakdown
+      {o:195,c:188,h:196,l:187,bull:false},
+      {o:188,c:182,h:189,l:181,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:6,offset:-18,text:'Dome peak',color:GOLD},
-      {type:'label',candleIdx:13,offset:-18,text:'Breakdown ↓',color:RED},
+      {type:'label', candleIdx:4, offset:-18, text:'Dome Top', color:GOLD},
+      {type:'label', candleIdx:11, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 50, name: "Rising Wedge", level: "Intermediate",
-    category: "Chart Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "Two CONVERGING upward trendlines — higher highs and higher lows but the range is tightening. Buyers losing steam despite pushing higher. Breakdown is DOWNWARD. Deceptive top pattern.",
+    category: "Chart Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Two upward-sloping converging trendlines with higher highs and higher lows. Despite the uptrend appearance, a break below the lower trendline signals a bearish reversal.",
     entry: "Break below the lower rising trendline",
     stop: "Above the most recent high within the wedge",
     target: "Height of the wedge subtracted from breakdown",
     candles: [
-      // RISING WEDGE — converging, shrinking range going up
-      {o:196,c:208,h:210,l:194,bull:true},
-      {o:208,c:202,h:210,l:200,bull:false},
-      {o:202,c:212,h:214,l:200,bull:true},
-      {o:212,c:206,h:213,l:205,bull:false},
-      {o:206,c:215,h:216,l:205,bull:true},
-      {o:215,c:210,h:216,l:209,bull:false},
-      {o:210,c:217,h:218,l:210,bull:true},
-      {o:217,c:213,h:218,l:212,bull:false},
-      {o:213,c:218,h:219,l:213,bull:true},
-      {o:218,c:215,h:219,l:214,bull:false},
-      // BREAKDOWN — surprise drop
-      {o:215,c:203,h:216,l:201,bull:false},
-      {o:203,c:191,h:205,l:189,bull:false},
-      {o:191,c:179,h:193,l:177,bull:false},
+      {o:190,c:194,h:189,l:195,bull:true},
+      {o:194,c:198,h:193,l:199,bull:true},
+      {o:198,c:196,h:199,l:197,bull:false},
+      {o:196,c:200,h:195,l:201,bull:true},
+      {o:200,c:204,h:199,l:205,bull:true},
+      {o:204,c:202,h:205,l:203,bull:false},
+      {o:202,c:205,h:201,l:206,bull:true},
+      {o:205,c:207,h:204,l:208,bull:true},
+      {o:207,c:205,h:208,l:206,bull:false},
+      {o:205,c:206,h:204,l:207,bull:true},
+      // Breakdown
+      {o:206,c:198,h:207,l:197,bull:false},
+      {o:198,c:190,h:199,l:189,bull:false},
+      {o:190,c:184,h:191,l:183,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Higher high',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'Converging ↑',color:GOLD},
-      {type:'label',candleIdx:10,offset:-18,text:'Surprise drop ↓',color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Rising Wedge', color:GOLD},
+      {type:'label', candleIdx:10, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 51, name: "Adam & Eve Top", level: "Advanced",
-    category: "Chart Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "A sharp spike top (Adam) followed by a wider rounded top (Eve). Adam = FOMO panic buying spike. Eve = distribution topping process. Together = smart money selling into retail excitement.",
-    entry: "Break below the neckline between Adam and Eve",
+    category: "Chart Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "A sharp spike top (Adam) followed by a wider, rounded top (Eve) at a similar level. The combination signals strong institutional selling and a major top.",
+    entry: "Break below the neckline connecting the lows between Adam and Eve",
     stop: "Above the higher of the two tops",
     target: "Depth of the pattern subtracted from breakdown",
     candles: [
-      {o:188,c:200,h:202,l:186,bull:true},
-      {o:200,c:212,h:214,l:198,bull:true},
-      // ADAM — sharp spike up
-      {o:212,c:224,h:228,l:210,bull:true},
-      {o:224,c:228,h:230,l:222,bull:true},
-      {o:228,c:214,h:230,l:212,bull:false},
-      {o:214,c:206,h:216,l:204,bull:false},
-      // NECKLINE area
-      {o:206,c:212,h:214,l:204,bull:true},
-      // EVE — wide rounded top
-      {o:212,c:220,h:222,l:210,bull:true},
-      {o:220,c:226,h:228,l:218,bull:true},
-      {o:226,c:228,h:230,l:224,bull:true},
-      {o:228,c:222,h:230,l:220,bull:false},
-      {o:222,c:214,h:224,l:212,bull:false},
-      {o:214,c:208,h:216,l:206,bull:false},
-      // BREAKDOWN
-      {o:208,c:194,h:210,l:192,bull:false},
-      {o:194,c:180,h:196,l:178,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      // Adam - sharp spike
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:214,h:207,l:215,bull:true},
+      {o:214,c:208,h:215,l:207,bull:false},
+      {o:208,c:202,h:209,l:201,bull:false},
+      // Between
+      {o:202,c:205,h:201,l:206,bull:true},
+      // Eve - rounded top
+      {o:205,c:209,h:204,l:210,bull:true},
+      {o:209,c:212,h:208,l:213,bull:true},
+      {o:212,c:210,h:213,l:211,bull:false},
+      {o:210,c:207,h:211,l:208,bull:false},
+      {o:207,c:203,h:208,l:204,bull:false},
+      // Breakdown
+      {o:203,c:195,h:204,l:194,bull:false},
+      {o:195,c:188,h:196,l:187,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Adam (sharp)',color:GOLD},
-      {type:'label',candleIdx:9,offset:-18,text:'Eve (rounded)',color:GOLD},
-      {type:'label',candleIdx:13,offset:-18,text:'Breakdown ↓',color:RED},
-      {type:'hline',candleIdx:6,label:'Neckline'},
+      {type:'label', candleIdx:3, offset:-18, text:'Adam', color:GOLD},
+      {type:'label', candleIdx:8, offset:-18, text:'Eve', color:GOLD},
+      {type:'label', candleIdx:12, offset:-18, text:'Breakdown', color:RED},
     ]
   },
+
   // ── Market Structure ──
   {
     id: 52, name: "Higher High", level: "Beginner",
-    category: "Market Structure", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "Each successive peak is HIGHER than the previous peak. This IS the definition of an uptrend. As long as higher highs keep forming, bulls are in control. Never fight this structure.",
+    category: "Market Structure", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "Each successive peak is higher than the previous peak. The fundamental definition of an uptrend. As long as higher highs are forming, the trend is intact.",
     entry: "On pullbacks to higher lows within the structure",
     stop: "Below the most recent higher low",
     target: "Next measured move based on swing size",
     candles: [
-      {o:190,c:198,h:200,l:188,bull:true},
-      {o:198,c:202,h:204,l:196,bull:true},
-      // HH 1 at 208
-      {o:202,c:208,h:210,l:200,bull:true},
-      {o:208,c:200,h:210,l:198,bull:false},
-      {o:200,c:196,h:202,l:194,bull:false},
-      {o:196,c:204,h:206,l:194,bull:true},
-      // HH 2 — higher at 218
-      {o:204,c:216,h:220,l:202,bull:true},
-      {o:216,c:206,h:220,l:204,bull:false},
-      {o:206,c:200,h:208,l:198,bull:false},
-      {o:200,c:210,h:212,l:199,bull:true},
-      // HH 3 — even higher at 228
-      {o:210,c:226,h:230,l:208,bull:true},
-      {o:226,c:214,h:230,l:212,bull:false},
-      {o:214,c:208,h:216,l:206,bull:false},
-      {o:208,c:220,h:222,l:207,bull:true},
+      {o:190,c:194,h:189,l:196,bull:true},
+      {o:194,c:198,h:193,l:200,bull:true},
+      {o:198,c:195,h:199,l:194,bull:false},
+      {o:195,c:200,h:194,l:202,bull:true},
+      // HH 1
+      {o:200,c:206,h:199,l:208,bull:true},
+      {o:206,c:202,h:207,l:201,bull:false},
+      {o:202,c:198,h:203,l:197,bull:false},
+      {o:198,c:204,h:197,l:206,bull:true},
+      // HH 2 (higher)
+      {o:204,c:212,h:203,l:214,bull:true},
+      {o:212,c:208,h:213,l:207,bull:false},
+      {o:208,c:204,h:209,l:203,bull:false},
+      {o:204,c:211,h:203,l:213,bull:true},
+      // HH 3 (higher still)
+      {o:211,c:219,h:210,l:221,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'HH 1',color:TEAL},
-      {type:'label',candleIdx:6,offset:-18,text:'HH 2 ↑',color:TEAL},
-      {type:'label',candleIdx:10,offset:-18,text:'HH 3 ↑↑',color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'HH 1', color:TEAL},
+      {type:'label', candleIdx:8, offset:-18, text:'HH 2', color:TEAL},
+      {type:'label', candleIdx:12, offset:-18, text:'HH 3', color:TEAL},
     ]
   },
   {
     id: 53, name: "Higher Low", level: "Beginner",
-    category: "Market Structure", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "Each successive pullback low is HIGHER than the previous low. Along with higher highs, this confirms the uptrend. The higher low IS the buy zone — where smart money adds positions.",
-    entry: "At or near the higher low formation with a bullish signal",
+    category: "Market Structure", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "Each successive pullback low is higher than the previous low. Along with higher highs, this defines an uptrend. The entry point for trend traders.",
+    entry: "At or near the higher low formation",
     stop: "Below the higher low",
     target: "Previous higher high and beyond",
     candles: [
-      {o:190,c:202,h:204,l:188,bull:true},
-      {o:202,c:212,h:214,l:200,bull:true},
-      {o:212,c:204,h:214,l:202,bull:false},
-      // HL 1 at 200
-      {o:204,c:200,h:206,l:198,bull:false},
-      {o:200,c:212,h:214,l:198,bull:true},
-      {o:212,c:222,h:224,l:210,bull:true},
-      {o:222,c:212,h:224,l:210,bull:false},
-      // HL 2 — higher at 208
-      {o:212,c:208,h:214,l:207,bull:false},
-      {o:208,c:222,h:224,l:207,bull:true},
-      {o:222,c:232,h:234,l:220,bull:true},
-      {o:232,c:220,h:234,l:218,bull:false},
-      // HL 3 — even higher at 216
-      {o:220,c:216,h:222,l:215,bull:false},
-      {o:216,c:232,h:234,l:215,bull:true},
-      {o:232,c:242,h:244,l:231,bull:true},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:198,h:203,l:197,bull:false},
+      // HL 1
+      {o:198,c:197,h:199,l:196,bull:false},
+      {o:197,c:203,h:196,l:205,bull:true},
+      {o:203,c:209,h:202,l:211,bull:true},
+      {o:209,c:204,h:210,l:203,bull:false},
+      // HL 2 (higher)
+      {o:204,c:203,h:205,l:202,bull:false},
+      {o:203,c:210,h:202,l:212,bull:true},
+      {o:210,c:216,h:209,l:218,bull:true},
+      {o:216,c:211,h:217,l:210,bull:false},
+      // HL 3 (higher still)
+      {o:211,c:210,h:212,l:209,bull:false},
+      {o:210,c:218,h:209,l:220,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-25,text:'HL 1',color:TEAL},
-      {type:'label',candleIdx:7,offset:-25,text:'HL 2 ↑',color:TEAL},
-      {type:'label',candleIdx:11,offset:-25,text:'HL 3 ↑↑',color:TEAL},
+      {type:'label', candleIdx:3, offset:-22, text:'HL 1', color:TEAL},
+      {type:'label', candleIdx:7, offset:-22, text:'HL 2', color:TEAL},
+      {type:'label', candleIdx:11, offset:-22, text:'HL 3', color:TEAL},
     ]
   },
   {
     id: 54, name: "Lower High", level: "Beginner",
-    category: "Market Structure", signal: "Bearish Continuation", signalColor: RED,
-    description: "Each successive bounce peak is LOWER than the previous one. This IS the definition of a downtrend. Every rally is weaker than the last. Never buy into a lower high structure.",
-    entry: "On bounces to lower highs — short entry opportunity",
+    category: "Market Structure", signal: "Bearish Continuation",
+    signalColor: RED,
+    description: "Each successive peak is lower than the previous peak. Along with lower lows, this defines a downtrend. Never buy into a lower high pattern — the trend is down.",
+    entry: "On bounces to lower highs — short entry",
     stop: "Above the lower high",
     target: "Previous lower low and beyond",
     candles: [
-      {o:250,c:238,h:252,l:236,bull:false},
-      {o:238,c:228,h:240,l:226,bull:false},
-      {o:228,c:236,h:238,l:226,bull:true},
-      // LH 1 at 240
-      {o:236,c:240,h:242,l:234,bull:true},
-      {o:240,c:228,h:242,l:226,bull:false},
-      {o:228,c:218,h:230,l:216,bull:false},
-      {o:218,c:228,h:230,l:216,bull:true},
-      // LH 2 — lower at 232
-      {o:228,c:232,h:234,l:226,bull:true},
-      {o:232,c:220,h:234,l:218,bull:false},
-      {o:220,c:210,h:222,l:208,bull:false},
-      {o:210,c:218,h:220,l:208,bull:true},
-      // LH 3 — even lower at 222
-      {o:218,c:222,h:224,l:216,bull:true},
-      {o:222,c:208,h:224,l:206,bull:false},
-      {o:208,c:196,h:210,l:194,bull:false},
+      {o:220,c:214,h:221,l:213,bull:false},
+      {o:214,c:208,h:215,l:207,bull:false},
+      {o:208,c:213,h:207,l:214,bull:true},
+      // LH 1
+      {o:213,c:218,h:212,l:219,bull:true},
+      {o:218,c:212,h:219,l:211,bull:false},
+      {o:212,c:206,h:213,l:205,bull:false},
+      {o:206,c:210,h:205,l:211,bull:true},
+      // LH 2 (lower)
+      {o:210,c:214,h:209,l:215,bull:true},
+      {o:214,c:208,h:215,l:207,bull:false},
+      {o:208,c:202,h:209,l:201,bull:false},
+      {o:202,c:206,h:201,l:207,bull:true},
+      // LH 3 (lower still)
+      {o:206,c:209,h:205,l:210,bull:true},
+      {o:209,c:202,h:210,l:201,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'LH 1',color:RED},
-      {type:'label',candleIdx:7,offset:-18,text:'LH 2 ↓',color:RED},
-      {type:'label',candleIdx:11,offset:-18,text:'LH 3 ↓↓',color:RED},
+      {type:'label', candleIdx:3, offset:-18, text:'LH 1', color:RED},
+      {type:'label', candleIdx:7, offset:-18, text:'LH 2', color:RED},
+      {type:'label', candleIdx:11, offset:-18, text:'LH 3', color:RED},
     ]
   },
   {
     id: 55, name: "Lower Low", level: "Beginner",
-    category: "Market Structure", signal: "Bearish Continuation", signalColor: RED,
-    description: "Each successive trough is LOWER than the previous trough. The fundamental definition of a downtrend. As long as lower lows keep forming, bears are in control. Respect the structure.",
+    category: "Market Structure", signal: "Bearish Continuation",
+    signalColor: RED,
+    description: "Each successive trough is lower than the previous trough. The fundamental definition of a downtrend. As long as lower lows are forming, the trend is intact.",
     entry: "On bounces to lower highs — short entry",
     stop: "Above the lower high preceding the lower low",
-    target: "Next measured move lower",
+    target: "Next measured move lower based on swing size",
     candles: [
-      {o:250,c:240,h:252,l:238,bull:false},
-      {o:240,c:248,h:250,l:238,bull:true},
-      {o:248,c:238,h:250,l:236,bull:false},
-      // LL 1 at 230
-      {o:238,c:230,h:240,l:228,bull:false},
-      {o:230,c:240,h:242,l:228,bull:true},
-      {o:240,c:230,h:242,l:228,bull:false},
-      // LL 2 — lower at 218
-      {o:230,c:218,h:232,l:216,bull:false},
-      {o:218,c:228,h:230,l:216,bull:true},
-      {o:228,c:218,h:230,l:216,bull:false},
-      // LL 3 — even lower at 206
-      {o:218,c:206,h:220,l:204,bull:false},
-      {o:206,c:216,h:218,l:204,bull:true},
-      {o:216,c:204,h:218,l:202,bull:false},
+      {o:220,c:215,h:221,l:214,bull:false},
+      {o:215,c:210,h:216,l:209,bull:false},
+      {o:210,c:214,h:209,l:215,bull:true},
+      {o:214,c:208,h:215,l:207,bull:false},
+      // LL 1
+      {o:208,c:202,h:209,l:201,bull:false},
+      {o:202,c:207,h:201,l:208,bull:true},
+      {o:207,c:202,h:208,l:201,bull:false},
+      // LL 2 (lower)
+      {o:202,c:196,h:203,l:195,bull:false},
+      {o:196,c:201,h:195,l:202,bull:true},
+      {o:201,c:195,h:202,l:194,bull:false},
+      // LL 3 (lower still)
+      {o:195,c:189,h:196,l:188,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-25,text:'LL 1',color:RED},
-      {type:'label',candleIdx:6,offset:-25,text:'LL 2 ↓',color:RED},
-      {type:'label',candleIdx:9,offset:-25,text:'LL 3 ↓↓',color:RED},
+      {type:'label', candleIdx:4, offset:-22, text:'LL 1', color:RED},
+      {type:'label', candleIdx:7, offset:-22, text:'LL 2', color:RED},
+      {type:'label', candleIdx:10, offset:-22, text:'LL 3', color:RED},
     ]
   },
   {
     id: 56, name: "Break of Structure", level: "Intermediate",
-    category: "Market Structure", signal: "Bearish Reversal", signalColor: RED,
-    description: "In an uptrend, price breaks BELOW a previous higher low. This is the FIRST WARNING that the trend is ending. Smart money traders use this to anticipate reversals before they happen.",
+    category: "Market Structure", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "In an uptrend, price breaks below a previous higher low (BOS). This is the first warning sign that the uptrend may be ending. Used by Smart Money traders to anticipate reversals.",
     entry: "After confirmed close below the broken structure level",
     stop: "Above the most recent high before the break",
     target: "Previous swing low",
     candles: [
-      // Uptrend with higher highs and higher lows
-      {o:190,c:202,h:204,l:188,bull:true},
-      {o:202,c:212,h:214,l:200,bull:true},
-      {o:212,c:204,h:214,l:202,bull:false},
-      // HIGHER LOW at 200 — this is the level that will break
-      {o:204,c:200,h:206,l:198,bull:false},
-      {o:200,c:214,h:216,l:198,bull:true},
-      {o:214,c:222,h:224,l:212,bull:true},
-      {o:222,c:212,h:224,l:210,bull:false},
-      {o:212,c:208,h:214,l:206,bull:false},
-      // BOS — BREAKS BELOW the previous higher low at 200
-      {o:208,c:196,h:210,l:194,bull:false},
-      {o:196,c:184,h:198,l:182,bull:false},
-      {o:184,c:174,h:186,l:172,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:204,h:209,l:203,bull:false},
+      // Higher low
+      {o:204,c:202,h:205,l:201,bull:false},
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:213,h:207,l:215,bull:true},
+      {o:213,c:208,h:214,l:207,bull:false},
+      {o:208,c:204,h:209,l:203,bull:false},
+      // BOS — breaks below prev HL
+      {o:204,c:199,h:205,l:198,bull:false},
+      {o:199,c:193,h:200,l:192,bull:false},
+      {o:193,c:188,h:194,l:187,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-25,text:'Higher Low (200)',color:TEAL},
-      {type:'label',candleIdx:8,offset:-18,text:'BOS — breaks below!',color:RED},
-      {type:'bracket',start:8,end:10,label:'Break of Structure'},
-      {type:'hline',candleIdx:3,label:'Broken HL'},
+      {type:'label', candleIdx:4, offset:-22, text:'Higher Low', color:TEAL},
+      {type:'label', candleIdx:9, offset:-18, text:'BOS', color:RED},
+      {type:'bracket', start:9, end:11, label:'Break of Structure'},
     ]
   },
   {
     id: 57, name: "Change of Character", level: "Advanced",
-    category: "Market Structure", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "In a downtrend, price breaks ABOVE a previous lower high. This is the FIRST SIGN the trend may be reversing. CHoCH is where smart money begins accumulating before the crowd notices.",
-    entry: "After confirmed close above the broken lower high",
+    category: "Market Structure", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "In a downtrend, price breaks above a previous lower high (CHoCH). This is the first sign that the downtrend may be reversing. A key Smart Money concept.",
+    entry: "After confirmed close above the broken lower high level",
     stop: "Below the most recent low before the break",
     target: "Previous swing high",
     candles: [
-      // Downtrend with lower highs and lower lows
-      {o:250,c:238,h:252,l:236,bull:false},
-      {o:238,c:228,h:240,l:226,bull:false},
-      {o:228,c:236,h:238,l:226,bull:true},
-      // LOWER HIGH at 238 — this is the level that will be broken
-      {o:236,c:238,h:240,l:234,bull:true},
-      {o:238,c:226,h:240,l:224,bull:false},
-      {o:226,c:214,h:228,l:212,bull:false},
-      {o:214,c:222,h:224,l:212,bull:true},
-      // CHoCH — BREAKS ABOVE the previous lower high at 238
-      {o:222,c:236,h:238,l:220,bull:true},
-      {o:236,c:248,h:250,l:234,bull:true},
-      {o:248,c:258,h:260,l:246,bull:true},
+      {o:220,c:214,h:221,l:213,bull:false},
+      {o:214,c:208,h:215,l:207,bull:false},
+      {o:208,c:212,h:207,l:213,bull:true},
+      // Lower high
+      {o:212,c:216,h:211,l:217,bull:true},
+      {o:216,c:210,h:217,l:209,bull:false},
+      {o:210,c:204,h:211,l:203,bull:false},
+      {o:204,c:208,h:203,l:209,bull:true},
+      // CHoCH — breaks above prev LH
+      {o:208,c:214,h:207,l:216,bull:true},
+      {o:214,c:220,h:213,l:222,bull:true},
+      {o:220,c:226,h:219,l:228,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Lower High (238)',color:RED},
-      {type:'label',candleIdx:7,offset:-18,text:'CHoCH — breaks above!',color:TEAL},
-      {type:'bracket',start:7,end:9,label:'Change of Character'},
-      {type:'hline',candleIdx:3,label:'Broken LH'},
+      {type:'label', candleIdx:3, offset:-18, text:'Lower High', color:RED},
+      {type:'label', candleIdx:7, offset:-18, text:'CHoCH', color:TEAL},
+      {type:'bracket', start:7, end:9, label:'Change of Character'},
     ]
   },
   {
     id: 58, name: "Market Structure Shift", level: "Advanced",
-    category: "Market Structure", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "A more decisive CHoCH — breaks a lower high with STRONG momentum candles. Confirms the trend has fully reversed from bearish to bullish. The crowd starts noticing here.",
+    category: "Market Structure", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "A more decisive CHoCH — price not only breaks a lower high but does so with strong momentum, signaling a confirmed shift from bearish to bullish market structure.",
     entry: "On the first pullback after the MSS confirmation",
     stop: "Below the MSS breakout candle low",
     target: "Previous major swing high",
     candles: [
-      {o:250,c:238,h:252,l:236,bull:false},
-      {o:238,c:226,h:240,l:224,bull:false},
-      {o:226,c:234,h:236,l:224,bull:true},
-      {o:234,c:222,h:236,l:220,bull:false},
-      {o:222,c:210,h:224,l:208,bull:false},
-      {o:210,c:218,h:220,l:208,bull:true},
-      {o:218,c:208,h:220,l:206,bull:false},
-      // MSS — explosive break with momentum through lower high
-      {o:208,c:224,h:226,l:206,bull:true},
-      {o:224,c:238,h:240,l:222,bull:true},
-      // Pullback — buy here
-      {o:238,c:230,h:240,l:228,bull:false},
-      {o:230,c:244,h:246,l:228,bull:true},
-      {o:244,c:256,h:258,l:242,bull:true},
+      {o:220,c:213,h:221,l:212,bull:false},
+      {o:213,c:206,h:214,l:205,bull:false},
+      {o:206,c:210,h:205,l:211,bull:true},
+      {o:210,c:204,h:211,l:203,bull:false},
+      {o:204,c:198,h:205,l:197,bull:false},
+      {o:198,c:203,h:197,l:204,bull:true},
+      {o:203,c:198,h:204,l:197,bull:false},
+      // MSS — strong break with momentum
+      {o:198,c:208,h:197,l:210,bull:true},
+      {o:208,c:218,h:207,l:220,bull:true},
+      {o:218,c:215,h:219,l:214,bull:false},
+      {o:215,c:222,h:214,l:224,bull:true},
+      {o:222,c:229,h:221,l:231,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:1,offset:-18,text:'Downtrend',color:RED},
-      {type:'label',candleIdx:7,offset:-18,text:'MSS — explosive!',color:TEAL},
-      {type:'label',candleIdx:9,offset:-22,text:'Buy the pullback',color:GOLD},
-      {type:'bracket',start:7,end:8,label:'Structure Shift'},
+      {type:'label', candleIdx:1, offset:-18, text:'Downtrend', color:RED},
+      {type:'label', candleIdx:7, offset:-18, text:'MSS', color:TEAL},
+      {type:'bracket', start:7, end:8, label:'Structure Shift'},
     ]
   },
+
   // ── Support & Resistance ──
   {
     id: 59, name: "Support Bounce", level: "Beginner",
-    category: "Support & Resistance", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Price falls to a previously established support level and bounces strongly. Buyers defend the level. The more times support has been tested, the stronger it is. Classic bread-and-butter setup.",
+    category: "Support & Resistance", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Price returns to a previously established support level and bounces higher. One of the most reliable and frequently traded setups in technical analysis.",
     entry: "First bullish candle off the support level",
-    stop: "Below the support level",
-    target: "Previous resistance or 2:1 minimum",
+    stop: "Below the support level (give it some room)",
+    target: "Previous resistance or 2:1 reward-to-risk minimum",
     candles: [
-      // Establish support at 210 initially
-      {o:230,c:220,h:232,l:218,bull:false},
-      {o:220,c:212,h:222,l:210,bull:false},
-      {o:212,c:210,h:214,l:208,bull:false},
-      {o:210,c:218,h:220,l:208,bull:true},
-      {o:218,c:228,h:230,l:216,bull:true},
-      {o:228,c:238,h:240,l:226,bull:true},
-      // PULLBACK TO SUPPORT
-      {o:238,c:228,h:240,l:226,bull:false},
-      {o:228,c:218,h:230,l:216,bull:false},
-      {o:218,c:212,h:220,l:210,bull:false},
-      // BOUNCE OFF SUPPORT at 210
-      {o:212,c:210,h:214,l:208,bull:false},
-      {o:210,c:222,h:224,l:208,bull:true},
-      {o:222,c:234,h:236,l:220,bull:true},
-      {o:234,c:244,h:246,l:232,bull:true},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:210,h:201,l:212,bull:true},
+      {o:210,c:204,h:211,l:203,bull:false},
+      {o:204,c:198,h:205,l:197,bull:false},
+      // Support zone
+      {o:198,c:195,h:199,l:194,bull:false},
+      {o:195,c:199,h:194,l:200,bull:true},
+      {o:199,c:205,h:198,l:207,bull:true},
+      {o:205,c:212,h:204,l:214,bull:true},
+      {o:212,c:218,h:211,l:220,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-25,text:'Support established',color:TEAL},
-      {type:'label',candleIdx:9,offset:-25,text:'Support tested',color:GOLD},
-      {type:'label',candleIdx:10,offset:-18,text:'BOUNCE ↑',color:TEAL},
-      {type:'hline',candleIdx:3,label:'Support Level'},
+      {type:'label', candleIdx:5, offset:-22, text:'Support', color:TEAL},
+      {type:'label', candleIdx:6, offset:-18, text:'Bounce', color:TEAL},
+      {type:'hline', candleIdx:5, label:'Support Level'},
     ]
   },
   {
     id: 60, name: "Resistance Rejection", level: "Beginner",
-    category: "Support & Resistance", signal: "Bearish Reversal", signalColor: RED,
-    description: "Price rallies to a previously established resistance level and gets rejected. Sellers defend the level. Mirror of the Support Bounce. The more rejections, the stronger the resistance.",
+    category: "Support & Resistance", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Price returns to a previously established resistance level and gets rejected lower. Sellers defend the level. Mirror of the support bounce.",
     entry: "First bearish candle after rejection from resistance",
     stop: "Above the resistance level",
-    target: "Previous support or 2:1 minimum",
+    target: "Previous support or 2:1 reward-to-risk minimum",
     candles: [
-      // Establish resistance at 236
-      {o:206,c:218,h:220,l:204,bull:true},
-      {o:218,c:230,h:232,l:216,bull:true},
-      {o:230,c:238,h:238,l:228,bull:true},
-      {o:238,c:228,h:240,l:226,bull:false},
-      {o:228,c:218,h:230,l:216,bull:false},
-      {o:218,c:208,h:220,l:206,bull:false},
-      // RALLY BACK TO RESISTANCE
-      {o:208,c:220,h:222,l:206,bull:true},
-      {o:220,c:232,h:234,l:218,bull:true},
-      {o:232,c:236,h:238,l:230,bull:true},
-      // REJECTION at resistance 236
-      {o:236,c:238,h:240,l:234,bull:true},
-      {o:238,c:226,h:240,l:224,bull:false},
-      {o:226,c:214,h:228,l:212,bull:false},
-      {o:214,c:202,h:216,l:200,bull:false},
+      {o:220,c:214,h:221,l:213,bull:false},
+      {o:214,c:208,h:215,l:207,bull:false},
+      {o:208,c:200,h:209,l:199,bull:false},
+      {o:200,c:206,h:199,l:208,bull:true},
+      {o:206,c:212,h:205,l:214,bull:true},
+      // Resistance zone
+      {o:212,c:215,h:211,l:216,bull:true},
+      {o:215,c:211,h:216,l:210,bull:false},
+      {o:211,c:205,h:212,l:204,bull:false},
+      {o:205,c:199,h:206,l:198,bull:false},
+      {o:199,c:193,h:200,l:192,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Resistance established',color:RED},
-      {type:'label',candleIdx:9,offset:-18,text:'Resistance tested',color:GOLD},
-      {type:'label',candleIdx:10,offset:-18,text:'REJECTION ↓',color:RED},
-      {type:'hline',candleIdx:3,label:'Resistance Level'},
+      {type:'label', candleIdx:5, offset:-18, text:'Resistance', color:RED},
+      {type:'label', candleIdx:6, offset:-18, text:'Rejection', color:RED},
+      {type:'hline', candleIdx:5, label:'Resistance Level'},
     ]
   },
   {
     id: 61, name: "Break and Retest", level: "Intermediate",
-    category: "Support & Resistance", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "Price breaks ABOVE resistance, then pulls back to retest it — which now acts as SUPPORT. This flip from resistance to support is the optimal entry. Best risk-reward entry in technical analysis.",
+    category: "Support & Resistance", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "Price breaks above resistance, pulls back to retest the broken level (now acting as support), then continues higher. The retest is the optimal entry point.",
     entry: "On the retest of the broken resistance (now support)",
-    stop: "Below the retested level — if it fails, the breakout failed",
-    target: "Measured move equal to the prior range",
+    stop: "Below the retested support level",
+    target: "Measured move equal to the previous range",
     candles: [
-      {o:196,c:206,h:208,l:194,bull:true},
-      {o:206,c:214,h:216,l:204,bull:true},
-      // RESISTANCE at 220 — tested and held
-      {o:214,c:220,h:222,l:212,bull:true},
-      {o:220,c:212,h:222,l:210,bull:false},
-      {o:212,c:218,h:220,l:210,bull:true},
-      // BREAKOUT above 220
-      {o:218,c:230,h:232,l:216,bull:true},
-      {o:230,c:240,h:242,l:228,bull:true},
-      // RETEST — pulls back to 220 (now support)
-      {o:240,c:230,h:242,l:228,bull:false},
-      {o:230,c:222,h:232,l:220,bull:false},
-      // HOLDS at 220 — perfect entry
-      {o:222,c:220,h:224,l:218,bull:false},
-      {o:220,c:232,h:234,l:218,bull:true},
-      // CONTINUATION
-      {o:232,c:244,h:246,l:230,bull:true},
-      {o:244,c:254,h:256,l:242,bull:true},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:198,h:203,l:197,bull:false},
+      {o:198,c:204,h:197,l:205,bull:true},
+      // Breakout
+      {o:204,c:212,h:203,l:214,bull:true},
+      {o:212,c:218,h:211,l:220,bull:true},
+      // Retest
+      {o:218,c:212,h:219,l:211,bull:false},
+      {o:212,c:208,h:213,l:207,bull:false},
+      {o:208,c:212,h:207,l:213,bull:true},
+      // Continuation
+      {o:212,c:220,h:211,l:222,bull:true},
+      {o:220,c:228,h:219,l:230,bull:true},
+      {o:228,c:234,h:227,l:236,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Resistance 220',color:RED},
-      {type:'label',candleIdx:5,offset:-18,text:'BREAKOUT ↑',color:TEAL},
-      {type:'label',candleIdx:9,offset:-22,text:'RETEST — buy here',color:GOLD},
-      {type:'label',candleIdx:10,offset:-18,text:'Continues ↑',color:TEAL},
-      {type:'hline',candleIdx:3,label:'R → S Flip'},
+      {type:'label', candleIdx:4, offset:-18, text:'Breakout', color:TEAL},
+      {type:'label', candleIdx:7, offset:-22, text:'Retest', color:GOLD},
+      {type:'label', candleIdx:9, offset:-18, text:'Continue', color:TEAL},
     ]
   },
   {
     id: 62, name: "Failed Breakout", level: "Intermediate",
-    category: "Support & Resistance", signal: "Bearish Reversal", signalColor: RED,
-    description: "Price breaks ABOVE resistance but immediately reverses back below it — trapping bulls who bought the breakout. Their forced selling creates a sharp drop. Also called a Bull Trap.",
+    category: "Support & Resistance", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Price breaks above resistance but immediately reverses and closes back below it. The failed breakout traps bulls and often leads to a sharp move lower.",
     entry: "When price closes back below the breakout level",
     stop: "Above the failed breakout high",
     target: "Previous support level",
     candles: [
-      {o:196,c:208,h:210,l:194,bull:true},
-      {o:208,c:218,h:220,l:206,bull:true},
-      // Resistance at 224
-      {o:218,c:224,h:226,l:216,bull:true},
-      {o:224,c:216,h:226,l:214,bull:false},
-      {o:216,c:222,h:224,l:214,bull:true},
-      // FALSE BREAKOUT — breaks above but immediately fails
-      {o:222,c:230,h:232,l:220,bull:true},
-      {o:230,c:222,h:234,l:220,bull:false},
-      // BULL TRAP — closes back below resistance
-      {o:222,c:212,h:224,l:210,bull:false},
-      {o:212,c:200,h:214,l:198,bull:false},
-      {o:200,c:190,h:202,l:188,bull:false},
-      {o:190,c:180,h:192,l:178,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:198,h:203,l:197,bull:false},
+      {o:198,c:204,h:197,l:205,bull:true},
+      // False breakout
+      {o:204,c:210,h:203,l:212,bull:true},
+      {o:210,c:206,h:213,l:205,bull:false},
+      // Failure and reversal
+      {o:206,c:200,h:207,l:199,bull:false},
+      {o:200,c:194,h:201,l:193,bull:false},
+      {o:194,c:188,h:195,l:187,bull:false},
+      {o:188,c:182,h:189,l:181,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Resistance 224',color:RED},
-      {type:'label',candleIdx:5,offset:-18,text:'False break ↑',color:GOLD},
-      {type:'label',candleIdx:7,offset:-18,text:'TRAP — drops hard ↓',color:RED},
-      {type:'bracket',start:5,end:6,label:'Bull Trap'},
+      {type:'label', candleIdx:4, offset:-18, text:'False Break', color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Reversal', color:RED},
+      {type:'bracket', start:4, end:5, label:'Trap'},
     ]
   },
   {
     id: 63, name: "Failed Breakdown", level: "Intermediate",
-    category: "Support & Resistance", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Price breaks BELOW support but immediately reverses back above — trapping bears who shorted the breakdown. Their forced covering creates a sharp rally. Also called a Bear Trap.",
+    category: "Support & Resistance", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "Price breaks below support but immediately reverses and closes back above it. The failed breakdown traps bears and often leads to a sharp rally higher.",
     entry: "When price closes back above the breakdown level",
     stop: "Below the failed breakdown low",
     target: "Previous resistance level",
     candles: [
-      {o:250,c:240,h:252,l:238,bull:false},
-      {o:240,c:230,h:242,l:228,bull:false},
-      // Support at 222
-      {o:230,c:224,h:232,l:222,bull:false},
-      {o:224,c:230,h:232,l:222,bull:true},
-      {o:230,c:224,h:232,l:222,bull:false},
-      // FALSE BREAKDOWN — breaks below but immediately recovers
-      {o:224,c:214,h:226,l:212,bull:false},
-      {o:214,c:226,h:228,l:212,bull:true},
-      // BEAR TRAP — closes back above support
-      {o:226,c:236,h:238,l:224,bull:true},
-      {o:236,c:248,h:250,l:234,bull:true},
-      {o:248,c:258,h:260,l:246,bull:true},
+      {o:215,c:210,h:216,l:209,bull:false},
+      {o:210,c:204,h:211,l:203,bull:false},
+      {o:204,c:208,h:203,l:209,bull:true},
+      {o:208,c:203,h:209,l:202,bull:false},
+      // False breakdown
+      {o:203,c:197,h:204,l:196,bull:false},
+      {o:197,c:203,h:196,l:204,bull:true},
+      // Recovery and rally
+      {o:203,c:209,h:202,l:211,bull:true},
+      {o:209,c:215,h:208,l:217,bull:true},
+      {o:215,c:221,h:214,l:223,bull:true},
+      {o:221,c:227,h:220,l:229,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-22,text:'Support 222',color:TEAL},
-      {type:'label',candleIdx:5,offset:-22,text:'False break ↓',color:GOLD},
-      {type:'label',candleIdx:6,offset:-18,text:'BEAR TRAP — rockets ↑',color:TEAL},
-      {type:'bracket',start:5,end:6,label:'Bear Trap'},
+      {type:'label', candleIdx:4, offset:-22, text:'False Break', color:TEAL},
+      {type:'label', candleIdx:5, offset:-18, text:'Recovery', color:TEAL},
+      {type:'bracket', start:4, end:5, label:'Bear Trap'},
     ]
   },
   {
     id: 64, name: "Range Expansion", level: "Intermediate",
-    category: "Support & Resistance", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "After a period of tight range-bound trading (low volatility), price breaks out with a dramatically larger candle — range expansion. This signals the start of a new directional move.",
+    category: "Support & Resistance", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "After a period of tight consolidation (low volatility), price breaks out with a large candle, significantly expanding the trading range. Signals a new trend is beginning.",
     entry: "On the expansion candle or first retest",
     stop: "Below the consolidation low",
     target: "Measured move equal to the consolidation height",
     candles: [
-      // TIGHT RANGE — consolidation
-      {o:208,c:212,h:214,l:206,bull:true},
-      {o:212,c:208,h:214,l:206,bull:false},
-      {o:208,c:212,h:214,l:206,bull:true},
-      {o:212,c:209,h:214,l:207,bull:false},
-      {o:209,c:212,h:214,l:207,bull:true},
-      {o:212,c:209,h:214,l:207,bull:false},
-      {o:209,c:211,h:213,l:208,bull:true},
-      // EXPANSION — massive candle breaks out
-      {o:211,c:230,h:232,l:209,bull:true},
-      {o:230,c:244,h:246,l:228,bull:true},
-      {o:244,c:256,h:258,l:242,bull:true},
+      {o:202,c:204,h:201,l:205,bull:true},
+      {o:204,c:202,h:205,l:203,bull:false},
+      {o:202,c:204,h:201,l:205,bull:true},
+      {o:204,c:203,h:205,l:204,bull:false},
+      {o:203,c:204,h:202,l:205,bull:true},
+      {o:204,c:203,h:205,l:202,bull:false},
+      {o:203,c:204,h:202,l:205,bull:true},
+      // Expansion
+      {o:204,c:216,h:203,l:218,bull:true},
+      {o:216,c:224,h:215,l:226,bull:true},
+      {o:224,c:230,h:223,l:232,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Tight range — coiling',color:GOLD},
-      {type:'label',candleIdx:7,offset:-18,text:'EXPANSION ↑',color:TEAL},
+      {type:'label', candleIdx:3, offset:-18, text:'Tight Range', color:GOLD},
+      {type:'label', candleIdx:7, offset:-18, text:'Expansion', color:TEAL},
     ]
   },
   {
     id: 65, name: "Range Contraction", level: "Intermediate",
-    category: "Support & Resistance", signal: "Indecision", signalColor: GOLD,
-    description: "Candles get progressively SMALLER — the market is coiling like a spring. This IS the setup. Do not trade the contraction itself. Wait for the explosion in either direction.",
-    entry: "On breakout above or below the contracting range — not before",
+    category: "Support & Resistance", signal: "Indecision",
+    signalColor: GOLD,
+    description: "Candles get progressively smaller as the market consolidates. Volatility is compressing. A breakout in either direction is imminent — watch for the trigger.",
+    entry: "On breakout above or below the contracting range",
     stop: "Opposite end of the contraction",
     target: "Equal to the contraction length in breakout direction",
     candles: [
-      {o:200,c:214,h:216,l:198,bull:true},
-      {o:214,c:202,h:216,l:200,bull:false},
-      {o:202,c:212,h:214,l:200,bull:true},
-      {o:212,c:204,h:214,l:202,bull:false},
-      {o:204,c:210,h:212,l:202,bull:true},
-      {o:210,c:205,h:212,l:204,bull:false},
-      {o:205,c:209,h:210,l:204,bull:true},
-      {o:209,c:206,h:210,l:205,bull:false},
-      {o:206,c:208,h:209,l:205,bull:true},
-      // BREAKOUT — explosion
-      {o:208,c:222,h:224,l:207,bull:true},
-      {o:222,c:234,h:236,l:221,bull:true},
+      {o:200,c:206,h:199,l:208,bull:true},
+      {o:206,c:200,h:207,l:199,bull:false},
+      {o:200,c:204,h:199,l:206,bull:true},
+      {o:204,c:201,h:205,l:202,bull:false},
+      {o:201,c:203,h:200,l:204,bull:true},
+      {o:203,c:202,h:204,l:203,bull:false},
+      {o:202,c:203,h:201,l:204,bull:true},
+      // Breakout
+      {o:203,c:211,h:202,l:213,bull:true},
+      {o:211,c:218,h:210,l:220,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:1,offset:-18,text:'Wide range',color:GOLD},
-      {type:'label',candleIdx:4,offset:-18,text:'Narrowing...',color:GOLD},
-      {type:'label',candleIdx:7,offset:-18,text:'Almost there...',color:GOLD},
-      {type:'label',candleIdx:9,offset:-18,text:'EXPLOSION ↑',color:TEAL},
+      {type:'label', candleIdx:2, offset:-18, text:'Contracting', color:GOLD},
+      {type:'label', candleIdx:7, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
+
   // ── Price Action ──
   {
     id: 66, name: "Inside Bar", level: "Beginner",
-    category: "Price Action", signal: "Indecision", signalColor: GOLD,
-    description: "A candle whose high AND low are completely within the range of the previous candle (the mother bar). The market is pausing. Energy is building. Trade the breakout — not the inside bar itself.",
-    entry: "Break above the mother bar high (bull) or below the low (bear)",
-    stop: "Opposite end of the inside bar",
+    category: "Price Action", signal: "Indecision",
+    signalColor: GOLD,
+    description: "A candle whose high and low are completely within the range of the previous candle. Signals a pause — the market is deciding its next move. Trade the breakout.",
+    entry: "Break above the mother bar high (bullish) or below the low (bearish)",
+    stop: "Opposite end of the inside bar range",
     target: "Measured move equal to the mother bar range",
     candles: [
-      {o:196,c:206,h:208,l:194,bull:true},
-      {o:206,c:216,h:218,l:204,bull:true},
-      {o:216,c:226,h:228,l:214,bull:true},
-      // MOTHER BAR — large range
-      {o:226,c:212,h:230,l:210,bull:false},
-      // INSIDE BAR — entire range fits inside mother
-      {o:220,c:216,h:222,l:214,bull:false},
-      // BREAKOUT UP
-      {o:216,c:232,h:234,l:214,bull:true},
-      {o:232,c:244,h:246,l:230,bull:true},
-      {o:244,c:254,h:256,l:242,bull:true},
+      {o:200,c:206,h:199,l:208,bull:true},
+      {o:206,c:210,h:205,l:212,bull:true},
+      {o:210,c:215,h:209,l:217,bull:true},
+      // Mother bar
+      {o:215,c:208,h:214,l:220,bull:false},
+      // Inside bar
+      {o:212,c:214,h:211,l:216,bull:true},
+      // Breakout
+      {o:214,c:222,h:213,l:224,bull:true},
+      {o:222,c:228,h:221,l:230,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Mother bar',color:GOLD},
-      {type:'label',candleIdx:4,offset:-18,text:'Inside bar',color:GOLD},
-      {type:'label',candleIdx:5,offset:-18,text:'BREAKOUT ↑',color:TEAL},
+      {type:'label', candleIdx:3, offset:-18, text:'Mother Bar', color:GOLD},
+      {type:'label', candleIdx:4, offset:-18, text:'Inside Bar', color:GOLD},
+      {type:'label', candleIdx:5, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 67, name: "Outside Bar", level: "Beginner",
-    category: "Price Action", signal: "Indecision", signalColor: GOLD,
-    description: "A candle that engulfs the ENTIRE range of the previous candle — higher high AND lower low. Represents volatility expansion. The direction of the CLOSE tells you the bias.",
+    category: "Price Action", signal: "Indecision",
+    signalColor: GOLD,
+    description: "A candle whose high is higher AND low is lower than the previous candle — engulfing the entire range. Shows expansion of volatility. Direction of close determines bias.",
     entry: "In the direction of the outside bar close",
     stop: "Beyond the outside bar extreme opposite the close",
-    target: "Previous swing high (bullish close) or low (bearish close)",
+    target: "Previous swing high (if bullish close) or low (if bearish)",
     candles: [
-      {o:200,c:208,h:210,l:198,bull:true},
-      {o:208,c:214,h:216,l:206,bull:true},
-      {o:214,c:210,h:216,l:208,bull:false},
-      // OUTSIDE BAR — wider than prev, closes bullish
-      {o:208,c:220,h:222,l:204,bull:true},
-      {o:220,c:230,h:232,l:218,bull:true},
-      {o:230,c:240,h:242,l:228,bull:true},
-      {o:240,c:250,h:252,l:238,bull:true},
+      {o:202,c:206,h:201,l:208,bull:true},
+      {o:206,c:210,h:205,l:212,bull:true},
+      {o:210,c:207,h:211,l:208,bull:false},
+      // Outside bar (bullish close)
+      {o:208,c:214,h:205,l:216,bull:true},
+      {o:214,c:219,h:213,l:221,bull:true},
+      {o:219,c:224,h:218,l:226,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Previous bar',color:GOLD},
-      {type:'label',candleIdx:3,offset:-25,text:'Outside bar — engulfs all',color:TEAL},
-      {type:'label',candleIdx:3,offset:-38,text:'Bullish close = bull bias',color:TEAL},
+      {type:'label', candleIdx:2, offset:-18, text:'Prev Bar', color:GOLD},
+      {type:'label', candleIdx:3, offset:-22, text:'Outside Bar', color:TEAL},
     ]
   },
   {
     id: 68, name: "NR7", level: "Advanced",
-    category: "Price Action", signal: "Indecision", signalColor: GOLD,
-    description: "The NARROWEST Range candle of the last 7 candles. Extreme compression. Statistically, NR7 candles are followed by significant moves. The spring is fully coiled. Wait for the pop.",
-    entry: "Break above NR7 high (bull) or below NR7 low (bear)",
+    category: "Price Action", signal: "Indecision",
+    signalColor: GOLD,
+    description: "The Narrowest Range candle of the last 7 candles. Extreme compression of volatility. Statistically, NR7 candles are often followed by significant directional moves.",
+    entry: "Break above the NR7 high or below the NR7 low",
     stop: "Opposite end of the NR7 candle",
-    target: "Average of the prior 7 candle ranges from breakout",
+    target: "Average of the 7 previous candle ranges from breakout",
     candles: [
-      {o:200,c:214,h:218,l:198,bull:true},
-      {o:214,c:204,h:218,l:202,bull:false},
-      {o:204,c:216,h:218,l:202,bull:true},
-      {o:216,c:206,h:218,l:204,bull:false},
-      {o:206,c:214,h:216,l:204,bull:true},
-      {o:214,c:207,h:216,l:205,bull:false},
-      // NR7 — absolute narrowest candle
-      {o:208,c:210,h:211,l:207,bull:true},
-      // EXPLOSIVE BREAKOUT
-      {o:210,c:226,h:228,l:209,bull:true},
-      {o:226,c:240,h:242,l:224,bull:true},
-      {o:240,c:252,h:254,l:238,bull:true},
+      {o:200,c:208,h:198,l:210,bull:true},
+      {o:208,c:202,h:210,l:200,bull:false},
+      {o:202,c:210,h:200,l:212,bull:true},
+      {o:210,c:204,h:212,l:202,bull:false},
+      {o:204,c:208,h:202,l:210,bull:true},
+      {o:208,c:204,h:210,l:202,bull:false},
+      // NR7 — narrowest
+      {o:205,c:206,h:204,l:207,bull:true},
+      // Breakout
+      {o:206,c:214,h:205,l:216,bull:true},
+      {o:214,c:221,h:213,l:223,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:6,offset:-22,text:'NR7 — narrowest!',color:GOLD},
-      {type:'label',candleIdx:7,offset:-18,text:'EXPLOSION ↑',color:TEAL},
+      {type:'label', candleIdx:6, offset:-20, text:'NR7', color:GOLD},
+      {type:'label', candleIdx:7, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 69, name: "Fakey Pattern", level: "Advanced",
-    category: "Price Action", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "An inside bar breaks out in one direction (the fake), then immediately reverses and explodes the opposite way. The market fakes out the obvious traders then goes the real direction. High accuracy.",
+    category: "Price Action", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "A false breakout from an inside bar setup that immediately reverses. The market fakes out one side then aggressively moves the other direction. High accuracy when identified.",
     entry: "When price reverses back through the inside bar range",
     stop: "Beyond the fakeout extreme",
     target: "Measured move in the true direction",
     candles: [
-      {o:196,c:208,h:210,l:194,bull:true},
-      {o:208,c:218,h:220,l:206,bull:true},
-      // MOTHER BAR
-      {o:218,c:208,h:222,l:206,bull:false},
-      // INSIDE BAR
-      {o:212,c:216,h:218,l:210,bull:true},
-      // FAKEOUT — breaks below the inside bar low
-      {o:216,c:206,h:218,l:204,bull:false},
-      // REVERSAL — real direction is UP
-      {o:206,c:220,h:222,l:204,bull:true},
-      {o:220,c:234,h:236,l:218,bull:true},
-      {o:234,c:246,h:248,l:232,bull:true},
+      {o:200,c:206,h:199,l:208,bull:true},
+      {o:206,c:210,h:205,l:212,bull:true},
+      // Mother bar and inside bar
+      {o:210,c:206,h:211,l:215,bull:false},
+      {o:208,c:210,h:207,l:212,bull:true},
+      // False breakdown (fakeout)
+      {o:210,c:204,h:211,l:203,bull:false},
+      // Reversal
+      {o:204,c:212,h:203,l:214,bull:true},
+      {o:212,c:220,h:211,l:222,bull:true},
+      {o:220,c:226,h:219,l:228,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Inside bar',color:GOLD},
-      {type:'label',candleIdx:4,offset:-25,text:'FAKEOUT ↓',color:RED},
-      {type:'label',candleIdx:5,offset:-18,text:'Real move ↑',color:TEAL},
-      {type:'bracket',start:4,end:5,label:'Fakey'},
+      {type:'label', candleIdx:4, offset:-22, text:'Fakeout', color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Reversal', color:TEAL},
+      {type:'bracket', start:4, end:5, label:'Fakey'},
     ]
   },
   {
     id: 70, name: "Pin Bar Reversal", level: "Beginner",
-    category: "Price Action", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "A candle with a tiny body and a very long wick (2-3x the body) pointing INTO a key level. The wick = rejection of that price. The longer the wick, the stronger the signal. Very clean setup.",
-    entry: "Above the high of the bullish pin bar (below the low for bearish)",
+    category: "Price Action", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "A candle with a small body and a very long wick (2-3x the body) pointing into a key level. The wick represents price rejection. One of the cleanest Price Action signals.",
+    entry: "Above the high of the pin bar (bullish) or below the low (bearish)",
     stop: "Beyond the tip of the pin bar wick",
     target: "Previous swing high or 2:1 minimum",
     candles: [
-      {o:242,c:232,h:244,l:230,bull:false},
-      {o:232,c:222,h:234,l:220,bull:false},
-      {o:222,c:212,h:224,l:210,bull:false},
-      {o:212,c:204,h:214,l:202,bull:false},
-      // BULLISH PIN BAR — tiny body, massive lower wick into support
-      {o:202,c:204,h:205,l:182,bull:true},
-      // Strong recovery
-      {o:204,c:216,h:218,l:202,bull:true},
-      {o:216,c:228,h:230,l:214,bull:true},
-      {o:228,c:240,h:242,l:226,bull:true},
+      {o:215,c:210,h:216,l:209,bull:false},
+      {o:210,c:205,h:211,l:204,bull:false},
+      {o:205,c:200,h:206,l:199,bull:false},
+      {o:200,c:196,h:201,l:195,bull:false},
+      // Bullish pin bar
+      {o:196,c:198,h:197,l:184,bull:true},
+      {o:198,c:204,h:197,l:206,bull:true},
+      {o:204,c:210,h:203,l:212,bull:true},
+      {o:210,c:216,h:209,l:218,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-35,text:'Tiny body',color:TEAL},
-      {type:'label',candleIdx:4,offset:-48,text:'Massive wick = rejection',color:GOLD},
-      {type:'label',candleIdx:5,offset:-18,text:'Strong recovery ↑',color:TEAL},
+      {type:'label', candleIdx:4, offset:-28, text:'Pin Bar', color:TEAL},
+      {type:'arrow', candleIdx:4, direction:'up'},
     ]
   },
   {
     id: 71, name: "Expansion Candle", level: "Intermediate",
-    category: "Price Action", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "A candle dramatically larger than the recent average — sudden surge in momentum and volume. Institutional participation is obvious. Often leads to trend continuation in the same direction.",
-    entry: "Open of the next candle or first retest of expansion candle midpoint",
+    category: "Price Action", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "A significantly larger than average candle that shows a sudden surge in momentum. Signals strong institutional participation and often leads to trend continuation.",
+    entry: "Open of the next candle after the expansion",
     stop: "Below the midpoint of the expansion candle",
     target: "Measured move equal to the expansion candle length",
     candles: [
-      // Small candles — normal activity
-      {o:196,c:200,h:202,l:194,bull:true},
-      {o:200,c:196,h:202,l:194,bull:false},
-      {o:196,c:200,h:202,l:194,bull:true},
-      {o:200,c:197,h:202,l:195,bull:false},
-      // EXPANSION CANDLE — massive vs prior
-      {o:197,c:222,h:224,l:195,bull:true},
-      // Continuation
-      {o:222,c:232,h:234,l:220,bull:true},
-      {o:232,c:242,h:244,l:230,bull:true},
-      {o:242,c:250,h:252,l:240,bull:true},
+      {o:195,c:198,h:194,l:200,bull:true},
+      {o:198,c:200,h:197,l:202,bull:true},
+      {o:200,c:198,h:201,l:199,bull:false},
+      {o:198,c:201,h:197,l:202,bull:true},
+      // Expansion candle
+      {o:201,c:216,h:200,l:218,bull:true},
+      {o:216,c:220,h:215,l:222,bull:true},
+      {o:220,c:224,h:219,l:226,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Normal size candles',color:GOLD},
-      {type:'label',candleIdx:4,offset:-18,text:'EXPANSION — institutions!',color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Expansion', color:TEAL},
     ]
   },
   {
     id: 72, name: "Exhaustion Candle", level: "Intermediate",
-    category: "Price Action", signal: "Bearish Reversal", signalColor: RED,
-    description: "A very large candle in the trend direction that closes near its OPEN after a massive upper wick. All buyers exhausted in one bar — no one left to buy. Reversal signal.",
-    entry: "Wait for next candle to confirm reversal",
+    category: "Price Action", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "A very large candle in the direction of the trend that closes near its open after a long wick. Signals buyers or sellers are exhausted. Often marks the end of a move.",
+    entry: "Wait for reversal confirmation on the next candle",
     stop: "Beyond the exhaustion candle extreme",
-    target: "50-61.8% retracement of the exhaustion candle",
+    target: "Retracement of 50-61.8% of the exhaustion candle",
     candles: [
-      {o:188,c:200,h:202,l:186,bull:true},
-      {o:200,c:212,h:214,l:198,bull:true},
-      {o:212,c:224,h:226,l:210,bull:true},
-      {o:224,c:234,h:236,l:222,bull:true},
-      // EXHAUSTION — huge wick up, closes near open
-      {o:234,c:236,h:256,l:232,bull:true},
-      // REVERSAL begins
-      {o:236,c:224,h:238,l:222,bull:false},
-      {o:224,c:212,h:226,l:210,bull:false},
-      {o:212,c:200,h:214,l:198,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:214,h:207,l:216,bull:true},
+      // Exhaustion candle
+      {o:214,c:215,h:213,l:228,bull:true},
+      {o:215,c:209,h:216,l:208,bull:false},
+      {o:209,c:203,h:210,l:202,bull:false},
+      {o:203,c:197,h:204,l:196,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'Huge wick = exhaustion',color:RED},
-      {type:'label',candleIdx:4,offset:-32,text:'Closes near open',color:GOLD},
-      {type:'label',candleIdx:5,offset:-18,text:'Reversal starts ↓',color:RED},
+      {type:'label', candleIdx:4, offset:-18, text:'Exhaustion', color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Reversal', color:RED},
     ]
   },
+
   // ── Gap Patterns ──
   {
     id: 73, name: "Gap Up Continuation", level: "Intermediate",
-    category: "Gap Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "Price GAPS UP at the open — a space between yesterday's close and today's open — and keeps going higher without filling the gap. Strong institutional buying. The unfilled gap acts as support.",
-    entry: "Open of the gap-up session or first pullback to the gap",
+    category: "Gap Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "Price gaps up significantly at the open and continues higher without filling the gap. Strong institutional buying. The unfilled gap acts as support on pullbacks.",
+    entry: "Open of the gap-up session or on first pullback to gap",
     stop: "Below the bottom of the gap",
-    target: "Measured move equal to the prior trend leg",
+    target: "Measured move equal to prior trend leg",
     candles: [
-      {o:190,c:200,h:202,l:188,bull:true},
-      {o:200,c:210,h:212,l:198,bull:true},
-      {o:210,c:208,h:212,l:206,bull:false},
-      {o:208,c:212,h:214,l:206,bull:true},
-      // GAP UP — opens way above prior close
-      {o:222,c:232,h:234,l:220,bull:true},
-      {o:232,c:242,h:244,l:230,bull:true},
-      {o:242,c:250,h:252,l:240,bull:true},
-      // Pullback — gap acts as support
-      {o:250,c:240,h:252,l:238,bull:false},
-      {o:240,c:248,h:250,l:238,bull:true},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:206,h:201,l:208,bull:true},
+      {o:206,c:203,h:207,l:202,bull:false},
+      // Gap up
+      {o:210,c:216,h:209,l:218,bull:true},
+      {o:216,c:222,h:215,l:224,bull:true},
+      {o:222,c:228,h:221,l:230,bull:true},
+      {o:228,c:224,h:229,l:223,bull:false},
+      {o:224,c:229,h:223,l:231,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Pre-gap close',color:GOLD},
-      {type:'label',candleIdx:4,offset:-18,text:'GAP UP ↑',color:TEAL},
-      {type:'bracket',start:3,end:4,label:'Gap Zone'},
+      {type:'label', candleIdx:3, offset:-18, text:'Pre-Gap', color:GOLD},
+      {type:'label', candleIdx:4, offset:-18, text:'Gap Up', color:TEAL},
+      {type:'bracket', start:3, end:4, label:'Gap Zone'},
     ]
   },
   {
     id: 74, name: "Gap Up Reversal", level: "Intermediate",
-    category: "Gap Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "Price gaps UP but immediately sells off and reverses, closing the gap and going below the prior close. Known as an exhaustion gap. The buying was the last gasp — now sellers take over.",
+    category: "Gap Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Price gaps up but immediately sells off, closing the gap and reversing below the prior close. Known as an island reversal or exhaustion gap. Very bearish signal.",
     entry: "When price closes below the bottom of the gap",
     stop: "Above the gap-up open",
     target: "Prior swing low",
     candles: [
-      {o:188,c:200,h:202,l:186,bull:true},
-      {o:200,c:212,h:214,l:198,bull:true},
-      {o:212,c:222,h:224,l:210,bull:true},
-      {o:222,c:230,h:232,l:220,bull:true},
-      // GAP UP then immediate reversal
-      {o:242,c:236,h:248,l:234,bull:false},
-      {o:236,c:224,h:238,l:222,bull:false},
-      {o:224,c:212,h:226,l:210,bull:false},
-      {o:212,c:200,h:214,l:198,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:212,h:207,l:214,bull:true},
+      // Gap up then reversal
+      {o:218,c:214,h:220,l:212,bull:false},
+      {o:214,c:208,h:215,l:207,bull:false},
+      {o:208,c:202,h:209,l:201,bull:false},
+      {o:202,c:196,h:203,l:195,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Pre-gap close',color:GOLD},
-      {type:'label',candleIdx:4,offset:-18,text:'Gap up — then FAIL ↓',color:RED},
-      {type:'label',candleIdx:5,offset:-18,text:'Sellers take over',color:RED},
+      {type:'label', candleIdx:3, offset:-18, text:'Pre-Gap', color:GOLD},
+      {type:'label', candleIdx:4, offset:-18, text:'Gap & Fail', color:RED},
     ]
   },
   {
     id: 75, name: "Gap Fill", level: "Beginner",
-    category: "Gap Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "After a gap up, price retraces all the way back to fill the gap (return to pre-gap prices). Markets fill gaps approximately 70% of the time. The gap acts like a magnet pulling price back.",
-    entry: "Short when gap fill begins OR at the gap's top targeting full fill",
-    stop: "Above the high of the gap-up session",
-    target: "Bottom of the gap (full fill)",
+    category: "Gap Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "After a gap up, price retraces to fill the gap (return to pre-gap prices). Markets fill gaps ~70% of the time. The gap acts as a magnet pulling price back.",
+    entry: "Short entry when gap fill begins or near gap fill completion",
+    stop: "Above the high of the gap-up candle",
+    target: "Top of the gap (partial fill) or bottom of the gap (full fill)",
     candles: [
-      {o:192,c:202,h:204,l:190,bull:true},
-      {o:202,c:210,h:212,l:200,bull:true},
-      {o:210,c:208,h:212,l:206,bull:false},
-      // GAP UP
-      {o:220,c:230,h:232,l:218,bull:true},
-      {o:230,c:238,h:240,l:228,bull:true},
-      // FILLING THE GAP — price falls back
-      {o:238,c:228,h:240,l:226,bull:false},
-      {o:228,c:218,h:230,l:216,bull:false},
-      {o:218,c:210,h:220,l:208,bull:false},
-      // GAP FILLED — back to pre-gap level
-      {o:210,c:208,h:212,l:206,bull:false},
-      {o:208,c:214,h:216,l:206,bull:true},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:204,h:201,l:206,bull:true},
+      // Gap up
+      {o:210,c:216,h:209,l:218,bull:true},
+      {o:216,c:212,h:217,l:211,bull:false},
+      {o:212,c:208,h:213,l:207,bull:false},
+      // Gap fill
+      {o:208,c:204,h:209,l:203,bull:false},
+      {o:204,c:202,h:205,l:201,bull:false},
+      {o:202,c:205,h:201,l:206,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Pre-gap level',color:GOLD},
-      {type:'label',candleIdx:3,offset:-18,text:'GAP UP',color:TEAL},
-      {type:'label',candleIdx:7,offset:-22,text:'Filling gap ↓',color:RED},
-      {type:'label',candleIdx:8,offset:-22,text:'GAP FILLED ✓',color:GOLD},
-      {type:'bracket',start:2,end:3,label:'Gap Zone'},
+      {type:'label', candleIdx:2, offset:-18, text:'Pre-Gap', color:GOLD},
+      {type:'label', candleIdx:3, offset:-18, text:'Gap Up', color:TEAL},
+      {type:'label', candleIdx:7, offset:-22, text:'Gap Filled', color:RED},
     ]
   },
   {
     id: 76, name: "Breakaway Gap", level: "Advanced",
-    category: "Gap Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "A gap that occurs at the breakout from a consolidation pattern. It SIGNALS the start of a major new move. These gaps rarely fill quickly — they represent genuine institutional conviction.",
+    category: "Gap Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "A gap that occurs at the breakout from a consolidation pattern (triangle, rectangle, flag). Signals the start of a new major move. These gaps rarely fill quickly.",
     entry: "Open of the breakaway gap session",
     stop: "Below the bottom of the gap",
-    target: "Measured move from the pattern height — these run far",
+    target: "Measured move from the pattern height",
     candles: [
-      // Consolidation
-      {o:208,c:214,h:216,l:206,bull:true},
-      {o:214,c:208,h:216,l:206,bull:false},
-      {o:208,c:214,h:216,l:206,bull:true},
-      {o:214,c:209,h:216,l:207,bull:false},
-      {o:209,c:213,h:215,l:208,bull:true},
-      // BREAKAWAY GAP — explodes out of consolidation with a gap
-      {o:222,c:234,h:236,l:220,bull:true},
-      {o:234,c:246,h:248,l:232,bull:true},
-      {o:246,c:256,h:258,l:244,bull:true},
-      {o:256,c:266,h:268,l:254,bull:true},
+      {o:200,c:204,h:199,l:206,bull:true},
+      {o:204,c:200,h:205,l:199,bull:false},
+      {o:200,c:204,h:199,l:205,bull:true},
+      {o:204,c:201,h:205,l:200,bull:false},
+      {o:201,c:203,h:200,l:204,bull:true},
+      // Breakaway gap
+      {o:209,c:216,h:208,l:218,bull:true},
+      {o:216,c:222,h:215,l:224,bull:true},
+      {o:222,c:228,h:221,l:230,bull:true},
+      {o:228,c:234,h:227,l:236,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Consolidation zone',color:GOLD},
-      {type:'label',candleIdx:5,offset:-18,text:'BREAKAWAY GAP ↑',color:TEAL},
-      {type:'bracket',start:4,end:5,label:'The Gap'},
+      {type:'label', candleIdx:2, offset:-18, text:'Consolidation', color:GOLD},
+      {type:'label', candleIdx:5, offset:-18, text:'Breakaway', color:TEAL},
+      {type:'bracket', start:4, end:5, label:'Gap'},
     ]
   },
   {
     id: 77, name: "Exhaustion Gap", level: "Advanced",
-    category: "Gap Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "A gap at the END of a strong trend — the last desperate move by the crowd before reversal. High volume, extreme sentiment. Smart money is selling into the gap. Fade this gap.",
+    category: "Gap Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "A gap that occurs at the end of a strong trend, often on climactic volume. Signals the last buyers/sellers are entering before the trend reverses. Look to fade these.",
     entry: "After reversal confirmation on high volume",
     stop: "Beyond the exhaustion gap extreme",
-    target: "50-61.8% retracement of the entire trend",
+    target: "Retracement of 50-61.8% of the entire prior trend",
     candles: [
-      {o:188,c:202,h:204,l:186,bull:true},
-      {o:202,c:216,h:218,l:200,bull:true},
-      {o:216,c:228,h:230,l:214,bull:true},
-      {o:228,c:238,h:240,l:226,bull:true},
-      // EXHAUSTION GAP — gaps up at end of trend then reverses
-      {o:252,c:246,h:260,l:244,bull:false},
-      {o:246,c:234,h:248,l:232,bull:false},
-      {o:234,c:220,h:236,l:218,bull:false},
-      {o:220,c:208,h:222,l:206,bull:false},
+      {o:190,c:198,h:189,l:200,bull:true},
+      {o:198,c:206,h:197,l:208,bull:true},
+      {o:206,c:214,h:205,l:216,bull:true},
+      {o:214,c:220,h:213,l:222,bull:true},
+      // Exhaustion gap then reversal
+      {o:228,c:224,h:232,l:222,bull:false},
+      {o:224,c:216,h:225,l:215,bull:false},
+      {o:216,c:208,h:217,l:207,bull:false},
+      {o:208,c:200,h:209,l:199,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Trend end',color:GOLD},
-      {type:'label',candleIdx:4,offset:-18,text:'EXHAUSTION GAP ↑ then ↓',color:RED},
-      {type:'bracket',start:3,end:4,label:'Final Gap'},
+      {type:'label', candleIdx:3, offset:-18, text:'Trend End', color:GOLD},
+      {type:'label', candleIdx:4, offset:-18, text:'Exhaust Gap', color:RED},
     ]
   },
   {
     id: 78, name: "Runaway Gap", level: "Advanced",
-    category: "Gap Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "A gap in the MIDDLE of a strong trend — also called a measuring or continuation gap. Confirms the trend has significant momentum remaining. Use the gap to measure how far the trend will go.",
+    category: "Gap Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "A gap that occurs in the middle of a strong trend, not at the beginning or end. Also called a continuation or measuring gap. Signals the trend has significant momentum remaining.",
     entry: "Open of the runaway gap session",
     stop: "Below the bottom of the gap",
-    target: "Distance from trend start to gap, projected forward from gap",
+    target: "Distance from trend start to gap, added to gap level",
     candles: [
-      // Start of trend
-      {o:186,c:198,h:200,l:184,bull:true},
-      {o:198,c:210,h:212,l:196,bull:true},
-      {o:210,c:218,h:220,l:208,bull:true},
-      // RUNAWAY GAP in the middle of trend
-      {o:228,c:240,h:242,l:226,bull:true},
-      {o:240,c:250,h:252,l:238,bull:true},
-      {o:250,c:260,h:262,l:248,bull:true},
-      {o:260,c:268,h:270,l:258,bull:true},
+      {o:188,c:194,h:187,l:196,bull:true},
+      {o:194,c:200,h:193,l:202,bull:true},
+      {o:200,c:204,h:199,l:206,bull:true},
+      {o:204,c:208,h:203,l:210,bull:true},
+      // Runaway gap in the middle
+      {o:214,c:220,h:213,l:222,bull:true},
+      {o:220,c:226,h:219,l:228,bull:true},
+      {o:226,c:232,h:225,l:234,bull:true},
+      {o:232,c:236,h:231,l:238,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:2,offset:-18,text:'Mid-trend',color:TEAL},
-      {type:'label',candleIdx:3,offset:-18,text:'RUNAWAY GAP ↑',color:TEAL},
-      {type:'bracket',start:2,end:3,label:'Gap'},
+      {type:'label', candleIdx:3, offset:-18, text:'Trend', color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Runaway Gap', color:TEAL},
+      {type:'bracket', start:3, end:4, label:'Gap'},
     ]
   },
+
   // ── Volume Patterns ──
   {
     id: 79, name: "Volume Spike Breakout", level: "Intermediate",
-    category: "Volume Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "A breakout from a key level accompanied by a volume SPIKE 2-3x above average. Volume is the fuel — without it, breakouts fail. With it, institutions are participating and the move is real.",
+    category: "Volume Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "A breakout from a key level accompanied by a significant volume spike (2-3x average). Volume confirms institutional participation and validates the move.",
     entry: "On the high-volume breakout candle",
     stop: "Below the breakout level",
     target: "Measured move from the consolidation height",
     candles: [
-      // Consolidation near resistance
-      {o:208,c:214,h:216,l:206,bull:true},
-      {o:214,c:208,h:216,l:206,bull:false},
-      {o:208,c:213,h:215,l:207,bull:true},
-      {o:213,c:208,h:215,l:206,bull:false},
-      {o:208,c:212,h:215,l:207,bull:true},
-      // VOLUME SPIKE BREAKOUT — massive volume + large candle
-      {o:212,c:228,h:230,l:210,bull:true},
-      {o:228,c:242,h:244,l:226,bull:true},
-      {o:242,c:254,h:256,l:240,bull:true},
+      {o:200,c:204,h:199,l:206,bull:true},
+      {o:204,c:200,h:205,l:199,bull:false},
+      {o:200,c:203,h:199,l:205,bull:true},
+      {o:203,c:200,h:204,l:199,bull:false},
+      {o:200,c:202,h:199,l:204,bull:true},
+      // Volume spike breakout
+      {o:202,c:212,h:201,l:214,bull:true},
+      {o:212,c:220,h:211,l:222,bull:true},
+      {o:220,c:226,h:219,l:228,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'Consolidation',color:GOLD},
-      {type:'label',candleIdx:5,offset:-18,text:'VOL SPIKE + BREAK ↑',color:TEAL},
+      {type:'label', candleIdx:3, offset:-18, text:'Consolidation', color:GOLD},
+      {type:'label', candleIdx:5, offset:-18, text:'Vol Spike', color:TEAL},
     ]
   },
   {
     id: 80, name: "Volume Climax", level: "Advanced",
-    category: "Volume Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "Extremely high volume on a move that quickly reverses. Every available buyer/seller exhausted in one massive burst. The crowd panics in — smart money walks out. Classic reversal signal.",
+    category: "Volume Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Extremely high volume on a strong move that quickly reverses. Indicates all available buyers/sellers have been exhausted in one massive burst. Classic reversal signal.",
     entry: "After price reverses from the climax candle",
     stop: "Beyond the climax candle extreme",
-    target: "50-61.8% retracement of the prior move",
+    target: "Retracement of 50-61.8% of the prior move",
     candles: [
-      {o:188,c:200,h:202,l:186,bull:true},
-      {o:200,c:212,h:214,l:198,bull:true},
-      {o:212,c:224,h:226,l:210,bull:true},
-      {o:224,c:234,h:236,l:222,bull:true},
-      // CLIMAX — massive move but reverses
-      {o:234,c:228,h:252,l:226,bull:false},
-      {o:228,c:216,h:230,l:214,bull:false},
-      {o:216,c:204,h:218,l:202,bull:false},
-      {o:204,c:192,h:206,l:190,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:208,h:201,l:210,bull:true},
+      {o:208,c:214,h:207,l:216,bull:true},
+      // Climax — huge volume, reverses
+      {o:214,c:210,h:213,l:224,bull:false},
+      {o:210,c:204,h:211,l:203,bull:false},
+      {o:204,c:198,h:205,l:197,bull:false},
+      {o:198,c:192,h:199,l:191,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'CLIMAX — massive vol',color:RED},
-      {type:'label',candleIdx:4,offset:-32,text:'Reverses hard ↓',color:RED},
+      {type:'label', candleIdx:4, offset:-18, text:'Volume Climax', color:RED},
+      {type:'label', candleIdx:5, offset:-18, text:'Reversal', color:RED},
     ]
   },
   {
     id: 81, name: "Volume Divergence", level: "Advanced",
-    category: "Volume Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "Price makes HIGHER highs while volume makes LOWER highs. The rally is happening on less and less fuel. Institutional selling is absorbing the buying. Volume leads price — divergence warns of reversal.",
+    category: "Volume Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "Price makes higher highs while volume makes lower highs (or vice versa). This divergence signals weakening momentum and a likely reversal. Volume leads price.",
     entry: "After price confirms the divergence with a reversal candle",
     stop: "Above the most recent high",
     target: "Previous swing low",
     candles: [
-      {o:188,c:200,h:202,l:186,bull:true},
-      {o:200,c:210,h:212,l:198,bull:true},
-      {o:210,c:206,h:212,l:204,bull:false},
-      // Higher high but weaker
-      {o:206,c:216,h:218,l:204,bull:true},
-      {o:216,c:210,h:218,l:208,bull:false},
-      // Even higher high, even weaker volume implied
-      {o:210,c:220,h:222,l:208,bull:true},
-      {o:220,c:212,h:222,l:210,bull:false},
-      // REVERSAL
-      {o:212,c:200,h:214,l:198,bull:false},
-      {o:200,c:188,h:202,l:186,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      {o:202,c:200,h:203,l:199,bull:false},
+      {o:200,c:206,h:199,l:208,bull:true},
+      {o:206,c:203,h:207,l:202,bull:false},
+      // Higher price, lower volume implied
+      {o:203,c:208,h:202,l:210,bull:true},
+      {o:208,c:204,h:209,l:203,bull:false},
+      {o:204,c:198,h:205,l:197,bull:false},
+      {o:198,c:192,h:199,l:191,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:3,offset:-18,text:'HH — normal vol',color:TEAL},
-      {type:'label',candleIdx:5,offset:-18,text:'HH — lower vol ⚠',color:GOLD},
-      {type:'label',candleIdx:7,offset:-18,text:'Reversal ↓',color:RED},
+      {type:'label', candleIdx:3, offset:-18, text:'Higher High', color:GOLD},
+      {type:'label', candleIdx:5, offset:-18, text:'HH + Low Vol', color:RED},
+      {type:'label', candleIdx:7, offset:-18, text:'Reversal', color:RED},
     ]
   },
   {
     id: 82, name: "Accumulation", level: "Advanced",
-    category: "Volume Pattern", signal: "Bullish Reversal", signalColor: TEAL,
-    description: "Sideways price action with RISING volume on up days and DECLINING volume on down days. Smart money quietly buying. Price hasn't moved yet — but the fuel is building. Breakout is coming.",
+    category: "Volume Pattern", signal: "Bullish Reversal",
+    signalColor: TEAL,
+    description: "A period of sideways price action with gradually declining volume followed by rising volume on up days. Institutional buyers are quietly building positions before a move higher.",
     entry: "On breakout above the accumulation range with volume",
     stop: "Below the low of the accumulation zone",
     target: "Measured move equal to the accumulation range height",
     candles: [
-      {o:242,c:230,h:244,l:228,bull:false},
-      {o:230,c:220,h:232,l:218,bull:false},
-      // ACCUMULATION — sideways with subtle signs of buying
-      {o:220,c:226,h:228,l:218,bull:true},
-      {o:226,c:220,h:228,l:218,bull:false},
-      {o:220,c:228,h:230,l:218,bull:true},
-      {o:228,c:222,h:230,l:220,bull:false},
-      {o:222,c:230,h:232,l:220,bull:true},
-      // BREAKOUT — accumulated energy releases
-      {o:230,c:246,h:248,l:228,bull:true},
-      {o:246,c:260,h:262,l:244,bull:true},
-      {o:260,c:272,h:274,l:258,bull:true},
+      {o:215,c:210,h:216,l:209,bull:false},
+      {o:210,c:205,h:211,l:204,bull:false},
+      // Accumulation zone — quiet sideways
+      {o:205,c:207,h:204,l:208,bull:true},
+      {o:207,c:204,h:208,l:203,bull:false},
+      {o:204,c:207,h:203,l:208,bull:true},
+      {o:207,c:205,h:208,l:204,bull:false},
+      {o:205,c:208,h:204,l:209,bull:true},
+      // Breakout with volume
+      {o:208,c:216,h:207,l:218,bull:true},
+      {o:216,c:224,h:215,l:226,bull:true},
+      {o:224,c:230,h:223,l:232,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'Smart money buying',color:GOLD},
-      {type:'label',candleIdx:7,offset:-18,text:'BREAKOUT ↑',color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Accumulation', color:GOLD},
+      {type:'label', candleIdx:7, offset:-18, text:'Breakout', color:TEAL},
     ]
   },
   {
     id: 83, name: "Distribution", level: "Advanced",
-    category: "Volume Pattern", signal: "Bearish Reversal", signalColor: RED,
-    description: "Sideways price action at a TOP with rising volume on down days and declining volume on up days. Smart money quietly SELLING. Price looks stable but the foundation is crumbling. Breakdown coming.",
+    category: "Volume Pattern", signal: "Bearish Reversal",
+    signalColor: RED,
+    description: "A period of sideways price action at a top with declining volume followed by rising volume on down days. Institutions are quietly selling their positions before a breakdown.",
     entry: "On breakdown below the distribution range with volume",
     stop: "Above the high of the distribution zone",
     target: "Measured move equal to the distribution range height",
     candles: [
-      {o:188,c:200,h:202,l:186,bull:true},
-      {o:200,c:212,h:214,l:198,bull:true},
-      // DISTRIBUTION — sideways with subtle selling
-      {o:212,c:220,h:222,l:210,bull:true},
-      {o:220,c:212,h:222,l:210,bull:false},
-      {o:212,c:220,h:222,l:210,bull:true},
-      {o:220,c:212,h:222,l:210,bull:false},
-      {o:212,c:218,h:222,l:210,bull:true},
-      // BREAKDOWN — distribution complete
-      {o:218,c:204,h:220,l:202,bull:false},
-      {o:204,c:190,h:206,l:188,bull:false},
-      {o:190,c:178,h:192,l:176,bull:false},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:202,h:195,l:204,bull:true},
+      // Distribution zone — quiet sideways at top
+      {o:202,c:204,h:201,l:206,bull:true},
+      {o:204,c:201,h:205,l:200,bull:false},
+      {o:201,c:204,h:200,l:205,bull:true},
+      {o:204,c:201,h:205,l:200,bull:false},
+      {o:201,c:203,h:200,l:205,bull:true},
+      // Breakdown with volume
+      {o:203,c:195,h:204,l:194,bull:false},
+      {o:195,c:187,h:196,l:186,bull:false},
+      {o:187,c:181,h:188,l:180,bull:false},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'Smart money selling',color:GOLD},
-      {type:'label',candleIdx:7,offset:-18,text:'BREAKDOWN ↓',color:RED},
+      {type:'label', candleIdx:4, offset:-18, text:'Distribution', color:GOLD},
+      {type:'label', candleIdx:7, offset:-18, text:'Breakdown', color:RED},
     ]
   },
   {
     id: 84, name: "Dry-Up Volume", level: "Intermediate",
-    category: "Volume Pattern", signal: "Bullish Continuation", signalColor: TEAL,
-    description: "Volume DRIES UP completely during a pullback in an uptrend. Low volume on pullbacks means sellers are NOT motivated — nobody wants to sell. The trend will resume when buyers step back in.",
-    entry: "When volume picks back up in the trend direction",
+    category: "Volume Pattern", signal: "Bullish Continuation",
+    signalColor: TEAL,
+    description: "Volume dries up to very low levels during a pullback in an uptrend. Low volume on pullbacks means sellers are not motivated — the path of least resistance remains higher.",
+    entry: "When volume begins to pick back up in the trend direction",
     stop: "Below the low of the dry-up pullback",
     target: "Previous high and continuation of the trend",
     candles: [
-      // Strong uptrend
-      {o:188,c:202,h:204,l:186,bull:true},
-      {o:202,c:216,h:218,l:200,bull:true},
-      {o:216,c:228,h:230,l:214,bull:true},
-      // DRY-UP PULLBACK — tiny candles, no volume
-      {o:228,c:224,h:230,l:222,bull:false},
-      {o:224,c:221,h:226,l:220,bull:false},
-      {o:221,c:223,h:225,l:220,bull:true},
-      {o:223,c:221,h:225,l:220,bull:false},
-      // VOLUME RETURNS — trend resumes
-      {o:221,c:236,h:238,l:219,bull:true},
-      {o:236,c:250,h:252,l:234,bull:true},
-      {o:250,c:262,h:264,l:248,bull:true},
+      {o:190,c:196,h:189,l:198,bull:true},
+      {o:196,c:204,h:195,l:206,bull:true},
+      {o:204,c:210,h:203,l:212,bull:true},
+      // Dry-up pullback — small candles, low volume
+      {o:210,c:208,h:211,l:207,bull:false},
+      {o:208,c:207,h:209,l:206,bull:false},
+      {o:207,c:208,h:206,l:209,bull:true},
+      // Volume returns, trend resumes
+      {o:208,c:216,h:207,l:218,bull:true},
+      {o:216,c:224,h:215,l:226,bull:true},
+      {o:224,c:230,h:223,l:232,bull:true},
     ],
     annotations: [
-      {type:'label',candleIdx:4,offset:-18,text:'Dry-up — no sellers',color:GOLD},
-      {type:'label',candleIdx:7,offset:-18,text:'Volume returns ↑',color:TEAL},
+      {type:'label', candleIdx:4, offset:-18, text:'Dry-Up Vol', color:GOLD},
+      {type:'label', candleIdx:6, offset:-18, text:'Vol Returns', color:TEAL},
     ]
   },
 ];
@@ -4394,45 +4330,28 @@ const SIGNALS = ['All', 'Bullish Reversal', 'Bearish Reversal', 'Bullish Continu
 // ─────────────────────────────────────────────
 // CANDLE ANIMATION ENGINE
 // ─────────────────────────────────────────────
-function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 680, height = 340 }) {
+// ─────────────────────────────────────────────
+// CANDLE ANIMATION ENGINE — Full Rebuild
+// ─────────────────────────────────────────────
+function CandleChart({ pattern, playing, onComplete, width = 680, height = 340 }) {
   const svgRef = useRef(null);
   const animRef = useRef(null);
   const stepRef = useRef(0);
 
-  const W = width;
-  const H = height;
-  const candles = pattern.candles || [];
-  const allPrices = candles.flatMap(c => [c.h, c.l, c.o, c.c]);
-  const rawMin = Math.min(...allPrices);
-  const rawMax = Math.max(...allPrices);
-  const priceRange = rawMax - rawMin || 20;
-  const pad = priceRange * 0.12;
-  const minP = rawMin - pad;
-  const maxP = rawMax + pad;
-
-// Normalize all candle prices to fill the chart dramatically
-  const normalize = (p) => rawMin + ((p - rawMin) / priceRange) * priceRange;
-  const PAD_L = 46;
-  const PAD_R = 36;
-  const PAD_T = 36;
-  const PAD_B = 42;
+  const W = width, H = height;
+  const candles = pattern.candles;
+  const allPrices = candles.flatMap(c => [c.h, c.l]);
+  const minP = Math.min(...allPrices) - 8;
+  const maxP = Math.max(...allPrices) + 8;
+  const PAD_L = 36, PAD_R = 16, PAD_T = 32, PAD_B = 28;
   const chartW = W - PAD_L - PAD_R;
   const chartH = H - PAD_T - PAD_B;
-  const spacing = chartW / Math.max(candles.length, 1);
-  const candleW = Math.max(18, Math.min(48, spacing * 0.65));
-
-  function mkEl(tag, attrs = {}) {
-    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    Object.entries(attrs).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) el.setAttribute(key, String(value));
-    });
-    return el;
-  }
+  const candleW = Math.min(18, chartW / candles.length - 3);
+  const spacing = chartW / candles.length;
 
   function yS(price) {
     return PAD_T + ((maxP - price) / (maxP - minP)) * chartH;
   }
-
   function xC(i) {
     return PAD_L + i * spacing + spacing / 2;
   }
@@ -4444,412 +4363,439 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
 
     stepRef.current = 0;
     svg.innerHTML = '';
-    if (animRef.current) clearTimeout(animRef.current);
 
-    // Layer groups — order matters for z-index.
-    const defs = mkEl('defs', {});
-    const gridG = mkEl('g', {});
-    const zoneG = mkEl('g', {});
-    const candleG = mkEl('g', {});
-    const lineG = mkEl('g', {});
-    const labelG = mkEl('g', {});
+    // Layer groups — order matters for z-index
+    const gridG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const zoneG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const candleG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const lineG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const labelG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    [gridG, zoneG, candleG, lineG, labelG].forEach(g => svg.appendChild(g));
 
-    const bullGradient = mkEl('linearGradient', {
-      id: 'bullGradient',
-      x1: '0%',
-      y1: '0%',
-      x2: '100%',
-      y2: '100%'
-    });
-    bullGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#9fffee' }));
-    bullGradient.appendChild(mkEl('stop', { offset: '45%', stopColor: TEAL }));
-    bullGradient.appendChild(mkEl('stop', { offset: '100%', stopColor: '#0b5f55' }));
-
-    const bearGradient = mkEl('linearGradient', {
-      id: 'bearGradient',
-      x1: '0%',
-      y1: '0%',
-      x2: '100%',
-      y2: '100%'
-    });
-    bearGradient.appendChild(mkEl('stop', { offset: '0%', stopColor: '#ffb3b3' }));
-    bearGradient.appendChild(mkEl('stop', { offset: '45%', stopColor: RED }));
-    bearGradient.appendChild(mkEl('stop', { offset: '100%', stopColor: '#7a1010' }));
-
-    defs.appendChild(bullGradient);
-    defs.appendChild(bearGradient);
-    [defs, gridG, zoneG, candleG, lineG, labelG].forEach(g => svg.appendChild(g));
-
-    function fadeIn(el, delay = 100) {
-      setTimeout(() => {
-        el.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-        el.style.opacity = '1';
-      }, delay);
-    }
-
-    function addText(text, x, y, color = GOLD, size = 11, anchor = 'middle', delay = 300) {
-      const labelWidth = Math.max(34, text.length * size * 0.62 + 14);
-      const labelHeight = size + 9;
-      const rectX = anchor === 'middle' ? x - labelWidth / 2 : anchor === 'end' ? x - labelWidth : x;
-      const bg = mkEl('rect', {
-        x: Math.max(PAD_L, Math.min(W - PAD_R - labelWidth, rectX)),
-        y: Math.max(6, Math.min(H - PAD_B - labelHeight, y - labelHeight + 3)),
-        width: labelWidth,
-        height: labelHeight,
-        rx: 5,
-        fill: 'rgba(4,10,18,0.92)',
-        stroke: `${color}55`,
-        'stroke-width': 0.75
-      });
-      bg.style.opacity = '0';
-      labelG.appendChild(bg);
-      fadeIn(bg, delay);
-
-      const tx = mkEl('text', {
-        x,
-        y,
-        fill: color,
-        'font-size': size,
-        'font-weight': 900,
-        'font-family': 'Inter, Arial, sans-serif',
-        'text-anchor': anchor
-      });
-      tx.textContent = text;
-      tx.style.opacity = '0';
-      labelG.appendChild(tx);
-      fadeIn(tx, delay + 40);
-      return tx;
-    }
-
-    function drawLine(x1, y1, x2, y2, color = GOLD, label = '', opts = {}) {
-      const line = mkEl('line', {
-        x1,
-        y1,
-        x2,
-        y2,
-        stroke: color,
-        'stroke-width': opts.width || 1.6,
-        'stroke-dasharray': opts.dash || '',
-        'stroke-linecap': 'round'
-      });
-      line.style.opacity = '0';
-      lineG.appendChild(line);
-      fadeIn(line, opts.delay || 900);
-      if (label) addText(label, opts.labelX || (x1 + x2) / 2, opts.labelY || y1 - 8, color, opts.fontSize || 11, opts.anchor || 'middle', (opts.delay || 900) + 120);
-      return line;
-    }
-
-    function drawArrow(x1, y1, x2, y2, color = GOLD, label = '', delay = 1000) {
-      const id = `arrow-${pattern.id}-${Math.random().toString(16).slice(2)}`;
-      const marker = mkEl('marker', {
-        id,
-        markerWidth: 8,
-        markerHeight: 8,
-        refX: 6,
-        refY: 3,
-        orient: 'auto',
-        markerUnits: 'strokeWidth'
-      });
-      marker.appendChild(mkEl('path', { d: 'M0,0 L0,6 L7,3 z', fill: color }));
-      defs.appendChild(marker);
-      const arrow = mkEl('line', {
-        x1,
-        y1,
-        x2,
-        y2,
-        stroke: color,
-        'stroke-width': 1.8,
-        'stroke-linecap': 'round',
-        'marker-end': `url(#${id})`
-      });
-      arrow.style.opacity = '0';
-      lineG.appendChild(arrow);
-      fadeIn(arrow, delay);
-      if (label) addText(label, x1, y1 - 8, color, 11, 'middle', delay + 120);
-    }
-
-    function drawZone(x1, y1, x2, y2, fill, stroke, label, delay = 1200) {
-      const top = Math.min(y1, y2);
-      const height = Math.abs(y2 - y1);
-      if (height < 4) return;
-      const rect = mkEl('rect', {
-        x: Math.min(x1, x2),
-        y: top,
-        width: Math.abs(x2 - x1),
-        height,
-        rx: 6,
-        fill,
-        stroke,
-        'stroke-width': 0.8
-      });
-      rect.style.opacity = '0';
-      zoneG.appendChild(rect);
-      fadeIn(rect, delay);
-      if (label) addText(label, Math.min(x1, x2) + 8, top + 15, stroke, 10, 'start', delay + 80);
-    }
-
-    function drawBracket(start, end, label, color = GOLD, delay = 1200) {
-      const x1 = xC(start) - candleW / 2;
-      const x2 = xC(end) + candleW / 2;
-      const y = H - PAD_B + 15;
-      drawLine(x1, y, x2, y, color, '', { delay, width: 1.5 });
-      drawLine(x1, y - 7, x1, y + 5, color, '', { delay, width: 1.5 });
-      drawLine(x2, y - 7, x2, y + 5, color, '', { delay, width: 1.5 });
-      if (label) addText(label, (x1 + x2) / 2, y + 19, color, 11, 'middle', delay + 120);
-    }
-
-    function candleLabelText(ann, c, x, delay) {
-      const labelY = Math.max(PAD_T + 16, yS(c.h) - 16 + (ann.offset || 0));
-      addText(ann.text, x, labelY, ann.color || GOLD, 10, 'middle', delay);
-      drawArrow(x, labelY + 8, x, yS(c.h) - 3, ann.color || GOLD, '', delay + 120);
-    }
-
-    // Grid lines + price labels.
+    // Grid lines + price labels
     for (let i = 0; i <= 5; i++) {
       const price = minP + (i / 5) * (maxP - minP);
       const y = yS(price);
-      gridG.appendChild(mkEl('line', {
-        x1: PAD_L,
-        x2: W - PAD_R,
-        y1: y,
-        y2: y,
-        stroke: 'rgba(255,255,255,0.06)',
-        'stroke-width': 0.7
-      }));
-      const pt = mkEl('text', {
-        x: PAD_L - 8,
-        y: y + 4,
-        fill: 'rgba(203,213,225,0.55)',
-        'font-size': 10,
-        'text-anchor': 'end',
-        'font-family': 'monospace'
-      });
+      const gl = mkEl('line', { x1: PAD_L, x2: W - PAD_R, y1: y, y2: y,
+        stroke: 'rgba(255,255,255,0.06)', 'stroke-width': '0.5' });
+      gridG.appendChild(gl);
+      const pt = mkEl('text', { x: PAD_L - 4, y: y + 4, fill: 'rgba(156,163,175,0.5)',
+        'font-size': '9', 'text-anchor': 'end', 'font-family': 'monospace' });
       pt.textContent = Math.round(price);
       gridG.appendChild(pt);
     }
 
-    for (let i = 0; i <= candles.length; i += 2) {
-      const x = PAD_L + i * spacing;
-      gridG.appendChild(mkEl('line', {
-        x1: x,
-        x2: x,
-        y1: PAD_T,
-        y2: H - PAD_B,
-        stroke: 'rgba(255,255,255,0.035)',
-        'stroke-width': 0.7
-      }));
-    }
-
+    // Draw candles one by one
     function drawNextCandle() {
       const i = stepRef.current;
       if (i >= candles.length) {
-        if (!quizMode) drawOverlays();
+        drawOverlays();
         onComplete && onComplete();
         return;
       }
-
       const c = candles[i];
       const color = c.bull ? TEAL : RED;
       const x = xC(i);
-      const yH = yS(c.h);
-      const yL = yS(c.l);
-      const yO = yS(c.o);
-      const yC2 = yS(c.c);
-      const bTop = Math.min(yO, yC2);
-      const bH = Math.max(Math.abs(yO - yC2), Math.max(6, spacing * 0.18));
+      const yH = yS(c.h), yL = yS(c.l);
+      const yO = yS(c.o), yC2 = yS(c.c);
 
-      const wick = mkEl('line', {
-        x1: x,
-        x2: x,
-        y1: yH,
-        y2: yL,
-        stroke: color,
-        'stroke-width': 1.8,
-        'stroke-linecap': 'round',
-        style: `filter: drop-shadow(0 0 5px ${color});`
-      });
-      wick.style.opacity = '0';
+      const wick = mkEl('line', { x1: x, x2: x, y1: yH, y2: yL,
+        stroke: color, 'stroke-width': '1.5' });
       candleG.appendChild(wick);
-      fadeIn(wick, 10);
 
-      const body = mkEl('rect', {
-        x: x - candleW / 2,
-        y: bTop,
-        width: candleW,
-        height: bH,
-        fill: c.bull ? 'url(#bullGradient)' : 'url(#bearGradient)',
-        stroke: c.bull ? '#8fffe9' : '#ffb3b3',
-        'stroke-width': 1.4,
-        rx: 4,
-        style: `filter: drop-shadow(0 0 7px ${color}) drop-shadow(0 0 12px rgba(212,175,55,0.18));`
-      });
-      body.style.opacity = '0';
+      const bTop = Math.min(yO, yC2);
+      const bH = Math.max(Math.abs(yO - yC2), 2);
+      const body = mkEl('rect', { x: x - candleW / 2, y: bTop,
+        width: candleW, height: bH, fill: color, rx: '1' });
       candleG.appendChild(body);
-      fadeIn(body, 10);
 
-      stepRef.current += 1;
+      stepRef.current++;
       animRef.current = setTimeout(drawNextCandle, 65);
     }
 
+    // After candles: draw all overlays
     function drawOverlays() {
+      setTimeout(() => {
+        drawAutoOverlays();
+        drawAnnotations();
+      }, 200);
+    }
+
+    // Auto-detect and draw trendlines/necklines based on pattern type
+    function drawAutoOverlays() {
       const name = (pattern.name || '').toLowerCase();
       const signal = (pattern.signal || '').toLowerCase();
-      const bullish = signal.includes('bullish');
-      const bearish = signal.includes('bearish');
-      const delay = 500;
 
-      // Every pattern still uses its original labels/brackets/arrows.
+      // ── Neckline for H&S, Double Top, Double Bottom, Triple Top, Triple Bottom ──
+      if (name.includes('head & shoulders') || name.includes('head and shoulders')) {
+        // Find the two neckline lows (troughs between shoulders and head)
+        const neckPrices = [candles[3], candles[7]].filter(Boolean);
+        if (neckPrices.length === 2) {
+          const y1 = yS(neckPrices[0].l);
+          const y2 = yS(neckPrices[1].l);
+          drawDashedLine(PAD_L, y1, W - PAD_R, y2, GOLD, '6,3', 'Neckline', 1500);
+        }
+      }
+
+      if (name.includes('inverse head')) {
+        const neckPrices = [candles[4], candles[8]].filter(Boolean);
+        if (neckPrices.length === 2) {
+          const y1 = yS(neckPrices[0].h);
+          const y2 = yS(neckPrices[1].h);
+          drawDashedLine(PAD_L, y1, W - PAD_R, y2, GOLD, '6,3', 'Neckline', 1500);
+        }
+      }
+
+      if (name.includes('double top')) {
+        const neckY = yS(candles[5]?.l || candles[5]?.c || 200);
+        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '6,3', 'Neckline', 1500);
+      }
+
+      if (name.includes('double bottom')) {
+        const neckY = yS(candles[6]?.h || candles[6]?.c || 210);
+        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, '6,3', 'Neckline', 1500);
+      }
+
+      if (name.includes('triple top')) {
+        const neckY = yS(candles[4]?.l || 197);
+        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '6,3', 'Neckline', 1500);
+      }
+
+      if (name.includes('triple bottom')) {
+        const neckY = yS(candles[4]?.h || 209);
+        drawDashedLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '6,3', 'Neckline', 1500);
+      }
+
+      // ── Trendlines for wedges ──
+      if (name.includes('rising wedge')) {
+        const x1 = xC(0), x2 = xC(candles.length - 4);
+        const upperY1 = yS(candles[0].h), upperY2 = yS(candles[7].h);
+        const lowerY1 = yS(candles[0].l), lowerY2 = yS(candles[6].l);
+        drawTrendLine(x1, upperY1, x2, upperY2, RED, '5,3', 'Resistance', 1200);
+        drawTrendLine(x1, lowerY1, x2, lowerY2, GOLD, '5,3', 'Support', 1400);
+      }
+
+      if (name.includes('falling wedge')) {
+        const x1 = xC(0), x2 = xC(candles.length - 4);
+        const upperY1 = yS(candles[0].h), upperY2 = yS(candles[6].h);
+        const lowerY1 = yS(candles[0].l), lowerY2 = yS(candles[8].l);
+        drawTrendLine(x1, upperY1, x2, upperY2, RED, '5,3', 'Resistance', 1200);
+        drawTrendLine(x1, lowerY1, x2, lowerY2, TEAL, '5,3', 'Support', 1400);
+      }
+
+      // ── Channel lines ──
+      if (name.includes('rising channel')) {
+        const x1 = xC(0), x2 = xC(candles.length - 1);
+        drawTrendLine(x1, yS(candles[0].l), x2, yS(candles[candles.length - 1].l), TEAL, '5,3', 'Support', 1200);
+        drawTrendLine(x1, yS(candles[0].h), x2, yS(candles[candles.length - 3].h), RED, '5,3', 'Resistance', 1400);
+      }
+
+      if (name.includes('falling channel')) {
+        const x1 = xC(0), x2 = xC(candles.length - 1);
+        drawTrendLine(x1, yS(candles[0].h), x2, yS(candles[candles.length - 1].h), RED, '5,3', 'Resistance', 1200);
+        drawTrendLine(x1, yS(candles[0].l), x2, yS(candles[candles.length - 3].l), TEAL, '5,3', 'Support', 1400);
+      }
+
+      // ── Flag trendlines ──
+      if (name.includes('bull flag')) {
+        const flagStart = 5, flagEnd = 9;
+        drawTrendLine(xC(flagStart), yS(candles[flagStart].h), xC(flagEnd), yS(candles[flagEnd].h), RED, '4,3', 'Flag Top', 1200);
+        drawTrendLine(xC(flagStart), yS(candles[flagStart].l), xC(flagEnd), yS(candles[flagEnd].l), TEAL, '4,3', 'Flag Bottom', 1400);
+      }
+
+      if (name.includes('bear flag')) {
+        const flagStart = 4, flagEnd = 8;
+        drawTrendLine(xC(flagStart), yS(candles[flagStart].h), xC(flagEnd), yS(candles[flagEnd].h), RED, '4,3', 'Flag Top', 1200);
+        drawTrendLine(xC(flagStart), yS(candles[flagStart].l), xC(flagEnd), yS(candles[flagEnd].l), TEAL, '4,3', 'Flag Bottom', 1400);
+      }
+
+      // ── Triangle resistance/support lines ──
+      if (name.includes('ascending triangle')) {
+        const flatY = yS(candles[3].h);
+        drawDashedLine(xC(3), flatY, xC(10), flatY, RED, '5,3', 'Resistance', 1200);
+        drawTrendLine(xC(3), yS(candles[4].l), xC(9), yS(candles[8].l), TEAL, '5,3', 'Support', 1400);
+      }
+
+      if (name.includes('descending triangle')) {
+        const flatY = yS(candles[2].l);
+        drawDashedLine(xC(2), flatY, xC(10), flatY, TEAL, '5,3', 'Support', 1200);
+        drawTrendLine(xC(2), yS(candles[1].h), xC(9), yS(candles[8].h), RED, '5,3', 'Resistance', 1400);
+      }
+
+      // ── Rectangle zones ──
+      if (name.includes('rectangle')) {
+        const topY = yS(Math.max(...candles.slice(2, 9).map(c => c.h)));
+        const botY = yS(Math.min(...candles.slice(2, 9).map(c => c.l)));
+        const zone = mkEl('rect', {
+          x: xC(2), y: topY,
+          width: xC(8) - xC(2), height: botY - topY,
+          fill: 'rgba(212,175,55,0.06)',
+          stroke: 'rgba(212,175,55,0.25)',
+          'stroke-width': '1',
+          'stroke-dasharray': '4,3',
+          rx: '3'
+        });
+        zone.style.opacity = '0';
+        zoneG.appendChild(zone);
+        fadeIn(zone, 1200);
+      }
+
+      // ── Support/Resistance hlines ──
+      if (name.includes('support bounce')) {
+        const supY = yS(Math.min(...candles.slice(4, 7).map(c => c.l)));
+        drawDashedLine(PAD_L, supY, W - PAD_R, supY, TEAL, '6,3', 'Support', 1200);
+      }
+
+      if (name.includes('resistance rejection')) {
+        const resY = yS(Math.max(...candles.slice(4, 7).map(c => c.h)));
+        drawDashedLine(PAD_L, resY, W - PAD_R, resY, RED, '6,3', 'Resistance', 1200);
+      }
+
+      // ── Stop/Target zones for any pattern ──
+      const lastCandle = candles[candles.length - 1];
+      const isBull = signal.includes('bullish');
+      const isBear = signal.includes('bearish');
+
+      if (isBull && lastCandle) {
+        const entryY = yS(lastCandle.c);
+        const stopY = yS(Math.min(...candles.map(c => c.l)) + 1);
+        const targetY = yS(Math.max(...candles.map(c => c.h)) + 8);
+
+        // Stop zone
+        drawZone(xC(candles.length - 3), stopY, xC(candles.length - 1) + candleW, entryY,
+          'rgba(239,83,80,0.12)', 'rgba(239,83,80,0.3)', 'Stop', 1800);
+        // Target zone
+        drawZone(xC(candles.length - 3), targetY, xC(candles.length - 1) + candleW, entryY - 10,
+          'rgba(38,166,154,0.12)', 'rgba(38,166,154,0.3)', 'Target', 2000);
+      }
+
+      if (isBear && lastCandle) {
+        const entryY = yS(lastCandle.c);
+        const stopY = yS(Math.max(...candles.map(c => c.h)) - 1);
+        const targetY = yS(Math.min(...candles.map(c => c.l)) - 8);
+
+        drawZone(xC(candles.length - 3), entryY, xC(candles.length - 1) + candleW, stopY,
+          'rgba(239,83,80,0.12)', 'rgba(239,83,80,0.3)', 'Stop', 1800);
+        drawZone(xC(candles.length - 3), entryY + 10, xC(candles.length - 1) + candleW, targetY,
+          'rgba(38,166,154,0.12)', 'rgba(38,166,154,0.3)', 'Target', 2000);
+      }
+    }
+
+    // Draw annotations from pattern data
+    function drawAnnotations() {
       pattern.annotations?.forEach((ann, idx) => {
-        const d = delay + idx * 160;
+        const delay = 800 + idx * 120;
+
         if (ann.type === 'label' && ann.candleIdx !== undefined) {
           const c = candles[ann.candleIdx];
           if (!c) return;
-          candleLabelText(ann, c, xC(ann.candleIdx), d);
+          const x = xC(ann.candleIdx);
+          const isBullSig = pattern.signal?.toLowerCase().includes('bullish');
+          const candleTopY = yS(c.h);
+          const candleBotY = yS(c.l);
+
+          // Place above for bullish labels at tops, below for bottoms
+          const placeAbove = candleTopY > PAD_T + 20;
+          const labelY = placeAbove ? candleTopY - 18 : candleBotY + 18;
+          const clampedY = Math.max(PAD_T + 12, Math.min(H - PAD_B - 8, labelY));
+
+          const tw = (ann.text?.length || 0) * 6 + 14;
+          const bg = mkEl('rect', {
+            x: x - tw / 2, y: clampedY - 10,
+            width: tw, height: 14,
+            fill: 'rgba(6,11,20,0.95)', rx: '3',
+            stroke: `${ann.color || GOLD}40`, 'stroke-width': '0.5'
+          });
+          bg.style.opacity = '0';
+          labelG.appendChild(bg);
+          fadeIn(bg, delay);
+
+          const txt = mkEl('text', {
+            x, y: clampedY,
+            fill: ann.color || GOLD,
+            'font-size': '10', 'font-weight': '700',
+            'font-family': 'monospace', 'text-anchor': 'middle'
+          });
+          txt.textContent = ann.text;
+          txt.style.opacity = '0';
+          labelG.appendChild(txt);
+          fadeIn(txt, delay);
+
+          // Tick line
+          const tickEnd = placeAbove ? candleTopY - 3 : candleBotY + 3;
+          const tickStart = placeAbove ? clampedY + 5 : clampedY - 13;
+          if (Math.abs(tickEnd - tickStart) > 5) {
+            const tick = mkEl('line', {
+              x1: x, x2: x, y1: tickStart, y2: tickEnd,
+              stroke: ann.color || GOLD,
+              'stroke-width': '0.5', 'stroke-dasharray': '2,2'
+            });
+            tick.style.opacity = '0';
+            lineG.appendChild(tick);
+            fadeIn(tick, delay);
+          }
         }
-        if (ann.type === 'bracket' && ann.start !== undefined && ann.end !== undefined) {
-          drawBracket(ann.start, ann.end, ann.label || 'Pattern', ann.color || GOLD, d);
-        }
+
         if (ann.type === 'hline' && ann.candleIdx !== undefined) {
           const c = candles[ann.candleIdx];
-          if (!c) return;
-          const y = bullish ? yS(c.l) : yS(c.h);
-          drawLine(PAD_L, y, W - PAD_R, y, ann.color || GOLD, ann.label || 'Key Level', { dash: '7,5', delay: d });
+          const next = candles[ann.candleIdx + 1];
+          const y = yS(Math.max(c.h, next?.h || c.h));
+          drawDashedLine(PAD_L, y, W - PAD_R, y, ann.color || GOLD, '5,3', ann.label, delay);
         }
-        if (ann.type === 'arrow' && ann.candleIdx !== undefined) {
-          const c = candles[ann.candleIdx];
-          if (!c) return;
-          const x = xC(ann.candleIdx);
-          const up = ann.direction === 'up';
-          drawArrow(x, up ? yS(c.l) + 30 : yS(c.h) - 30, x, up ? yS(c.l) + 3 : yS(c.h) - 3, ann.color || (up ? TEAL : RED), up ? 'Buyers step in' : 'Sellers reject', d);
+
+        if (ann.type === 'bracket' && ann.start !== undefined) {
+          const x1 = xC(ann.start) - candleW / 2;
+          const x2 = xC(ann.end) + candleW / 2;
+          const y = H - PAD_B + 8;
+          const midX = (x1 + x2) / 2;
+
+          const bline = mkEl('line', { x1, x2, y1: y, y2: y,
+            stroke: ann.color || GOLD, 'stroke-width': '1' });
+          bline.style.opacity = '0';
+          lineG.appendChild(bline);
+          fadeIn(bline, delay);
+
+          [x1, x2].forEach(tx => {
+            const tick = mkEl('line', { x1: tx, x2: tx, y1: y - 4, y2: y + 4,
+              stroke: ann.color || GOLD, 'stroke-width': '1' });
+            tick.style.opacity = '0';
+            lineG.appendChild(tick);
+            fadeIn(tick, delay);
+          });
+
+          const lw = (ann.label?.length || 0) * 5.5 + 10;
+          const lbg = mkEl('rect', { x: midX - lw / 2, y: y + 4, width: lw, height: 13,
+            fill: 'rgba(6,11,20,0.95)', rx: '2' });
+          lbg.style.opacity = '0';
+          labelG.appendChild(lbg);
+          fadeIn(lbg, delay + 80);
+
+          const ltxt = mkEl('text', { x: midX, y: y + 13,
+            fill: ann.color || GOLD, 'font-size': '9', 'font-weight': '700',
+            'font-family': 'monospace', 'text-anchor': 'middle' });
+          ltxt.textContent = ann.label || '';
+          ltxt.style.opacity = '0';
+          labelG.appendChild(ltxt);
+          fadeIn(ltxt, delay + 80);
         }
       });
+    }
 
-      // Automatic child-simple teaching overlays for common pattern families.
-      if (name.includes('engulfing')) {
-        const idx = Math.max(1, candles.findIndex((c, i) => i > 0 && Math.abs(c.c - c.o) > Math.abs(candles[i - 1].c - candles[i - 1].o) && c.bull !== candles[i - 1].bull));
-        const prev = Math.max(0, idx - 1);
-        drawBracket(prev, idx, 'Pattern', GOLD, 900);
-        addText(candles[idx]?.bull ? 'Big green candle swallows the red candle' : 'Big red candle swallows the green candle', xC(idx), yS(candles[idx]?.h || maxP) - 26, candles[idx]?.bull ? TEAL : RED, 11, 'middle', 950);
-        drawArrow(xC(idx), yS(candles[idx]?.h || maxP) - 12, xC(idx), yS(candles[idx]?.h || maxP) + 6, candles[idx]?.bull ? TEAL : RED, '', 1050);
+    // ── Helpers ──
+    function mkEl(tag, attrs = {}) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      return el;
+    }
+
+    function fadeIn(el, delay) {
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.4s';
+        el.style.opacity = '1';
+      }, delay || 100);
+    }
+
+    function drawDashedLine(x1, y1, x2, y2, color, dash, label, delay) {
+      const line = mkEl('line', { x1, x2, y1, y2,
+        stroke: color || GOLD, 'stroke-width': '1.2',
+        'stroke-dasharray': dash || '5,3' });
+      line.style.opacity = '0';
+      lineG.appendChild(line);
+      fadeIn(line, delay);
+
+      if (label) {
+        const lw = label.length * 5.5 + 12;
+        const lbg = mkEl('rect', { x: W - PAD_R - lw, y: y1 - 10, width: lw, height: 13,
+          fill: 'rgba(6,11,20,0.92)', rx: '2' });
+        lbg.style.opacity = '0';
+        lineG.appendChild(lbg);
+        fadeIn(lbg, delay + 100);
+
+        const ltxt = mkEl('text', { x: W - PAD_R - 4, y: y1,
+          fill: color || GOLD, 'font-size': '9', 'font-weight': '700',
+          'font-family': 'monospace', 'text-anchor': 'end' });
+        ltxt.textContent = label;
+        ltxt.style.opacity = '0';
+        lineG.appendChild(ltxt);
+        fadeIn(ltxt, delay + 100);
       }
+    }
 
-      if (name.includes('hammer')) {
-        const idx = candles.findIndex(c => Math.abs(c.l - Math.min(c.o, c.c)) > Math.abs(c.o - c.c) * 2);
-        if (idx >= 0) {
-          addText('Long wick = sellers got rejected', xC(idx), yS(candles[idx].l) + 28, TEAL, 11, 'middle', 900);
-          drawArrow(xC(idx), yS(candles[idx].l) + 15, xC(idx), yS(candles[idx].l) + 3, TEAL, '', 1000);
-        }
+    function drawTrendLine(x1, y1, x2, y2, color, dash, label, delay) {
+      // Extend slightly beyond the candles
+      const slope = (y2 - y1) / (x2 - x1);
+      const ex1 = x1 - 10;
+      const ey1 = y1 - slope * 10;
+      const ex2 = x2 + 30;
+      const ey2 = y2 + slope * 30;
+
+      const line = mkEl('line', { x1: ex1, x2: ex2, y1: ey1, y2: ey2,
+        stroke: color || GOLD, 'stroke-width': '1.2',
+        'stroke-dasharray': dash || '5,3' });
+      line.style.opacity = '0';
+      lineG.appendChild(line);
+      fadeIn(line, delay);
+
+      if (label) {
+        const lbg = mkEl('rect', { x: ex2 - 2, y: ey2 - 11,
+          width: label.length * 5.5 + 10, height: 13,
+          fill: 'rgba(6,11,20,0.92)', rx: '2' });
+        lbg.style.opacity = '0';
+        lineG.appendChild(lbg);
+        fadeIn(lbg, delay + 100);
+
+        const ltxt = mkEl('text', { x: ex2 + 2, y: ey2 - 1,
+          fill: color || GOLD, 'font-size': '9', 'font-weight': '700',
+          'font-family': 'monospace', 'text-anchor': 'start' });
+        ltxt.textContent = label;
+        ltxt.style.opacity = '0';
+        lineG.appendChild(ltxt);
+        fadeIn(ltxt, delay + 100);
       }
+    }
 
-      if (name.includes('shooting star') || name.includes('gravestone')) {
-        const idx = candles.findIndex(c => Math.abs(c.h - Math.max(c.o, c.c)) > Math.abs(c.o - c.c) * 2);
-        if (idx >= 0) {
-          addText('Long top wick = buyers got rejected', xC(idx), yS(candles[idx].h) - 22, RED, 11, 'middle', 900);
-          drawArrow(xC(idx), yS(candles[idx].h) - 8, xC(idx), yS(candles[idx].h) + 6, RED, '', 1000);
-        }
-      }
+    function drawZone(x1, y1, x2, y2, fill, stroke, label, delay) {
+      if (y1 > y2) [y1, y2] = [y2, y1];
+      if (y2 - y1 < 4) return;
+      const rect = mkEl('rect', { x: x1, y: y1, width: x2 - x1, height: y2 - y1,
+        fill, stroke, 'stroke-width': '0.5', rx: '3' });
+      rect.style.opacity = '0';
+      zoneG.appendChild(rect);
+      fadeIn(rect, delay);
 
-      if (name.includes('double top') || name.includes('triple top') || name.includes('head')) {
-        const highs = candles.map(c => c.h);
-        const resistance = Math.max(...highs.slice(0, Math.max(3, candles.length - 2)));
-        const resistanceY = yS(resistance);
-        drawLine(PAD_L, resistanceY, W - PAD_R, resistanceY, RED, 'Resistance — sellers defend here', { dash: '7,5', delay: 800, labelY: resistanceY - 10 });
-        candles.forEach((c, i) => {
-          if (c.h >= resistance - 3 && i < candles.length - 1) addText(name.includes('triple') ? `Top ${Math.min(i + 1, 3)}` : 'Top', xC(i), yS(c.h) - 18, RED, 10, 'middle', 1000 + i * 80);
-        });
-        const lows = candles.slice(2, -1).map(c => c.l);
-        const neck = Math.min(...lows) + 2;
-        const neckY = yS(neck);
-        drawLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, 'Neckline / support', { dash: '7,5', delay: 1100, labelY: neckY + 16 });
-        drawArrow(W - PAD_R - 90, neckY - 28, W - PAD_R - 45, neckY + 4, RED, 'Break below support', 1300);
-      }
-
-      if (name.includes('double bottom') || name.includes('triple bottom') || name.includes('inverse head')) {
-        const lows = candles.map(c => c.l);
-        const support = Math.min(...lows.slice(0, Math.max(3, candles.length - 2)));
-        const supportY = yS(support);
-        drawLine(PAD_L, supportY, W - PAD_R, supportY, TEAL, 'Support — buyers defend here', { dash: '7,5', delay: 800, labelY: supportY + 16 });
-        candles.forEach((c, i) => {
-          if (c.l <= support + 3 && i < candles.length - 1) addText(name.includes('triple') ? `Bottom ${Math.min(i + 1, 3)}` : 'Bottom', xC(i), yS(c.l) + 22, TEAL, 10, 'middle', 1000 + i * 80);
-        });
-        const highs = candles.slice(2, -1).map(c => c.h);
-        const neck = Math.max(...highs) - 2;
-        const neckY = yS(neck);
-        drawLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, 'Neckline / breakout level', { dash: '7,5', delay: 1100, labelY: neckY - 10 });
-        drawArrow(W - PAD_R - 90, neckY + 28, W - PAD_R - 45, neckY - 4, TEAL, 'Break above resistance', 1300);
-      }
-
-      if (name.includes('triangle') || name.includes('wedge') || name.includes('pennant') || name.includes('flag')) {
-        const first = 0;
-        const last = Math.max(1, candles.length - 3);
-        const upperStart = yS(candles[first].h);
-        const upperEnd = yS(candles[last].h);
-        const lowerStart = yS(candles[first].l);
-        const lowerEnd = yS(candles[last].l);
-        drawLine(xC(first), upperStart, xC(last), upperEnd, RED, 'Resistance line', { dash: '6,4', delay: 900 });
-        drawLine(xC(first), lowerStart, xC(last), lowerEnd, TEAL, 'Support line', { dash: '6,4', delay: 1050, labelY: lowerEnd + 14 });
-        const lastC = candles[candles.length - 2] || candles[candles.length - 1];
-        drawArrow(xC(candles.length - 3), yS(lastC.c), xC(candles.length - 1), yS(lastC.c), bullish ? TEAL : RED, bullish ? 'Breakout' : 'Breakdown', 1300);
-      }
-
-      if (name.includes('cup')) {
-        addText('Rounded cup', xC(Math.floor(candles.length / 2)), H - PAD_B - 18, GOLD, 12, 'middle', 900);
-        drawArrow(xC(candles.length - 4), yS(candles[candles.length - 4].h) - 20, xC(candles.length - 2), yS(candles[candles.length - 2].h) - 2, GOLD, 'Handle', 1100);
-      }
-
-      if (bearish) {
-        const entryY = yS(candles[candles.length - 3]?.c || minP);
-        drawZone(W - PAD_R - 145, entryY - 30, W - PAD_R - 15, entryY - 4, 'rgba(239,83,80,0.11)', 'rgba(239,83,80,0.45)', 'Stop zone', 1600);
-        drawZone(W - PAD_R - 145, entryY + 5, W - PAD_R - 15, Math.min(H - PAD_B, entryY + 48), 'rgba(38,166,154,0.10)', 'rgba(38,166,154,0.35)', 'Target zone', 1750);
-      }
-
-      if (bullish) {
-        const entryY = yS(candles[candles.length - 3]?.c || maxP);
-        drawZone(W - PAD_R - 145, Math.max(PAD_T, entryY - 48), W - PAD_R - 15, entryY - 5, 'rgba(38,166,154,0.10)', 'rgba(38,166,154,0.35)', 'Target zone', 1600);
-        drawZone(W - PAD_R - 145, entryY + 5, W - PAD_R - 15, entryY + 30, 'rgba(239,83,80,0.11)', 'rgba(239,83,80,0.45)', 'Stop zone', 1750);
+      if (label) {
+        const ltxt = mkEl('text', { x: x1 + 6, y: y1 + 10,
+          fill: '#fff', 'font-size': '8', 'font-weight': '700',
+          'font-family': 'monospace' });
+        ltxt.textContent = label;
+        ltxt.style.opacity = '0';
+        labelG.appendChild(ltxt);
+        fadeIn(ltxt, delay + 100);
       }
     }
 
     drawNextCandle();
 
-    return () => {
-      if (animRef.current) clearTimeout(animRef.current);
-    };
-  }, [playing, pattern, quizMode]);
+    return () => { if (animRef.current) clearTimeout(animRef.current); };
+  }, [playing, pattern]);
 
   return (
-    <svg
-      ref={svgRef}
-      viewBox={`0 0 ${W} ${H}`}
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'block',
-        background: 'transparent'
-      }}
-    />
+    <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`}
+      style={{ width: '100%', height: '100%', display: 'block', background: 'transparent' }} />
   );
 }
-
 
 // ─────────────────────────────────────────────
 // PATTERN CARD — Full Professional Layout
 // ─────────────────────────────────────────────
 
-function PatternCard({
-  pattern,
-  isExpanded,
-  onClick,
-  singleMode = false,
-  quizMode = false,
-  onNext,
-  onPrev,
-  onToggleQuiz
-}) {
+function PatternCard({ pattern, isExpanded, onClick }) {
   const [playing, setPlaying] = useState(false);
   const [done, setDone] = useState(false);
-  const [multipleChoiceMode, setMultipleChoiceMode] = useState(false);
-  
+  const [quizMode, setQuizMode] = useState(false);
+  const [quizAnswer, setQuizAnswer] = useState(null);
+  const [quizOptions, setQuizOptions] = useState([]);
+
   useEffect(() => {
     if (isExpanded && !playing && !done) {
       setTimeout(() => setPlaying(true), 250);
@@ -4857,8 +4803,8 @@ function PatternCard({
     if (!isExpanded) {
       setPlaying(false);
       setDone(false);
-      setMultipleChoiceMode(false);
-      
+      setQuizMode(false);
+      setQuizAnswer(null);
     }
   }, [isExpanded, playing, done]);
 
@@ -4867,6 +4813,16 @@ function PatternCard({
     setDone(false);
     setPlaying(false);
     setTimeout(() => setPlaying(true), 100);
+  }
+
+  function startQuiz(e) {
+    e?.stopPropagation?.();
+    const others = ALL_PATTERNS.filter(p => p.id !== pattern.id && p.category === pattern.category);
+    const shuffled = [...others].sort(() => Math.random() - 0.5).slice(0, 3);
+    const opts = [pattern, ...shuffled].sort(() => Math.random() - 0.5);
+    setQuizOptions(opts);
+    setQuizAnswer(null);
+    setQuizMode(true);
   }
 
   const levelColor = pattern.level === 'Beginner' ? TEAL : pattern.level === 'Intermediate' ? GOLD : PURPLE;
@@ -4926,26 +4882,17 @@ function PatternCard({
             </div>
             <div style={{ minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                {!quizMode && (
-                  <h2 style={{ margin: 0, color: '#f8fafc', fontSize: isExpanded ? 32 : 18, lineHeight: 1.05, fontWeight: 950, letterSpacing: -0.6 }}>
-                    {pattern.name}
-                  </h2>
-                )}
+                <h2 style={{ margin: 0, color: '#f8fafc', fontSize: isExpanded ? 32 : 18, lineHeight: 1.05, fontWeight: 950, letterSpacing: -0.6 }}>
+                  {pattern.name}
+                </h2>
                 <span style={{ color: sc, fontSize: isExpanded ? 28 : 16, fontWeight: 900 }}>{directionIcon}</span>
-                {quizMode && (
-                  <span style={{ color: GOLD, fontSize: isExpanded ? 24 : 16, fontWeight: 950, letterSpacing: 0.4 }}>
-                    Guess the Pattern
-                  </span>
-                )}
               </div>
-              {!quizMode && (
-                <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-                  <Pill color={levelColor}>{pattern.level}</Pill>
-                  <Pill color={BLUE}>{pattern.category}</Pill>
-                  <Pill color={sc}>{pattern.signal}</Pill>
-                </div>
-              )}
-              {isExpanded && !quizMode && (
+              <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
+                <Pill color={levelColor}>{pattern.level}</Pill>
+                <Pill color={BLUE}>{pattern.category}</Pill>
+                <Pill color={sc}>{pattern.signal}</Pill>
+              </div>
+              {isExpanded && (
                 <p style={{ color: '#e5e7eb', fontSize: 16, lineHeight: 1.6, margin: '12px 0 0', maxWidth: 1180 }}>
                   {pattern.description}
                 </p>
@@ -4954,18 +4901,9 @@ function PatternCard({
           </div>
 
           {isExpanded && (
-            <div style={{ display: 'flex', gap: 10, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-              {singleMode && (
-                <>
-                  <button onClick={onClick} style={buttonStyle('#94a3b8')}>← Back</button>
-                  <button onClick={onPrev} style={buttonStyle('#94a3b8')}>← Prev</button>
-                  <button onClick={onNext} style={buttonStyle(GOLD)}>Next →</button>
-                  <button onClick={onToggleQuiz} style={buttonStyle(quizMode ? RED : TEAL)}>
-                    {quizMode ? 'Show Answer' : 'Quiz Mode'}
-                  </button>
-                </>
-              )}
-              
+            <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
+              <button onClick={handleReplay} style={buttonStyle('#94a3b8')}>↻ Replay</button>
+              <button onClick={startQuiz} style={buttonStyle(GOLD)}>❔ Quiz Me</button>
             </div>
           )}
         </div>
@@ -4973,11 +4911,11 @@ function PatternCard({
 
       {isExpanded && (
         <div style={{ padding: 16 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: quizMode ? '1fr' : 'minmax(0, 2.25fr) minmax(300px, 0.9fr)', gap: 14, alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2.25fr) minmax(300px, 0.9fr)', gap: 14, alignItems: 'stretch' }}>
             <Panel title="PATTERN ANIMATION" icon="▰" color={sc}>
               <div
                 style={{
-                  height: singleMode ? 'min(62vh, 640px)' : 390,
+                  height: 390,
                   borderRadius: 14,
                   background:
                     'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px), radial-gradient(circle at 50% 15%, rgba(212,175,55,0.08), transparent 35%), #050b14',
@@ -4989,27 +4927,13 @@ function PatternCard({
                   justifyContent: 'center',
                 }}
               >
-                <CandleChart
-                  pattern={pattern}
-                  playing={playing}
-                  quizMode={quizMode}
-                  onComplete={() => setDone(true)}
-                  width={singleMode ? 1200 : 920}
-                  height={singleMode ? 620 : 380}
-                />
+                <CandleChart pattern={pattern} playing={playing} onComplete={() => setDone(true)} width={920} height={380} />
               </div>
               <div style={{ marginTop: 10, border: `1px solid ${sc}40`, background: `${sc}0f`, color: '#dbeafe', borderRadius: 10, padding: '10px 12px', fontSize: 14, lineHeight: 1.55 }}>
-                {quizMode ? (
-                  <strong style={{ color: GOLD }}>Study the chart only. What pattern is this?</strong>
-                ) : (
-                  <>
-                    <strong style={{ color: sc }}>How it works:</strong> {pattern.description}
-                  </>
-                )}
+                <strong style={{ color: sc }}>How it works:</strong> {pattern.description}
               </div>
             </Panel>
 
-            {!quizMode && (
             <Panel title="AT A GLANCE" icon="◉" color={TEAL}>
               <div style={{ display: 'grid', gap: 12 }}>
                 {atAGlance.map(item => (
@@ -5023,11 +4947,9 @@ function PatternCard({
                 ))}
               </div>
             </Panel>
-            )}
           </div>
 
-          {!quizMode && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12, marginTop: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: 12, marginTop: 12 }}>
             <InfoCard title="PSYCHOLOGY" color={RED} icon="🧠">{pattern.psychology}</InfoCard>
             <InfoCard title="REQUIREMENTS" color={TEAL} icon="✅"><BulletList items={pattern.requirements} /></InfoCard>
             <InfoCard title="IDEAL LOCATION" color={GOLD} icon="🎯"><BulletList items={toList(pattern.idealLocation)} /></InfoCard>
@@ -5057,9 +4979,8 @@ function PatternCard({
               <div>{pattern.quiz?.choices?.map((c, i) => `${String.fromCharCode(65 + i)}) ${c}`).join('   ')}</div>
             </InfoCard>
           </div>
-          )}
 
-          {multipleChoiceMode && (
+          {quizMode && (
             <div style={{ marginTop: 14, border: `1px solid ${GOLD}40`, background: 'rgba(212,175,55,0.06)', borderRadius: 14, padding: 16 }}>
               <div style={{ color: GOLD, fontSize: 14, fontWeight: 950, letterSpacing: 1.4, marginBottom: 12 }}>PATTERN RECOGNITION QUIZ</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 10 }}>
@@ -5075,6 +4996,8 @@ function PatternCard({
                   return (
                     <button
                       key={opt.id}
+                      onClick={() => setQuizAnswer(opt.id)}
+                      disabled={!!quizAnswer}
                       style={{ background: bg, border: `1px solid ${border}`, borderRadius: 10, color, fontSize: 14, fontWeight: 850, padding: '13px 14px', cursor: quizAnswer ? 'default' : 'pointer', textAlign: 'left' }}
                     >
                       {opt.name}{quizAnswer && isCorrect ? ' ✓' : ''}{isSelected && !isCorrect ? ' ✗' : ''}
@@ -5156,99 +5079,6 @@ export default function PatternsPage() {
   const [level, setLevel] = useState('All');
   const [signal, setSignal] = useState('All');
   const [expanded, setExpanded] = useState(null);
-  const [cardQuizMode, setCardQuizMode] = useState(false);
-  const [pageMode, setPageMode] = useState('library'); // 'library' | 'quiz'
-
-  // ── Quiz Session State ──
-  const [quizPool, setQuizPool] = useState([]);
-  const [quizIndex, setQuizIndex] = useState(0);
-  const [quizOptions, setQuizOptions] = useState([]);
-  const [quizAnswer, setQuizAnswer] = useState(null);
-  const [quizPlaying, setQuizPlaying] = useState(false);
-  const [quizDone, setQuizDone] = useState(false);
-  const [score, setScore] = useState({ correct: 0, incorrect: 0, streak: 0, bestStreak: 0 });
-  const [quizFilter, setQuizFilter] = useState({ level: 'All', category: 'All' });
-  const [showHint, setShowHint] = useState(false);
-  const [hintUsed, setHintUsed] = useState(false);
-  const [weakAreas, setWeakAreas] = useState({});
-  const [sessionComplete, setSessionComplete] = useState(false);
-  const SESSION_SIZE = 10;
-
-  function buildQuizPool() {
-    let pool = [...ALL_PATTERNS];
-    if (quizFilter.level !== 'All') pool = pool.filter(p => p.level === quizFilter.level);
-    if (quizFilter.category !== 'All') pool = pool.filter(p => p.category === quizFilter.category);
-    const weighted = [];
-    pool.forEach(p => {
-      const times = 1 + (weakAreas[p.id] || 0);
-      for (let i = 0; i < times; i++) weighted.push(p);
-    });
-    const shuffled = weighted.sort(() => Math.random() - 0.5);
-    const seen = new Set();
-    const deduped = [];
-    for (const p of shuffled) {
-      if (!seen.has(p.id)) { seen.add(p.id); deduped.push(p); }
-      if (deduped.length >= SESSION_SIZE) break;
-    }
-    return deduped;
-  }
-
-  function buildOptions(current) {
-    const others = ALL_PATTERNS.filter(p => p.id !== current.id);
-    const shuffled = others.sort(() => Math.random() - 0.5).slice(0, 3);
-    return [current, ...shuffled].sort(() => Math.random() - 0.5);
-  }
-
-  function startQuizSession() {
-    const pool = buildQuizPool();
-    if (pool.length < 4) return;
-    setQuizPool(pool);
-    setQuizIndex(0);
-    setQuizOptions(buildOptions(pool[0]));
-    setQuizAnswer(null);
-    setQuizPlaying(false);
-    setQuizDone(false);
-    setShowHint(false);
-    setHintUsed(false);
-    setScore({ correct: 0, incorrect: 0, streak: 0, bestStreak: 0 });
-    setSessionComplete(false);
-    setTimeout(() => setQuizPlaying(true), 200);
-  }
-
-  function handleQuizAnswer(optId) {
-    if (quizAnswer) return;
-    const current = quizPool[quizIndex];
-    const correct = optId === current.id;
-    setQuizAnswer(optId);
-    setScore(prev => {
-      const newStreak = correct ? prev.streak + 1 : 0;
-      return {
-        correct: prev.correct + (correct ? 1 : 0),
-        incorrect: prev.incorrect + (correct ? 0 : 1),
-        streak: newStreak,
-        bestStreak: Math.max(prev.bestStreak, newStreak),
-      };
-    });
-    if (!correct) {
-      setWeakAreas(prev => ({ ...prev, [current.id]: (prev[current.id] || 0) + 1 }));
-    }
-  }
-
-  function handleNextQuestion() {
-    const nextIdx = quizIndex + 1;
-    if (nextIdx >= quizPool.length) {
-      setSessionComplete(true);
-      return;
-    }
-    setQuizIndex(nextIdx);
-    setQuizOptions(buildOptions(quizPool[nextIdx]));
-    setQuizAnswer(null);
-    setQuizPlaying(false);
-    setQuizDone(false);
-    setShowHint(false);
-    setHintUsed(false);
-    setTimeout(() => setQuizPlaying(true), 200);
-  }
 
   const filtered = ALL_PATTERNS.filter(p => {
     if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
@@ -5265,33 +5095,6 @@ export default function PatternsPage() {
     advanced: ALL_PATTERNS.filter(p => p.level === 'Advanced').length,
   };
 
-  const currentIndex = filtered.findIndex(p => p.id === expanded);
-  const selectedPattern = filtered.find(p => p.id === expanded);
-
-  function openPattern(id) {
-    setExpanded(id);
-    setCardQuizMode(false);
-  }
-
-  function closePattern() {
-    setExpanded(null);
-    setCardQuizMode(false);
-  }
-
-  function goNext() {
-    if (!filtered.length) return;
-    const idx = currentIndex === -1 ? 0 : currentIndex;
-    setExpanded(filtered[(idx + 1) % filtered.length].id);
-  }
-
-  function goPrev() {
-    if (!filtered.length) return;
-    const idx = currentIndex === -1 ? 0 : currentIndex;
-    setExpanded(filtered[(idx - 1 + filtered.length) % filtered.length].id);
-  }
-
-  const currentQuizPattern = quizPool[quizIndex];
-
   return (
     <main className="pageStack" style={{ maxWidth: '100%', padding: '0 20px 60px' }}>
 
@@ -5304,327 +5107,73 @@ export default function PatternsPage() {
             {ALL_PATTERNS.length} animated patterns — psychology, entry, stop, target, quiz and more for each.
           </span>
         </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          {/* Mode toggle */}
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 4, gap: 4 }}>
-            {[{ key: 'library', label: '📚 Library' }, { key: 'quiz', label: '⚡ Quiz Mode' }].map(m => (
-              <button key={m.key} onClick={() => { setPageMode(m.key); setExpanded(null); }}
-                style={{ background: pageMode === m.key ? GOLD : 'transparent', border: 'none', borderRadius: 9, color: pageMode === m.key ? '#000' : '#9ca3af', fontSize: 13, fontWeight: 900, padding: '9px 20px', cursor: 'pointer', transition: 'all 0.2s' }}>
-                {m.label}
-              </button>
-            ))}
-          </div>
+        <div style={{ display: 'flex', gap: 8 }}>
           <div style={{ background: 'rgba(38,166,154,0.1)', border: '1px solid rgba(38,166,154,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 11, color: TEAL, fontWeight: 700 }}>
-            All 125 Patterns Live 🔥
+            <div style={{ background: 'rgba(38,166,154,0.1)', border: '1px solid rgba(38,166,154,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 11, color: TEAL, fontWeight: 700 }}>
+  All 125 Patterns Live 🔥
+</div>
+          </div>
+          <div style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 11, color: GOLD, fontWeight: 700 }}>
+            125 Patterns Total
           </div>
         </div>
       </section>
 
-      {/* ── LIBRARY MODE ── */}
-      {pageMode === 'library' && (
-        <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
-            {[
-              { label: 'TOTAL PATTERNS', value: stats.total, color: GOLD },
-              { label: 'BEGINNER', value: stats.beginner, color: TEAL },
-              { label: 'INTERMEDIATE', value: stats.intermediate, color: GOLD },
-              { label: 'ADVANCED', value: stats.advanced, color: PURPLE },
-            ].map(s => (
-              <div key={s.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 18px' }}>
-                <div style={{ color: '#9ca3af', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, marginBottom: 6 }}>{s.label}</div>
-                <div style={{ color: s.color, fontSize: 28, fontWeight: 900, fontFamily: 'monospace' }}>{s.value}</div>
-              </div>
-            ))}
+      {/* Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
+        {[
+          { label: 'TOTAL PATTERNS', value: stats.total, color: GOLD },
+          { label: 'BEGINNER', value: stats.beginner, color: TEAL },
+          { label: 'INTERMEDIATE', value: stats.intermediate, color: GOLD },
+          { label: 'ADVANCED', value: stats.advanced, color: PURPLE },
+        ].map(s => (
+          <div key={s.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '14px 18px' }}>
+            <div style={{ color: '#9ca3af', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, marginBottom: 6 }}>{s.label}</div>
+            <div style={{ color: s.color, fontSize: 28, fontWeight: 900, fontFamily: 'monospace' }}>{s.value}</div>
           </div>
+        ))}
+      </div>
 
-          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 20px', marginBottom: 20, display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search patterns..."
-              style={{ flex: 1, minWidth: 180, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#fff', padding: '8px 14px', fontSize: 13, outline: 'none', fontFamily: 'monospace' }} />
-            {[
-              { label: 'Category', value: category, set: setCategory, opts: CATEGORIES },
-              { label: 'Level', value: level, set: setLevel, opts: LEVELS },
-              { label: 'Signal', value: signal, set: setSignal, opts: SIGNALS },
-            ].map(f => (
-              <select key={f.label} value={f.value} onChange={e => f.set(e.target.value)}
-                style={{ background: '#0d1421', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#f5f1e8', padding: '8px 12px', fontSize: 12, fontFamily: 'monospace', outline: 'none', cursor: 'pointer' }}>
-                {f.opts.map(o => <option key={o} value={o}>{f.label}: {o}</option>)}
-              </select>
-            ))}
-            <div style={{ color: '#9ca3af', fontSize: 12, fontFamily: 'monospace', flexShrink: 0 }}>
-              {filtered.length} pattern{filtered.length !== 1 ? 's' : ''}
-            </div>
-          </div>
+      {/* Filters */}
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 20px', marginBottom: 20, display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search patterns..."
+          style={{ flex: 1, minWidth: 180, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#fff', padding: '8px 14px', fontSize: 13, outline: 'none', fontFamily: 'monospace' }}
+        />
+        {[
+          { label: 'Category', value: category, set: setCategory, opts: CATEGORIES },
+          { label: 'Level', value: level, set: setLevel, opts: LEVELS },
+          { label: 'Signal', value: signal, set: setSignal, opts: SIGNALS },
+        ].map(f => (
+          <select key={f.label} value={f.value} onChange={e => f.set(e.target.value)}
+            style={{ background: '#0d1421', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, color: '#f5f1e8', padding: '8px 12px', fontSize: 12, fontFamily: 'monospace', outline: 'none', cursor: 'pointer' }}>
+            {f.opts.map(o => <option key={o} value={o}>{f.label}: {o}</option>)}
+          </select>
+        ))}
+        <div style={{ color: '#9ca3af', fontSize: 12, fontFamily: 'monospace', flexShrink: 0 }}>
+          {filtered.length} pattern{filtered.length !== 1 ? 's' : ''}
+        </div>
+      </div>
 
-          {expanded && selectedPattern ? (
-            <div style={{ width: '100%', maxWidth: 1800, margin: '0 auto' }}>
-              <PatternCard
-                pattern={selectedPattern}
-                isExpanded={true}
-                singleMode={true}
-                quizMode={cardQuizMode}
-                onClick={closePattern}
-                onNext={goNext}
-                onPrev={goPrev}
-                onToggleQuiz={() => setCardQuizMode(v => !v)}
-              />
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: 12 }}>
-              {filtered.map(p => (
-                <PatternCard key={p.id} pattern={p} isExpanded={false} singleMode={false} onClick={() => openPattern(p.id)} />
-              ))}
-            </div>
-          )}
+      {/* Pattern Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+        {filtered.map(p => (
+          <PatternCard
+            key={p.id}
+            pattern={p}
+isExpanded={expanded === p.id}
+            onClick={() => setExpanded(expanded === p.id ? null : p.id)}
+          />
+        ))}
+      </div>
 
-          {filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
-              <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
-              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>No patterns found</div>
-              <div style={{ fontSize: 13 }}>Try adjusting your filters</div>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* ── QUIZ MODE ── */}
-      {pageMode === 'quiz' && (
-        <div style={{ maxWidth: 960, margin: '0 auto' }}>
-
-          {/* Pre-session screen */}
-          {quizPool.length === 0 && !sessionComplete && (
-            <div style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: `1px solid ${GOLD}33`, borderRadius: 20, padding: '48px 40px', textAlign: 'center' }}>
-              <div style={{ fontSize: 52, marginBottom: 16 }}>⚡</div>
-              <div style={{ color: GOLD, fontSize: 26, fontWeight: 950, marginBottom: 10 }}>Pattern Recognition Quiz</div>
-              <div style={{ color: '#9ca3af', fontSize: 15, lineHeight: 1.7, marginBottom: 36, maxWidth: 520, margin: '0 auto 36px' }}>
-                Watch the animated pattern with zero labels. Identify it from 4 options. Track your streak, build your edge, and eliminate weak spots.
-              </div>
-
-              <div style={{ display: 'flex', gap: 24, justifyContent: 'center', marginBottom: 36, flexWrap: 'wrap' }}>
-                <div>
-                  <div style={{ color: '#9ca3af', fontSize: 11, fontWeight: 800, letterSpacing: 1.2, marginBottom: 8 }}>DIFFICULTY</div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    {LEVELS.map(l => (
-                      <button key={l} onClick={() => setQuizFilter(f => ({ ...f, level: l }))}
-                        style={{ background: quizFilter.level === l ? `${GOLD}22` : 'rgba(255,255,255,0.04)', border: `1px solid ${quizFilter.level === l ? GOLD : 'rgba(255,255,255,0.1)'}`, borderRadius: 9, color: quizFilter.level === l ? GOLD : '#9ca3af', fontSize: 13, fontWeight: 800, padding: '9px 18px', cursor: 'pointer' }}>
-                        {l}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <div style={{ color: '#9ca3af', fontSize: 11, fontWeight: 800, letterSpacing: 1.2, marginBottom: 8 }}>CATEGORY</div>
-                  <select value={quizFilter.category} onChange={e => setQuizFilter(f => ({ ...f, category: e.target.value }))}
-                    style={{ background: '#0d1421', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 9, color: '#f5f1e8', padding: '9px 16px', fontSize: 13, fontFamily: 'monospace', outline: 'none', cursor: 'pointer' }}>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              {Object.keys(weakAreas).length > 0 && (
-                <div style={{ background: 'rgba(239,83,80,0.08)', border: '1px solid rgba(239,83,80,0.25)', borderRadius: 12, padding: '14px 20px', marginBottom: 28, textAlign: 'left', maxWidth: 600, margin: '0 auto 28px' }}>
-                  <div style={{ color: RED, fontSize: 11, fontWeight: 900, letterSpacing: 1, marginBottom: 10 }}>⚠️ WEAK AREAS — weighted higher this session</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {Object.entries(weakAreas).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([id, count]) => {
-                      const p = ALL_PATTERNS.find(x => x.id === parseInt(id));
-                      return p ? (
-                        <span key={id} style={{ background: 'rgba(239,83,80,0.12)', border: '1px solid rgba(239,83,80,0.3)', color: RED, fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 6 }}>
-                          {p.name} ×{count}
-                        </span>
-                      ) : null;
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <button onClick={startQuizSession}
-                style={{ background: GOLD, border: 'none', borderRadius: 14, color: '#000', fontSize: 17, fontWeight: 950, padding: '18px 52px', cursor: 'pointer', letterSpacing: 0.5, boxShadow: `0 0 32px ${GOLD}44` }}>
-                START QUIZ — {SESSION_SIZE} PATTERNS
-              </button>
-              <div style={{ color: '#6b7280', fontSize: 12, marginTop: 14 }}>
-                One hint per question · Wrong answers appear more often in future sessions
-              </div>
-            </div>
-          )}
-
-          {/* Session complete */}
-          {sessionComplete && (
-            <div style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: `1px solid ${GOLD}33`, borderRadius: 20, padding: '48px 40px', textAlign: 'center' }}>
-              <div style={{ fontSize: 52, marginBottom: 16 }}>
-                {score.correct >= SESSION_SIZE * 0.8 ? '🏆' : score.correct >= SESSION_SIZE * 0.6 ? '📈' : '📚'}
-              </div>
-              <div style={{ color: GOLD, fontSize: 26, fontWeight: 950, marginBottom: 28 }}>Session Complete</div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
-                {[
-                  { label: 'CORRECT', value: score.correct, color: TEAL },
-                  { label: 'INCORRECT', value: score.incorrect, color: RED },
-                  { label: 'ACCURACY', value: `${Math.round((score.correct / SESSION_SIZE) * 100)}%`, color: GOLD },
-                  { label: 'BEST STREAK', value: score.bestStreak, color: PURPLE },
-                ].map(s => (
-                  <div key={s.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '18px' }}>
-                    <div style={{ color: '#9ca3af', fontSize: 10, fontWeight: 800, letterSpacing: 1.5, marginBottom: 8 }}>{s.label}</div>
-                    <div style={{ color: s.color, fontSize: 34, fontWeight: 950, fontFamily: 'monospace' }}>{s.value}</div>
-                  </div>
-                ))}
-              </div>
-
-              {score.correct >= SESSION_SIZE * 0.8 && (
-                <div style={{ background: 'rgba(38,166,154,0.1)', border: '1px solid rgba(38,166,154,0.3)', borderRadius: 12, padding: '14px 20px', marginBottom: 24, color: TEAL, fontWeight: 800, fontSize: 15 }}>
-                  🔥 Outstanding — {score.correct}/{SESSION_SIZE} correct. Elite pattern recognition.
-                </div>
-              )}
-
-              {Object.keys(weakAreas).length > 0 && score.correct < SESSION_SIZE * 0.8 && (
-                <div style={{ background: 'rgba(239,83,80,0.08)', border: '1px solid rgba(239,83,80,0.2)', borderRadius: 12, padding: '14px 20px', marginBottom: 24, textAlign: 'left' }}>
-                  <div style={{ color: RED, fontSize: 11, fontWeight: 900, letterSpacing: 1, marginBottom: 10 }}>REVIEW THESE IN THE LIBRARY</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {Object.entries(weakAreas).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([id]) => {
-                      const p = ALL_PATTERNS.find(x => x.id === parseInt(id));
-                      return p ? (
-                        <button key={id} onClick={() => { setPageMode('library'); openPattern(p.id); }}
-                          style={{ background: 'rgba(239,83,80,0.12)', border: '1px solid rgba(239,83,80,0.3)', color: RED, fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 6, cursor: 'pointer' }}>
-                          {p.name}
-                        </button>
-                      ) : null;
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <button onClick={startQuizSession}
-                  style={{ background: GOLD, border: 'none', borderRadius: 12, color: '#000', fontSize: 15, fontWeight: 950, padding: '14px 36px', cursor: 'pointer' }}>
-                  QUIZ AGAIN
-                </button>
-                <button onClick={() => { setQuizPool([]); setSessionComplete(false); }}
-                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, color: '#f5f1e8', fontSize: 15, fontWeight: 800, padding: '14px 36px', cursor: 'pointer' }}>
-                  Change Settings
-                </button>
-                <button onClick={() => setPageMode('library')}
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, color: '#9ca3af', fontSize: 15, fontWeight: 700, padding: '14px 36px', cursor: 'pointer' }}>
-                  Go to Library
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Active question */}
-          {quizPool.length > 0 && !sessionComplete && currentQuizPattern && (
-            <div>
-              {/* Progress bar */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '12px 20px' }}>
-                <div style={{ color: '#9ca3af', fontSize: 13, fontFamily: 'monospace', flexShrink: 0 }}>
-                  <span style={{ color: GOLD, fontWeight: 900 }}>{quizIndex + 1}</span> / <span style={{ color: GOLD, fontWeight: 900 }}>{quizPool.length}</span>
-                </div>
-                <div style={{ flex: 1, height: 5, background: 'rgba(255,255,255,0.08)', borderRadius: 3 }}>
-                  <div style={{ height: '100%', width: `${(quizIndex / quizPool.length) * 100}%`, background: GOLD, borderRadius: 3, transition: 'width 0.3s' }} />
-                </div>
-                <div style={{ display: 'flex', gap: 16, flexShrink: 0 }}>
-                  <span style={{ color: TEAL, fontSize: 13, fontWeight: 900, fontFamily: 'monospace' }}>✓ {score.correct}</span>
-                  <span style={{ color: RED, fontSize: 13, fontWeight: 900, fontFamily: 'monospace' }}>✗ {score.incorrect}</span>
-                  {score.streak >= 2 && <span style={{ color: GOLD, fontSize: 13, fontWeight: 900, fontFamily: 'monospace' }}>🔥 {score.streak}</span>}
-                </div>
-              </div>
-
-              {/* Chart */}
-              <div style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '20px', marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-                  <div style={{ width: 7, height: 7, borderRadius: '50%', background: GOLD, boxShadow: `0 0 8px ${GOLD}` }} />
-                  <span style={{ color: '#9ca3af', fontSize: 11, fontWeight: 800, letterSpacing: 1.8 }}>IDENTIFY THIS PATTERN</span>
-                  <span style={{ color: '#6b7280', fontSize: 11, marginLeft: 'auto' }}>Category: {currentQuizPattern.category}</span>
-                  {!hintUsed && !quizAnswer && (
-                    <button onClick={() => { setShowHint(true); setHintUsed(true); }}
-                      style={{ background: `${PURPLE}18`, border: `1px solid ${PURPLE}44`, borderRadius: 7, color: PURPLE, fontSize: 11, fontWeight: 800, padding: '5px 12px', cursor: 'pointer' }}>
-                      💡 Hint
-                    </button>
-                  )}
-                  {hintUsed && !quizAnswer && <span style={{ color: '#6b7280', fontSize: 11 }}>Hint used</span>}
-                </div>
-
-                {showHint && (
-                  <div style={{ background: `${PURPLE}12`, border: `1px solid ${PURPLE}30`, borderRadius: 10, padding: '12px 16px', marginBottom: 14, color: PURPLE, fontSize: 13, fontWeight: 700 }}>
-                    💡 This is a <strong>{currentQuizPattern.signal}</strong> pattern · Confidence: {currentQuizPattern.confidence}/10
-                  </div>
-                )}
-
-                <div style={{ background: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px), #050b14', backgroundSize: '48px 48px, 48px 48px', borderRadius: 12, height: 360, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <CandleChart
-                    pattern={{ ...currentQuizPattern, annotations: [] }}
-                    playing={quizPlaying}
-                    onComplete={() => setQuizDone(true)}
-                    width={900}
-                    height={344}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', gap: 16, marginTop: 12, alignItems: 'center' }}>
-                  {[{ color: TEAL, label: 'Bullish candle' }, { color: RED, label: 'Bearish candle' }].map(item => (
-                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 10, height: 10, borderRadius: 2, background: item.color }} />
-                      <span style={{ color: '#9ca3af', fontSize: 11 }}>{item.label}</span>
-                    </div>
-                  ))}
-                  {quizDone && (
-                    <button onClick={() => { setQuizPlaying(false); setQuizDone(false); setTimeout(() => setQuizPlaying(true), 100); }}
-                      style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 7, color: '#9ca3af', fontSize: 11, fontWeight: 700, padding: '5px 12px', cursor: 'pointer' }}>
-                      ↺ Replay
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Answer choices */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
-                {quizOptions.map(opt => {
-                  const isCorrect = opt.id === currentQuizPattern.id;
-                  const isSelected = quizAnswer === opt.id;
-                  let bg = 'rgba(255,255,255,0.04)';
-                  let border = 'rgba(255,255,255,0.1)';
-                  let color = '#f5f1e8';
-                  if (isSelected && isCorrect) { bg = 'rgba(38,166,154,0.16)'; border = `${TEAL}60`; color = TEAL; }
-                  if (isSelected && !isCorrect) { bg = 'rgba(239,83,80,0.16)'; border = `${RED}60`; color = RED; }
-                  if (quizAnswer && isCorrect) { bg = 'rgba(38,166,154,0.16)'; border = `${TEAL}60`; color = TEAL; }
-                  return (
-                    <button key={opt.id} onClick={() => handleQuizAnswer(opt.id)} disabled={!!quizAnswer}
-                      style={{ background: bg, border: `2px solid ${border}`, borderRadius: 14, color, fontSize: 15, fontWeight: 800, padding: '18px 22px', cursor: quizAnswer ? 'default' : 'pointer', textAlign: 'left', transition: 'all 0.2s', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span>{opt.name}</span>
-                      {quizAnswer && isCorrect && <span style={{ fontSize: 20 }}>✓</span>}
-                      {isSelected && !isCorrect && <span style={{ fontSize: 20 }}>✗</span>}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Answer reveal */}
-              {quizAnswer && (
-                <div style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: `1px solid ${quizAnswer === currentQuizPattern.id ? `${TEAL}44` : `${RED}44`}`, borderRadius: 16, padding: '22px', marginBottom: 16 }}>
-                  <div style={{ color: quizAnswer === currentQuizPattern.id ? TEAL : RED, fontSize: 18, fontWeight: 950, marginBottom: 16 }}>
-                    {quizAnswer === currentQuizPattern.id
-                      ? `✓ Correct — ${currentQuizPattern.name}`
-                      : `✗ That was ${currentQuizPattern.name}`}
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
-                    <InfoCard title="WHAT IT IS" color={GOLD} icon="📖">{currentQuizPattern.description}</InfoCard>
-                    <InfoCard title="KEY PSYCHOLOGY" color={currentQuizPattern.signalColor || GOLD} icon="🧠">{currentQuizPattern.psychology}</InfoCard>
-                    <InfoCard title="HOW TO TRADE IT" color={TEAL} icon="🎯">
-                      <div><strong style={{ color: TEAL }}>Entry:</strong> {currentQuizPattern.entry}</div>
-                      <div style={{ marginTop: 6 }}><strong style={{ color: RED }}>Stop:</strong> {currentQuizPattern.stop}</div>
-                      <div style={{ marginTop: 6 }}><strong style={{ color: GOLD }}>Target:</strong> {currentQuizPattern.target}</div>
-                    </InfoCard>
-                  </div>
-                  {quizAnswer !== currentQuizPattern.id && (
-                    <div style={{ background: 'rgba(239,83,80,0.08)', border: '1px solid rgba(239,83,80,0.2)', borderRadius: 10, padding: '10px 14px', marginBottom: 14, color: '#9ca3af', fontSize: 13 }}>
-                      This pattern added to your weak areas — it will appear more often in future sessions.
-                    </div>
-                  )}
-                  <button onClick={handleNextQuestion}
-                    style={{ background: GOLD, border: 'none', borderRadius: 12, color: '#000', fontSize: 15, fontWeight: 950, padding: '14px 32px', cursor: 'pointer', width: '100%' }}>
-                    {quizIndex + 1 >= quizPool.length ? 'See Results →' : 'Next Pattern →'}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+      {filtered.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
+          <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
+          <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>No patterns found</div>
+          <div style={{ fontSize: 13 }}>Try adjusting your filters</div>
         </div>
       )}
 
