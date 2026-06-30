@@ -4735,14 +4735,12 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
         const idx = Math.max(1, candles.findIndex((c, i) => i > 0 && Math.abs(c.c - c.o) > Math.abs(candles[i - 1].c - candles[i - 1].o) && c.bull !== candles[i - 1].bull));
         const prev = Math.max(0, idx - 1);
         drawBracket(prev, idx, 'Pattern', GOLD, 900);
-        addText(candles[idx]?.bull ? 'Big green candle swallows the red candle' : 'Big red candle swallows the green candle', xC(idx), yS(candles[idx]?.h || maxP) - 26, candles[idx]?.bull ? TEAL : RED, 11, 'middle', 950);
         drawArrow(xC(idx), yS(candles[idx]?.h || maxP) - 12, xC(idx), yS(candles[idx]?.h || maxP) + 6, candles[idx]?.bull ? TEAL : RED, '', 1050);
       }
 
       if (name.includes('hammer')) {
         const idx = candles.findIndex(c => Math.abs(c.l - Math.min(c.o, c.c)) > Math.abs(c.o - c.c) * 2);
         if (idx >= 0) {
-          addText('Long wick = sellers got rejected', xC(idx), yS(candles[idx].l) + 28, TEAL, 11, 'middle', 900);
           drawArrow(xC(idx), yS(candles[idx].l) + 15, xC(idx), yS(candles[idx].l) + 3, TEAL, '', 1000);
         }
       }
@@ -4750,7 +4748,6 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
       if (name.includes('shooting star') || name.includes('gravestone')) {
         const idx = candles.findIndex(c => Math.abs(c.h - Math.max(c.o, c.c)) > Math.abs(c.o - c.c) * 2);
         if (idx >= 0) {
-          addText('Long top wick = buyers got rejected', xC(idx), yS(candles[idx].h) - 22, RED, 11, 'middle', 900);
           drawArrow(xC(idx), yS(candles[idx].h) - 8, xC(idx), yS(candles[idx].h) + 6, RED, '', 1000);
         }
       }
@@ -4759,14 +4756,13 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
         const highs = candles.map(c => c.h);
         const resistance = Math.max(...highs.slice(0, Math.max(3, candles.length - 2)));
         const resistanceY = yS(resistance);
-        drawLine(PAD_L, resistanceY, W - PAD_R, resistanceY, RED, 'Resistance — sellers defend here', { dash: '7,5', delay: 800, labelY: resistanceY - 10 });
+        drawLine(PAD_L, resistanceY, W - PAD_R, resistanceY, RED, '', { dash: '7,5', delay: 800, labelY: resistanceY - 10 });
         candles.forEach((c, i) => {
-          if (c.h >= resistance - 3 && i < candles.length - 1) addText(name.includes('triple') ? `Top ${Math.min(i + 1, 3)}` : 'Top', xC(i), yS(c.h) - 18, RED, 10, 'middle', 1000 + i * 80);
         });
         const lows = candles.slice(2, -1).map(c => c.l);
         const neck = Math.min(...lows) + 2;
         const neckY = yS(neck);
-        drawLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, 'Neckline / support', { dash: '7,5', delay: 1100, labelY: neckY + 16 });
+        drawLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, '', { dash: '7,5', delay: 1100, labelY: neckY + 16 });
         drawArrow(W - PAD_R - 90, neckY - 28, W - PAD_R - 45, neckY + 4, RED, 'Break below support', 1300);
       }
 
@@ -4774,14 +4770,13 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
         const lows = candles.map(c => c.l);
         const support = Math.min(...lows.slice(0, Math.max(3, candles.length - 2)));
         const supportY = yS(support);
-        drawLine(PAD_L, supportY, W - PAD_R, supportY, TEAL, 'Support — buyers defend here', { dash: '7,5', delay: 800, labelY: supportY + 16 });
+        drawLine(PAD_L, supportY, W - PAD_R, supportY, TEAL, '', { dash: '7,5', delay: 800, labelY: supportY + 16 });
         candles.forEach((c, i) => {
-          if (c.l <= support + 3 && i < candles.length - 1) addText(name.includes('triple') ? `Bottom ${Math.min(i + 1, 3)}` : 'Bottom', xC(i), yS(c.l) + 22, TEAL, 10, 'middle', 1000 + i * 80);
         });
         const highs = candles.slice(2, -1).map(c => c.h);
         const neck = Math.max(...highs) - 2;
         const neckY = yS(neck);
-        drawLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, 'Neckline / breakout level', { dash: '7,5', delay: 1100, labelY: neckY - 10 });
+        drawLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '', { dash: '7,5', delay: 1100, labelY: neckY - 10 });
         drawArrow(W - PAD_R - 90, neckY + 28, W - PAD_R - 45, neckY - 4, TEAL, 'Break above resistance', 1300);
       }
 
