@@ -112,7 +112,7 @@ function DividendDeepDive({ ticker, onClose }) {
         const data = await res.json();
         setProfile(data);
 
-        const prompt = `You are an institutional dividend analyst at TRQX Capital. Generate a comprehensive dividend investment report for ${ticker} (${data.name}).
+        const prompt = `You are an institutional dividend analyst at TRQX Capital. Generate a comprehensive dividend investment report for ${ticker} (${data.name}). Keep every explanation field to ONE concise sentence under 20 words.
 
 Available Data:
 - Price: $${fmt(data.price)}, Market Cap: ${data.marketCap ? `$${(data.marketCap/1000).toFixed(1)}B` : "N/A"}
