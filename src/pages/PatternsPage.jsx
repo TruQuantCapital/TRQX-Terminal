@@ -4763,7 +4763,7 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
         const neck = Math.min(...lows) + 2;
         const neckY = yS(neck);
         drawLine(PAD_L, neckY, W - PAD_R, neckY, TEAL, '', { dash: '7,5', delay: 1100, labelY: neckY + 16 });
-        drawArrow(W - PAD_R - 90, neckY - 28, W - PAD_R - 45, neckY + 4, RED, 'Break below support', 1300);
+        drawArrow(W - PAD_R - 90, neckY - 28, W - PAD_R - 45, neckY + 4, RED, '', 1300);
       }
 
       if (name.includes('double bottom') || name.includes('triple bottom') || name.includes('inverse head')) {
@@ -4777,7 +4777,7 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
         const neck = Math.max(...highs) - 2;
         const neckY = yS(neck);
         drawLine(PAD_L, neckY, W - PAD_R, neckY, GOLD, '', { dash: '7,5', delay: 1100, labelY: neckY - 10 });
-        drawArrow(W - PAD_R - 90, neckY + 28, W - PAD_R - 45, neckY - 4, TEAL, 'Break above resistance', 1300);
+        drawArrow(W - PAD_R - 90, neckY + 28, W - PAD_R - 45, neckY - 4, TEAL, '', 1300);
       }
 
         
