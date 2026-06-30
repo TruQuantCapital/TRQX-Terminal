@@ -4756,7 +4756,6 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
         const highs = candles.map(c => c.h);
         const resistance = Math.max(...highs.slice(0, Math.max(3, candles.length - 2)));
         const resistanceY = yS(resistance);
-        drawLine(PAD_L, resistanceY, W - PAD_R, resistanceY, RED, '', { dash: '7,5', delay: 800, labelY: resistanceY - 10 });
         candles.forEach((c, i) => {
         });
         const lows = candles.slice(2, -1).map(c => c.l);
@@ -4770,7 +4769,6 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
         const lows = candles.map(c => c.l);
         const support = Math.min(...lows.slice(0, Math.max(3, candles.length - 2)));
         const supportY = yS(support);
-        drawLine(PAD_L, supportY, W - PAD_R, supportY, TEAL, '', { dash: '7,5', delay: 800, labelY: supportY + 16 });
         candles.forEach((c, i) => {
         });
         const highs = candles.slice(2, -1).map(c => c.h);
