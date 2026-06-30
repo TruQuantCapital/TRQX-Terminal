@@ -132,8 +132,21 @@ Respond ONLY with valid JSON, no markdown, no explanation:
           body: JSON.stringify({ prompt }),
         });
         const aiData = aiRes.ok ? await aiRes.json() : {};
-        const text = (aiData.reply || "").replace(/```json|```/g, "").trim();
-        setReport(JSON.parse(text));
+        let text = (aiData.reply || "").replace(/```json|```/g, "").trim();
+
+        // Extract just the JSON object in case there's extra text before/after
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) text = jsonMatch[0];
+
+        // Strip trailing commas which break JSON.parse
+        text = text.replace(/,(\s*[}\]])/g, "$1");
+
+        try {
+          setReport(JSON.parse(text));
+        } catch (parseErr) {
+          console.error("[DividendDeepDive] JSON parse failed:", parseErr.message, "Raw text:", text);
+          throw new Error("The AI report had a formatting issue. Please try again.");
+        }
       } catch (e) {
         setError(e.message);
       } finally {
