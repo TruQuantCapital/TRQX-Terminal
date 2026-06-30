@@ -4605,7 +4605,7 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
     }
 
     function candleLabelText(ann, c, x, delay) {
-      const labelY = Math.max(PAD_T + 16, yS(c.h) - 16 + (ann.offset || 0));
+      const labelY = Math.max(PAD_T + 20, Math.min(H - PAD_B - 20, yS(c.h) - 22 + (ann.offset || 0)));
       addText(ann.text, x, labelY, ann.color || GOLD, 10, 'middle', delay);
       drawArrow(x, labelY + 8, x, yS(c.h) - 3, ann.color || GOLD, '', delay + 120);
     }
@@ -4785,24 +4785,7 @@ function CandleChart({ pattern, playing, quizMode = false, onComplete, width = 6
         drawArrow(W - PAD_R - 90, neckY + 28, W - PAD_R - 45, neckY - 4, TEAL, 'Break above resistance', 1300);
       }
 
-      if (name.includes('triangle') || name.includes('wedge') || name.includes('pennant') || name.includes('flag')) {
-        const first = 0;
-        const last = Math.max(1, candles.length - 3);
-        const upperStart = yS(candles[first].h);
-        const upperEnd = yS(candles[last].h);
-        const lowerStart = yS(candles[first].l);
-        const lowerEnd = yS(candles[last].l);
-        drawLine(xC(first), upperStart, xC(last), upperEnd, RED, 'Resistance line', { dash: '6,4', delay: 900 });
-        drawLine(xC(first), lowerStart, xC(last), lowerEnd, TEAL, 'Support line', { dash: '6,4', delay: 1050, labelY: lowerEnd + 14 });
-        const lastC = candles[candles.length - 2] || candles[candles.length - 1];
-        drawArrow(xC(candles.length - 3), yS(lastC.c), xC(candles.length - 1), yS(lastC.c), bullish ? TEAL : RED, bullish ? 'Breakout' : 'Breakdown', 1300);
-      }
-
-      if (name.includes('cup')) {
-        addText('Rounded cup', xC(Math.floor(candles.length / 2)), H - PAD_B - 18, GOLD, 12, 'middle', 900);
-        drawArrow(xC(candles.length - 4), yS(candles[candles.length - 4].h) - 20, xC(candles.length - 2), yS(candles[candles.length - 2].h) - 2, GOLD, 'Handle', 1100);
-      }
-   
+        
     }
 
     drawNextCandle();
