@@ -13,6 +13,7 @@ import {
   Crown,
   Users,
   CandlestickChart,
+  PieChart,
 } from "lucide-react";
 import "./LandingPage.css";
 import trqxLionHero from "../assets/trqx-lion-hero.png";
@@ -37,6 +38,7 @@ const features = [
   ["Economic Calendar", "Never get surprised by major news.", CalendarDays],
   ["Market News", "AI-curated market headlines.", Newspaper],
   ["Trade Planning", "Build complete trade plans.", ClipboardList],
+  ["Capital Allocator", "AI-generated portfolio plans based on your capital and goals.", PieChart],
   ["Academy", "Learn from beginner to advanced.", GraduationCap],
 ];
 
@@ -57,13 +59,13 @@ const plans = [
     name: "Pro",
     price: "$79",
     badge: "MOST POPULAR",
-    features: ["Everything in Starter", "Options Flow Scanner", "GEMX Gamma Dashboard", "Trade Plan builder", "Claude AI Chat on Scanner & Academy", "Golden flow alerts", "Dark pool prints"],
+    features: ["Everything in Starter", "Options Flow Scanner", "GEMX Gamma Dashboard", "Trade Plan builder", "Capital Allocator (AI portfolio builder)", "Claude AI Chat on Scanner & Academy", "Golden flow alerts", "Dark pool prints"],
   },
   {
     name: "Elite",
     price: "$149",
     badge: "ALL ACCESS",
-    features: ["Everything in Pro", "Claude AI everywhere in terminal", "Discord webhook alerts", "ORB Indicator access", "MarketBrief AI read", "Smart money tracker", "Flow replay"],
+    features: ["Everything in Pro", "Capital Allocator (AI portfolio builder)", "Claude AI everywhere in terminal", "Discord webhook alerts", "ORB Indicator access", "MarketBrief AI read", "Smart money tracker", "Flow replay"],
   },
 ];
 export default function LandingPage() {

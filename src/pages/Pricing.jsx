@@ -97,6 +97,7 @@ export default function Pricing() {
       description: "The complete TRQX Capital experience",
       features: [
         { text: "Everything in Pro", included: true },
+        { text: "Capital Allocator (AI portfolio builder)", included: true },
         { text: "Discord webhook alerts (custom)", included: true },
         { text: "ORB Indicator access", included: true },
         { text: "AI Chat everywhere in the terminal", included: true },
