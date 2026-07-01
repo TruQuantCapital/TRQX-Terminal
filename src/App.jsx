@@ -12,6 +12,7 @@ import LandingPage from "./pages/LandingPage";
 import NewsPage from "./pages/NewsPage";
 import OptionsPage from "./pages/OptionsPage";
 import TradePlanPage from "./pages/TradePlanPage";
+import CapitalAllocatorPage from "./pages/CapitalAllocatorPage";
 import EconomicCalendarPage from "./pages/EconomicCalendarPage";
 import AcademyPage from "./pages/AcademyPage";
 import ResearchPage from "./pages/ResearchPage";
@@ -153,6 +154,7 @@ export default function App() {
           <Route path="/scanner" element={<ProtectedTerminal><Scanner /></ProtectedTerminal>} />
           <Route path="/options-flow" element={<ProtectedTerminal><OptionsPage /></ProtectedTerminal>} />
           <Route path="/trade-plan" element={<ProtectedTerminal><TradePlanPage /></ProtectedTerminal>} />
+          <Route path="/capital-allocator" element={<ProtectedTerminal><CapitalAllocatorPage /></ProtectedTerminal>} />
           <Route path="/gamma-ex" element={<ProtectedTerminal><GammaPage /></ProtectedTerminal>} />
           <Route path="/economic-calendar" element={<ProtectedTerminal><EconomicCalendarPage /></ProtectedTerminal>} />
           <Route path="/news" element={<ProtectedTerminal><NewsPage /></ProtectedTerminal>} />

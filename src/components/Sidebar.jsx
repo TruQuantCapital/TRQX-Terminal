@@ -16,6 +16,7 @@ import {
   BarChart3,
   DollarSign,
   Crown,
+  PieChart,
 } from "lucide-react";
 
 export const nav = [
@@ -28,6 +29,7 @@ export const nav = [
   { key: "scanner", label: "Flow Scanner", icon: Search, feature: "basic_flow" },
   { key: "gamma", label: "GEMX", icon: Waves, feature: "gemx" },
   { key: "tradeplan", label: "Trade Plan", icon: Target, feature: "trade_plan" },
+  { key: "capital-allocator", label: "Capital Allocator", icon: PieChart, feature: "trade_plan" },
   { key: "alerts", label: "Alerts", icon: Bell, feature: "alerts" },
   { key: "academy", label: "Academy", icon: GraduationCap, feature: "academy" },
   { key: "patterns", label: "Flash Cards", icon: BookOpen, feature: "flashcards" },
@@ -44,7 +46,7 @@ const navGroups = [
   },
   {
     label: "TRADING TOOLS",
-    keys: ["options", "scanner", "gamma", "tradeplan", "alerts"],
+    keys: ["options", "scanner", "gamma", "tradeplan", "capital-allocator", "alerts"],
   },
   {
     label: "EDUCATION",
@@ -133,6 +135,8 @@ export default function Sidebar({ active, setActive, user, tier, canAccess }) {
                       window.location.href = "/home";
                     } else if (item.key === "discord") {
                       window.open("https://discord.gg/jy3ta9qkfH", "_blank");
+                    } else if (item.key === "capital-allocator") {
+                      window.location.href = "/capital-allocator";
                     } else {
                       setActive(item.key);
                     }
