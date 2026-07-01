@@ -347,6 +347,11 @@ export default function CapitalAllocatorPage() {
               </div>
               <div style={{ background: `${GOLD}15`, border: `1px solid ${GOLD}40`, borderRadius: 10, padding: "8px 16px" }}>
                 <div style={{ color: "#9ca3af", fontSize: 10, fontWeight: 700 }}>TIMEFRAME ESTIMATE</div>
+                {plan.cashRemaining > 0 && (
+                <div style={{ color: "#9ca3af", fontSize: 13, marginTop: 10 }}>
+              💵 <strong style={{ color: "#f5f1e8" }}>${plan.cashRemaining}</strong> remaining cash after position sizing
+                </div>
+                )}
                 <div style={{ color: GOLD, fontSize: 14, fontWeight: 800 }}>{plan.timeframeEstimate}</div>
               </div>
             </div>
@@ -364,7 +369,7 @@ export default function CapitalAllocatorPage() {
                     <span style={{ background: "rgba(38,166,154,0.12)", border: "1px solid rgba(38,166,154,0.3)", color: TEAL, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 5 }}>{stock.sector}</span>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ color: "#f5f1e8", fontSize: 15, fontWeight: 800 }}>{stock.shares} shares</div>
+                    <div style={{ color: "#f5f1e8", fontSize: 15, fontWeight: 800 }}>{stShow cash remainingock.shares} shares</div>
                     <div style={{ color: "#9ca3af", fontSize: 12 }}>${stock.price} · ${stock.dollarAmount} total</div>
                   </div>
                 </div>
