@@ -369,7 +369,7 @@ export default function CapitalAllocatorPage() {
                     <span style={{ background: "rgba(38,166,154,0.12)", border: "1px solid rgba(38,166,154,0.3)", color: TEAL, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 5 }}>{stock.sector}</span>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ color: "#f5f1e8", fontSize: 15, fontWeight: 800 }}>{stShow cash remainingock.shares} shares</div>
+                    <div style={{ color: "#f5f1e8", fontSize: 15, fontWeight: 800 }}>{stock.shares} shares</div>
                     <div style={{ color: "#9ca3af", fontSize: 12 }}>${stock.price} · ${stock.dollarAmount} total</div>
                   </div>
                 </div>
