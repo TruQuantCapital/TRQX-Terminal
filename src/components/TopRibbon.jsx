@@ -169,7 +169,7 @@ export default function TopRibbon() {
     : "var(--gold)";
 
   return (
-    <header className="top" style={{ flexWrap: "wrap" }}>
+    <header className="top" style={{ flexWrap: "wrap", height: "auto", minHeight: "0", overflow: "visible", paddingBottom: "12px" }}>
       {/* Market Close group */}
       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
         <SectionLabel>Market Close</SectionLabel>
