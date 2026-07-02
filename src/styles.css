@@ -1628,6 +1628,10 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
   .academy {
     grid-template-columns: 1fr;
   }
+  .grid > *,
+  .academy > * {
+    min-width: 0;
+  }
 }
 
 .flash-wrap {
