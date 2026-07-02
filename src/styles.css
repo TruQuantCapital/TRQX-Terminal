@@ -1621,16 +1621,68 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
 
 /* Mobile: stack the dashboard/academy card grids into a single
    column instead of overflowing horizontally past the viewport */
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE GRID COLLAPSE — single source of truth.
+   Every fixed multi-column CSS grid in this file, collapsed to
+   one column below 900px so nothing overflows the viewport on
+   phones. If a new multi-column .grid-like class is added later,
+   add its selector here rather than writing a new mobile block
+   elsewhere.
+   ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 900px) {
-  .grid {
+  .grid,
+  .academy,
+  .gammaTiles,
+  .flowQuickStats,
+  .flowDecisionGrid,
+  .smartMoneySection,
+  .aiInsightGrid,
+  .scoreRows,
+  .tradePlanCards,
+  .calendarGrid,
+  .alertsGrid,
+  .recentAlertsList,
+  .marketBriefGrid,
+  .academyGrid,
+  .smartMoneyGrid,
+  .flowCommandCenter,
+  .replay-main {
     grid-template-columns: 1fr !important;
   }
-  .academy {
-    grid-template-columns: 1fr !important;
-  }
+
   .grid > *,
-  .academy > * {
+  .academy > *,
+  .gammaTiles > *,
+  .flowQuickStats > *,
+  .flowDecisionGrid > *,
+  .smartMoneySection > *,
+  .aiInsightGrid > *,
+  .scoreRows > *,
+  .tradePlanCards > *,
+  .calendarGrid > *,
+  .alertsGrid > *,
+  .recentAlertsList > *,
+  .marketBriefGrid > *,
+  .academyGrid > *,
+  .smartMoneyGrid > *,
+  .flowCommandCenter > *,
+  .replay-main > * {
     min-width: 0 !important;
+  }
+
+  .replay-main {
+    height: auto !important;
+  }
+
+  .founding-banner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .wide,
+  .card.gamma,
+  .newsVideoWide {
+    grid-column: auto !important;
   }
 }
 
