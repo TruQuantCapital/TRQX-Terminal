@@ -103,7 +103,7 @@ export default function Sidebar({ active, setActive, user, tier, canAccess }) {
         </div>
       </div>
 
-      <nav className="nav">
+      <nav className="sidebarNav">
         {navGroups.map((group) => (
           <div key={group.label}>
             <div style={{

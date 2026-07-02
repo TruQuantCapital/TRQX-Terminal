@@ -1472,7 +1472,7 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
   flex-direction: column;
 }
 
-.nav {
+.sidebarNav {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1579,7 +1579,7 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
     font-size: 28px;
   }
 
-  .nav {
+  .sidebarNav {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
