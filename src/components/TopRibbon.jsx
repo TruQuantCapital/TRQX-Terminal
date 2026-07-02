@@ -63,31 +63,14 @@ function fmtPrem(v) {
 
 const SYMBOLS = ["SPY", "QQQ", "IWM", "NVDA"];
 
-function SectionLabel({ children }) {
-  return (
-    <div
-      style={{
-        fontSize: "10px",
-        letterSpacing: "1.5px",
-        color: "var(--muted, #888)",
-        fontWeight: 700,
-        textTransform: "uppercase",
-        marginBottom: "2px",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 export default function TopRibbon() {
   const [tiles, setTiles] = useState(SYMBOLS.map(s => ({ symbol: s, price: "—", change: "—", trend: "flat", stale: true })));
-  const [premarketTiles, setPremarketTiles] = useState(SYMBOLS.map(s => ({ symbol: s, price: "—", change: "—", trend: "flat", stale: true })));
   const [flowStats, setFlowStats] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [countdown, setCountdown] = useState("—");
   const [cpiLabel, setCpiLabel] = useState("CPI Release");
 
+  // CPI countdown
   useEffect(() => {
     function tick() {
       const next = getNextCPI();
@@ -100,6 +83,7 @@ export default function TopRibbon() {
     return () => clearInterval(id);
   }, []);
 
+  // Stock quotes
   async function fetchTiles() {
     const results = await Promise.all(SYMBOLS.map(async (symbol) => {
       try {
@@ -110,34 +94,16 @@ export default function TopRibbon() {
         const changePct = data.changePct ?? data.change_percent ?? null;
         if (!price || Number(price) === 0) throw new Error("no price");
         const trend = Number(changePct) > 0 ? "up" : Number(changePct) < 0 ? "down" : "flat";
-
-        const pm = data.premarket;
-        const pmTile = pm && pm.price
-          ? {
-              symbol,
-              price: fmt(pm.price),
-              change: fmtPct(pm.changePct),
-              trend: Number(pm.changePct) > 0 ? "up" : Number(pm.changePct) < 0 ? "down" : "flat",
-              stale: false,
-            }
-          : { symbol, price: "—", change: "—", trend: "flat", stale: true };
-
-        return {
-          main: { symbol, price: fmt(price), change: fmtPct(changePct), trend, stale: false },
-          premarket: pmTile,
-        };
+        return { symbol, price: fmt(price), change: fmtPct(changePct), trend, stale: false };
       } catch {
-        return {
-          main: { symbol, price: "—", change: "—", trend: "flat", stale: true },
-          premarket: { symbol, price: "—", change: "—", trend: "flat", stale: true },
-        };
+        return { symbol, price: "—", change: "—", trend: "flat", stale: true };
       }
     }));
-    setTiles(results.map(r => r.main));
-    setPremarketTiles(results.map(r => r.premarket));
+    setTiles(results);
     setLastUpdate(new Date());
   }
 
+  // Flow stats
   async function fetchFlowStats() {
     try {
       const res = await fetch(`${API}/api/flow/stats`);
@@ -162,25 +128,20 @@ export default function TopRibbon() {
     : "var(--gold)";
 
   return (
-    <header className="top" style={{ height: "auto", minHeight: "0", overflow: "visible", flexWrap: "wrap", paddingTop: "10px", paddingBottom: "10px" }}>
-      {/* Market Close group */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-        <SectionLabel>Market Close</SectionLabel>
-        <div style={{ display: "flex", gap: "inherit" }}>
-          {tiles.map((m) => (
-            <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
-              <div className="tickerText">
-                <b>{m.symbol}</b>
-                <span>{m.price}</span>
-                <em className={m.trend === "up" ? "positive" : m.trend === "down" ? "negative" : ""}>
-                  {m.change}
-                </em>
-              </div>
-              <Sparkline trend={m.trend} />
-            </div>
-          ))}
+    <header className="top">
+      {/* Stock tiles */}
+      {tiles.map((m) => (
+        <div className="ticker" key={m.symbol} style={m.stale ? { opacity: 0.45 } : {}}>
+          <div className="tickerText">
+            <b>{m.symbol}</b>
+            <span>{m.price}</span>
+            <em className={m.trend === "up" ? "positive" : m.trend === "down" ? "negative" : ""}>
+              {m.change}
+            </em>
+          </div>
+          <Sparkline trend={m.trend} />
         </div>
-      </div>
+      ))}
 
       {/* Flow stat tiles */}
       {flowStats && (
@@ -210,24 +171,6 @@ export default function TopRibbon() {
           </div>
         </>
       )}
-
-      {/* Premarket group — fills the gap to the right of Put Premium */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-        <SectionLabel>Premarket</SectionLabel>
-        <div style={{ display: "flex", gap: "inherit" }}>
-          {premarketTiles.map((m) => (
-            <div className="ticker" key={`pm-${m.symbol}`} style={m.stale ? { opacity: 0.45 } : {}}>
-              <div className="tickerText">
-                <b>{m.symbol}</b>
-                <span>{m.price}</span>
-                <em className={m.trend === "up" ? "positive" : m.trend === "down" ? "negative" : ""}>
-                  {m.change}
-                </em>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Market Status */}
       <div className="statusBox">
