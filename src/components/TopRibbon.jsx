@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
@@ -63,10 +63,6 @@ function fmtPrem(v) {
 
 const SYMBOLS = ["SPY", "QQQ", "IWM", "NVDA"];
 
-// Small section label used above the market-close and premarket rows.
-// Inline styles as a fallback in case a matching CSS class doesn't
-// already exist in the stylesheet — safe to replace with a real
-// className once you've added one to your CSS file.
 function SectionLabel({ children }) {
   return (
     <div
@@ -92,7 +88,6 @@ export default function TopRibbon() {
   const [countdown, setCountdown] = useState("—");
   const [cpiLabel, setCpiLabel] = useState("CPI Release");
 
-  // CPI countdown
   useEffect(() => {
     function tick() {
       const next = getNextCPI();
@@ -105,7 +100,6 @@ export default function TopRibbon() {
     return () => clearInterval(id);
   }, []);
 
-  // Stock quotes (market-close / regular session prices) + premarket
   async function fetchTiles() {
     const results = await Promise.all(SYMBOLS.map(async (symbol) => {
       try {
@@ -144,7 +138,6 @@ export default function TopRibbon() {
     setLastUpdate(new Date());
   }
 
-  // Flow stats
   async function fetchFlowStats() {
     try {
       const res = await fetch(`${API}/api/flow/stats`);
@@ -169,7 +162,7 @@ export default function TopRibbon() {
     : "var(--gold)";
 
   return (
-    <header className="top" style={{ flexWrap: "wrap", height: "auto", minHeight: "0", overflow: "visible", paddingBottom: "12px" }}>
+    <header className="top">
       {/* Market Close group */}
       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
         <SectionLabel>Market Close</SectionLabel>
@@ -218,24 +211,8 @@ export default function TopRibbon() {
         </>
       )}
 
-      {/* Market Status */}
-      <div className="statusBox">
-        <span className="dot" />
-        <div>
-          <b>Market Status</b>
-          <p>{lastUpdate ? `Updated ${lastUpdate.toLocaleTimeString()}` : "Loading..."}</p>
-        </div>
-      </div>
-
-      {/* Next Event */}
-      <div className="eventBox">
-        <b>Next Event</b>
-        <p>{cpiLabel}</p>
-        <span>{countdown}</span>
-      </div>
-
-      {/* Premarket group — right side, own row */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "100%" }}>
+      {/* Premarket group — fills the gap to the right of Put Premium */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
         <SectionLabel>Premarket</SectionLabel>
         <div style={{ display: "flex", gap: "inherit" }}>
           {premarketTiles.map((m) => (
@@ -250,6 +227,22 @@ export default function TopRibbon() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Market Status */}
+      <div className="statusBox">
+        <span className="dot" />
+        <div>
+          <b>Market Status</b>
+          <p>{lastUpdate ? `Updated ${lastUpdate.toLocaleTimeString()}` : "Loading..."}</p>
+        </div>
+      </div>
+
+      {/* Next Event */}
+      <div className="eventBox">
+        <b>Next Event</b>
+        <p>{cpiLabel}</p>
+        <span>{countdown}</span>
       </div>
     </header>
   );
