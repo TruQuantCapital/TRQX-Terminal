@@ -1623,14 +1623,14 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
    column instead of overflowing horizontally past the viewport */
 @media (max-width: 900px) {
   .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
   .academy {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
   .grid > *,
   .academy > * {
-    min-width: 0;
+    min-width: 0 !important;
   }
 }
 
