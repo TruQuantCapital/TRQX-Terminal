@@ -1454,14 +1454,14 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
   font-size: 14px;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   SIDEBAR â€” single source of truth.
+/* ═══════════════════════════════════════════════════════════════
+   SIDEBAR — single source of truth.
    Default state below is the FULL desktop sidebar (wide,
    labels + cards + user info all visible). The two media
    queries that follow progressively simplify it for smaller
    viewports. Nothing sidebar-related should be added outside
-   this block â€” patch here, not in a new block appended later.
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   this block — patch here, not in a new block appended later.
+   ═══════════════════════════════════════════════════════════════ */
 
 .sidebar {
   min-height: 100vh;
@@ -1618,6 +1618,18 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
     display: block;
   }
 }
+
+/* Mobile: stack the dashboard/academy card grids into a single
+   column instead of overflowing horizontally past the viewport */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .academy {
+    grid-template-columns: 1fr;
+  }
+}
+
 .flash-wrap {
   margin-top: 28px;
   padding: 18px;
@@ -1824,103 +1836,3 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
   transform: translateY(-1px);
   box-shadow: 0 0 14px rgba(212,175,55,.18);
 }
-import { useMemo, useState } from "react";
-
-function makeCards(lesson) {
-  const headings = lesson.content?.filter((x) => x.type === "heading") || [];
-  const paragraphs = lesson.content?.filter((x) => x.type === "p") || [];
-
-  const cards = [];
-
-  headings.forEach((h, i) => {
-    const answer =
-      paragraphs[i]?.text ||
-      lesson.objective ||
-      "Review this section in the lesson.";
-
-    cards.push({
-      front: h.text.replace(/[📘🎯🧠✅📚📝✍️🧪👀🚨]/g, "").trim(),
-      back: answer,
-    });
-  });
-
-  if (cards.length === 0) {
-    cards.push({
-      front: lesson.title,
-      back: lesson.objective || "Review the lesson content.",
-    });
-  }
-
-  return cards.slice(0, 12);
-}
-
-function MiniCandles() {
-  return (
-    <div className="flash-mini-chart" aria-hidden="true">
-      <span className="flash-grid-line one"></span>
-      <span className="flash-grid-line two"></span>
-      <span className="flash-candle bull tall"></span>
-      <span className="flash-candle bear small"></span>
-      <span className="flash-candle bull mid"></span>
-      <span className="flash-candle bull small2"></span>
-    </div>
-  );
-}
-
-export default function FlashCards({ lesson }) {
-  const cards = useMemo(() => makeCards(lesson), [lesson]);
-  const [index, setIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-
-  const card = cards[index];
-
-  function nextCard() {
-    setFlipped(false);
-    setIndex((i) => (i + 1) % cards.length);
-  }
-
-  function prevCard() {
-    setFlipped(false);
-    setIndex((i) => (i - 1 + cards.length) % cards.length);
-  }
-
-  return (
-    <div className="flash-wrap">
-      <div className="flash-head">
-        <div>
-          <small>FLASHCARDS</small>
-          <h3>{lesson.title}</h3>
-        </div>
-        <span>
-          {index + 1} / {cards.length}
-        </span>
-      </div>
-
-      <button
-        className={`flash-card ${flipped ? "flipped" : ""}`}
-        onClick={() => setFlipped((v) => !v)}
-      >
-        <div className="flash-card-top">
-          <div className="flash-label">{flipped ? "ANSWER" : "QUESTION"}</div>
-          <div className="flash-brand">TRQX</div>
-        </div>
-
-        <MiniCandles />
-
-        <div className="flash-text">{flipped ? card.back : card.front}</div>
-        <div className="flash-hint">Click card to flip</div>
-      </button>
-
-      <div className="flash-actions">
-        <button onClick={prevCard}>← Previous</button>
-        <button onClick={() => setFlipped((v) => !v)}>
-          {flipped ? "Show Question" : "Show Answer"}
-        </button>
-        <button onClick={nextCard}>Next →</button>
-      </div>
-    </div>
-  );
-}
-
-
-
