@@ -333,7 +333,7 @@ export function CalendarCard() {
           title="Economic Calendar"
         />
       </div>
-      <a onClick={() => navigate("/economic-calendar")} style={{ cursor: "pointer" }}>View Full Calendar ?</a>
+      <a onClick={() => navigate("/economic-calendar")} style={{ cursor: "pointer" }}>View Full Calendar →</a>
     </section>
   );
 }
@@ -534,7 +534,7 @@ export function GammaCard({ full = false }) {
     : Array.from({ length: 42 }).map((_, i) => ({ calls: Math.abs(Math.sin(i / 4) * 72) + 10, puts: 0 }));
 
   return (
-    <section className={`card gamma ${full ? "fullPageCard" : "wide"}`}>
+    <section className={`card gamma ${full ? "fullPageCard" : ""}`} style={{ height: "100%" }}>
       <div className="cardTitle purple" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{ cursor: "pointer" }} onClick={() => navigate("/gamma-ex")}>Gamma Exposure ({gamma?.ticker ?? ticker}) ?</span>
         <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
@@ -575,7 +575,7 @@ export function GammaCard({ full = false }) {
 export function ScannerCard({ full = false }) {
   const navigate = useNavigate();
   return (
-    <section className={`card scanner ${full ? "fullPageCard" : "wide"}`}>
+    <section className={`card scanner ${full ? "fullPageCard" : ""}`} style={{ height: "100%" }}>
       <div className="cardTitle purple">Scanner</div>
       <div className="tabs">
         <button onClick={() => navigate("/scanner?filter=momentum")}>Momentum</button>
@@ -610,7 +610,7 @@ export function ScannerCard({ full = false }) {
           r.setup,
         ]}
       />
-      <a onClick={() => navigate("/scanner")} style={{ cursor: "pointer" }}>View Full Scanner ?</a>
+      <a onClick={() => navigate("/scanner")} style={{ cursor: "pointer" }}>View Full Scanner →</a>
     </section>
   );
 }
@@ -659,7 +659,7 @@ export function OptionsFlowCard({ full = false }) {
     .slice(0, full ? 25 : 8);
 
   return (
-    <section className={`card options ${full ? "fullPageCard" : "wide"}`}>
+    <section className={`card options ${full ? "fullPageCard" : ""}`} style={{ height: "100%" }}>
       <div className="cardTitle purple">Options Flow</div>
 
       <div className="tabs">
