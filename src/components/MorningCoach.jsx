@@ -64,7 +64,7 @@ export default function MorningCoach() {
   return (
     <>
       {/* Backdrop */}
-      <div onClick={dismiss} style={{
+      <div style={{
         position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)",
         zIndex: 3000, backdropFilter: "blur(4px)"
       }} />
