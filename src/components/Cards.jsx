@@ -816,48 +816,72 @@ export function NewsCard() {
   );
 }
 
-export function AcademyCard() {
+  export function AcademyCard() {
   const navigate = useNavigate();
   return (
-    <section className="card academy full">
-      <div className="course greenCourse">
-        <GraduationCap />
-        <div>
-          <small>Beginner Course</small>
-          <b>Learn Options Trading</b>
-          <span><i style={{ width: "75%" }}></i></span>
-        </div>
+    <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 14 }}>
+
+      {/* Options Flow */}
+      <div onClick={() => navigate("/options-flow")} style={{ cursor: "pointer", background: "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))", border: "1px solid rgba(212,175,55,.2)", borderRadius: 14, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2 }}>TRADING TOOLS</div>
+        <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>⚡ Options Flow</div>
+        <div style={{ color: "#9ca3af", fontSize: 12, lineHeight: 1.6 }}>Track institutional call and put sweeps in real time. Learn how to read flow direction and size for trade conviction.</div>
+        <div style={{ color: "#d4af37", fontSize: 12, fontWeight: 700, marginTop: "auto" }}>View Options Flow →</div>
       </div>
 
-      <div className="course purpleCourse">
-        <Waves />
-        <div>
-          <small>Intermediate Course</small>
-          <b>Gamma Exposure Mastery</b>
-          <span><i style={{ width: "45%" }}></i></span>
-        </div>
+      {/* Flow Scanner */}
+      <div onClick={() => navigate("/scanner")} style={{ cursor: "pointer", background: "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))", border: "1px solid rgba(212,175,55,.2)", borderRadius: 14, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2 }}>TRADING TOOLS</div>
+        <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>🔍 Flow Scanner</div>
+        <div style={{ color: "#9ca3af", fontSize: 12, lineHeight: 1.6 }}>Live options flow scanner with TRQX Flow Score. Filter by sweeps, blocks, and unusual activity across all tickers.</div>
+        <div style={{ color: "#d4af37", fontSize: 12, fontWeight: 700, marginTop: "auto" }}>View Flow Scanner →</div>
       </div>
 
-      <div className="course goldCourse">
-        <Crown />
-        <div>
-          <small>Advanced Course</small>
-          <b>The TRQX System</b>
-          <span><i style={{ width: "20%" }}></i></span>
-        </div>
+      {/* GEMX */}
+      <div onClick={() => navigate("/gamma-ex")} style={{ cursor: "pointer", background: "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))", border: "1px solid rgba(212,175,55,.2)", borderRadius: 14, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2 }}>TRADING TOOLS</div>
+        <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>📊 GEMX Dashboard</div>
+        <div style={{ color: "#9ca3af", fontSize: 12, lineHeight: 1.6 }}>Gamma exposure levels, call wall, put wall, and gamma flip for SPY and QQQ. Essential for understanding dealer positioning.</div>
+        <div style={{ color: "#d4af37", fontSize: 12, fontWeight: 700, marginTop: "auto" }}>View GEMX →</div>
       </div>
 
-      <div className="course greenCourse continue">
-        <ExternalLink />
-        <div>
-          <small>Continue Learning</small>
-          <b>Understanding Gamma</b>
+      {/* Academy Progress */}
+      <div onClick={() => navigate("/academy")} style={{ cursor: "pointer", background: "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))", border: "1px solid rgba(212,175,55,.2)", borderRadius: 14, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2 }}>ACADEMY</div>
+        <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>🎓 Your Progress</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9ca3af", marginBottom: 4 }}>
+              <span>Beginner</span><span>75%</span>
+            </div>
+            <div style={{ height: 5, background: "rgba(255,255,255,.08)", borderRadius: 999, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: "75%", background: "#22c55e", borderRadius: 999 }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9ca3af", marginBottom: 4 }}>
+              <span>Intermediate</span><span>45%</span>
+            </div>
+            <div style={{ height: 5, background: "rgba(255,255,255,.08)", borderRadius: 999, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: "45%", background: "#a78bfa", borderRadius: 999 }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9ca3af", marginBottom: 4 }}>
+              <span>Advanced</span><span>20%</span>
+            </div>
+            <div style={{ height: 5, background: "rgba(255,255,255,.08)", borderRadius: 999, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: "20%", background: "#d4af37", borderRadius: 999 }} />
+            </div>
+          </div>
         </div>
-        <button onClick={() => navigate("/academy")}>Continue ?</button>
+        <div style={{ color: "#d4af37", fontSize: 12, fontWeight: 700, marginTop: "auto" }}>Continue Learning →</div>
       </div>
+
     </section>
   );
 }
+ 
 
 
 
