@@ -170,7 +170,7 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
 .sector { display: grid; grid-template-columns: 95px 1fr 55px; gap: 8px; align-items: center; font-size: 12px; margin: 7px 0; color: var(--muted); }
 .sector div { height: 5px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; }
 .sector i { display: block; height: 100%; background: #d4af37; border-radius: 6px; }
-.wide { grid-column: span 2; }
+.wide { grid-column: span 3; }
 .card.gamma { grid-column: span 3; }
 .full { grid-column: 1 / -1; }
 .fullPageCard { width: 100%; }
