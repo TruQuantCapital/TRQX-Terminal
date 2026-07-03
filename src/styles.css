@@ -1892,3 +1892,7 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
   transform: translateY(-1px);
   box-shadow: 0 0 14px rgba(212,175,55,.18);
 }
+.cell-fill > * {
+  min-height: 100%;
+  box-sizing: border-box;
+}
