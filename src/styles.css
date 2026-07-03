@@ -127,8 +127,8 @@ button, select { font: inherit; }
 .eventBox span { font-weight: 900; color: var(--text); }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: #d4af37; box-shadow: 0 0 18px #d4af37; }
 .grid { display: grid; grid-template-columns: 1.05fr 2fr 1.35fr; gap: 14px; }
-.card { padding: 16px; min-height: 160px; overflow: hidden; }
-.cardTitle { color: var(--text); text-transform: uppercase; font-weight: 900; font-size: 13px; letter-spacing: .5px; margin-bottom: 12px; }
+.card { padding: 18px; min-height: 160px; overflow: hidden; font-size: 14px; }
+.cardTitle { color: var(--text); text-transform: uppercase; font-weight: 900; font-size: 14px; letter-spacing: .5px; margin-bottom: 14px; }
 .cardTitle.purple { color: var(--purple); }
 .cardTitle span { float: right; }
 .regime h1 { color: #d4af37; margin: 0; font-size: 28px; }

@@ -23,30 +23,30 @@ export default function Dashboard() {
     alignItems: "stretch",
   };
 
-  return (
-    <main style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+ return (
+    <main style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
-      {/* ROW 1 — Market Intelligence */}
-      <div style={{ ...rowStyle, gridTemplateColumns: "1.2fr 0.9fr 1.1fr" }}>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 260 }}><MarketBrief /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 260 }}><CalendarCard /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 260, maxHeight: 260, overflow: "auto" }}><AiSummary /></div>
+      {/* ROW 1 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.9fr 1.1fr", gap: 16, alignItems: "stretch" }}>
+        <div style={{ minWidth: 0 }}><MarketBrief /></div>
+        <div style={{ minWidth: 0 }}><CalendarCard /></div>
+        <div style={{ minWidth: 0, maxHeight: 300, overflowY: "auto", borderRadius: 12 }}><AiSummary /></div>
       </div>
 
-      {/* ROW 2 — Market Regime, Breadth, Gamma */}
-      <div style={{ ...rowStyle, gridTemplateColumns: "1fr 1fr 1fr" }}>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 580 }}><GaugeCard /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 580 }}><BreadthCard /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 580 }}><GammaCard /></div>
+      {/* ROW 2 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, alignItems: "stretch" }}>
+        <div style={{ minWidth: 0 }}><GaugeCard /></div>
+        <div style={{ minWidth: 0 }}><BreadthCard /></div>
+        <div style={{ minWidth: 0 }}><GammaCard /></div>
       </div>
 
-      {/* ROW 3 — Flow Tools */}
-      <div style={{ ...rowStyle, gridTemplateColumns: "1fr 1fr" }}>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 400 }}><OptionsFlowCard /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 400 }}><ScannerCard /></div>
+      {/* ROW 3 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "stretch" }}>
+        <div style={{ minWidth: 0 }}><OptionsFlowCard /></div>
+        <div style={{ minWidth: 0 }}><ScannerCard /></div>
       </div>
 
-      {/* ROW 4 — Academy */}
+      {/* ROW 4 */}
       <div style={{ minWidth: 0 }}>
         <AcademyCard />
       </div>
