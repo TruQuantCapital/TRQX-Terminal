@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
 import TopRibbon from "./components/TopRibbon";
+import MorningCoach from "./components/MorningCoach";
 import TickerTape from "./components/TickerTape";
 import Dashboard from "./pages/Dashboard";
 import Scanner from "./pages/Scanner";
@@ -96,8 +97,8 @@ function TerminalLayout({ children }) {
 
   return (
     <div className="app">
+      <MorningCoach />
       <Sidebar active={active} setActive={setActive} user={user} tier={tier} canAccess={canAccess} />
-
       <section className="content">
         <TopRibbon />
         <TickerTape />
