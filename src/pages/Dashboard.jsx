@@ -23,27 +23,30 @@ export default function Dashboard() {
     alignItems: "stretch",
   };
 
- return (
+ // one helper style — every cell becomes a flex box so the card inside stretches
+  const cell = { minWidth: 0, display: "flex", flexDirection: "column" };
+
+  return (
     <main style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
-      {/* ROW 1 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.9fr 1.1fr", gap: 16, alignItems: "stretch" }}>
-        <div style={{ minWidth: 0 }}><MarketBrief /></div>
-        <div style={{ minWidth: 0 }}><CalendarCard /></div>
-        <div style={{ minWidth: 0, maxHeight: 300, overflowY: "auto", borderRadius: 12 }}><AiSummary /></div>
+      {/* ROW 1 — pinned to 340px */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.9fr 1.1fr", gap: 16, gridAutoRows: "340px" }}>
+        <div style={cell}><MarketBrief /></div>
+        <div style={cell}><CalendarCard /></div>
+        <div style={{ ...cell, overflowY: "auto", borderRadius: 12 }}><AiSummary /></div>
       </div>
 
-      {/* ROW 2 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, alignItems: "stretch" }}>
-        <div style={{ minWidth: 0 }}><GaugeCard /></div>
-        <div style={{ minWidth: 0 }}><BreadthCard /></div>
-        <div style={{ minWidth: 0 }}><GammaCard /></div>
+      {/* ROW 2 — pinned to 520px */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, gridAutoRows: "520px" }}>
+        <div style={cell}><GaugeCard /></div>
+        <div style={cell}><BreadthCard /></div>
+        <div style={cell}><GammaCard /></div>
       </div>
 
       {/* ROW 3 */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "stretch" }}>
-        <div style={{ minWidth: 0 }}><OptionsFlowCard /></div>
-        <div style={{ minWidth: 0 }}><ScannerCard /></div>
+        <div style={cell}><OptionsFlowCard /></div>
+        <div style={cell}><ScannerCard /></div>
       </div>
 
       {/* ROW 4 */}
