@@ -26,9 +26,9 @@ export default function Dashboard() {
         <AiSummary />
       </div>
 
-      {/* ROW 3 — Flow Tools */}
+      {/* ROW 2 — Flow Tools */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, alignItems: "start" }}>
-        <div style={{ gridColumn: "1", minWidth: 0 }}><OptionsFlowCard /></div>
+        <div style={{ gridColumn: "2", minWidth: 0 }}><OptionsFlowCard /></div>
         <div style={{ gridColumn: "2", minWidth: 0 }}><ScannerCard /></div>
       </div>
 
