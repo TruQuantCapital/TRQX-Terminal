@@ -409,6 +409,7 @@ List 2 things that could invalidate the current bias, each starting with a dash.
           const data = await aiRes.json();
           setAnalysis(data.reply || null);
         }
+      } catch (e) {
         console.log("AiSummary error:", e);
       } finally {
         setLoading(false);

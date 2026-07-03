@@ -23,7 +23,9 @@ export default function Dashboard() {
 
   return (
     <main style={{ display: "flex", flexDirection: "column", gap: 16, fontSize: 15 }}>
-      
+      <div style={{ background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.3)", borderRadius: 10, padding: "10px 16px", color: "#d4af37", fontSize: 13, textAlign: "center" }}>
+        🇺🇸 Markets closed for Independence Day — live flow resumes Monday, July 6 at 9:30 AM ET. Academy, Research & Capital Allocator are fully open.
+      </div>
       {/* ROW 1 — fixed 360px, everything scrolls internally */}
       <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.9fr 1.1fr", gap: 16, gridAutoRows: "360px" }}>
         <div className="cell-fill" style={scrollCell}><MarketBrief /></div>
