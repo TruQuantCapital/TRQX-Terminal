@@ -1896,3 +1896,6 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
   min-height: 100%;
   box-sizing: border-box;
 }
+#root {
+  zoom: 1.1;
+}
