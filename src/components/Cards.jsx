@@ -486,6 +486,18 @@ export function BreadthCard() {
         <span><b className="negative">23%</b> Declining</span>
         <span><b>5%</b> Unchanged</span>
       </div>
+      {/* Market Breadth Summary */}
+      <div style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.2)", borderRadius: 10, padding: "12px 14px", margin: "10px 0" }}>
+        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>WHAT THIS MEANS</div>
+        <div style={{ color: "#d1d5db", fontSize: 12, lineHeight: 1.7 }}>
+          {(() => {
+            const adv = 72;
+            if (adv >= 65) return "Strong broad participation — the majority of stocks are advancing, signaling healthy market internals. This confirms the rally has institutional backing, not just a few mega-caps carrying the index. Favor long setups and momentum plays today.";
+            if (adv >= 50) return "Mixed breadth — more stocks are advancing than declining but conviction is moderate. Stick to high-quality setups with strong flow confirmation. Avoid chasing extended names.";
+            return "Weak breadth — most stocks are declining, signaling broad market weakness. Even if the index looks stable, internals are deteriorating. Reduce position size, tighten stops, and favor defensive names or cash.";
+          })()}
+        </div>
+      </div>
       <div className="sectorList">
         {sectors.map((s) => (
           <div className="sector" key={s[0]}>
@@ -536,7 +548,7 @@ export function GammaCard({ full = false }) {
   return (
     <section className={`card gamma ${full ? "fullPageCard" : ""}`} style={{ height: "100%" }}>
       <div className="cardTitle purple" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ cursor: "pointer" }} onClick={() => navigate("/gamma-ex")}>Gamma Exposure ({gamma?.ticker ?? ticker}) ?</span>
+        <span style={{ cursor: "pointer" }} onClick={() => navigate("/gamma-ex")}>Gamma Exposure ({gamma?.ticker ?? ticker})</span>
         <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
           <input
             value={tickerInput}
@@ -569,6 +581,27 @@ export function GammaCard({ full = false }) {
           );
         })}
       </div>
+      {/* Gamma Summary */}
+      {gamma && (
+        <div style={{ marginTop: 12, background: "rgba(159,107,255,0.06)", border: "1px solid rgba(159,107,255,0.2)", borderRadius: 10, padding: "12px 14px" }}>
+          <div style={{ color: "#9f6bff", fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>GAMMA SUMMARY — {gamma.ticker}</div>
+          <div style={{ color: "#d1d5db", fontSize: 12, lineHeight: 1.7 }}>
+            {(() => {
+              const flip = gamma.gammaFlip;
+              const callWall = gamma.callWall;
+              const putWall = gamma.putWall;
+              const positioning = gamma.dealerPositioning;
+              const squeeze = gamma.squeezeRisk;
+              if (!flip) return "Loading gamma analysis...";
+              if (positioning === "Long Gamma") {
+                return `Dealers are LONG gamma on ${gamma.ticker} — this means they buy dips and sell rips, creating a stabilizing effect between the ${putWall} put wall and ${callWall} call wall. Price is likely to pin near ${flip} (gamma flip). Expect dampened volatility and range-bound action unless price breaks through a key wall. Squeeze risk is ${squeeze?.toLowerCase()}.`;
+              } else {
+                return `Dealers are SHORT gamma on ${gamma.ticker} — this means they amplify price moves in both directions. With the gamma flip at ${flip}, any break above ${callWall} or below ${putWall} could trigger accelerated dealer hedging and explosive moves. Squeeze risk is ${squeeze?.toLowerCase()} — size accordingly and use tight stops.`;
+              }
+            })()}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

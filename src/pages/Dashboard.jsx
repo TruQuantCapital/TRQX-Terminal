@@ -28,22 +28,22 @@ export default function Dashboard() {
 
       {/* ROW 1 — Market Intelligence */}
       <div style={{ ...rowStyle, gridTemplateColumns: "1.2fr 0.9fr 1.1fr" }}>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column" }}><MarketBrief /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column" }}><CalendarCard /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column" }}><AiSummary /></div>
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 260 }}><MarketBrief /></div>
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 260 }}><CalendarCard /></div>
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 260, maxHeight: 260, overflow: "auto" }}><AiSummary /></div>
       </div>
 
       {/* ROW 2 — Market Regime, Breadth, Gamma */}
       <div style={{ ...rowStyle, gridTemplateColumns: "1fr 1fr 1fr" }}>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column" }}><GaugeCard /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column" }}><BreadthCard /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column" }}><GammaCard /></div>
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 580 }}><GaugeCard /></div>
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 580 }}><BreadthCard /></div>
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 580 }}><GammaCard /></div>
       </div>
 
       {/* ROW 3 — Flow Tools */}
       <div style={{ ...rowStyle, gridTemplateColumns: "1fr 1fr" }}>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column" }}><OptionsFlowCard /></div>
-        <div style={{ minWidth: 0, display: "flex", flexDirection: "column" }}><ScannerCard /></div>
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 400 }}><OptionsFlowCard /></div>
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 400 }}><ScannerCard /></div>
       </div>
 
       {/* ROW 4 — Academy */}
