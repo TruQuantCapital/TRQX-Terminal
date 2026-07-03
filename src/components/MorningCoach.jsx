@@ -18,15 +18,18 @@ export default function MorningCoach() {
 
 
   useEffect(() => {
-    if (!hasAccess) return;
-    // Don't stack on top of onboarding — coach starts tomorrow
-    if (!localStorage.getItem("trqx_onboarding_complete")) return;
-    // Only show once per day
+    console.log("[coach] effect ran — hasAccess:", hasAccess);
+    if (!hasAccess) { console.log("[coach] exit: no access"); return; }
+    if (!localStorage.getItem("trqx_onboarding_complete")) { console.log("[coach] exit: onboarding not complete"); return; }
     const today = new Date().toISOString().slice(0, 10);
     const lastSeen = localStorage.getItem(STORAGE_KEY);
+    console.log("[coach] lastSeen:", lastSeen, "today:", today);
     if (lastSeen !== today) {
+      console.log("[coach] SHOWING MODAL");
       setVisible(true);
       fetchCoach();
+    } else {
+      console.log("[coach] exit: already shown today");
     }
   }, [hasAccess]);
 
