@@ -156,11 +156,11 @@ export default function MorningCoach() {
             {coach.highImpactEvents?.length > 0 && (
               <div style={{ background: `${RED}10`, border: `1px solid ${RED}30`, borderRadius: 10, padding: "12px 16px" }}>
                 <div style={{ color: RED, fontSize: 10, fontWeight: 800, letterSpacing: 1, marginBottom: 6 }}>⚠️ HIGH IMPACT EVENTS TODAY</div>
-                {coach.highImpactEvents.map((e, i) => (
-                  <div key={i} style={{ color: "#f5f1e8", fontSize: 13, fontWeight: 600 }}>
-                    {e.time} — {e.event}
-                  </div>
-                ))}
+                {coach.highImpactEvents.map((evt, i) => (
+                <div key={i} style={{ color: "#f5f1e8", fontSize: 13, fontWeight: 600 }}>
+                  {evt.time} — {evt.event}
+                </div>
+              ))}
               </div>
             )}
 
