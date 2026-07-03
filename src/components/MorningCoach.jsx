@@ -57,6 +57,7 @@ export default function MorningCoach() {
   }
 
   if (!visible || !hasAccess) return null;
+  
 
   return (
     <>
@@ -66,12 +67,22 @@ export default function MorningCoach() {
         zIndex: 3000, backdropFilter: "blur(4px)"
       }} />
 
-      {/* Modal */}
       <div style={{
         position: "fixed", top: "50%", left: "50%",
         transform: "translate(-50%, -50%)",
         width: "100%", maxWidth: 620,
         background: "#0b1420",
+        border: `1px solid ${GOLD}40`,
+        borderRadius: 20, padding: "32px 36px",
+        zIndex: 3001, maxHeight: "90vh", overflowY: "auto",
+      }}>
+        {/* Always visible close button */}
+        <button onClick={dismiss} style={{
+          position: "absolute", top: 16, right: 16,
+          background: "rgba(255,255,255,0.08)", border: "none",
+          borderRadius: 8, color: "#fff", cursor: "pointer",
+          padding: "6px 12px", fontSize: 18, fontWeight: 700,
+        }}>✕</button>
         border: `1px solid ${GOLD}40`,
         borderRadius: 20, padding: "32px 36px",
         zIndex: 3001, maxHeight: "90vh", overflowY: "auto",
