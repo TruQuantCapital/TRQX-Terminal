@@ -26,11 +26,10 @@ export default function Dashboard() {
         <AiSummary />
       </div>
 
-      {/* ROW 2 — Market Regime, Breadth, Gamma */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
-        <GaugeCard />
-        <BreadthCard />
-        <GammaCard />
+      {/* ROW 3 — Flow Tools */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, alignItems: "start" }}>
+        <div style={{ gridColumn: "1", minWidth: 0 }}><OptionsFlowCard /></div>
+        <div style={{ gridColumn: "2", minWidth: 0 }}><ScannerCard /></div>
       </div>
 
       {/* ROW 3 — Flow Tools */}
