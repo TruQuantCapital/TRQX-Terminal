@@ -3,7 +3,6 @@ import MarketBrief from "../components/MarketBrief";
 import OnboardingModal from "../components/OnboardingModal";
 import {
   GaugeCard,
-  CalendarCard,
   AiSummary,
   BreadthCard,
   GammaCard,
