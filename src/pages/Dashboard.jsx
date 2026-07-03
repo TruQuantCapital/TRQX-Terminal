@@ -23,6 +23,7 @@ export default function Dashboard() {
 
   return (
     <main style={{ display: "flex", flexDirection: "column", gap: 16, fontSize: 15 }}>
+      <div style={{ color: "red", fontSize: 20 }}>BUILD v2 — {new Date().toISOString()}</div>
 
       {/* ROW 1 — fixed 360px, everything scrolls internally */}
       <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.9fr 1.1fr", gap: 16, gridAutoRows: "360px" }}>
