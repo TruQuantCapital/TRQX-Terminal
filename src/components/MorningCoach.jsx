@@ -14,11 +14,13 @@ export default function MorningCoach() {
   const [loading, setLoading] = useState(false);
   const [coach, setCoach] = useState(null);
   const [error, setError] = useState(null);
+  const hasAccess = canAccess("morning_coach");
 
-  const hasAccess = canAccess("morning_coach") || true; // temp: show for all to test
 
   useEffect(() => {
     if (!hasAccess) return;
+    // Don't stack on top of onboarding — coach starts tomorrow
+    if (!localStorage.getItem("trqx_onboarding_complete")) return;
     // Only show once per day
     const today = new Date().toISOString().slice(0, 10);
     const lastSeen = localStorage.getItem(STORAGE_KEY);
@@ -40,7 +42,7 @@ export default function MorningCoach() {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
-      if (!res.ok) throw new Error("Failed to load morning coach");
+      if (!res.ok) throw new Error(`Failed to load morning coach (${res.status})`);
       const data = await res.json();
       setCoach(data);
     } catch (e) {
@@ -83,10 +85,6 @@ export default function MorningCoach() {
           borderRadius: 8, color: "#fff", cursor: "pointer",
           padding: "6px 12px", fontSize: 18, fontWeight: 700,
         }}>✕</button>
-        border: `1px solid ${GOLD}40`,
-        borderRadius: 20, padding: "32px 36px",
-        zIndex: 3001, maxHeight: "90vh", overflowY: "auto",
-      }}>
 
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
