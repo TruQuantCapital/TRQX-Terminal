@@ -22,7 +22,6 @@ export default function Dashboard() {
     <main className="grid">
       <MarketBrief />
       <GaugeCard />
-      <CalendarCard />
       <AiSummary />
       <BreadthCard />
       <GammaCard />
