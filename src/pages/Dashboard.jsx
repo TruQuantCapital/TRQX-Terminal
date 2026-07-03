@@ -17,39 +17,34 @@ export default function Dashboard() {
     return !localStorage.getItem("trqx_onboarding_complete");
   });
 
-  const rowStyle = {
-    display: "grid",
-    gap: 14,
-    alignItems: "stretch",
-  };
-
- // one helper style — every cell becomes a flex box so the card inside stretches
-  const cell = { minWidth: 0, display: "flex", flexDirection: "column" };
+  // Plain block cell — grid stretches it, content scrolls inside it.
+  // NOT flex — flex is what ate the scrollbar last time.
+  const scrollCell = { minWidth: 0, overflowY: "auto", borderRadius: 12 };
 
   return (
-    <main style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <main style={{ display: "flex", flexDirection: "column", gap: 16, fontSize: 15 }}>
 
-      {/* ROW 1 — pinned to 340px */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.9fr 1.1fr", gap: 16, gridAutoRows: "340px" }}>
-        <div style={cell}><MarketBrief /></div>
-        <div style={cell}><CalendarCard /></div>
-        <div style={{ ...cell, overflowY: "auto", borderRadius: 12 }}><AiSummary /></div>
+      {/* ROW 1 — fixed 360px, everything scrolls internally */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.9fr 1.1fr", gap: 16, gridAutoRows: "360px" }}>
+        <div style={scrollCell}><MarketBrief /></div>
+        <div style={scrollCell}><CalendarCard /></div>
+        <div style={scrollCell}><AiSummary /></div>
       </div>
 
-      {/* ROW 2 — pinned to 520px */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, gridAutoRows: "520px" }}>
-        <div style={cell}><GaugeCard /></div>
-        <div style={cell}><BreadthCard /></div>
-        <div style={cell}><GammaCard /></div>
+      {/* ROW 2 — fixed 560px (Regime/Gauge is dense), all scroll */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, gridAutoRows: "560px" }}>
+        <div style={scrollCell}><GaugeCard /></div>
+        <div style={scrollCell}><BreadthCard /></div>
+        <div style={scrollCell}><GammaCard /></div>
       </div>
 
-      {/* ROW 3 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "stretch" }}>
-        <div style={cell}><OptionsFlowCard /></div>
-        <div style={cell}><ScannerCard /></div>
+      {/* ROW 3 — fixed 480px */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, gridAutoRows: "480px" }}>
+        <div style={scrollCell}><OptionsFlowCard /></div>
+        <div style={scrollCell}><ScannerCard /></div>
       </div>
 
-      {/* ROW 4 */}
+      {/* ROW 4 — content-sized, it's just 4 quick links */}
       <div style={{ minWidth: 0 }}>
         <AcademyCard />
       </div>
