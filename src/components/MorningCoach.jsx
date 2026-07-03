@@ -15,7 +15,7 @@ export default function MorningCoach() {
   const [coach, setCoach] = useState(null);
   const [error, setError] = useState(null);
 
-  const hasAccess = true; // temp bypass for testing
+  const hasAccess = canAccess("morning_coach");
 
   useEffect(() => {
     if (!hasAccess) return;
