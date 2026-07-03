@@ -145,7 +145,7 @@ export function GaugeCard() {
     : ["Reduce Exposure", "Tighten Stops", "Take Quick Profits", "Stay Selective"];
 
   return (
-    <section className="card regime" style={{ padding: 0, overflow: "hidden", background: "#0a0f1a", border: "1px solid rgba(255,255,255,0.08)" }}>
+    <section className="card regime full" style={{ padding: 0, overflow: "hidden", background: "#0a0f1a", border: "1px solid rgba(255,255,255,0.08)" }}>
 
       {/* Header */}
       <div style={{ padding: "16px 20px 12px", borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -183,7 +183,7 @@ export function GaugeCard() {
       </div>
 
       {/* Main 3-column body */}
-      <div style={{ display: "grid", gridTemplateColumns: "100px 1fr 100px", minWidth: 0, borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "200px 1fr 200px", minWidth: 0, borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
 
         {/* Gauge */}
         <div style={{ padding: "20px 16px", borderRight: "1px solid rgba(255,255,255,0.07)", display: "flex", flexDirection: "column", alignItems: "center" }}>
