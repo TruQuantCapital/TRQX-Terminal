@@ -23,8 +23,9 @@ function fmtM(v) {
 
 function GammaHistogram({ strikeChart, callWall, putWall, gammaFlip, price }) {
   if (!strikeChart?.length) return (
-    <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center", color: "#6b7280", fontSize: 13 }}>
-      No strike data available
+    <div style={{ height: 220, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "#9ca3af", fontSize: 14, textAlign: "center" }}>
+      <div>📡 Building live gamma profile — flow data accumulates while markets are open.</div>
+      <div style={{ fontSize: 12, marginTop: 6, color: "#6b7280" }}>Markets reopen Monday, July 6 · 9:30 AM ET</div>
     </div>
   );
 
@@ -208,7 +209,7 @@ export default function GammaPage() {
     return () => { clearInterval(t); clearInterval(clock); };
   }, [ticker]);
 
-  const price = Number(quote?.price) || null;
+  const price = Number(quote?.last) || null;
   const callWall = Number(gamma?.callWall) || null;
   const putWall = Number(gamma?.putWall) || null;
   const gammaFlip = Number(gamma?.gammaFlip) || null;
@@ -331,7 +332,7 @@ export default function GammaPage() {
       </div>
 
       {/* ROW 3: CURRENT PRICE | GAMMA REGIME | KEY DRIVERS | PLAYBOOK | GAMMA SCORE */}
-      <div style={{ display: "grid", gridTemplateColumns: "200px 260px 1fr 220px 200px", gap: 10, marginTop: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "220px 280px 1fr 220px", gap: 10, marginTop: 12 }}>
 
         {/* CURRENT PRICE STATUS */}
         <div style={{ background: "#0d1421", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: 16 }}>
@@ -421,19 +422,8 @@ export default function GammaPage() {
         </div>
       </div>
 
-      {/* ROW 4: GAMMA FLOW STRIP */}
+     {/* ROW 4: GAMMA FLOW STRIP */}
       <div style={{ background: "#0d1421", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "14px 20px", marginTop: 12, display: "flex", alignItems: "center", gap: 20 }}>
-        <div>
-          <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 9, fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>GAMMA EXPOSURE FLOW (24H)</div>
-          <div style={{ display: "flex", gap: 1, alignItems: "flex-end", height: 36 }}>
-            {Array.from({ length: 32 }).map((_, i) => {
-              const h = 30 + Math.sin(i / 3) * 20 + Math.random() * 10;
-              const isRecent = i > 24;
-              return <div key={i} style={{ width: 6, height: Math.max(4, h / 3), background: isRecent ? "#d4af37" : "rgba(212,175,55,0.25)", borderRadius: 1 }} />;
-            })}
-          </div>
-        </div>
-        <div style={{ width: 1, height: 48, background: "rgba(255,255,255,0.08)" }} />
         {[
           { label: "Net Gamma", value: netGamma >= 0 ? `+${fmtM(netGamma)}` : fmtM(netGamma), color: netGamma >= 0 ? "#22c55e" : "#ef4444" },
           { label: "Call Premium", value: fmtM(callPrem), color: "#22c55e" },
