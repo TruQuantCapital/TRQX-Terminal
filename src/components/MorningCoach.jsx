@@ -194,7 +194,7 @@ export default function MorningCoach() {
 
         {/* Footer */}
         <div style={{ marginTop: 28, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ color: "#4b5563", fontSize: 11 }}>Shows once per day · Pro & Elite only</div>
+          <div style={{ color: "#4b5563", fontSize: 11 }}>SShows once per day · Pro & Elite only · Educational content, not financial advice</div>
           <button onClick={dismiss} style={{
             background: GOLD, border: "none", borderRadius: 10,
             color: "#000", fontWeight: 800, fontSize: 14,
