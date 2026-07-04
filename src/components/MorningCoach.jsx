@@ -17,19 +17,14 @@ export default function MorningCoach() {
   const hasAccess = canAccess("morning_coach");
 
 
-  useEffect(() => {
-    console.log("[coach] effect ran — hasAccess:", hasAccess);
-    if (!hasAccess) { console.log("[coach] exit: no access"); return; }
-    if (!localStorage.getItem("trqx_onboarding_complete")) { console.log("[coach] exit: onboarding not complete"); return; }
+useEffect(() => {
+    if (!hasAccess) return;
+    if (!localStorage.getItem("trqx_onboarding_complete")) return;
     const today = new Date().toISOString().slice(0, 10);
     const lastSeen = localStorage.getItem(STORAGE_KEY);
-    console.log("[coach] lastSeen:", lastSeen, "today:", today);
     if (lastSeen !== today) {
-      console.log("[coach] SHOWING MODAL");
       setVisible(true);
       fetchCoach();
-    } else {
-      console.log("[coach] exit: already shown today");
     }
   }, [hasAccess]);
 
@@ -194,7 +189,7 @@ export default function MorningCoach() {
 
         {/* Footer */}
         <div style={{ marginTop: 28, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ color: "#4b5563", fontSize: 11 }}>SShows once per day · Pro & Elite only · Educational content, not financial advice</div>
+          <div style={{ color: "#4b5563", fontSize: 11 }}>Shows once per day · Pro & Elite only · Educational content, not financial advice</div>
           <button onClick={dismiss} style={{
             background: GOLD, border: "none", borderRadius: 10,
             color: "#000", fontWeight: 800, fontSize: 14,
