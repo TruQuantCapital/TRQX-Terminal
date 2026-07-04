@@ -76,7 +76,16 @@ export function AuthProvider({ children }) {
   }
 
   async function signUp(email, password) {
-    return supabase.auth.signUp({ email, password });
+    const result = await supabase.auth.signUp({ email, password });
+    // Fire-and-forget welcome email — confirmation is off, so a session exists at signup
+    const token = result.data?.session?.access_token;
+    if (!result.error && token) {
+      fetch("https://trqx-flow-scanner-production.up.railway.app/api/email/welcome", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      }).catch(() => {});
+    }
+    return result;
   }
 
   async function signOut() {
