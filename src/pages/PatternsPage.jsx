@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from "react";
+import PatternAcademy from "../components/PatternAcademy/PatternAcademy";
 
 const GOLD = "#d4af37";
 const TEAL = "#26a69a";
@@ -5114,239 +5115,13 @@ function toList(value) {
 // ─────────────────────────────────────────────
 // MAIN PAGE
 // ─────────────────────────────────────────────
-
-// ─────────────────────────────────────────────
-// TRQX PATTERN ACADEMY — Interactive Challenge Mode
-// ─────────────────────────────────────────────
-function buildChallengeItems(pattern) {
-  const source = (pattern.annotations || []).filter(a => a.text || a.label);
-  const items = source.slice(0, 6).map((a, i) => ({
-    id: `zone-${pattern.id}-${i}`,
-    label: a.text || a.label,
-    answer: a.text || a.label,
-    candleIdx: typeof a.candleIdx === 'number' ? a.candleIdx : (typeof a.start === 'number' ? a.start : i),
-    x: Math.min(88, Math.max(12, 10 + ((typeof a.candleIdx === 'number' ? a.candleIdx : (typeof a.start === 'number' ? a.start : i)) / Math.max(1, (pattern.candles?.length || 8) - 1)) * 80)),
-    y: [24, 38, 52, 66, 32, 58][i % 6],
-    tutor: `${a.text || a.label} is part of the ${pattern.name} setup. Connect it to the candle or structure where the pattern gives its strongest clue.`,
-  }));
-
-  if (items.length >= 3) return items;
-
-  const fallback = [
-    { label: pattern.name, y: 26, tutor: `This is the full ${pattern.name} structure. Identify the complete formation before thinking about entry.` },
-    { label: pattern.entry || 'Entry Zone', y: 44, tutor: `The entry is where confirmation appears. Do not enter before the setup confirms.` },
-    { label: pattern.stop || 'Invalidation / Stop', y: 62, tutor: `The stop belongs where the pattern is proven wrong. Protect capital first.` },
-    { label: pattern.target || 'Target Area', y: 78, tutor: `The target is where reward should justify the risk.` },
-  ];
-
-  return fallback.map((item, i) => ({
-    id: `zone-${pattern.id}-fallback-${i}`,
-    label: item.label.length > 30 ? item.label.slice(0, 30) + '…' : item.label,
-    answer: item.label.length > 30 ? item.label.slice(0, 30) + '…' : item.label,
-    candleIdx: i,
-    x: [22, 45, 68, 82][i % 4],
-    y: item.y,
-    tutor: item.tutor,
-  }));
-}
-
-function shuffleList(list) {
-  return [...list].sort(() => Math.random() - 0.5);
-}
-
-function PatternChallengeAcademy({ patterns }) {
-  const playablePatterns = patterns.filter(p => p.candles?.length && (p.annotations?.length || p.description));
-  const [patternIndex, setPatternIndex] = useState(0);
-  const [placed, setPlaced] = useState({});
-  const [checked, setChecked] = useState(false);
-  const [academyScore, setAcademyScore] = useState({ xp: 0, streak: 0, bestStreak: 0, mastered: 0 });
-  const [playing, setPlaying] = useState(true);
-  const [showHint, setShowHint] = useState(false);
-
-  const pattern = playablePatterns[patternIndex] || playablePatterns[0];
-  const challengeItems = buildChallengeItems(pattern);
-  const labels = shuffleList(challengeItems.map(item => item.answer));
-  const correctCount = challengeItems.filter(item => placed[item.id] === item.answer).length;
-  const accuracy = checked ? Math.round((correctCount / challengeItems.length) * 100) : 0;
-  const mastery = Math.min(100, Math.round((academyScore.mastered / Math.max(1, playablePatterns.length)) * 100));
-
-  function handleDragStart(e, label) {
-    e.dataTransfer.setData('text/plain', label);
-  }
-
-  function handleDrop(e, zoneId) {
-    e.preventDefault();
-    const label = e.dataTransfer.getData('text/plain');
-    if (!label) return;
-    setPlaced(prev => ({ ...prev, [zoneId]: label }));
-  }
-
-  function checkAnswers() {
-    const allCorrect = correctCount === challengeItems.length;
-    setChecked(true);
-    setAcademyScore(prev => ({
-      xp: prev.xp + (correctCount * 25) + (allCorrect ? 100 : 0),
-      streak: allCorrect ? prev.streak + 1 : 0,
-      bestStreak: Math.max(prev.bestStreak, allCorrect ? prev.streak + 1 : prev.streak),
-      mastered: prev.mastered + (allCorrect ? 1 : 0),
-    }));
-  }
-
-  function resetChallenge() {
-    setPlaced({});
-    setChecked(false);
-    setShowHint(false);
-    setPlaying(false);
-    setTimeout(() => setPlaying(true), 100);
-  }
-
-  function nextPattern() {
-    setPatternIndex(prev => (prev + 1) % playablePatterns.length);
-    setPlaced({});
-    setChecked(false);
-    setShowHint(false);
-    setPlaying(false);
-    setTimeout(() => setPlaying(true), 120);
-  }
-
-  return (
-    <section style={{ display: 'grid', gap: 18 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-        {[
-          { label: 'XP', value: academyScore.xp, color: GOLD, icon: '⚡' },
-          { label: 'STREAK', value: academyScore.streak, color: TEAL, icon: '🔥' },
-          { label: 'BEST', value: academyScore.bestStreak, color: PURPLE, icon: '🏆' },
-          { label: 'MASTERY', value: `${mastery}%`, color: BLUE, icon: '📈' },
-        ].map(item => (
-          <div key={item.label} style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: `1px solid ${item.color}44`, borderRadius: 14, padding: 16 }}>
-            <div style={{ color: '#9ca3af', fontSize: 10, fontWeight: 900, letterSpacing: 1.6 }}>{item.icon} {item.label}</div>
-            <div style={{ color: item.color, fontSize: 28, fontWeight: 950, marginTop: 6, fontFamily: 'monospace' }}>{item.value}</div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ background: 'linear-gradient(145deg, rgba(7,14,25,0.98), rgba(3,7,14,0.98))', border: '1px solid rgba(212,175,55,0.22)', borderRadius: 18, padding: 20 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'flex-start', marginBottom: 16 }}>
-          <div>
-            <p style={{ margin: 0, color: GOLD, fontSize: 11, fontWeight: 900, letterSpacing: 1.8 }}>TRQX PATTERN ACADEMY</p>
-            <h2 style={{ margin: '5px 0 6px', fontSize: 28 }}>{pattern.name}</h2>
-            <p style={{ margin: 0, color: '#9ca3af', maxWidth: 760 }}>Drag each label onto the chart. Check your answer to unlock AI Tutor feedback.</p>
-          </div>
-          <div style={{ minWidth: 150, textAlign: 'right' }}>
-            <div style={{ color: '#9ca3af', fontSize: 11, fontWeight: 800 }}>CURRENT SCORE</div>
-            <div style={{ color: checked ? (accuracy === 100 ? TEAL : GOLD) : '#f5f1e8', fontSize: 30, fontWeight: 950, fontFamily: 'monospace' }}>{checked ? `${correctCount}/${challengeItems.length}` : '--'}</div>
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px', gap: 16 }}>
-          <div style={{ position: 'relative', background: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px), #050b14', backgroundSize: '48px 48px, 48px 48px', borderRadius: 16, minHeight: 420, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
-            <CandleChart
-              pattern={{ ...pattern, annotations: [] }}
-              playing={playing}
-              quizMode={true}
-              onComplete={() => {}}
-              width={980}
-              height={404}
-            />
-
-            {challengeItems.map(item => {
-              const isCorrect = checked && placed[item.id] === item.answer;
-              const isWrong = checked && placed[item.id] && placed[item.id] !== item.answer;
-              return (
-                <div
-                  key={item.id}
-                  onDragOver={e => e.preventDefault()}
-                  onDrop={e => handleDrop(e, item.id)}
-                  style={{
-                    position: 'absolute',
-                    left: `${item.x}%`,
-                    top: `${item.y}%`,
-                    transform: 'translate(-50%, -50%)',
-                    minWidth: 132,
-                    minHeight: 38,
-                    borderRadius: 12,
-                    border: `2px dashed ${isCorrect ? TEAL : isWrong ? RED : GOLD}`,
-                    background: isCorrect ? 'rgba(38,166,154,0.88)' : isWrong ? 'rgba(239,83,80,0.88)' : 'rgba(5,11,20,0.84)',
-                    color: isCorrect || isWrong ? '#fff' : '#f5f1e8',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    textAlign: 'center',
-                    padding: '8px 10px',
-                    fontSize: 11,
-                    fontWeight: 950,
-                    boxShadow: `0 0 18px ${isCorrect ? 'rgba(38,166,154,0.25)' : isWrong ? 'rgba(239,83,80,0.25)' : 'rgba(212,175,55,0.18)'}`,
-                    backdropFilter: 'blur(8px)',
-                  }}
-                >
-                  {placed[item.id] || 'DROP LABEL'}
-                </div>
-              );
-            })}
-          </div>
-
-          <aside style={{ display: 'grid', gap: 12, alignContent: 'start' }}>
-            <div style={{ background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14 }}>
-              <div style={{ color: GOLD, fontSize: 12, fontWeight: 950, marginBottom: 12 }}>DRAG LABELS</div>
-              {labels.map(label => (
-                <div key={label} draggable onDragStart={e => handleDragStart(e, label)}
-                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.16), rgba(38,166,154,0.06))', border: '1px solid rgba(212,175,55,0.35)', borderRadius: 12, padding: '12px 13px', marginBottom: 10, cursor: 'grab', color: '#f5f1e8', fontSize: 12, fontWeight: 900 }}>
-                  {label}
-                </div>
-              ))}
-            </div>
-
-            <button onClick={() => setShowHint(v => !v)} style={{ background: `${PURPLE}18`, border: `1px solid ${PURPLE}55`, borderRadius: 12, color: PURPLE, fontWeight: 900, padding: '12px 14px', cursor: 'pointer' }}>💡 Hint</button>
-            <button onClick={checkAnswers} style={{ background: GOLD, border: 'none', borderRadius: 12, color: '#000', fontWeight: 950, padding: '13px 14px', cursor: 'pointer' }}>Check Answer</button>
-            <button onClick={resetChallenge} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, color: '#f5f1e8', fontWeight: 900, padding: '12px 14px', cursor: 'pointer' }}>Reset</button>
-            <button onClick={nextPattern} style={{ background: 'rgba(38,166,154,0.14)', border: `1px solid ${TEAL}55`, borderRadius: 12, color: TEAL, fontWeight: 900, padding: '12px 14px', cursor: 'pointer' }}>Next Pattern →</button>
-          </aside>
-        </div>
-
-        {showHint && (
-          <div style={{ marginTop: 16, background: `${PURPLE}10`, border: `1px solid ${PURPLE}35`, borderRadius: 14, padding: 16, color: '#d8ccff', lineHeight: 1.55 }}>
-            <strong style={{ color: PURPLE }}>AI Hint:</strong> Start with the overall signal: <strong>{pattern.signal}</strong>. Then identify the candle or structure that confirms the setup. Context matters more than memorizing the shape.
-          </div>
-        )}
-
-        {checked && (
-          <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 18 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 12 }}>
-              <h3 style={{ margin: 0, color: GOLD }}>🤖 AI Tutor Feedback</h3>
-              <span style={{ color: accuracy === 100 ? TEAL : GOLD, fontWeight: 950 }}>{accuracy}% Accuracy</span>
-            </div>
-            <div style={{ display: 'grid', gap: 10 }}>
-              {challengeItems.map(item => {
-                const ok = placed[item.id] === item.answer;
-                return (
-                  <div key={item.id} style={{ borderLeft: `4px solid ${ok ? TEAL : RED}`, background: ok ? 'rgba(38,166,154,0.08)' : 'rgba(239,83,80,0.08)', borderRadius: 10, padding: '10px 12px', color: '#cbd5e1', fontSize: 13, lineHeight: 1.55 }}>
-                    <strong style={{ color: ok ? TEAL : RED }}>{ok ? 'Correct' : 'Review'}:</strong>{' '}
-                    {ok
-                      ? `You correctly placed “${item.answer}.” ${item.tutor}`
-                      : `You placed “${placed[item.id] || 'nothing'}.” The correct label is “${item.answer}.” ${item.tutor}`}
-                  </div>
-                );
-              })}
-            </div>
-            {accuracy === 100 && (
-              <div style={{ marginTop: 14, background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.35)', borderRadius: 12, padding: 12, color: GOLD, fontWeight: 900 }}>
-                🏆 Badge unlocked: {pattern.name} Master
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
 export default function PatternsPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
   const [level, setLevel] = useState('All');
   const [signal, setSignal] = useState('All');
   const [expanded, setExpanded] = useState(null);
-  const [pageMode, setPageMode] = useState('library'); // 'library' | 'quiz' | 'challenge'
+  const [pageMode, setPageMode] = useState('library'); // 'library' | 'quiz' | 'academy'
 
   // ── Quiz Session State ──
   const [quizPool, setQuizPool] = useState([]);
@@ -5489,7 +5264,7 @@ export default function PatternsPage() {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
           {/* Mode toggle */}
           <div style={{ display: 'flex', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: 4, gap: 4 }}>
-            {[{ key: 'library', label: '📚 Library' }, { key: 'quiz', label: '⚡ Quiz Mode' }, { key: 'challenge', label: '🎯 Pattern Academy' }].map(m => (
+            {[{ key: 'library', label: '📚 Library' }, { key: 'academy', label: '🎯 Pattern Academy' }, { key: 'quiz', label: '⚡ Quiz Mode' }].map(m => (
               <button key={m.key} onClick={() => { setPageMode(m.key); setExpanded(null); }}
                 style={{ background: pageMode === m.key ? GOLD : 'transparent', border: 'none', borderRadius: 9, color: pageMode === m.key ? '#000' : '#9ca3af', fontSize: 13, fontWeight: 900, padding: '9px 20px', cursor: 'pointer', transition: 'all 0.2s' }}>
                 {m.label}
@@ -5570,8 +5345,8 @@ export default function PatternsPage() {
 
 
       {/* ── PATTERN ACADEMY MODE ── */}
-      {pageMode === 'challenge' && (
-        <PatternChallengeAcademy patterns={ALL_PATTERNS} />
+      {pageMode === 'academy' && (
+        <PatternAcademy patterns={ALL_PATTERNS} />
       )}
 
       {/* ── QUIZ MODE ── */}
