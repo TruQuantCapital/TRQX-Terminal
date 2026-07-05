@@ -102,18 +102,55 @@ const CARDS = [
     explanation:["Symmetrical triangles show compression between lower highs and higher lows.","They can break either direction, so wait for confirmation.","The first strong close outside the triangle matters most."]
   },
   {
-    id:"rising-wedge", title:"Rising Wedge Pattern", level:"Advanced", trend:"Bullish Weakening → Bearish", range:{min:95,max:145},
-    candles:[C(8,100,108,98,106),C(12,106,117,104,115),C(16,115,111,118,109),C(20,111,121,110,119),C(24,119,116,123,114),C(28,116,126,115,124),C(32,124,121,128,119),C(36,121,130,120,128),C(40,128,124,132,122),C(44,124,116,126,114),C(48,116,106,118,104)],
-    lines:[{label:"Rising Resistance",x1:14,y1:45,x2:40,y2:22,color:RED},{label:"Rising Support",x1:14,y1:78,x2:40,y2:55,color:GREEN}],
-    zones:[{id:"res",label:"Rising Resistance",help:"Upper trendline climbs",x:29,y:33},{id:"sup",label:"Rising Support",help:"Lower trendline climbs",x:29,y:66},{id:"compression",label:"Compression",help:"Wedge narrows",x:40,y:46},{id:"break",label:"Breakdown",help:"Support line fails",x:45,y:72},{id:"target",label:"Target",help:"Move often retraces wedge base",x:54,y:84}],
-    explanation:["Rising wedge shows price rising with weakening structure.","The wedge narrows as momentum fades.","Break below rising support confirms bearish reversal or continuation."]
+    id:"rising-wedge", title:"Rising Wedge Pattern", level:"Advanced", trend:"Bullish Weakening → Bearish", range:{min:90,max:150},
+    candles:[
+      C(8,98,107,96,104), C(12,104,111,101,109),
+      C(16,109,123,106,120), C(20,120,114,124,112),
+      C(24,114,127,113,125), C(28,125,119,129,117),
+      C(32,119,132,118,130), C(36,130,124,134,122),
+      C(40,124,136,123,134), C(44,134,128,138,126),
+      C(48,128,137,127,135), C(52,135,121,139,118),
+      C(56,121,112,123,110), C(60,112,106,114,104),
+      C(64,106,98,108,95)
+    ],
+    lines:[
+      {label:"Rising Resistance",x1:16,y1:46,x2:48,y2:29,color:RED},
+      {label:"Rising Support",x1:16,y1:72,x2:48,y2:42,color:GREEN},
+      {label:"Breakdown",x1:50,y1:43,x2:58,y2:66,color:RED,dashed:true}
+    ],
+    zones:[
+      {id:"res",label:"Rising Resistance",help:"Connects at least 2-3 rising swing highs",x:31,y:35},
+      {id:"sup",label:"Rising Support",help:"Connects rising swing lows; breaks on confirmation",x:31,y:60},
+      {id:"compression",label:"Compression",help:"Highs and lows converge; momentum weakens",x:46,y:38},
+      {id:"break",label:"Breakdown",help:"Price closes below rising support",x:55,y:62},
+      {id:"target",label:"Target",help:"Common target is the base of the wedge",x:63,y:78}
+    ],
+    explanation:["A rising wedge requires higher highs and higher lows, but the two trendlines must converge.","The support line should be steeper than resistance; that shows buyers are chasing weaker moves.","The pattern is not confirmed until price breaks below rising support.","A common target is the wedge base or the measured height of the wedge projected downward."]
   },
   {
-    id:"falling-wedge", title:"Falling Wedge Pattern", level:"Advanced", trend:"Bearish Weakening → Bullish", range:{min:95,max:145},
-    candles:[C(8,140,132,142,130),C(12,132,120,134,118),C(16,120,124,126,116),C(20,124,113,126,111),C(24,113,116,118,108),C(28,116,106,118,104),C(32,106,110,112,101),C(36,110,103,112,100),C(40,103,108,110,98),C(44,108,120,106,118),C(48,118,132,116,130)],
-    lines:[{label:"Falling Resistance",x1:14,y1:25,x2:40,y2:52,color:RED},{label:"Falling Support",x1:14,y1:58,x2:40,y2:80,color:GREEN}],
-    zones:[{id:"res",label:"Falling Resistance",help:"Upper trendline declines",x:28,y:39},{id:"sup",label:"Falling Support",help:"Lower trendline declines",x:29,y:70},{id:"compression",label:"Compression",help:"Range tightens",x:39,y:61},{id:"break",label:"Breakout",help:"Resistance line breaks",x:46,y:40},{id:"target",label:"Target",help:"Move often returns to wedge origin",x:55,y:25}],
-    explanation:["Falling wedge shows selling pressure weakening.","The wedge narrows as the downtrend loses momentum.","Break above falling resistance confirms bullish reversal or continuation."]
+    id:"falling-wedge", title:"Falling Wedge Pattern", level:"Advanced", trend:"Bearish Weakening → Bullish", range:{min:90,max:150},
+    candles:[
+      C(8,142,132,144,130), C(12,132,124,134,122),
+      C(16,124,130,132,120), C(20,130,118,132,116),
+      C(24,118,124,126,113), C(28,124,112,126,110),
+      C(32,112,118,120,106), C(36,118,108,120,104),
+      C(40,108,114,116,100), C(44,114,106,116,99),
+      C(48,106,112,114,96), C(52,112,124,110,122),
+      C(56,122,134,120,132), C(60,132,142,130,140)
+    ],
+    lines:[
+      {label:"Falling Resistance",x1:16,y1:31,x2:48,y2:50,color:RED},
+      {label:"Falling Support",x1:16,y1:56,x2:48,y2:74,color:GREEN},
+      {label:"Breakout",x1:50,y1:49,x2:58,y2:30,color:GREEN,dashed:true}
+    ],
+    zones:[
+      {id:"res",label:"Falling Resistance",help:"Connects lower swing highs",x:31,y:42},
+      {id:"sup",label:"Falling Support",help:"Connects lower swing lows",x:31,y:67},
+      {id:"compression",label:"Compression",help:"Range narrows as sellers weaken",x:45,y:60},
+      {id:"break",label:"Breakout",help:"Price closes above falling resistance",x:55,y:39},
+      {id:"target",label:"Target",help:"Common target is wedge origin/base",x:64,y:23}
+    ],
+    explanation:["A falling wedge requires lower highs and lower lows, with both trendlines converging.","Selling pressure weakens as the swings get smaller.","The bullish confirmation is a break and close above falling resistance.","A common target is the wedge origin or measured wedge height projected upward."]
   },
   {
     id:"cup-handle", title:"Cup and Handle Pattern", level:"Intermediate", trend:"Bullish Continuation", range:{min:95,max:150},
@@ -198,6 +235,7 @@ export default function PatternAcademy() {
   const [placed, setPlaced] = useState({});
   const [results, setResults] = useState({});
   const [showHint, setShowHint] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState(null);
   const [xp, setXp] = useState(2950);
   const [streak, setStreak] = useState(0);
   const [attempts, setAttempts] = useState(48);
@@ -215,9 +253,7 @@ export default function PatternAcademy() {
     e.dataTransfer.setData("labelId", id);
   }
 
-  function drop(e, zoneId) {
-    e.preventDefault();
-    const labelId = e.dataTransfer.getData("labelId");
+  function placeLabel(labelId, zoneId) {
     if (!labelId) return;
     setPlaced((prev) => {
       const next = { ...prev };
@@ -227,7 +263,14 @@ export default function PatternAcademy() {
       next[zoneId] = labelId;
       return next;
     });
+    setSelectedLabel(null);
     setResults({});
+  }
+
+  function drop(e, zoneId) {
+    e.preventDefault();
+    const labelId = e.dataTransfer.getData("labelId");
+    placeLabel(labelId, zoneId);
   }
 
   function checkAnswer() {
@@ -245,6 +288,7 @@ export default function PatternAcademy() {
     setPlaced({});
     setResults({});
     setShowHint(false);
+    setSelectedLabel(null);
   }
 
   function nextCard() {
@@ -307,17 +351,19 @@ export default function PatternAcademy() {
               const picked = labels.find((l) => l.id === placed[zone.id]);
               const state = checked ? (results[zone.id] ? "correct" : "wrong") : "";
               return (
-                <div
+                <button
+                  type="button"
                   key={zone.id}
-                  className={`pa-zone ${state} ${!picked ? "empty" : ""}`}
+                  className={`pa-zone ${state} ${!picked ? "empty" : ""} ${selectedLabel ? "ready" : ""}`}
                   style={{ left: `${zone.x}%`, top: `${zone.y}%` }}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={(e) => drop(e, zone.id)}
+                  onClick={() => placeLabel(selectedLabel, zone.id)}
                   title={zone.help}
                 >
                   <span className="pa-zone-number">{i + 1}</span>
                   <span className="pa-zone-text">{picked?.label || "DROP"}</span>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -326,16 +372,21 @@ export default function PatternAcademy() {
         <aside className="pa-side-panel">
           <div className="pa-side-title">🏆 Drag these labels</div>
           {labels.map((label) => (
-            <div
+            <button
+              type="button"
               key={label.id}
               draggable
               onDragStart={(e) => dragStart(e, label.id)}
-              className={`pa-drag-label ${used.includes(label.id) ? "used" : ""}`}
+              onClick={() => setSelectedLabel(label.id)}
+              className={`pa-drag-label ${used.includes(label.id) ? "used" : ""} ${selectedLabel === label.id ? "selected" : ""}`}
             >
               <strong>{label.label}</strong>
               <span>{label.help}</span>
-            </div>
+            </button>
           ))}
+          {selectedLabel && (
+            <div className="pa-mobile-selected">Selected: <b>{labels.find((l) => l.id === selectedLabel)?.label}</b>. Tap a drop zone on the chart.</div>
+          )}
           <div className="pa-control-card">
             <button className="pa-button ghost" onClick={() => setShowHint((v) => !v)}>💡 Hint</button>
             {showHint && <p className="pa-hint-text">Start with the biggest structure first: neckline/support/resistance, then label the peaks/lows, then confirmation.</p>}
