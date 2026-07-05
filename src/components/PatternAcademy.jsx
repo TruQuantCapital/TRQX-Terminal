@@ -173,23 +173,46 @@ function Candle({ candle, range }) {
 }
 
 function Line({ line }) {
-  const dx = line.x2 - line.x1;
-  const dy = line.y2 - line.y1;
-  const length = Math.sqrt(dx * dx + dy * dy);
-  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  // SVG with preserveAspectRatio="none" maps percent coordinates 1:1 onto the
+  // chart regardless of its aspect ratio — fixes the diagonal-line distortion
+  // the old CSS-rotation approach had on wide charts.
+  const color = line.color || GOLD;
+  const midX = (line.x1 + line.x2) / 2;
+  const midY = (line.y1 + line.y2) / 2;
   return (
-    <div
-      className={`pa-line ${line.soft ? "soft" : ""} ${line.dashed ? "dashed" : ""}`}
-      style={{
-        left: `${line.x1}%`,
-        top: `${line.y1}%`,
-        width: `${length}%`,
-        transform: `rotate(${angle}deg)`,
-        borderColor: line.color || GOLD
-      }}
-    >
-      <span>{line.label}</span>
-    </div>
+    <>
+      <svg
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        style={{
+          position: "absolute", inset: 0, width: "100%", height: "100%",
+          zIndex: 6, pointerEvents: "none", overflow: "visible",
+          filter: `drop-shadow(0 0 6px ${color}66)`,
+        }}
+      >
+        <line
+          x1={line.x1} y1={line.y1} x2={line.x2} y2={line.y2}
+          stroke={color}
+          strokeWidth={line.soft ? 16 : 3}
+          strokeOpacity={line.soft ? 0.28 : 1}
+          strokeDasharray={line.dashed ? "7 7" : undefined}
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+      <span
+        style={{
+          position: "absolute", left: `${midX}%`, top: `${midY}%`,
+          transform: "translate(-50%, -140%)",
+          background: "#07111d", border: `1px solid ${color}`,
+          padding: "3px 8px", borderRadius: 8, color: "#f8fafc",
+          fontWeight: 900, fontSize: 12, whiteSpace: "nowrap",
+          zIndex: 7, pointerEvents: "none",
+        }}
+      >
+        {line.label}
+      </span>
+    </>
   );
 }
 
@@ -301,6 +324,19 @@ export default function PatternAcademy() {
     });
     setResults({});
     setScored(false);
+  }
+
+  // ── Calibration tool: Shift+Click anywhere on the chart to get
+  //    the exact zone coordinates, logged AND copied to clipboard.
+  //    Use this when placing zones on a new pattern image. ──────
+  function calibrateClick(e) {
+    if (!e.shiftKey) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = +(((e.clientX - rect.left) / rect.width) * 100).toFixed(1);
+    const y = +(((e.clientY - rect.top) / rect.height) * 100).toFixed(1);
+    const snippet = `x:${x}, y:${y}`;
+    console.log(`[calibrate] ${snippet}`);
+    try { navigator.clipboard.writeText(snippet); } catch { /* clipboard blocked — value is in console */ }
   }
 
   // ── Tap-to-place (works on touch AND mouse) ────────────────
@@ -432,12 +468,24 @@ export default function PatternAcademy() {
             </div>
           </div>
 
-          <div className="pa-chart">
-            <div className="pa-price-axis">{priceTicks.map((t) => <span key={t}>{t}</span>)}</div>
-            <div className="pa-time-axis"><span>Setup</span><span>Context</span><span>Pattern</span><span>Confirm</span><span>Entry</span></div>
-
-            {card.lines.map((line, i) => <Line key={`${line.label}-${i}`} line={line} />)}
-            {card.candles.map((c, i) => <Candle key={`${card.id}-${i}`} candle={c} range={card.range} />)}
+          <div className="pa-chart" onClick={calibrateClick}>
+            {card.image ? (
+              /* IMAGE MODE — the picture is the chart. Zones position by the
+                 same percent coordinates; use Shift+Click to read them off. */
+              <img
+                src={card.image}
+                alt={card.title}
+                draggable={false}
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill", userSelect: "none" }}
+              />
+            ) : (
+              <>
+                <div className="pa-price-axis">{priceTicks.map((t) => <span key={t}>{t}</span>)}</div>
+                <div className="pa-time-axis"><span>Setup</span><span>Context</span><span>Pattern</span><span>Confirm</span><span>Entry</span></div>
+                {(card.lines || []).map((line, i) => <Line key={`${line.label}-${i}`} line={line} />)}
+                {(card.candles || []).map((c, i) => <Candle key={`${card.id}-${i}`} candle={c} range={card.range} />)}
+              </>
+            )}
 
             {card.zones.map((zone, i) => {
               const picked = labels.find((l) => l.id === placed[zone.id]);
