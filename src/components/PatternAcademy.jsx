@@ -193,71 +193,200 @@ function Line({ line }) {
   );
 }
 
+// ────────────────────────────────────────────────────────────
+// Persistence — per-account stats, same localStorage pattern
+// as Morning Coach. Reads the Supabase session for a user id;
+// falls back to "guest" when logged out.
+// ────────────────────────────────────────────────────────────
+
+function getAccountId() {
+  try {
+    const key = Object.keys(localStorage).find(
+      (k) => k.startsWith("sb-") && k.includes("auth-token")
+    );
+    if (!key) return "guest";
+    const session = JSON.parse(localStorage.getItem(key));
+    return session?.user?.id || session?.user?.email || "guest";
+  } catch {
+    return "guest";
+  }
+}
+
+const EMPTY_STATS = { xp: 0, streak: 0, bestStreak: 0, attempts: 0, correctTotal: 0, mastered: [] };
+
+function loadStats(accountId) {
+  try {
+    const raw = localStorage.getItem(`trqx_pattern_academy::${accountId}`);
+    if (!raw) return { ...EMPTY_STATS };
+    return { ...EMPTY_STATS, ...JSON.parse(raw) };
+  } catch {
+    return { ...EMPTY_STATS };
+  }
+}
+
+function saveStats(accountId, stats) {
+  try {
+    localStorage.setItem(`trqx_pattern_academy::${accountId}`, JSON.stringify(stats));
+  } catch {
+    /* storage full or blocked — stats stay in memory for the session */
+  }
+}
+
+// Fisher–Yates shuffle, non-mutating
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export default function PatternAcademy() {
+  const accountId = useMemo(() => getAccountId(), []);
+  const [stats, setStats] = useState(() => loadStats(accountId));
   const [cardIndex, setCardIndex] = useState(0);
-  const [placed, setPlaced] = useState({});
-  const [results, setResults] = useState({});
+  const [placed, setPlaced] = useState({});        // zoneId -> labelId
+  const [results, setResults] = useState({});      // zoneId -> boolean
+  const [scored, setScored] = useState(false);     // guards double-scoring the same attempt
   const [showHint, setShowHint] = useState(false);
-  const [xp, setXp] = useState(2950);
-  const [streak, setStreak] = useState(0);
-  const [attempts, setAttempts] = useState(48);
-  const [correctTotal, setCorrectTotal] = useState(38);
+  const [selectedLabel, setSelectedLabel] = useState(null); // tap-to-place selection
+  const [shuffleNonce, setShuffleNonce] = useState(0);      // reshuffles labels on reset
 
   const card = CARDS[cardIndex];
   const checked = Object.keys(results).length > 0;
   const correctCount = Object.values(results).filter(Boolean).length;
-  const accuracy = Math.round((correctTotal / Math.max(attempts, 1)) * 100);
+  const accuracy = stats.attempts > 0 ? Math.round((stats.correctTotal / stats.attempts) * 100) : 0;
   const used = Object.values(placed);
+  const allPlaced = card.zones.every((z) => placed[z.id]);
+  const isMastered = stats.mastered.includes(card.id);
 
-  const labels = useMemo(() => card.zones.map((z) => ({ id: z.id, label: z.label, help: z.help })), [card]);
+  // Shuffled label bank — reshuffles per card and per reset so the
+  // side-panel order never mirrors the zone numbering.
+  const labels = useMemo(
+    () => shuffle(card.zones.map((z) => ({ id: z.id, label: z.label, help: z.help }))),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [card.id, shuffleNonce]
+  );
 
+  function updateStats(updater) {
+    setStats((prev) => {
+      const next = updater(prev);
+      saveStats(accountId, next);
+      return next;
+    });
+  }
+
+  // ── Placement (shared by tap and drag) ─────────────────────
+  function placeLabel(zoneId, labelId) {
+    if (!labelId) return;
+    setPlaced((prev) => {
+      const next = { ...prev };
+      Object.keys(next).forEach((key) => {
+        if (next[key] === labelId) delete next[key]; // a label lives in one zone at a time
+      });
+      next[zoneId] = labelId;
+      return next;
+    });
+    setResults({});
+    setScored(false);
+    setSelectedLabel(null);
+  }
+
+  function clearZone(zoneId) {
+    setPlaced((prev) => {
+      const next = { ...prev };
+      delete next[zoneId];
+      return next;
+    });
+    setResults({});
+    setScored(false);
+  }
+
+  // ── Tap-to-place (works on touch AND mouse) ────────────────
+  function tapLabel(labelId) {
+    if (used.includes(labelId)) return;
+    setSelectedLabel((cur) => (cur === labelId ? null : labelId));
+  }
+
+  function tapZone(zoneId) {
+    if (selectedLabel) {
+      placeLabel(zoneId, selectedLabel);
+    } else if (placed[zoneId]) {
+      clearZone(zoneId); // tap a filled zone with nothing selected -> return its label
+    }
+  }
+
+  // ── Desktop drag (kept as a bonus input method) ─────────────
   function dragStart(e, id) {
     e.dataTransfer.setData("labelId", id);
   }
 
   function drop(e, zoneId) {
     e.preventDefault();
-    const labelId = e.dataTransfer.getData("labelId");
-    if (!labelId) return;
-    setPlaced((prev) => {
-      const next = { ...prev };
-      Object.keys(next).forEach((key) => {
-        if (next[key] === labelId) delete next[key];
-      });
-      next[zoneId] = labelId;
-      return next;
-    });
-    setResults({});
+    placeLabel(zoneId, e.dataTransfer.getData("labelId"));
   }
 
+  // ── Grading — by label TEXT, so identical twin labels
+  //    (e.g. two "Higher Low" zones) are interchangeable ──────
   function checkAnswer() {
+    if (scored) return; // same attempt can't be farmed for XP
+    const labelTextById = Object.fromEntries(card.zones.map((z) => [z.id, z.label]));
     const next = {};
-    card.zones.forEach((z) => { next[z.id] = placed[z.id] === z.id; });
+    card.zones.forEach((z) => {
+      const placedId = placed[z.id];
+      next[z.id] = placedId ? labelTextById[placedId] === z.label : false;
+    });
     const count = Object.values(next).filter(Boolean).length;
+    const perfect = count === card.zones.length;
     setResults(next);
-    setAttempts((v) => v + card.zones.length);
-    setCorrectTotal((v) => v + count);
-    setStreak((v) => count === card.zones.length ? v + 1 : 0);
-    setXp((v) => v + count * 25 + (count === card.zones.length ? 100 : 0));
+    setScored(true);
+    updateStats((s) => {
+      const newStreak = perfect ? s.streak + 1 : 0;
+      return {
+        ...s,
+        attempts: s.attempts + card.zones.length,
+        correctTotal: s.correctTotal + count,
+        streak: newStreak,
+        bestStreak: Math.max(s.bestStreak, newStreak),
+        xp: s.xp + count * 25 + (perfect ? 100 : 0),
+        mastered: perfect && !s.mastered.includes(card.id) ? [...s.mastered, card.id] : s.mastered,
+      };
+    });
   }
 
   function reset() {
     setPlaced({});
     setResults({});
+    setScored(false);
     setShowHint(false);
+    setSelectedLabel(null);
+    setShuffleNonce((n) => n + 1); // fresh label order each attempt
   }
 
-  function nextCard() {
-    setCardIndex((i) => (i + 1) % CARDS.length);
-    reset();
+  function goToCard(nextIndex) {
+    setCardIndex(((nextIndex % CARDS.length) + CARDS.length) % CARDS.length);
+    setPlaced({});
+    setResults({});
+    setScored(false);
+    setShowHint(false);
+    setSelectedLabel(null);
+    setShuffleNonce((n) => n + 1);
   }
 
-  const feedback = checked ? card.zones.map((z) => {
-    const picked = labels.find((l) => l.id === placed[z.id]);
-    if (results[z.id]) return { ok: true, text: `Correct: ${z.label}. ${z.help}` };
-    if (!picked) return { ok: false, text: `Missing: ${z.label}. ${z.help}` };
-    return { ok: false, text: `Almost. You placed ${picked.label}, but this location is ${z.label}. ${z.help}` };
-  }) : [];
+  function resetProgress() {
+    if (!window.confirm("Reset all Pattern Academy progress? XP, streaks, and mastered cards will start over.")) return;
+    updateStats(() => ({ ...EMPTY_STATS }));
+  }
+
+  const feedback = checked
+    ? card.zones.map((z) => {
+        const picked = labels.find((l) => l.id === placed[z.id]);
+        if (results[z.id]) return { ok: true, text: `Correct: ${z.label}. ${z.help}` };
+        if (!picked) return { ok: false, text: `Missing: ${z.label}. ${z.help}` };
+        return { ok: false, text: `Almost. You placed ${picked.label}, but this location is ${z.label}. ${z.help}` };
+      })
+    : [];
 
   const priceTicks = Array.from({ length: 6 }, (_, i) => {
     const p = card.range.max - ((card.range.max - card.range.min) / 5) * i;
@@ -272,14 +401,21 @@ export default function PatternAcademy() {
           <div className="pa-title-row">
             <h2>{card.title}</h2>
             <span className="pa-level-pill">{card.level}</span>
+            {isMastered && (
+              <span className="pa-level-pill" style={{ borderColor: "rgba(34,197,94,.55)", background: "rgba(34,197,94,.1)", color: "#4ade80" }}>
+                ✓ Mastered
+              </span>
+            )}
           </div>
-          <div className="pa-subtext">Drag each label to the correct area. These cards are hand-built for teaching, not auto-generated.</div>
+          <div className="pa-subtext">
+            Tap a label, then tap its location on the chart — or drag and drop on desktop. Tap a filled slot to clear it.
+          </div>
         </div>
         <div className="pa-stats-strip">
-          <div className="pa-stat gold"><span>XP</span><strong>{xp.toLocaleString()}</strong></div>
-          <div className="pa-stat"><span>Streak</span><strong>🔥 {streak}</strong></div>
-          <div className="pa-stat green"><span>Accuracy</span><strong>{accuracy}%</strong></div>
-          <div className="pa-stat blue"><span>Cards</span><strong>{CARDS.length}</strong></div>
+          <div className="pa-stat gold"><span>XP</span><strong>{stats.xp.toLocaleString()}</strong></div>
+          <div className="pa-stat"><span>Streak</span><strong>🔥 {stats.streak}</strong></div>
+          <div className="pa-stat green"><span>Accuracy</span><strong>{stats.attempts > 0 ? `${accuracy}%` : "--"}</strong></div>
+          <div className="pa-stat blue"><span>Mastered</span><strong>{stats.mastered.length}/{CARDS.length}</strong></div>
         </div>
       </div>
 
@@ -291,8 +427,8 @@ export default function PatternAcademy() {
               <span className="pa-trend-pill">TREND: <b>{card.trend}</b></span>
             </div>
             <div className="pa-progress-wrap">
-              <div className="pa-progress-label"><span>Progress</span><span>{cardIndex + 1}/{CARDS.length}</span></div>
-              <div className="pa-progress-track"><div className="pa-progress-fill" style={{ width: `${((cardIndex + 1) / CARDS.length) * 100}%` }} /></div>
+              <div className="pa-progress-label"><span>Mastered</span><span>{stats.mastered.length}/{CARDS.length}</span></div>
+              <div className="pa-progress-track"><div className="pa-progress-fill" style={{ width: `${(stats.mastered.length / CARDS.length) * 100}%` }} /></div>
             </div>
           </div>
 
@@ -306,17 +442,24 @@ export default function PatternAcademy() {
             {card.zones.map((zone, i) => {
               const picked = labels.find((l) => l.id === placed[zone.id]);
               const state = checked ? (results[zone.id] ? "correct" : "wrong") : "";
+              const targetable = selectedLabel && !picked;
               return (
                 <div
                   key={zone.id}
                   className={`pa-zone ${state} ${!picked ? "empty" : ""}`}
-                  style={{ left: `${zone.x}%`, top: `${zone.y}%` }}
+                  style={{
+                    left: `${zone.x}%`,
+                    top: `${zone.y}%`,
+                    cursor: "pointer",
+                    ...(targetable ? { borderColor: "#f4d35e", boxShadow: "0 0 14px rgba(212,175,55,.55)" } : {}),
+                  }}
+                  onClick={() => tapZone(zone.id)}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={(e) => drop(e, zone.id)}
                   title={zone.help}
                 >
                   <span className="pa-zone-number">{i + 1}</span>
-                  <span className="pa-zone-text">{picked?.label || "DROP"}</span>
+                  <span className="pa-zone-text">{picked?.label || (targetable ? "TAP HERE" : "DROP")}</span>
                 </div>
               );
             })}
@@ -324,24 +467,40 @@ export default function PatternAcademy() {
         </div>
 
         <aside className="pa-side-panel">
-          <div className="pa-side-title">🏆 Drag these labels</div>
-          {labels.map((label) => (
-            <div
-              key={label.id}
-              draggable
-              onDragStart={(e) => dragStart(e, label.id)}
-              className={`pa-drag-label ${used.includes(label.id) ? "used" : ""}`}
-            >
-              <strong>{label.label}</strong>
-              <span>{label.help}</span>
-            </div>
-          ))}
+          <div className="pa-side-title">🏆 {selectedLabel ? "Now tap its spot on the chart" : "Tap or drag these labels"}</div>
+          {labels.map((label) => {
+            const isUsed = used.includes(label.id);
+            const isSelected = selectedLabel === label.id;
+            return (
+              <div
+                key={label.id}
+                draggable={!isUsed}
+                onDragStart={(e) => dragStart(e, label.id)}
+                onClick={() => tapLabel(label.id)}
+                className={`pa-drag-label ${isUsed ? "used" : ""}`}
+                style={isSelected ? { borderColor: "#f4d35e", background: "rgba(212,175,55,.22)", boxShadow: "0 0 14px rgba(212,175,55,.45)" } : {}}
+              >
+                <strong>{label.label}</strong>
+                <span>{label.help}</span>
+              </div>
+            );
+          })}
           <div className="pa-control-card">
             <button className="pa-button ghost" onClick={() => setShowHint((v) => !v)}>💡 Hint</button>
             {showHint && <p className="pa-hint-text">Start with the biggest structure first: neckline/support/resistance, then label the peaks/lows, then confirmation.</p>}
-            <button className="pa-button" onClick={checkAnswer}>Check Answer</button>
-            <button className="pa-button secondary" onClick={reset}>Reset</button>
-            <button className="pa-button next" onClick={nextCard}>Next Pattern →</button>
+            <button
+              className="pa-button"
+              onClick={checkAnswer}
+              disabled={!allPlaced || scored}
+              style={!allPlaced || scored ? { opacity: 0.45, cursor: "not-allowed" } : {}}
+            >
+              {scored ? `Scored ${correctCount}/${card.zones.length}` : allPlaced ? "Check Answer" : `Place all ${card.zones.length} labels`}
+            </button>
+            <button className="pa-button secondary" onClick={reset}>Reset Card</button>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <button className="pa-button secondary" onClick={() => goToCard(cardIndex - 1)}>← Prev</button>
+              <button className="pa-button next" onClick={() => goToCard(cardIndex + 1)}>Next →</button>
+            </div>
           </div>
         </aside>
       </div>
@@ -349,7 +508,7 @@ export default function PatternAcademy() {
       <div className="pa-bottom-grid">
         <div className="pa-info-panel">
           <h3>🤖 AI Tutor Feedback</h3>
-          {!checked && <p>Drag the labels to the correct locations, then click <b>Check Answer</b>. The tutor will explain what each structure means.</p>}
+          {!checked && <p>Place every label, then click <b>Check Answer</b>. The tutor will explain what each structure means.</p>}
           {feedback.map((f, i) => <div key={i} className={`pa-feedback-line ${f.ok ? "good" : "bad"}`}>{f.ok ? "✅" : "❌"} {f.text}</div>)}
         </div>
         <div className="pa-info-panel">
@@ -358,13 +517,20 @@ export default function PatternAcademy() {
         </div>
         <div className="pa-info-panel">
           <h3>📈 Your Stats</h3>
-          <div className="pa-accuracy-ring" style={{ "--deg": `${accuracy * 3.6}deg` }}><strong>{accuracy}%</strong><span>Accuracy</span></div>
+          <div className="pa-accuracy-ring" style={{ "--deg": `${accuracy * 3.6}deg` }}><strong>{stats.attempts > 0 ? `${accuracy}%` : "--"}</strong><span>Accuracy</span></div>
           <div className="pa-mini-stats">
-            <div><span>Correct</span><strong>{correctTotal}</strong></div>
-            <div><span>Attempts</span><strong>{attempts}</strong></div>
-            <div><span>Current Card</span><strong>{cardIndex + 1}/{CARDS.length}</strong></div>
-            <div><span>Current Score</span><strong>{checked ? `${correctCount}/${card.zones.length}` : "--"}</strong></div>
+            <div><span>Correct</span><strong>{stats.correctTotal}</strong></div>
+            <div><span>Attempts</span><strong>{stats.attempts}</strong></div>
+            <div><span>Best Streak</span><strong>{stats.bestStreak}</strong></div>
+            <div><span>Card</span><strong>{cardIndex + 1}/{CARDS.length}</strong></div>
           </div>
+          <button
+            className="pa-button secondary"
+            onClick={resetProgress}
+            style={{ marginTop: 12, width: "100%", fontSize: 12, opacity: 0.8 }}
+          >
+            Reset Progress
+          </button>
         </div>
       </div>
     </section>
