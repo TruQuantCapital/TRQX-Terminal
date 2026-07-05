@@ -102,18 +102,55 @@ const CARDS = [
     explanation:["Symmetrical triangles show compression between lower highs and higher lows.","They can break either direction, so wait for confirmation.","The first strong close outside the triangle matters most."]
   },
   {
-    id:"rising-wedge", title:"Rising Wedge Pattern", level:"Advanced", trend:"Bullish Weakening → Bearish", range:{min:95,max:145},
-    candles:[C(8,100,108,98,106),C(12,106,117,104,115),C(16,115,111,118,109),C(20,111,121,110,119),C(24,119,116,123,114),C(28,116,126,115,124),C(32,124,121,128,119),C(36,121,130,120,128),C(40,128,124,132,122),C(44,124,116,126,114),C(48,116,106,118,104)],
-    lines:[{label:"Rising Resistance",x1:14,y1:45,x2:40,y2:22,color:RED},{label:"Rising Support",x1:14,y1:78,x2:40,y2:55,color:GREEN}],
-    zones:[{id:"res",label:"Rising Resistance",help:"Upper trendline climbs",x:29,y:33},{id:"sup",label:"Rising Support",help:"Lower trendline climbs",x:29,y:66},{id:"compression",label:"Compression",help:"Wedge narrows",x:40,y:46},{id:"break",label:"Breakdown",help:"Support line fails",x:45,y:72},{id:"target",label:"Target",help:"Move often retraces wedge base",x:54,y:84}],
-    explanation:["Rising wedge shows price rising with weakening structure.","The wedge narrows as momentum fades.","Break below rising support confirms bearish reversal or continuation."]
+    id:"rising-wedge", title:"Rising Wedge Pattern", level:"Advanced", trend:"Bullish Weakening → Bearish", range:{min:90,max:150},
+    candles:[
+      C(8,98,107,96,104), C(12,104,111,101,109),
+      C(16,109,123,106,120), C(20,120,114,124,112),
+      C(24,114,127,113,125), C(28,125,119,129,117),
+      C(32,119,132,118,130), C(36,130,124,134,122),
+      C(40,124,136,123,134), C(44,134,128,138,126),
+      C(48,128,137,127,135), C(52,135,121,139,118),
+      C(56,121,112,123,110), C(60,112,106,114,104),
+      C(64,106,98,108,95)
+    ],
+    lines:[
+      {label:"Rising Resistance",x1:16,y1:46,x2:48,y2:29,color:RED},
+      {label:"Rising Support",x1:16,y1:72,x2:48,y2:42,color:GREEN},
+      {label:"Breakdown",x1:50,y1:43,x2:58,y2:66,color:RED,dashed:true}
+    ],
+    zones:[
+      {id:"res",label:"Rising Resistance",help:"Connects at least 2-3 rising swing highs",x:31,y:35},
+      {id:"sup",label:"Rising Support",help:"Connects rising swing lows; breaks on confirmation",x:31,y:60},
+      {id:"compression",label:"Compression",help:"Highs and lows converge; momentum weakens",x:46,y:38},
+      {id:"break",label:"Breakdown",help:"Price closes below rising support",x:55,y:62},
+      {id:"target",label:"Target",help:"Common target is the base of the wedge",x:63,y:78}
+    ],
+    explanation:["A rising wedge requires higher highs and higher lows, but the two trendlines must converge.","The support line should be steeper than resistance; that shows buyers are chasing weaker moves.","The pattern is not confirmed until price breaks below rising support.","A common target is the wedge base or the measured height of the wedge projected downward."]
   },
   {
-    id:"falling-wedge", title:"Falling Wedge Pattern", level:"Advanced", trend:"Bearish Weakening → Bullish", range:{min:95,max:145},
-    candles:[C(8,140,132,142,130),C(12,132,120,134,118),C(16,120,124,126,116),C(20,124,113,126,111),C(24,113,116,118,108),C(28,116,106,118,104),C(32,106,110,112,101),C(36,110,103,112,100),C(40,103,108,110,98),C(44,108,120,106,118),C(48,118,132,116,130)],
-    lines:[{label:"Falling Resistance",x1:14,y1:25,x2:40,y2:52,color:RED},{label:"Falling Support",x1:14,y1:58,x2:40,y2:80,color:GREEN}],
-    zones:[{id:"res",label:"Falling Resistance",help:"Upper trendline declines",x:28,y:39},{id:"sup",label:"Falling Support",help:"Lower trendline declines",x:29,y:70},{id:"compression",label:"Compression",help:"Range tightens",x:39,y:61},{id:"break",label:"Breakout",help:"Resistance line breaks",x:46,y:40},{id:"target",label:"Target",help:"Move often returns to wedge origin",x:55,y:25}],
-    explanation:["Falling wedge shows selling pressure weakening.","The wedge narrows as the downtrend loses momentum.","Break above falling resistance confirms bullish reversal or continuation."]
+    id:"falling-wedge", title:"Falling Wedge Pattern", level:"Advanced", trend:"Bearish Weakening → Bullish", range:{min:90,max:150},
+    candles:[
+      C(8,142,132,144,130), C(12,132,124,134,122),
+      C(16,124,130,132,120), C(20,130,118,132,116),
+      C(24,118,124,126,113), C(28,124,112,126,110),
+      C(32,112,118,120,106), C(36,118,108,120,104),
+      C(40,108,114,116,100), C(44,114,106,116,99),
+      C(48,106,112,114,96), C(52,112,124,110,122),
+      C(56,122,134,120,132), C(60,132,142,130,140)
+    ],
+    lines:[
+      {label:"Falling Resistance",x1:16,y1:31,x2:48,y2:50,color:RED},
+      {label:"Falling Support",x1:16,y1:56,x2:48,y2:74,color:GREEN},
+      {label:"Breakout",x1:50,y1:49,x2:58,y2:30,color:GREEN,dashed:true}
+    ],
+    zones:[
+      {id:"res",label:"Falling Resistance",help:"Connects lower swing highs",x:31,y:42},
+      {id:"sup",label:"Falling Support",help:"Connects lower swing lows",x:31,y:67},
+      {id:"compression",label:"Compression",help:"Range narrows as sellers weaken",x:45,y:60},
+      {id:"break",label:"Breakout",help:"Price closes above falling resistance",x:55,y:39},
+      {id:"target",label:"Target",help:"Common target is wedge origin/base",x:64,y:23}
+    ],
+    explanation:["A falling wedge requires lower highs and lower lows, with both trendlines converging.","Selling pressure weakens as the swings get smaller.","The bullish confirmation is a break and close above falling resistance.","A common target is the wedge origin or measured wedge height projected upward."]
   },
   {
     id:"cup-handle", title:"Cup and Handle Pattern", level:"Intermediate", trend:"Bullish Continuation", range:{min:95,max:150},
@@ -193,200 +230,78 @@ function Line({ line }) {
   );
 }
 
-// ────────────────────────────────────────────────────────────
-// Persistence — per-account stats, same localStorage pattern
-// as Morning Coach. Reads the Supabase session for a user id;
-// falls back to "guest" when logged out.
-// ────────────────────────────────────────────────────────────
-
-function getAccountId() {
-  try {
-    const key = Object.keys(localStorage).find(
-      (k) => k.startsWith("sb-") && k.includes("auth-token")
-    );
-    if (!key) return "guest";
-    const session = JSON.parse(localStorage.getItem(key));
-    return session?.user?.id || session?.user?.email || "guest";
-  } catch {
-    return "guest";
-  }
-}
-
-const EMPTY_STATS = { xp: 0, streak: 0, bestStreak: 0, attempts: 0, correctTotal: 0, mastered: [] };
-
-function loadStats(accountId) {
-  try {
-    const raw = localStorage.getItem(`trqx_pattern_academy::${accountId}`);
-    if (!raw) return { ...EMPTY_STATS };
-    return { ...EMPTY_STATS, ...JSON.parse(raw) };
-  } catch {
-    return { ...EMPTY_STATS };
-  }
-}
-
-function saveStats(accountId, stats) {
-  try {
-    localStorage.setItem(`trqx_pattern_academy::${accountId}`, JSON.stringify(stats));
-  } catch {
-    /* storage full or blocked — stats stay in memory for the session */
-  }
-}
-
-// Fisher–Yates shuffle, non-mutating
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
 export default function PatternAcademy() {
-  const accountId = useMemo(() => getAccountId(), []);
-  const [stats, setStats] = useState(() => loadStats(accountId));
   const [cardIndex, setCardIndex] = useState(0);
-  const [placed, setPlaced] = useState({});        // zoneId -> labelId
-  const [results, setResults] = useState({});      // zoneId -> boolean
-  const [scored, setScored] = useState(false);     // guards double-scoring the same attempt
+  const [placed, setPlaced] = useState({});
+  const [results, setResults] = useState({});
   const [showHint, setShowHint] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState(null); // tap-to-place selection
-  const [shuffleNonce, setShuffleNonce] = useState(0);      // reshuffles labels on reset
+  const [selectedLabel, setSelectedLabel] = useState(null);
+  const [xp, setXp] = useState(2950);
+  const [streak, setStreak] = useState(0);
+  const [attempts, setAttempts] = useState(48);
+  const [correctTotal, setCorrectTotal] = useState(38);
 
   const card = CARDS[cardIndex];
   const checked = Object.keys(results).length > 0;
   const correctCount = Object.values(results).filter(Boolean).length;
-  const accuracy = stats.attempts > 0 ? Math.round((stats.correctTotal / stats.attempts) * 100) : 0;
+  const accuracy = Math.round((correctTotal / Math.max(attempts, 1)) * 100);
   const used = Object.values(placed);
-  const allPlaced = card.zones.every((z) => placed[z.id]);
-  const isMastered = stats.mastered.includes(card.id);
 
-  // Shuffled label bank — reshuffles per card and per reset so the
-  // side-panel order never mirrors the zone numbering.
-  const labels = useMemo(
-    () => shuffle(card.zones.map((z) => ({ id: z.id, label: z.label, help: z.help }))),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [card.id, shuffleNonce]
-  );
+  const labels = useMemo(() => card.zones.map((z) => ({ id: z.id, label: z.label, help: z.help })), [card]);
 
-  function updateStats(updater) {
-    setStats((prev) => {
-      const next = updater(prev);
-      saveStats(accountId, next);
-      return next;
-    });
-  }
-
-  // ── Placement (shared by tap and drag) ─────────────────────
-  function placeLabel(zoneId, labelId) {
-    if (!labelId) return;
-    setPlaced((prev) => {
-      const next = { ...prev };
-      Object.keys(next).forEach((key) => {
-        if (next[key] === labelId) delete next[key]; // a label lives in one zone at a time
-      });
-      next[zoneId] = labelId;
-      return next;
-    });
-    setResults({});
-    setScored(false);
-    setSelectedLabel(null);
-  }
-
-  function clearZone(zoneId) {
-    setPlaced((prev) => {
-      const next = { ...prev };
-      delete next[zoneId];
-      return next;
-    });
-    setResults({});
-    setScored(false);
-  }
-
-  // ── Tap-to-place (works on touch AND mouse) ────────────────
-  function tapLabel(labelId) {
-    if (used.includes(labelId)) return;
-    setSelectedLabel((cur) => (cur === labelId ? null : labelId));
-  }
-
-  function tapZone(zoneId) {
-    if (selectedLabel) {
-      placeLabel(zoneId, selectedLabel);
-    } else if (placed[zoneId]) {
-      clearZone(zoneId); // tap a filled zone with nothing selected -> return its label
-    }
-  }
-
-  // ── Desktop drag (kept as a bonus input method) ─────────────
   function dragStart(e, id) {
     e.dataTransfer.setData("labelId", id);
   }
 
-  function drop(e, zoneId) {
-    e.preventDefault();
-    placeLabel(zoneId, e.dataTransfer.getData("labelId"));
+  function placeLabel(labelId, zoneId) {
+    if (!labelId) return;
+    setPlaced((prev) => {
+      const next = { ...prev };
+      Object.keys(next).forEach((key) => {
+        if (next[key] === labelId) delete next[key];
+      });
+      next[zoneId] = labelId;
+      return next;
+    });
+    setSelectedLabel(null);
+    setResults({});
   }
 
-  // ── Grading — by label TEXT, so identical twin labels
-  //    (e.g. two "Higher Low" zones) are interchangeable ──────
+  function drop(e, zoneId) {
+    e.preventDefault();
+    const labelId = e.dataTransfer.getData("labelId");
+    placeLabel(labelId, zoneId);
+  }
+
   function checkAnswer() {
-    if (scored) return; // same attempt can't be farmed for XP
-    const labelTextById = Object.fromEntries(card.zones.map((z) => [z.id, z.label]));
     const next = {};
-    card.zones.forEach((z) => {
-      const placedId = placed[z.id];
-      next[z.id] = placedId ? labelTextById[placedId] === z.label : false;
-    });
+    card.zones.forEach((z) => { next[z.id] = placed[z.id] === z.id; });
     const count = Object.values(next).filter(Boolean).length;
-    const perfect = count === card.zones.length;
     setResults(next);
-    setScored(true);
-    updateStats((s) => {
-      const newStreak = perfect ? s.streak + 1 : 0;
-      return {
-        ...s,
-        attempts: s.attempts + card.zones.length,
-        correctTotal: s.correctTotal + count,
-        streak: newStreak,
-        bestStreak: Math.max(s.bestStreak, newStreak),
-        xp: s.xp + count * 25 + (perfect ? 100 : 0),
-        mastered: perfect && !s.mastered.includes(card.id) ? [...s.mastered, card.id] : s.mastered,
-      };
-    });
+    setAttempts((v) => v + card.zones.length);
+    setCorrectTotal((v) => v + count);
+    setStreak((v) => count === card.zones.length ? v + 1 : 0);
+    setXp((v) => v + count * 25 + (count === card.zones.length ? 100 : 0));
   }
 
   function reset() {
     setPlaced({});
     setResults({});
-    setScored(false);
     setShowHint(false);
     setSelectedLabel(null);
-    setShuffleNonce((n) => n + 1); // fresh label order each attempt
   }
 
-  function goToCard(nextIndex) {
-    setCardIndex(((nextIndex % CARDS.length) + CARDS.length) % CARDS.length);
-    setPlaced({});
-    setResults({});
-    setScored(false);
-    setShowHint(false);
-    setSelectedLabel(null);
-    setShuffleNonce((n) => n + 1);
+  function nextCard() {
+    setCardIndex((i) => (i + 1) % CARDS.length);
+    reset();
   }
 
-  function resetProgress() {
-    if (!window.confirm("Reset all Pattern Academy progress? XP, streaks, and mastered cards will start over.")) return;
-    updateStats(() => ({ ...EMPTY_STATS }));
-  }
-
-  const feedback = checked
-    ? card.zones.map((z) => {
-        const picked = labels.find((l) => l.id === placed[z.id]);
-        if (results[z.id]) return { ok: true, text: `Correct: ${z.label}. ${z.help}` };
-        if (!picked) return { ok: false, text: `Missing: ${z.label}. ${z.help}` };
-        return { ok: false, text: `Almost. You placed ${picked.label}, but this location is ${z.label}. ${z.help}` };
-      })
-    : [];
+  const feedback = checked ? card.zones.map((z) => {
+    const picked = labels.find((l) => l.id === placed[z.id]);
+    if (results[z.id]) return { ok: true, text: `Correct: ${z.label}. ${z.help}` };
+    if (!picked) return { ok: false, text: `Missing: ${z.label}. ${z.help}` };
+    return { ok: false, text: `Almost. You placed ${picked.label}, but this location is ${z.label}. ${z.help}` };
+  }) : [];
 
   const priceTicks = Array.from({ length: 6 }, (_, i) => {
     const p = card.range.max - ((card.range.max - card.range.min) / 5) * i;
@@ -401,21 +316,14 @@ export default function PatternAcademy() {
           <div className="pa-title-row">
             <h2>{card.title}</h2>
             <span className="pa-level-pill">{card.level}</span>
-            {isMastered && (
-              <span className="pa-level-pill" style={{ borderColor: "rgba(34,197,94,.55)", background: "rgba(34,197,94,.1)", color: "#4ade80" }}>
-                ✓ Mastered
-              </span>
-            )}
           </div>
-          <div className="pa-subtext">
-            Tap a label, then tap its location on the chart — or drag and drop on desktop. Tap a filled slot to clear it.
-          </div>
+          <div className="pa-subtext">Drag each label to the correct area. These cards are hand-built for teaching, not auto-generated.</div>
         </div>
         <div className="pa-stats-strip">
-          <div className="pa-stat gold"><span>XP</span><strong>{stats.xp.toLocaleString()}</strong></div>
-          <div className="pa-stat"><span>Streak</span><strong>🔥 {stats.streak}</strong></div>
-          <div className="pa-stat green"><span>Accuracy</span><strong>{stats.attempts > 0 ? `${accuracy}%` : "--"}</strong></div>
-          <div className="pa-stat blue"><span>Mastered</span><strong>{stats.mastered.length}/{CARDS.length}</strong></div>
+          <div className="pa-stat gold"><span>XP</span><strong>{xp.toLocaleString()}</strong></div>
+          <div className="pa-stat"><span>Streak</span><strong>🔥 {streak}</strong></div>
+          <div className="pa-stat green"><span>Accuracy</span><strong>{accuracy}%</strong></div>
+          <div className="pa-stat blue"><span>Cards</span><strong>{CARDS.length}</strong></div>
         </div>
       </div>
 
@@ -427,8 +335,8 @@ export default function PatternAcademy() {
               <span className="pa-trend-pill">TREND: <b>{card.trend}</b></span>
             </div>
             <div className="pa-progress-wrap">
-              <div className="pa-progress-label"><span>Mastered</span><span>{stats.mastered.length}/{CARDS.length}</span></div>
-              <div className="pa-progress-track"><div className="pa-progress-fill" style={{ width: `${(stats.mastered.length / CARDS.length) * 100}%` }} /></div>
+              <div className="pa-progress-label"><span>Progress</span><span>{cardIndex + 1}/{CARDS.length}</span></div>
+              <div className="pa-progress-track"><div className="pa-progress-fill" style={{ width: `${((cardIndex + 1) / CARDS.length) * 100}%` }} /></div>
             </div>
           </div>
 
@@ -442,65 +350,49 @@ export default function PatternAcademy() {
             {card.zones.map((zone, i) => {
               const picked = labels.find((l) => l.id === placed[zone.id]);
               const state = checked ? (results[zone.id] ? "correct" : "wrong") : "";
-              const targetable = selectedLabel && !picked;
               return (
-                <div
+                <button
+                  type="button"
                   key={zone.id}
-                  className={`pa-zone ${state} ${!picked ? "empty" : ""}`}
-                  style={{
-                    left: `${zone.x}%`,
-                    top: `${zone.y}%`,
-                    cursor: "pointer",
-                    ...(targetable ? { borderColor: "#f4d35e", boxShadow: "0 0 14px rgba(212,175,55,.55)" } : {}),
-                  }}
-                  onClick={() => tapZone(zone.id)}
+                  className={`pa-zone ${state} ${!picked ? "empty" : ""} ${selectedLabel ? "ready" : ""}`}
+                  style={{ left: `${zone.x}%`, top: `${zone.y}%` }}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={(e) => drop(e, zone.id)}
+                  onClick={() => placeLabel(selectedLabel, zone.id)}
                   title={zone.help}
                 >
                   <span className="pa-zone-number">{i + 1}</span>
-                  <span className="pa-zone-text">{picked?.label || (targetable ? "TAP HERE" : "DROP")}</span>
-                </div>
+                  <span className="pa-zone-text">{picked?.label || "DROP"}</span>
+                </button>
               );
             })}
           </div>
         </div>
 
         <aside className="pa-side-panel">
-          <div className="pa-side-title">🏆 {selectedLabel ? "Now tap its spot on the chart" : "Tap or drag these labels"}</div>
-          {labels.map((label) => {
-            const isUsed = used.includes(label.id);
-            const isSelected = selectedLabel === label.id;
-            return (
-              <div
-                key={label.id}
-                draggable={!isUsed}
-                onDragStart={(e) => dragStart(e, label.id)}
-                onClick={() => tapLabel(label.id)}
-                className={`pa-drag-label ${isUsed ? "used" : ""}`}
-                style={isSelected ? { borderColor: "#f4d35e", background: "rgba(212,175,55,.22)", boxShadow: "0 0 14px rgba(212,175,55,.45)" } : {}}
-              >
-                <strong>{label.label}</strong>
-                <span>{label.help}</span>
-              </div>
-            );
-          })}
+          <div className="pa-side-title">🏆 Drag these labels</div>
+          {labels.map((label) => (
+            <button
+              type="button"
+              key={label.id}
+              draggable
+              onDragStart={(e) => dragStart(e, label.id)}
+              onClick={() => setSelectedLabel(label.id)}
+              className={`pa-drag-label ${used.includes(label.id) ? "used" : ""} ${selectedLabel === label.id ? "selected" : ""}`}
+            >
+              <strong>{label.label}</strong>
+              <span>{label.help}</span>
+            </button>
+          ))}
+          {selectedLabel && (
+            <div className="pa-mobile-selected">Selected: <b>{labels.find((l) => l.id === selectedLabel)?.label}</b>. Tap a drop zone on the chart.</div>
+          )}
           <div className="pa-control-card">
             <button className="pa-button ghost" onClick={() => setShowHint((v) => !v)}>💡 Hint</button>
             {showHint && <p className="pa-hint-text">Start with the biggest structure first: neckline/support/resistance, then label the peaks/lows, then confirmation.</p>}
-            <button
-              className="pa-button"
-              onClick={checkAnswer}
-              disabled={!allPlaced || scored}
-              style={!allPlaced || scored ? { opacity: 0.45, cursor: "not-allowed" } : {}}
-            >
-              {scored ? `Scored ${correctCount}/${card.zones.length}` : allPlaced ? "Check Answer" : `Place all ${card.zones.length} labels`}
-            </button>
-            <button className="pa-button secondary" onClick={reset}>Reset Card</button>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <button className="pa-button secondary" onClick={() => goToCard(cardIndex - 1)}>← Prev</button>
-              <button className="pa-button next" onClick={() => goToCard(cardIndex + 1)}>Next →</button>
-            </div>
+            <button className="pa-button" onClick={checkAnswer}>Check Answer</button>
+            <button className="pa-button secondary" onClick={reset}>Reset</button>
+            <button className="pa-button next" onClick={nextCard}>Next Pattern →</button>
           </div>
         </aside>
       </div>
@@ -508,7 +400,7 @@ export default function PatternAcademy() {
       <div className="pa-bottom-grid">
         <div className="pa-info-panel">
           <h3>🤖 AI Tutor Feedback</h3>
-          {!checked && <p>Place every label, then click <b>Check Answer</b>. The tutor will explain what each structure means.</p>}
+          {!checked && <p>Drag the labels to the correct locations, then click <b>Check Answer</b>. The tutor will explain what each structure means.</p>}
           {feedback.map((f, i) => <div key={i} className={`pa-feedback-line ${f.ok ? "good" : "bad"}`}>{f.ok ? "✅" : "❌"} {f.text}</div>)}
         </div>
         <div className="pa-info-panel">
@@ -517,20 +409,13 @@ export default function PatternAcademy() {
         </div>
         <div className="pa-info-panel">
           <h3>📈 Your Stats</h3>
-          <div className="pa-accuracy-ring" style={{ "--deg": `${accuracy * 3.6}deg` }}><strong>{stats.attempts > 0 ? `${accuracy}%` : "--"}</strong><span>Accuracy</span></div>
+          <div className="pa-accuracy-ring" style={{ "--deg": `${accuracy * 3.6}deg` }}><strong>{accuracy}%</strong><span>Accuracy</span></div>
           <div className="pa-mini-stats">
-            <div><span>Correct</span><strong>{stats.correctTotal}</strong></div>
-            <div><span>Attempts</span><strong>{stats.attempts}</strong></div>
-            <div><span>Best Streak</span><strong>{stats.bestStreak}</strong></div>
-            <div><span>Card</span><strong>{cardIndex + 1}/{CARDS.length}</strong></div>
+            <div><span>Correct</span><strong>{correctTotal}</strong></div>
+            <div><span>Attempts</span><strong>{attempts}</strong></div>
+            <div><span>Current Card</span><strong>{cardIndex + 1}/{CARDS.length}</strong></div>
+            <div><span>Current Score</span><strong>{checked ? `${correctCount}/${card.zones.length}` : "--"}</strong></div>
           </div>
-          <button
-            className="pa-button secondary"
-            onClick={resetProgress}
-            style={{ marginTop: 12, width: "100%", fontSize: 12, opacity: 0.8 }}
-          >
-            Reset Progress
-          </button>
         </div>
       </div>
     </section>
