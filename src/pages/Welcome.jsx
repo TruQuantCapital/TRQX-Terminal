@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
@@ -75,7 +75,7 @@ const FEATURES = [
   { icon: "🎓", title: "Trading Academy", desc: "27 lessons, drills, flashcards & quizzes across 3 levels.", featureKey: "academy", minTier: "starter" },
   { icon: "📰", title: "Market News", desc: "Live market news, economic calendar & market intelligence.", featureKey: "news", minTier: "free" },
   { icon: "🤖", title: "AI Intelligence", desc: "Ask AI anything about flow, gamma, charts & trade setups.", featureKey: "ai_chat", minTier: "pro" },
-  { icon: "📈", title: "Options Flow", desc: "Unusual options activity, sweeps & institutional positioning.", featureKey: "options_flow", minTier: "elite" },
+  { icon: "📈", title: "Options Flow", desc: "Unusual options activity, sweeps & institutional positioning.", featureKey: "options_flow", minTier: "pro" },
 ];
 
 const TIER_CONFIG = {
@@ -143,16 +143,22 @@ function getTierBadge(minTier) {
 
 export default function Welcome() {
   const navigate = useNavigate();
-  const { tier, canAccess } = useAuth();
+  const { tier, canAccess, user } = useAuth();
   const normalizedTier = (tier || "free").toLowerCase();
   const config = TIER_CONFIG[normalizedTier] || TIER_CONFIG.free;
   const userRank = TIER_RANK[normalizedTier] ?? 0;
-  const isFirstVisit = !localStorage.getItem("trqx_visited");
+  const visitKey = `trqx_visited_${user?.email || "anon"}`;
+  const isFirstVisit = !localStorage.getItem(visitKey);
+  const emailSentRef = useRef(false);
 
   useEffect(() => {
     confetti();
-    triggerWelcomeEmail();
-    localStorage.setItem("trqx_visited", "true");
+    // Welcome email: exactly once per account per browser (this page owns it)
+    if (isFirstVisit && !emailSentRef.current) {
+      emailSentRef.current = true;
+      triggerWelcomeEmail();
+    }
+    localStorage.setItem(visitKey, "true");
   }, []);
 
   return (
