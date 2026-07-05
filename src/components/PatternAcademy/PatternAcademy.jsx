@@ -210,23 +210,43 @@ function Candle({ candle, range }) {
 }
 
 function Line({ line }) {
-  const dx = line.x2 - line.x1;
-  const dy = line.y2 - line.y1;
-  const length = Math.sqrt(dx * dx + dy * dy);
-  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  const color = line.color || GOLD;
+  const midX = (line.x1 + line.x2) / 2;
+  const midY = (line.y1 + line.y2) / 2;
   return (
-    <div
-      className={`pa-line ${line.soft ? "soft" : ""} ${line.dashed ? "dashed" : ""}`}
-      style={{
-        left: `${line.x1}%`,
-        top: `${line.y1}%`,
-        width: `${length}%`,
-        transform: `rotate(${angle}deg)`,
-        borderColor: line.color || GOLD
-      }}
-    >
-      <span>{line.label}</span>
-    </div>
+    <>
+      <svg
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        style={{
+          position: "absolute", inset: 0, width: "100%", height: "100%",
+          zIndex: 6, pointerEvents: "none", overflow: "visible",
+          filter: `drop-shadow(0 0 6px ${color}66)`,
+        }}
+      >
+        <line
+          x1={line.x1} y1={line.y1} x2={line.x2} y2={line.y2}
+          stroke={color}
+          strokeWidth={line.soft ? 16 : 3}
+          strokeOpacity={line.soft ? 0.28 : 1}
+          strokeDasharray={line.dashed ? "7 7" : undefined}
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+      <span
+        style={{
+          position: "absolute", left: `${midX}%`, top: `${midY}%`,
+          transform: "translate(-50%, -140%)",
+          background: "#07111d", border: `1px solid ${color}`,
+          padding: "3px 8px", borderRadius: 8, color: "#f8fafc",
+          fontWeight: 900, fontSize: 12, whiteSpace: "nowrap",
+          zIndex: 7, pointerEvents: "none",
+        }}
+      >
+        {line.label}
+      </span>
+    </>
   );
 }
 
