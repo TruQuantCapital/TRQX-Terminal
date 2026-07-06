@@ -1,4 +1,4 @@
-// Scanner v2.4 - FuturesBar built-in (no separate component file needed)
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "../hooks/useAuth";
 
@@ -428,8 +428,7 @@ export default function Scanner() {
 
   return (
     <div className="scanner-page">
-      <FuturesBar />
-      <StatsBar rows={rows} stats={stats} search={search} connected={connected} />
+       <StatsBar rows={rows} stats={stats} search={search} connected={connected} />
       <TopContracts contracts={search ? topContracts.filter(c=>c.ticker?.includes(search.toUpperCase())) : topContracts} />
 
       <div className="view-switcher" style={isMobile?swipeRow:undefined}>
