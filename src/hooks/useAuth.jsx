@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("[auth] session on load:", session?.user?.email, "token:", session?.access_token?.slice(0,20));
+      console.log("[auth] session on load:", session?.user?.email ?? "no session");
       setUser(session?.user ?? null);
       setAccessToken(session?.access_token ?? null);
       if (session?.user) fetchProfile(session.user.id);
@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      console.log("[auth] state change:", session?.user?.email, "token:", session?.access_token?.slice(0,20));
+      console.log("[auth] state change:", session?.user?.email ?? "signed out");
       setUser(session?.user ?? null);
       setAccessToken(session?.access_token ?? null);
       if (session?.user) fetchProfile(session.user.id);
