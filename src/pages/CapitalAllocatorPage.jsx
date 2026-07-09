@@ -390,15 +390,14 @@ export default function CapitalAllocatorPage() {
                   </div>
                   <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3 }}>
                     <div style={{ height: "100%", width: `${pct}%`, background: GOLD, borderRadius: 3 }} />
-                    <div style={{ marginTop: 20, padding: "12px 16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, color: "#6b7280", fontSize: 11, lineHeight: 1.6 }}>
-        This is an educational model portfolio for illustration only — not personalized investment advice.
-        TRQX Capital is not a registered investment adviser. Investing involves risk, including possible loss of principal.
-        Always do your own research before making investment decisions.
-      </div>
-                    
                   </div>
                 </div>
               ))}
+              <div style={{ marginTop: 20, padding: "12px 16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, color: "#6b7280", fontSize: 11, lineHeight: 1.6 }}>
+                This is an educational model portfolio for illustration only — not personalized investment advice.
+                TRQX Capital is not a registered investment adviser. Investing involves risk, including possible loss of principal.
+                Always do your own research before making investment decisions.
+              </div>
             </div>
           )}
 
