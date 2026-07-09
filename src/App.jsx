@@ -36,6 +36,7 @@ const routeByKey = {
   options: "/options-flow",
   dividends: "/dividends",
   tradeplan: "/trade-plan",
+  "capital-allocator": "/capital-allocator",
   gamma: "/gamma-ex",
   calendar: "/economic-calendar",
   alerts: "/alerts",
@@ -54,6 +55,7 @@ const keyByPath = {
   "/scanner": "scanner",
   "/options-flow": "options",
   "/trade-plan": "tradeplan",
+  "/capital-allocator": "capital-allocator",
   "/gamma-ex": "gamma",
   "/economic-calendar": "calendar",
   "/alerts": "alerts",
@@ -173,10 +175,3 @@ export default function App() {
     </AuthProvider>
   );
 }
-
-
-
-
-
-
-

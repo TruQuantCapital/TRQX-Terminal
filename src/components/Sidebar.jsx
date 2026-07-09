@@ -135,8 +135,6 @@ export default function Sidebar({ active, setActive, user, tier, canAccess }) {
                       window.location.href = "/home";
                     } else if (item.key === "discord") {
                       window.open("https://discord.gg/jy3ta9qkfH", "_blank");
-                    } else if (item.key === "capital-allocator") {
-                      window.location.href = "/capital-allocator";
                     } else {
                       setActive(item.key);
                     }
@@ -182,5 +180,3 @@ export default function Sidebar({ active, setActive, user, tier, canAccess }) {
     </aside>
   );
 }
-
-
