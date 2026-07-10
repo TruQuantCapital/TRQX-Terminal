@@ -114,10 +114,14 @@ Write exactly 2 sentences. Be specific, professional, and actionable. Reference 
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ prompt }),
             });
-            if (aiRes.ok && !disposed) {
-              const aiData = await aiRes.json();
-              setAiRead(aiData.reply || null);
-            }
+            const aiData = await aiRes.json();
+
+if (aiRes.ok && aiData.reply) {
+    setAiRead(aiData.reply);
+} else {
+    console.warn("AI unavailable, using fallback.");
+    setAiRead(null);
+}
           } catch (e) {
             console.log("AI read failed:", e.message);
           }
