@@ -6,64 +6,27 @@ const TEAL = "#26a69a";
 const RED = "#ef5350";
 const API = import.meta.env.VITE_API_URL || "https://trqx-flow-scanner-production.up.railway.app";
 
-const STORAGE_KEY_BASE = "trqx_morning_coach_date";
-
-// Coach display window, ET. Outside this window the modal never shows —
-// it's a MORNING coach; before this fix a UTC date bug made it pop every
-// evening after 8 PM ET (toISOString rolls to tomorrow's UTC date).
-const SHOW_START_HOUR_ET = 4;   // 4:00 AM ET
-const SHOW_END_HOUR_ET = 12;    // until noon ET
-
-function etDateString() {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
-  }).format(new Date());
-}
-
-function etHourNow() {
-  return Number(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/New_York", hour: "numeric", hour12: false,
-    }).format(new Date())
-  );
-}
-
-// A coach payload is only renderable if it has actual content.
-// Guards against any empty/partial object slipping through as a
-// blank modal shell.
-function coachHasContent(c) {
-  return !!(c && c.greeting && c.marketBrief);
-}
+const STORAGE_KEY = "trqx_morning_coach_date";
 
 export default function MorningCoach() {
-  const { user, tier, getToken, canAccess } = useAuth();
+  const { tier, getToken, canAccess } = useAuth();
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [coach, setCoach] = useState(null);
   const [error, setError] = useState(null);
   const hasAccess = canAccess("morning_coach");
 
-  // Per-account key so switching accounts on one browser doesn't
-  // suppress (or double-fire) the coach.
-  const storageKey = `${STORAGE_KEY_BASE}_${user?.email || "anon"}`;
 
-  useEffect(() => {
+useEffect(() => {
     if (!hasAccess) return;
     if (!localStorage.getItem("trqx_onboarding_complete")) return;
-
-    // Morning window only, evaluated in ET.
-    const hour = etHourNow();
-    if (hour < SHOW_START_HOUR_ET || hour >= SHOW_END_HOUR_ET) return;
-
-    // Once per ET day. The old key used toISOString() (UTC), which
-    // flips to "tomorrow" at 8 PM ET and re-triggered the modal at night.
-    const today = etDateString();
-    const lastSeen = localStorage.getItem(storageKey);
+    const today = new Date().toISOString().slice(0, 10);
+    const lastSeen = localStorage.getItem(STORAGE_KEY);
     if (lastSeen !== today) {
       setVisible(true);
       fetchCoach();
     }
-  }, [hasAccess, user?.email]);
+  }, [hasAccess]);
 
   async function fetchCoach() {
     setLoading(true);
@@ -77,9 +40,8 @@ export default function MorningCoach() {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
-      const data = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(data?.error || `Failed to load morning coach (${res.status})`);
-      if (!coachHasContent(data)) throw new Error("Coach unavailable this morning — try again in a moment.");
+      if (!res.ok) throw new Error(`Failed to load morning coach (${res.status})`);
+      const data = await res.json();
       setCoach(data);
     } catch (e) {
       setError(e.message);
@@ -89,13 +51,13 @@ export default function MorningCoach() {
   }
 
   function dismiss() {
-    localStorage.setItem(storageKey, etDateString());
+    const today = new Date().toISOString().slice(0, 10);
+    localStorage.setItem(STORAGE_KEY, today);
     setVisible(false);
   }
 
   if (!visible || !hasAccess) return null;
-
-  const showContent = coachHasContent(coach) && !loading && !error;
+  
 
   return (
     <>
@@ -129,16 +91,16 @@ export default function MorningCoach() {
               TRQX CAPITAL · MORNING COACH
             </div>
             <div style={{ color: "#f5f1e8", fontSize: 22, fontWeight: 900 }}>
-              {coach?.date || new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "America/New_York" })}
+              {coach?.date || new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </div>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            {showContent && coach?.isOpEx && (
+            {coach?.isOpEx && (
               <span style={{ background: `${RED}20`, border: `1px solid ${RED}50`, color: RED, fontSize: 10, fontWeight: 800, padding: "4px 10px", borderRadius: 6, letterSpacing: 1 }}>
                 ⚡ OPEX
               </span>
             )}
-            {showContent && coach?.sentiment && ["Bullish", "Bearish"].includes(coach.sentiment) && (
+            {coach?.sentiment && (
               <span style={{
                 background: coach.sentiment === "Bullish" ? `${TEAL}20` : `${RED}20`,
                 border: `1px solid ${coach.sentiment === "Bullish" ? TEAL : RED}50`,
@@ -177,8 +139,8 @@ export default function MorningCoach() {
           </div>
         )}
 
-        {/* Content — only renders when the coach payload actually has content */}
-        {showContent && (
+        {/* Content */}
+        {coach && !loading && (
           <div style={{ display: "grid", gap: 20 }}>
 
             {/* Greeting */}
@@ -205,28 +167,22 @@ export default function MorningCoach() {
             </div>
 
             {/* Game Plan */}
-            {coach.gamePlan && (
-              <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "16px 18px" }}>
-                <div style={{ color: TEAL, fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 8 }}>TODAY'S GAME PLAN</div>
-                <div style={{ color: "#d1d5db", fontSize: 14, lineHeight: 1.8 }}>{coach.gamePlan}</div>
-              </div>
-            )}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "16px 18px" }}>
+              <div style={{ color: TEAL, fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 8 }}>TODAY'S GAME PLAN</div>
+              <div style={{ color: "#d1d5db", fontSize: 14, lineHeight: 1.8 }}>{coach.gamePlan}</div>
+            </div>
 
             {/* Mindset */}
-            {coach.mindset && (
-              <div style={{ background: `${GOLD}08`, border: `1px solid ${GOLD}25`, borderRadius: 12, padding: "14px 18px" }}>
-                <div style={{ color: GOLD, fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 8 }}>MINDSET</div>
-                <div style={{ color: "#f5f1e8", fontSize: 14, fontWeight: 600, lineHeight: 1.7, fontStyle: "italic" }}>"{coach.mindset}"</div>
-              </div>
-            )}
+            <div style={{ background: `${GOLD}08`, border: `1px solid ${GOLD}25`, borderRadius: 12, padding: "14px 18px" }}>
+              <div style={{ color: GOLD, fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 8 }}>MINDSET</div>
+              <div style={{ color: "#f5f1e8", fontSize: 14, fontWeight: 600, lineHeight: 1.7, fontStyle: "italic" }}>"{coach.mindset}"</div>
+            </div>
 
             {/* Platform Reminders */}
-            {coach.platformReminders && (
-              <div>
-                <div style={{ color: "#9ca3af", fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 8 }}>PLATFORM REMINDERS</div>
-                <div style={{ color: "#9ca3af", fontSize: 13, lineHeight: 1.7 }}>{coach.platformReminders}</div>
-              </div>
-            )}
+            <div>
+              <div style={{ color: "#9ca3af", fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 8 }}>PLATFORM REMINDERS</div>
+              <div style={{ color: "#9ca3af", fontSize: 13, lineHeight: 1.7 }}>{coach.platformReminders}</div>
+            </div>
 
           </div>
         )}
