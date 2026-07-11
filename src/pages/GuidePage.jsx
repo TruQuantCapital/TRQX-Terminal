@@ -127,7 +127,7 @@ function VideoEmbed({ youtubeId, title, description }) {
         <iframe
           width="100%"
           height="400"
-          src={`https://www.youtube.com/embed/${youtubeId}`}
+          src={`https://www.youtube-nocookie.com/embed/${youtubeId}?rel=0&modestbranding=1`}
           title={title}
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -161,7 +161,7 @@ function VideosGuide() {
   // Example: youtubeId="dQw4w9WgXcQ"
   const videos = [
     {
-      youtubeId: null,
+      youtubeId: "ayMULKq198M",
       title: "Platform Walkthrough — TRQX Capital Terminal Overview",
       description: "A complete tour of every tool in the terminal. Start here if you're brand new.",
       path: "Path 1 — All Users",
