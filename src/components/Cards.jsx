@@ -1,7 +1,8 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GraduationCap, Waves, Crown, ExternalLink } from "lucide-react";
 import DataTable from "./DataTable";
+import { useAuth } from "../hooks/useAuth";
 import {
   economicRows,
   gammaMetrics,
@@ -11,9 +12,68 @@ import {
 
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
+/* ────────────────────────────────────────────────────────────
+   Market hours (America/New_York) — mirrors backend v2.5 gate.
+   Weekends, NYSE holidays, and 9:30–4:00 (1:00 on early closes).
+──────────────────────────────────────────────────────────── */
+const NYSE_HOLIDAYS = new Set([
+  // 2026
+  "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25",
+  "2026-06-19", "2026-07-03", "2026-09-07", "2026-11-26", "2026-12-25",
+  // 2027
+  "2027-01-01", "2027-01-18", "2027-02-15", "2027-03-26", "2027-05-31",
+  "2027-06-18", "2027-07-05", "2027-09-06", "2027-11-25", "2027-12-24",
+]);
+const NYSE_EARLY_CLOSE = new Set(["2026-11-27", "2026-12-24", "2027-11-26"]);
+
+function getETParts() {
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    weekday: "short", year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hour12: false,
+  });
+  const p = Object.fromEntries(fmt.formatToParts(new Date()).map(x => [x.type, x.value]));
+  return {
+    dateStr: `${p.year}-${p.month}-${p.day}`,
+    weekday: p.weekday,
+    minutes: parseInt(p.hour, 10) * 60 + parseInt(p.minute, 10),
+  };
+}
+
+export function isMarketOpen() {
+  const { dateStr, weekday, minutes } = getETParts();
+  if (weekday === "Sat" || weekday === "Sun") return false;
+  if (NYSE_HOLIDAYS.has(dateStr)) return false;
+  const close = NYSE_EARLY_CLOSE.has(dateStr) ? 13 * 60 : 16 * 60;
+  return minutes >= 9 * 60 + 30 && minutes < close;
+}
+
+function useMarketOpen() {
+  const [open, setOpen] = useState(isMarketOpen);
+  useEffect(() => {
+    const i = setInterval(() => setOpen(isMarketOpen()), 60_000);
+    return () => clearInterval(i);
+  }, []);
+  return open;
+}
+
+function ClosedChip({ compact = false }) {
+  return (
+    <span style={{
+      background: "rgba(212,175,55,0.1)", border: "1px solid rgba(212,175,55,0.4)",
+      color: "#d4af37", fontSize: compact ? "9px" : "10px", fontWeight: 800,
+      letterSpacing: "1px", padding: compact ? "2px 8px" : "3px 10px",
+      borderRadius: "6px", whiteSpace: "nowrap",
+    }}>
+      MARKET CLOSED · LAST SESSION
+    </span>
+  );
+}
+
 export function GaugeCard() {
   const [stats, setStats] = useState(null);
   const [time, setTime] = useState("");
+  const open = useMarketOpen();
 
   useEffect(() => {
     async function fetchStats() {
@@ -25,17 +85,19 @@ export function GaugeCard() {
       } catch {}
     }
     fetchStats();
-    const t = setInterval(fetchStats, 15000);
+    // 15s while the market is open; 5 min when closed (data can't change)
+    const t = setInterval(fetchStats, open ? 15_000 : 300_000);
+    return () => clearInterval(t);
+  }, [open]);
 
-    // Update clock
+  useEffect(() => {
     const tick = () => {
       const now = new Date();
       setTime(now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZoneName: "short" }));
     };
     tick();
-    const clock = setInterval(tick, 60000);
-
-    return () => { clearInterval(t); clearInterval(clock); };
+    const clock = setInterval(tick, 60_000);
+    return () => clearInterval(clock);
   }, []);
 
   const ratio = stats?.ratio ?? 1;
@@ -100,17 +162,18 @@ export function GaugeCard() {
   const needleBase1 = polarToXY(scoreAngle + 90, 7);
   const needleBase2 = polarToXY(scoreAngle - 90, 7);
 
-  // Key drivers
-  const vix = sweeps > 80 ? 28.4 : sweeps > 40 ? 18.2 : 13.1;
-  const vixChange = sweeps > 80 ? "+12.1%" : sweeps > 40 ? "+4.2%" : "-2.1%";
+  // Key drivers — every value below is derived from REAL flow stats.
+  // (The old VIX tile was a synthetic number invented from sweep count;
+  //  VIX was removed from the backend rotation in v2.5, so it's gone here too.)
   const putCall = (putPrem / (callPrem + putPrem + 1)).toFixed(2);
+  const fmtM = (v) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `$${(v / 1_000).toFixed(0)}K` : `$${v}`;
 
   const keyDrivers = [
-    { label: "VIX", sub: "Volatility Index", value: vix.toFixed(1), change: vixChange, changeColor: sweeps > 40 ? "#ef4444" : "#22c55e" },
-    { label: "SPY TREND", sub: "vs 20 DMA", value: ratio > 1.1 ? "Above" : "Below", change: ratio > 1.1 ? "+1.2%" : "-1.2%", changeColor: ratio > 1.1 ? "#22c55e" : "#ef4444" },
-    { label: "BREADTH", sub: "Advancing Stocks", value: `${breadthPct}%`, change: breadthLabel, changeColor: breadthPct > 50 ? "#22c55e" : "#d4af37" },
-    { label: "PUT/CALL RATIO", sub: "Options Sentiment", value: putCall, change: Number(putCall) > 1 ? "High" : "Normal", changeColor: Number(putCall) > 1 ? "#ef4444" : "#22c55e" },
-    { label: "DEALER GAMMA", sub: "Positioning", value: ratio > 1.1 ? "LONG" : "SHORT", change: ratio > 1.1 ? "Positive" : "Negative", changeColor: ratio > 1.1 ? "#22c55e" : "#ef4444" },
+    { label: "SWEEP ACTIVITY", sub: "Aggressive Orders", value: sweeps, change: sweeps > 80 ? "Elevated" : sweeps > 40 ? "Active" : "Quiet", changeColor: sweeps > 80 ? "#ef4444" : sweeps > 40 ? "#d4af37" : "#22c55e" },
+    { label: "BLOCK ACTIVITY", sub: "Institutional Size", value: blocks, change: blocks > 30 ? "Heavy" : blocks > 10 ? "Moderate" : "Light", changeColor: blocks > 30 ? "#22c55e" : "#d4af37" },
+    { label: "CALL PREMIUM", sub: "Bullish Flow", value: fmtM(callPrem), change: ratio > 1 ? "Leading" : "Lagging", changeColor: ratio > 1 ? "#22c55e" : "#ef4444" },
+    { label: "PUT/CALL RATIO", sub: "Options Sentiment", value: putCall, change: Number(putCall) > 0.5 ? "Hedging" : "Normal", changeColor: Number(putCall) > 0.5 ? "#ef4444" : "#22c55e" },
+    { label: "DEALER GAMMA", sub: "Positioning (Est.)", value: ratio > 1.1 ? "LONG" : "SHORT", change: ratio > 1.1 ? "Positive" : "Negative", changeColor: ratio > 1.1 ? "#22c55e" : "#ef4444" },
   ];
 
   // Trading style
@@ -148,10 +211,13 @@ export function GaugeCard() {
     <section className="card regime full" style={{ padding: 0, overflow: "hidden", background: "#0a0f1a", border: "1px solid rgba(255,255,255,0.08)" }}>
 
       {/* Header */}
-      <div style={{ padding: "16px 20px 12px", borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ padding: "16px 20px 12px", borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap" }}>
         <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "11px", fontWeight: 700, letterSpacing: "2px", fontFamily: "var(--font-head)" }}>MARKET REGIME</div>
-        <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", display: "flex", alignItems: "center", gap: "6px" }}>
-          <span>⏱</span> LAST UPDATED: {time}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {!open && <ClosedChip />}
+          <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", display: "flex", alignItems: "center", gap: "6px" }}>
+            <span>⏱</span> LAST UPDATED: {time}
+          </div>
         </div>
       </div>
 
@@ -162,7 +228,9 @@ export function GaugeCard() {
         </div>
         <div>
           <div style={{ color: regimeColor, fontSize: "28px", fontWeight: 900, fontFamily: "var(--font-head)", letterSpacing: "2px", lineHeight: 1 }}>{regime}</div>
-          <div style={{ color: "rgba(255,255,255,0.45)", fontSize: "12px", marginTop: "4px", lineHeight: 1.5, maxWidth: "400px" }}>{regimeDesc}</div>
+          <div style={{ color: "rgba(255,255,255,0.45)", fontSize: "12px", marginTop: "4px", lineHeight: 1.5, maxWidth: "400px" }}>
+            {regimeDesc}{!open && " Regime reflects the most recent completed session."}
+          </div>
         </div>
       </div>
 
@@ -235,13 +303,13 @@ export function GaugeCard() {
 
         {/* Key Drivers */}
         <div style={{ padding: "20px", borderRight: "1px solid rgba(255,255,255,0.07)" }}>
-          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "10px", fontWeight: 700, letterSpacing: "2px", fontFamily: "var(--font-head)", marginBottom: "14px" }}>KEY DRIVERS</div>
+          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "10px", fontWeight: 700, letterSpacing: "2px", fontFamily: "var(--font-head)", marginBottom: "14px" }}>KEY DRIVERS — LIVE FLOW</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             {keyDrivers.map((d, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", background: i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent", borderRadius: "8px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>
-                    {["📊", "📈", "👥", "🔄", "⚡"][i]}
+                    {["⚡", "🏦", "📈", "🔄", "🎯"][i]}
                   </div>
                   <div>
                     <div style={{ color: "rgba(255,255,255,0.8)", fontSize: "12px", fontWeight: 700 }}>{d.label}</div>
@@ -339,11 +407,14 @@ export function CalendarCard() {
 }
 
 export function AiSummary() {
-  const [analysis, setAnalysis] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
-  const API = "https://trqx-flow-scanner-production.up.railway.app";
+  const [analysis, setAnalysis] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const { getToken } = useAuth();
 
-  React.useEffect(() => {
+  useEffect(() => {
+    let cancelled = false;
     async function load() {
       try {
         const [calRes, flowRes] = await Promise.all([
@@ -360,16 +431,23 @@ export function AiSummary() {
         }).join(", ");
 
         const eventText = topEvents || "No major economic events scheduled today.";
-        const callM = Math.round((flow.callPremium||0)/1000000);
-const putM = Math.round((flow.putPremium||0)/1000000);
-const ratio = callM > 0 && putM > 0 ? (callM / putM).toFixed(2) : "N/A";
-const sentiment = flow.sentiment || "Neutral";
-const sweeps = flow.sweepCount || 0;
-const blocks = flow.blockCount || 0;
+        const callM = Math.round((flow.callPremium || 0) / 1000000);
+        const putM = Math.round((flow.putPremium || 0) / 1000000);
+        const ratio = callM > 0 && putM > 0 ? (callM / putM).toFixed(2) : "N/A";
+        const sentiment = flow.sentiment || "Neutral";
+        const sweeps = flow.sweepCount || 0;
+        const blocks = flow.blockCount || 0;
 
-const prompt = `You are a professional market analyst at TRQX Capital delivering a pre-market intelligence brief to active traders.
+        const open = isMarketOpen();
+        const statusLine = open
+          ? "MARKET STATUS: OPEN — the flow data below is from the live session."
+          : "MARKET STATUS: CLOSED — the flow data below is from the most recent completed trading session. Frame this brief as a recap of that session plus what to watch when the market reopens. Do NOT write as if trading is currently happening.";
 
-LIVE OPTIONS FLOW DATA:
+        const prompt = `You are a professional market analyst at TRQX Capital delivering a market intelligence brief to active traders.
+
+${statusLine}
+
+OPTIONS FLOW DATA:
 - Flow Sentiment: ${sentiment}
 - Call Premium: $${callM}M | Put Premium: $${putM}M | Call/Put Ratio: ${ratio}
 - Sweep Count: ${sweeps} | Block Count: ${blocks}
@@ -378,15 +456,15 @@ LIVE OPTIONS FLOW DATA:
 ECONOMIC CALENDAR (Today & Next 48 Hours):
 ${eventText}
 
-Write a detailed pre-market brief using ONLY plain text — no markdown, no hashtags, no asterisks, no bullet symbols other than a dash.
+Write a detailed brief using ONLY plain text — no markdown, no hashtags, no asterisks, no bullet symbols other than a dash.
 
 Structure your response exactly as follows:
 
 MARKET OVERVIEW
-Write 3 sentences summarizing current market conditions combining the options flow data and economic calendar context.
+Write 3 sentences summarizing market conditions combining the options flow data and economic calendar context.
 
 FLOW ANALYSIS
-Write 2 sentences explaining what the institutional options flow is signaling and what it means for traders today.
+Write 2 sentences explaining what the institutional options flow is signaling and what it means for traders.
 
 KEY EVENTS TO WATCH
 List each major economic event with its forecast vs prior value and explain in one sentence what a surprise in either direction would mean for markets. Format each as: EVENT NAME - Forecast: X, Prior: Y. Impact: [your interpretation]
@@ -395,28 +473,40 @@ TRADE BIAS
 State clearly: BULLISH, BEARISH, or NEUTRAL. Then write 2 sentences explaining why based on the combination of flow data and upcoming events.
 
 WATCH LIST ITEMS
-List exactly 4 specific things traders should monitor today, each starting with a dash. Be specific — name tickers, levels, or indicators where relevant.
+List exactly 4 specific things traders should monitor, each starting with a dash. Be specific — name tickers, levels, or indicators where relevant.
 
 RISK FACTORS
 List 2 things that could invalidate the current bias, each starting with a dash.`;
 
+        const tok = (await getToken?.()) || "";
         const aiRes = await fetch(API + "/api/market-intelligence", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + tok },
           body: JSON.stringify({ prompt }),
         });
+        if (cancelled) return;
         if (aiRes.ok) {
           const data = await aiRes.json();
-          setAnalysis(data.reply || null);
+          if (data.reply) {
+            setAnalysis(data.reply);
+          } else {
+            setFailed(true);
+          }
+        } else {
+          setFailed(true);
         }
       } catch (e) {
         console.log("AiSummary error:", e);
+        if (!cancelled) setFailed(true);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     load();
-  }, []);
+    return () => { cancelled = true; };
+  }, [reloadKey]);
+
+  const retry = () => { setFailed(false); setAnalysis(null); setLoading(true); setReloadKey(k => k + 1); };
 
   const textLines = analysis ? analysis.split("\n").filter(function(l) { return l.trim(); }) : [];
   const isBullish = analysis && analysis.toLowerCase().includes("bullish");
@@ -426,49 +516,58 @@ List 2 things that could invalidate the current bias, each starting with a dash.
 
   return (
     <section className="card ai">
-      <div className="cardTitle purple">
-        Market Intelligence <span>TRQX AI</span>
+      <div className="cardTitle purple" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+        <span>Market Intelligence <span>TRQX AI</span></span>
+        {!isMarketOpen() && <ClosedChip compact />}
       </div>
       {loading ? (
-        <p style={{ color: "#9ca3af", fontSize: "13px" }}>Analyzing today's economic events...</p>
+        <p style={{ color: "#9ca3af", fontSize: "13px" }}>Analyzing market conditions...</p>
       ) : analysis ? (
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
             <span style={{ background: sentimentColor + "20", border: "1px solid " + sentimentColor + "60", color: sentimentColor, fontSize: "11px", fontWeight: "800", padding: "3px 10px", borderRadius: "6px", letterSpacing: "0.08em" }}>
               {sentimentLabel}
             </span>
-            <span style={{ color: "#9ca3af", fontSize: "11px" }}>for equities today</span>
+            <span style={{ color: "#9ca3af", fontSize: "11px" }}>for equities</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {textLines.map(function(line, i) {
-  const clean = line
-    .replace(/^#{1,3}\s*/, "")
-    .replace(/\*\*/g, "")
-    .replace(/^[-•*]\s*/, "")
-    .replace(/^\d\.\s*/, "")
-    .trim();
-  if (!clean || clean === "-") return null;
-  const isHeader = line.startsWith("#") || line.startsWith("**");
-  const isBullet = line.trimStart().startsWith("-") || line.trimStart().startsWith("•") || line.trimStart().startsWith("*") || /^\d\./.test(line.trimStart());
-  if (isHeader) return (
-    <b key={i} style={{ color: "#f5f1e8", fontSize: "13px", display: "block", marginTop: "10px", marginBottom: "4px" }}>{clean}</b>
-  );
-  if (isBullet) return (
-    <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start", marginBottom: "4px" }}>
-      <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>•</span>
-      <span style={{ color: "#9ca3af", fontSize: "13px", lineHeight: "1.5" }}>{clean}</span>
-    </div>
-  );
-  return <p key={i} style={{ color: "#f5f1e8", fontSize: "13px", lineHeight: "1.6", margin: "0 0 6px" }}>{clean}</p>;
-})}
+              const clean = line
+                .replace(/^#{1,3}\s*/, "")
+                .replace(/\*\*/g, "")
+                .replace(/^[-•*]\s*/, "")
+                .replace(/^\d\.\s*/, "")
+                .trim();
+              if (!clean || clean === "-") return null;
+              const isHeader = line.startsWith("#") || line.startsWith("**");
+              const isBullet = line.trimStart().startsWith("-") || line.trimStart().startsWith("•") || line.trimStart().startsWith("*") || /^\d\./.test(line.trimStart());
+              if (isHeader) return (
+                <b key={i} style={{ color: "#f5f1e8", fontSize: "13px", display: "block", marginTop: "10px", marginBottom: "4px" }}>{clean}</b>
+              );
+              if (isBullet) return (
+                <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start", marginBottom: "4px" }}>
+                  <span style={{ color: sentimentColor, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>•</span>
+                  <span style={{ color: "#9ca3af", fontSize: "13px", lineHeight: "1.5" }}>{clean}</span>
+                </div>
+              );
+              return <p key={i} style={{ color: "#f5f1e8", fontSize: "13px", lineHeight: "1.6", margin: "0 0 6px" }}>{clean}</p>;
+            })}
           </div>
         </div>
       ) : (
-        <p style={{ color: "#9ca3af", fontSize: "13px" }}>Loading market intelligence...</p>
+        <div style={{ padding: "8px 0" }}>
+          <p style={{ color: "#9ca3af", fontSize: "13px", margin: "0 0 10px" }}>
+            Market intelligence is unavailable right now. This can happen briefly after a deploy or if the AI service is busy.
+          </p>
+          <button onClick={retry} style={{ background: "rgba(212,175,55,0.12)", border: "1px solid rgba(212,175,55,0.4)", color: "#d4af37", fontSize: "12px", fontWeight: 700, padding: "6px 16px", borderRadius: "8px", cursor: "pointer" }}>
+            ↻ Retry
+          </button>
+        </div>
       )}
     </section>
   );
 }
+
 export function BreadthCard() {
   const sectors = [
     ["Technology", "+1.25%", 92],
@@ -515,9 +614,11 @@ export function BreadthCard() {
 }
 
 export function GammaCard({ full = false }) {
+  const navigate = useNavigate();
   const [tickerInput, setTickerInput] = useState("SPY");
   const [ticker, setTicker] = useState("SPY");
   const [gamma, setGamma] = useState(null);
+  const open = useMarketOpen();
 
   useEffect(() => {
     async function fetchGamma() {
@@ -529,9 +630,10 @@ export function GammaCard({ full = false }) {
       } catch {}
     }
     fetchGamma();
-    const t = setInterval(fetchGamma, 30000);
+    // 30s while open; 5 min when closed (levels can't change)
+    const t = setInterval(fetchGamma, open ? 30_000 : 300_000);
     return () => clearInterval(t);
-  }, [ticker]);
+  }, [ticker, open]);
 
   const metrics = gamma ? [
     { label: "CALL WALL", value: gamma.callWall ?? "--", detail: "+Gamma", tone: "" },
@@ -548,8 +650,11 @@ export function GammaCard({ full = false }) {
 
   return (
     <section className={`card gamma ${full ? "fullPageCard" : ""}`} style={{ height: "100%" }}>
-      <div className="cardTitle purple" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ cursor: "pointer" }} onClick={() => navigate("/gamma-ex")}>Gamma Exposure ({gamma?.ticker ?? ticker})</span>
+      <div className="cardTitle purple" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", flexWrap: "wrap" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <span style={{ cursor: "pointer" }} onClick={() => navigate("/gamma-ex")}>Gamma Exposure ({gamma?.ticker ?? ticker})</span>
+          {!open && <ClosedChip compact />}
+        </span>
         <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
           <input
             value={tickerInput}
@@ -594,10 +699,11 @@ export function GammaCard({ full = false }) {
               const positioning = gamma.dealerPositioning;
               const squeeze = gamma.squeezeRisk;
               if (!flip) return "Loading gamma analysis...";
+              const closedNote = open ? "" : "Market is closed — these levels reflect the most recent completed session and will refresh at the next open. ";
               if (positioning === "Long Gamma") {
-                return `Dealers are LONG gamma on ${gamma.ticker} — this means they buy dips and sell rips, creating a stabilizing effect between the ${putWall} put wall and ${callWall} call wall. Price is likely to pin near ${flip} (gamma flip). Expect dampened volatility and range-bound action unless price breaks through a key wall. Squeeze risk is ${squeeze?.toLowerCase()}.`;
+                return `${closedNote}Dealers are LONG gamma on ${gamma.ticker} — this means they buy dips and sell rips, creating a stabilizing effect between the ${putWall} put wall and ${callWall} call wall. Price is likely to pin near ${flip} (gamma flip). Expect dampened volatility and range-bound action unless price breaks through a key wall. Squeeze risk is ${squeeze?.toLowerCase()}.`;
               } else {
-                return `Dealers are SHORT gamma on ${gamma.ticker} — this means they amplify price moves in both directions. With the gamma flip at ${flip}, any break above ${callWall} or below ${putWall} could trigger accelerated dealer hedging and explosive moves. Squeeze risk is ${squeeze?.toLowerCase()} — size accordingly and use tight stops.`;
+                return `${closedNote}Dealers are SHORT gamma on ${gamma.ticker} — this means they amplify price moves in both directions. With the gamma flip at ${flip}, any break above ${callWall} or below ${putWall} could trigger accelerated dealer hedging and explosive moves. Squeeze risk is ${squeeze?.toLowerCase()} — size accordingly and use tight stops.`;
               }
             })()}
           </div>
@@ -606,6 +712,7 @@ export function GammaCard({ full = false }) {
     </section>
   );
 }
+
 export function ScannerCard({ full = false }) {
   const navigate = useNavigate();
   return (
@@ -653,6 +760,7 @@ export function OptionsFlowCard({ full = false }) {
   const navigate = useNavigate();
   const [rows, setRows] = useState(optionsFlowRows);
   const [query, setQuery] = useState("");
+  const open = useMarketOpen();
 
   function fmtPremium(v) {
     const n = Number(v);
@@ -680,9 +788,10 @@ export function OptionsFlowCard({ full = false }) {
     }
 
     fetchFlow();
-    const interval = setInterval(fetchFlow, 15000);
+    // 15s while open; 5 min when closed (no new prints arrive)
+    const interval = setInterval(fetchFlow, open ? 15_000 : 300_000);
     return () => clearInterval(interval);
-  }, []);
+  }, [open]);
 
   const filteredRows = rows
     .filter((r) => {
@@ -694,7 +803,10 @@ export function OptionsFlowCard({ full = false }) {
 
   return (
     <section className={`card options ${full ? "fullPageCard" : ""}`} style={{ height: "100%" }}>
-      <div className="cardTitle purple">Options Flow</div>
+      <div className="cardTitle purple" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+        <span>Options Flow</span>
+        {!open && <ClosedChip compact />}
+      </div>
 
       <div className="tabs">
         <button onClick={() => navigate("/options-flow?filter=sweep")}>Sweeps</button>
@@ -747,13 +859,14 @@ export function OptionsFlowCard({ full = false }) {
         ]}
       />
 
-      <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} result(s) for ${query.toUpperCase()}` : "View All Options Flow ?"}</a>
+      <a onClick={() => navigate("/options-flow")} style={{ cursor: "pointer" }}>{query ? `Showing ${filteredRows.length} result(s) for ${query.toUpperCase()}` : "View All Options Flow →"}</a>
     </section>
   );
 }
 
 export function WatchlistCard() {
   const navigate = useNavigate();
+  const open = useMarketOpen();
   const [rows, setRows] = useState([
     { ticker: "SPY", price: "—", change: "—", volume: "—" },
     { ticker: "QQQ", price: "—", change: "—", volume: "—" },
@@ -780,9 +893,10 @@ export function WatchlistCard() {
       setRows(results);
     }
     fetchPrices();
-    const t = setInterval(fetchPrices, 30000);
+    // 30s while open; 5 min when closed (prices are frozen)
+    const t = setInterval(fetchPrices, open ? 30_000 : 300_000);
     return () => clearInterval(t);
-  }, []);
+  }, [open]);
 
   return (
     <section className="card watch">
@@ -806,12 +920,12 @@ export function NewsCard() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    fetch(`https://trqx-flow-scanner-production.up.railway.app/api/news?limit=6`)
+    fetch(`${API}/api/news?limit=6`)
       .then(r => r.ok ? r.json() : { rows: [] })
       .then(data => { setRows(data.rows || []); setLoading(false); })
       .catch(() => setLoading(false));
     const interval = setInterval(() => {
-      fetch(`https://trqx-flow-scanner-production.up.railway.app/api/news?limit=6`)
+      fetch(`${API}/api/news?limit=6`)
         .then(r => r.ok ? r.json() : { rows: [] })
         .then(data => setRows(data.rows || []));
     }, 120000);
@@ -845,12 +959,12 @@ export function NewsCard() {
           </div>
         </a>
       ))}
-      <a onClick={() => navigate("/news")} style={{ cursor: "pointer" }}>View All News ?</a>
+      <a onClick={() => navigate("/news")} style={{ cursor: "pointer" }}>View All News →</a>
     </section>
   );
 }
 
-  export function AcademyCard() {
+export function AcademyCard() {
   const navigate = useNavigate();
   return (
     <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 14 }}>
@@ -915,19 +1029,3 @@ export function NewsCard() {
     </section>
   );
 }
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
