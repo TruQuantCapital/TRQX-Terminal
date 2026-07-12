@@ -19,7 +19,7 @@ const MAJOR_EVENTS = [
   { name: "GDP", date: new Date("2026-09-30T08:30:00-04:00") },
 ].sort((a, b) => a.date - b.date);
 
-function function getNextMajorEvent() {
+function getNextMajorEvent() {
   const now = Date.now();
   const liveWindow = 30 * 60 * 1000;
 
