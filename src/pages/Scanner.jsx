@@ -220,7 +220,7 @@ function ORBDashboard({ getToken, tier }) {
           <div className="orb-chart-header">📈 {selectedTicker} — 5 Min Chart
             {orbData[selectedTicker] && <span className="orb-chart-levels">ORB H: <span className="green">${orbData[selectedTicker]?.high?.toFixed(2)}</span> ORB L: <span className="red">${orbData[selectedTicker]?.low?.toFixed(2)}</span></span>}
           </div>
-          <iframe key={selectedTicker} src={`https://www.tradingview.com/widgetembed/?frameElementId=tv_orb&symbol=${selectedTicker==="SPX"?"SP:SPX":selectedTicker}&interval=5&hidesidetoolbar=0&symboledit=1&saveimage=0&theme=dark&style=1&timezone=America%2FNew_York&withdateranges=1&showpopupbutton=1&locale=en&utm_source=scanner.thetrulies.com`} className="orb-iframe" style={isMobile?{height:"320px",width:"100%"}:undefined} allowTransparency={true} scrolling="no" allowFullScreen={true} />
+          <iframe key={selectedTicker} src={`https://www.tradingview.com/widgetembed/?frameElementId=tv_orb&symbol=${selectedTicker==="SPX"?"SP:SPX":selectedTicker}&interval=5&hidesidetoolbar=0&symboledit=1&saveimage=0&theme=dark&style=1&timezone=America%2FNew_York&withdateranges=1&showpopupbutton=1&locale=en&utm_source=scanner.thetrulies.com`} className="orb-iframe" style={isMobile?{height:"320px",width:"100%"}:undefined} scrolling="no" allowFullScreen={true} />
         </div>
         <div className="orb-flow-wrap">
           <div className="orb-flow-header">🎯 FLOW NEAR ORB LEVELS</div>
@@ -298,7 +298,7 @@ function FlowReplay({ hasFeature, getToken }) {
       </div>)}
       {rows.length>0&&(<div className="replay-main" style={isMobile?{display:"flex",flexDirection:"column",gap:"16px"}:undefined}>
         <div className="replay-chart"><div className="replay-chart-header">📈 {ticker} — {date} (TradingView)</div>
-          <iframe src={`https://www.tradingview.com/widgetembed/?frameElementId=tradingview_replay&symbol=${ticker}&interval=5&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=F1F3F6&studies=[]&theme=dark&style=1&timezone=America%2FNew_York&withdateranges=1&showpopupbutton=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=scanner.thetrulies.com`} className="replay-iframe" style={isMobile?{height:"300px",width:"100%"}:undefined} allowTransparency={true} scrolling="no" allowFullScreen={true} />
+          <iframe src={`https://www.tradingview.com/widgetembed/?frameElementId=tradingview_replay&symbol=${ticker}&interval=5&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=F1F3F6&studies=[]&theme=dark&style=1&timezone=America%2FNew_York&withdateranges=1&showpopupbutton=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=scanner.thetrulies.com`} className="replay-iframe" style={isMobile?{height:"300px",width:"100%"}:undefined} scrolling="no" allowFullScreen={true} />
         </div>
         <div className="replay-table-wrap">
           <div className="replay-table-header">⏮️ FLOW TAPE — {date}{playing&&<span className="replay-live-dot">● REPLAYING</span>}</div>
