@@ -2,16 +2,33 @@ import React, { useEffect, useState } from "react";
 
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
-const CPI_DATES = [
-  new Date("2026-07-14T08:30:00-05:00"),
-  new Date("2026-08-12T08:30:00-05:00"),
-  new Date("2026-09-10T08:30:00-05:00"),
-  new Date("2026-10-14T08:30:00-05:00"),
-  new Date("2026-11-13T08:30:00-05:00"),
-  new Date("2026-12-10T08:30:00-05:00"),
-];
+const MAJOR_EVENTS = [
+  { name: "CPI", date: new Date("2026-07-14T08:30:00-04:00") },
+  { name: "PPI", date: new Date("2026-07-15T08:30:00-04:00") },
+  { name: "FOMC", date: new Date("2026-07-29T14:00:00-04:00") },
+  { name: "GDP", date: new Date("2026-07-30T08:30:00-04:00") },
+  { name: "PCE", date: new Date("2026-07-30T08:30:00-04:00") },
+  { name: "NFP", date: new Date("2026-08-07T08:30:00-04:00") },
+  { name: "CPI", date: new Date("2026-08-12T08:30:00-04:00") },
+  { name: "PPI", date: new Date("2026-08-13T08:30:00-04:00") },
+  { name: "GDP", date: new Date("2026-08-26T08:30:00-04:00") },
+  { name: "NFP", date: new Date("2026-09-04T08:30:00-04:00") },
+  { name: "PPI", date: new Date("2026-09-10T08:30:00-04:00") },
+  { name: "CPI", date: new Date("2026-09-11T08:30:00-04:00") },
+  { name: "FOMC", date: new Date("2026-09-16T14:00:00-04:00") },
+  { name: "GDP", date: new Date("2026-09-30T08:30:00-04:00") },
+].sort((a, b) => a.date - b.date);
 
-function getNextCPI() {
+function function getNextMajorEvent() {
+  const now = Date.now();
+  const liveWindow = 30 * 60 * 1000;
+
+  return (
+    MAJOR_EVENTS.find(
+      (event) => event.date.getTime() + liveWindow > now
+    ) ?? null
+  );
+}() {
   const now = new Date();
   return CPI_DATES.find((d) => d > now) ?? null;
 }
@@ -68,20 +85,34 @@ export default function TopRibbon() {
   const [flowStats, setFlowStats] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);
   const [countdown, setCountdown] = useState("—");
-  const [cpiLabel, setCpiLabel] = useState("CPI Release");
+  const [eventLabel, setEventLabel] = useState("Loading...");
 
   // CPI countdown
   useEffect(() => {
-    function tick() {
-      const next = getNextCPI();
-      if (!next) { setCpiLabel("CPI"); setCountdown("—"); return; }
-      setCpiLabel(`CPI ${next.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`);
-      setCountdown(formatCountdown(next - new Date()));
+  function tick() {
+    const next = getNextMajorEvent();
+
+    if (!next) {
+      setEventLabel("No Scheduled Events");
+      setCountdown("—");
+      return;
     }
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
+
+    const displayDate = next.date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      timeZone: "America/New_York",
+    });
+
+    setEventLabel(`${next.name} ${displayDate}`);
+    setCountdown(formatCountdown(next.date.getTime() - Date.now()));
+  }
+
+  tick();
+  const id = setInterval(tick, 1000);
+
+  return () => clearInterval(id);
+}, []);
 
   // Stock quotes
   async function fetchTiles() {
@@ -184,7 +215,7 @@ export default function TopRibbon() {
       {/* Next Event */}
       <div className="eventBox">
         <b>Next Event</b>
-        <p>{cpiLabel}</p>
+        <p>{eventLabel}</p>
         <span>{countdown}</span>
       </div>
     </header>
