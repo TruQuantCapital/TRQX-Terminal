@@ -1,3 +1,14 @@
+// TRQX Scanner v2.6
+// Changes from v2.5:
+//  - Ticker search now pulls the FULL session cache from /api/flow/ticker/:ticker
+//    (debounced 400ms) instead of filtering the live 500-row rolling window.
+//    Live WS prints matching the searched ticker merge into the results in real time.
+//  - Fresh token per request (getToken) on: WebSocket connect, heatmap, smart money,
+//    AI chat, ORB dashboard, Flow Replay. Kills the ~1hr silent token death for
+//    users who keep the tab open all session.
+//  - WebSocket zombie fix: reconnect timer is cancelled on unmount so stale sockets
+//    can't resurrect after navigation.
+//  - All strings rewritten as clean UTF-8 (mojibake em-dashes/emojis purged).
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "../hooks/useAuth";
@@ -85,7 +96,7 @@ function AIChat({ hasFeature }) {
   const [msgs, setMsgs] = useState([{ role: "ai", text: "Ask me anything about today's options flow. Try: \"What's unusual on NVDA?\" or \"Is SPY bullish today?\"" }]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const { token } = useAuth();
+  const { getToken } = useAuth();
   const bottomRef = useRef(null);
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs]);
   const send = async () => {
@@ -93,7 +104,8 @@ function AIChat({ hasFeature }) {
     const userMsg = input.trim(); setInput("");
     setMsgs(m => [...m, { role: "user", text: userMsg }]); setLoading(true);
     try {
-      const res = await fetch(`${API}/api/ai/chat`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ message: userMsg }) });
+      const tok = (await getToken?.()) || "";
+      const res = await fetch(`${API}/api/ai/chat`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${tok}` }, body: JSON.stringify({ message: userMsg }) });
       const data = await res.json();
       setMsgs(m => [...m, { role: "ai", text: data.reply || data.error || "No response" }]);
     } catch { setMsgs(m => [...m, { role: "ai", text: "Connection error. Please try again." }]); }
@@ -154,7 +166,7 @@ function SmartMoney({ data, hasFeature }) {
   );
 }
 
-function ORBDashboard({ token, tier }) {
+function ORBDashboard({ getToken, tier }) {
   const isMobile = useIsMobile();
   const hasFeature = ["pro","elite"].includes(tier);
   const [orbData, setOrbData] = useState({});
@@ -166,21 +178,22 @@ function ORBDashboard({ token, tier }) {
   const fetchORB = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/orb`, { headers: { Authorization: `Bearer ${token}` } });
+      const tok = (await getToken?.()) || "";
+      const res = await fetch(`${API}/api/orb`, { headers: { Authorization: `Bearer ${tok}` } });
       const data = await res.json();
       setOrbData(data.orb || {}); setFlowNearOrb(data.flowNearOrb || []);
       setLastUpdate(new Date().toLocaleTimeString("en-US", { hour12: false, timeZone: "America/New_York" }));
     } catch(e) { console.error("ORB fetch error:", e); } finally { setLoading(false); }
   };
-  useEffect(() => { if (hasFeature) { fetchORB(); const i = setInterval(fetchORB, 60_000); return () => clearInterval(i); } }, [token, tier]);
-  if (!hasFeature) return (<div className="orb-locked"><div className="locked-icon">📐</div><div className="locked-title">ORB Dashboard</div><div className="locked-sub">Upgrade to Pro to access the Live ORB + Flow Dashboard</div><a href="/pricing" className="upgrade-btn" style={{marginTop:"16px"}}>Upgrade to Pro →</a></div>);
+  useEffect(() => { if (hasFeature) { fetchORB(); const i = setInterval(fetchORB, 60_000); return () => clearInterval(i); } }, [tier]);
+  if (!hasFeature) return (<div className="orb-locked"><div className="locked-icon">📏</div><div className="locked-title">ORB Dashboard</div><div className="locked-sub">Upgrade to Pro to access the Live ORB + Flow Dashboard</div><a href="/pricing" className="upgrade-btn" style={{marginTop:"16px"}}>Upgrade to Pro →</a></div>);
   const getORBStatus = (orb) => { if (!orb?.currentPrice || !orb?.high || !orb?.low) return "waiting"; if (orb.currentPrice > orb.high) return "bullish-breakout"; if (orb.currentPrice < orb.low) return "bearish-breakout"; return "inside"; };
   const getStatusLabel = (s) => ({"bullish-breakout":"🚀 BREAKOUT ABOVE","bearish-breakout":"📉 BREAKDOWN BELOW","inside":"⏳ INSIDE RANGE","waiting":"⏰ WAITING FOR ORB"}[s] || "—");
   const getStatusColor = (s) => ({"bullish-breakout":"var(--green)","bearish-breakout":"var(--red)","inside":"var(--gold)","waiting":"var(--text-muted)"}[s] || "var(--text-muted)");
   return (
     <div className="orb-page">
       <div className="orb-header" style={isMobile ? { display:"flex", flexDirection:"column", gap:"10px", alignItems:"flex-start" } : undefined}>
-        <div className="orb-title-row"><div className="orb-title" style={isMobile ? { fontSize:"16px" } : undefined}>📐 TRQX ORB DASHBOARD — 15MIN</div><div className="orb-sub">Opening Range Breakout levels with institutional flow confirmation</div></div>
+        <div className="orb-title-row"><div className="orb-title" style={isMobile ? { fontSize:"16px" } : undefined}>📏 TRQX ORB DASHBOARD — 15MIN</div><div className="orb-sub">Opening Range Breakout levels with institutional flow confirmation</div></div>
         <div className="orb-header-right">{lastUpdate && <div className="orb-update">Updated: {lastUpdate} ET</div>}<button className="orb-refresh-btn" onClick={fetchORB} disabled={loading}>{loading ? "↻ Loading..." : "↻ Refresh"}</button></div>
       </div>
       <div className="orb-cards" style={isMobile ? { display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px" } : undefined}>
@@ -230,7 +243,7 @@ function ORBDashboard({ token, tier }) {
   );
 }
 
-function FlowReplay({ hasFeature, token }) {
+function FlowReplay({ hasFeature, getToken }) {
   const isMobile = useIsMobile();
   const [ticker, setTicker] = useState("SPY");
   const [date, setDate] = useState(() => { const d = new Date(); d.setDate(d.getDate()-1); return d.toISOString().slice(0,10); });
@@ -245,7 +258,8 @@ function FlowReplay({ hasFeature, token }) {
     if (!ticker||!date) return;
     setLoading(true); setError(null); setRows([]); setVisibleRows([]); setStats(null); setPlaying(false); setPlayIndex(0);
     try {
-      const res = await fetch(`${API}/api/replay?ticker=${ticker.toUpperCase()}&date=${date}`, { headers: { Authorization:`Bearer ${token}` } });
+      const tok = (await getToken?.()) || "";
+      const res = await fetch(`${API}/api/replay?ticker=${ticker.toUpperCase()}&date=${date}`, { headers: { Authorization:`Bearer ${tok}` } });
       const data = await res.json();
       if (data.error) { setError(data.error); setLoading(false); return; }
       setRows(data.rows||[]); setVisibleRows(data.rows||[]); setStats(data.stats);
@@ -323,9 +337,9 @@ function CommunityChat({ tier }) {
   );
 }
 
-function StatsBar({ rows, stats, search, connected }) {
+function StatsBar({ rows, stats, search, connected, searchLoading, usingCache }) {
   const isMobile = useIsMobile();
-  const searchUpper = search?.toUpperCase() || "";
+  const searchUpper = search?.trim().toUpperCase() || "";
   let displayStats = stats;
   if (searchUpper) {
     const activeRows = rows.filter(r => r.ticker === searchUpper);
@@ -338,12 +352,13 @@ function StatsBar({ rows, stats, search, connected }) {
     const fSentiment = fRatio>1.5 ? "Bullish" : fRatio<0.67 ? "Bearish" : "Neutral";
     displayStats = { sentiment:fSentiment, ratio:+fRatio.toFixed(2), callPremium:fCallPrem, putPremium:fPutPrem, sweepCount:fSweeps, blockCount:fBlocks, unusualCount:fUnusual };
   }
+  const searchSub = searchUpper ? (searchLoading ? "Loading..." : usingCache ? "Full Session" : "Live Window") : "Today";
   return (
     <div className="stats-bar" style={isMobile?{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:"8px",alignItems:"stretch",padding:"10px"}:undefined}>
-      {searchUpper&&<div className="stats-filter-label" style={isMobile?{gridColumn:"1 / -1",textAlign:"center"}:undefined}>📌 {searchUpper}</div>}
+      {searchUpper&&<div className="stats-filter-label" style={isMobile?{gridColumn:"1 / -1",textAlign:"center"}:undefined}>📌 {searchUpper}{usingCache?" — FULL SESSION":""}</div>}
       <StatCard label="OVERALL FLOW" value={displayStats?.sentiment||"Loading..."} sub={`Ratio: ${displayStats?.ratio||"—"}`} color={displayStats?.sentiment==="Bullish"?"#22c55e":displayStats?.sentiment==="Bearish"?"#ef4444":"#C9A84C"} compact={isMobile} />
-      <StatCard label="CALL PREMIUM" value={fmtPrem(displayStats?.callPremium)} sub={searchUpper||"Today"} color="#22c55e" compact={isMobile} />
-      <StatCard label="PUT PREMIUM"  value={fmtPrem(displayStats?.putPremium)}  sub={searchUpper||"Today"} color="#ef4444" compact={isMobile} />
+      <StatCard label="CALL PREMIUM" value={fmtPrem(displayStats?.callPremium)} sub={searchUpper?searchSub:"Today"} color="#22c55e" compact={isMobile} />
+      <StatCard label="PUT PREMIUM"  value={fmtPrem(displayStats?.putPremium)}  sub={searchUpper?searchSub:"Today"} color="#ef4444" compact={isMobile} />
       <StatCard label="SWEEPS"  value={displayStats?.sweepCount ||0} color="#C9A84C" compact={isMobile} />
       <StatCard label="BLOCKS"  value={displayStats?.blockCount ||0} color="#a78bfa" compact={isMobile} />
       <StatCard label="UNUSUAL" value={displayStats?.unusualCount||0} color="#f97316" compact={isMobile} />
@@ -369,7 +384,13 @@ export default function Scanner() {
   const [minPrem, setMinPrem] = useState(0);
   const [connected, setConnected] = useState(false);
   const [activeView, setActiveView] = useState("scanner");
+  const [searchRows, setSearchRows] = useState(null);   // null = no cache results; array = full-session cache for searched ticker
+  const [searchLoading, setSearchLoading] = useState(false);
   const wsRef = useRef(null);
+  const searchRef = useRef("");
+
+  // Keep the live WS handler aware of the current search without re-connecting
+  useEffect(() => { searchRef.current = search.trim().toUpperCase(); }, [search]);
 
   const features = {
     aiChat:     ["starter","pro","elite"].includes(tier),
@@ -381,39 +402,101 @@ export default function Scanner() {
     webhooks:   ["elite"].includes(tier),
   };
 
+  // ── WebSocket: fresh token on connect, no zombie reconnects after unmount ──
   useEffect(() => {
     let ws;
-    const connect = () => {
-      ws = new WebSocket(`${WS}?token=${token||""}`);
+    let reconnectTimer;
+    let cancelled = false;
+    const connect = async () => {
+      if (cancelled) return;
+      let tok = "";
+      try { tok = (await getToken?.()) || token || ""; } catch { tok = token || ""; }
+      if (cancelled) return;
+      ws = new WebSocket(`${WS}?token=${tok}`);
       wsRef.current = ws;
       ws.onopen = () => setConnected(true);
-      ws.onclose = () => { setConnected(false); setTimeout(connect, 3000); };
+      ws.onclose = () => {
+        setConnected(false);
+        if (!cancelled) reconnectTimer = setTimeout(connect, 3000);
+      };
       ws.onerror = () => ws.close();
       ws.onmessage = (e) => {
         try {
           const msg = JSON.parse(e.data);
           if (msg.type==="history") setRows(msg.rows||[]);
-          if (msg.type==="flow")    setRows(r => [msg.row,...r].slice(0,500));
+          if (msg.type==="flow") {
+            setRows(r => [msg.row,...r].slice(0,500));
+            // Merge live prints into active full-session search results
+            const sym = searchRef.current;
+            if (sym && msg.row?.ticker === sym) {
+              setSearchRows(sr => Array.isArray(sr) ? [msg.row, ...sr].slice(0, 2000) : sr);
+            }
+          }
           if (msg.type==="stats")   setStats(msg.data);
           if (msg.type==="top_contracts") setTopContracts(msg.data||[]);
         } catch {}
       };
     };
     connect();
-    return () => ws?.close();
+    return () => {
+      cancelled = true;
+      clearTimeout(reconnectTimer);
+      try { ws?.close(); } catch {}
+    };
   }, []);
 
+  // ── Ticker search → full-session cache endpoint (debounced, fresh token) ──
   useEffect(() => {
-    if (features.sectorHeat) fetch(`${API}/api/flow/heatmap`, { headers:{ Authorization:`Bearer ${token}` } }).then(r=>r.json()).then(setHeatmap).catch(()=>{});
-    if (features.smartMoney) fetch(`${API}/api/flow/smart-money`, { headers:{ Authorization:`Bearer ${token}` } }).then(r=>r.json()).then(setSmartMoney).catch(()=>{});
-    const interval = setInterval(() => {
-      if (features.sectorHeat) fetch(`${API}/api/flow/heatmap`, { headers:{ Authorization:`Bearer ${token}` } }).then(r=>r.json()).then(setHeatmap).catch(()=>{});
-    }, 30_000);
-    return () => clearInterval(interval);
+    const sym = search.trim().toUpperCase();
+    if (!sym) { setSearchRows(null); setSearchLoading(false); return; }
+    let cancelled = false;
+    setSearchLoading(true);
+    const t = setTimeout(async () => {
+      try {
+        const tok = (await getToken?.()) || "";
+        const res = await fetch(`${API}/api/flow/ticker/${encodeURIComponent(sym)}`, {
+          headers: { Authorization: `Bearer ${tok}` },
+        });
+        const data = await res.json();
+        if (cancelled) return;
+        const fetched = Array.isArray(data) ? data : (data.rows || []);
+        setSearchRows(fetched);
+      } catch {
+        if (!cancelled) setSearchRows(null); // fall back to live-window filtering on error
+      } finally {
+        if (!cancelled) setSearchLoading(false);
+      }
+    }, 400);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [search]);
+
+  // ── Heatmap + Smart Money: fresh token per request ──
+  useEffect(() => {
+    let cancelled = false;
+    const loadExtras = async () => {
+      let tok = "";
+      try { tok = (await getToken?.()) || ""; } catch {}
+      if (cancelled) return;
+      if (features.sectorHeat) {
+        fetch(`${API}/api/flow/heatmap`, { headers:{ Authorization:`Bearer ${tok}` } })
+          .then(r=>r.json()).then(d=>{ if(!cancelled) setHeatmap(d); }).catch(()=>{});
+      }
+      if (features.smartMoney) {
+        fetch(`${API}/api/flow/smart-money`, { headers:{ Authorization:`Bearer ${tok}` } })
+          .then(r=>r.json()).then(d=>{ if(!cancelled) setSmartMoney(d); }).catch(()=>{});
+      }
+    };
+    loadExtras();
+    const interval = setInterval(loadExtras, 30_000);
+    return () => { cancelled = true; clearInterval(interval); };
   }, [tier]);
 
-  const filteredRows = rows.filter(row => {
-    if (search && !row.ticker?.includes(search.toUpperCase())) return false;
+  const searchUpper = search.trim().toUpperCase();
+  const usingCache = !!searchUpper && Array.isArray(searchRows) && searchRows.length > 0;
+  const sourceRows = usingCache ? searchRows : rows;
+
+  const filteredRows = sourceRows.filter(row => {
+    if (searchUpper && !row.ticker?.includes(searchUpper)) return false;
     if (minPrem && row.premium < minPrem*1000) return false;
     if (tab==="UNUSUAL") return ["sweep","block","unusual"].includes(row.tag);
     if (tab==="0DTE") { const d=Math.floor((new Date(row.expStr)-Date.now())/86400000); return d<=0; }
@@ -423,13 +506,17 @@ export default function Scanner() {
     return true;
   });
 
+  const emptyMsg = searchUpper
+    ? (searchLoading ? `Loading full session flow for ${searchUpper}...` : `No flow found for ${searchUpper} this session`)
+    : "Waiting for flow data...";
+
   const mTh = { color:'#FFFFFF', fontWeight:700, fontSize:"10px", padding:"8px 6px", whiteSpace:"nowrap" };
   const mTd = { fontSize:"11px", padding:"8px 6px", whiteSpace:"nowrap" };
 
   return (
     <div className="scanner-page">
-       <StatsBar rows={rows} stats={stats} search={search} connected={connected} />
-      <TopContracts contracts={search ? topContracts.filter(c=>c.ticker?.includes(search.toUpperCase())) : topContracts} />
+      <StatsBar rows={sourceRows} stats={stats} search={search} connected={connected} searchLoading={searchLoading} usingCache={usingCache} />
+      <TopContracts contracts={searchUpper ? topContracts.filter(c=>c.ticker?.includes(searchUpper)) : topContracts} />
 
       <div className="view-switcher" style={isMobile?swipeRow:undefined}>
         <button style={isMobile?{flexShrink:0,whiteSpace:"nowrap"}:undefined} className={activeView==="scanner"?"view-btn active":"view-btn"} onClick={()=>setActiveView("scanner")}>📊 Flow Scanner</button>
@@ -437,14 +524,14 @@ export default function Scanner() {
         <button style={isMobile?{flexShrink:0,whiteSpace:"nowrap"}:undefined} className={activeView==="heatmap"?"view-btn active":"view-btn"} onClick={()=>setActiveView("heatmap")}>🗺️ Sector Heat</button>
         <button style={isMobile?{flexShrink:0,whiteSpace:"nowrap"}:undefined} className={activeView==="smart"?"view-btn active":"view-btn"} onClick={()=>setActiveView("smart")}>🎯 Smart Money</button>
         <button style={isMobile?{flexShrink:0,whiteSpace:"nowrap"}:undefined} className={activeView==="community"?"view-btn active":"view-btn"} onClick={()=>setActiveView("community")}>💬 Community {!["elite"].includes(tier)&&<span className="elite-badge">ELITE</span>}</button>
-        <button style={isMobile?{flexShrink:0,whiteSpace:"nowrap"}:undefined} className={activeView==="orb"?"view-btn active":"view-btn"} onClick={()=>setActiveView("orb")}>📐 ORB Dashboard {!["pro","elite"].includes(tier)&&<span className="elite-badge">PRO</span>}</button>
+        <button style={isMobile?{flexShrink:0,whiteSpace:"nowrap"}:undefined} className={activeView==="orb"?"view-btn active":"view-btn"} onClick={()=>setActiveView("orb")}>📏 ORB Dashboard {!["pro","elite"].includes(tier)&&<span className="elite-badge">PRO</span>}</button>
         <button style={isMobile?{flexShrink:0,whiteSpace:"nowrap"}:undefined} className={activeView==="replay"?"view-btn active":"view-btn"} onClick={()=>setActiveView("replay")}>⏮️ Flow Replay {!["elite"].includes(tier)&&<span className="elite-badge">ELITE</span>}</button>
       </div>
 
       {activeView==="scanner"&&(<>
         <div className="filter-bar" style={isMobile?{display:"flex",flexDirection:"column",gap:"10px",alignItems:"stretch"}:undefined}>
           <div style={isMobile?{display:"flex",gap:"8px"}:{display:"contents"}}>
-            <input className="search-input" placeholder="Filter by symbol..." value={search} onChange={e=>setSearch(e.target.value)} style={isMobile?{flex:1,minWidth:0}:undefined} />
+            <input className="search-input" placeholder="Search ticker (full session)..." value={search} onChange={e=>setSearch(e.target.value)} style={isMobile?{flex:1,minWidth:0}:undefined} />
             <select className="prem-select" value={minPrem} onChange={e=>setMinPrem(+e.target.value)} style={isMobile?{flexShrink:0}:undefined}>
               <option value={0}>All Premium</option><option value={100}>$100K+</option><option value={500}>$500K+</option><option value={1000}>$1M+</option><option value={5000}>$5M+</option>
             </select>
@@ -469,7 +556,7 @@ export default function Scanner() {
                     <td style={mTd}><TagBadge tag={row.tag} compact /></td>
                   </tr>
                 ))}
-                {filteredRows.length===0&&<tr><td colSpan={features.flowScore?6:5} className="empty-row">Waiting for flow data...</td></tr>}
+                {filteredRows.length===0&&<tr><td colSpan={features.flowScore?6:5} className="empty-row">{emptyMsg}</td></tr>}
               </tbody>
             </table>
           </div>
@@ -501,7 +588,7 @@ export default function Scanner() {
                     <td><TagBadge tag={row.tag} /></td>
                   </tr>
                 ))}
-                {filteredRows.length===0&&<tr><td colSpan="13" className="empty-row">Waiting for flow data...</td></tr>}
+                {filteredRows.length===0&&<tr><td colSpan="13" className="empty-row">{emptyMsg}</td></tr>}
               </tbody>
             </table>
           </div>
@@ -512,8 +599,8 @@ export default function Scanner() {
       {activeView==="heatmap"   && <SectorHeatmap data={heatmap} hasFeature={features.sectorHeat} />}
       {activeView==="smart"     && <SmartMoney data={smartMoney} hasFeature={features.smartMoney} />}
       {activeView==="community" && <CommunityChat tier={tier} />}
-      {activeView==="orb"       && <ORBDashboard token={token} tier={tier} />}
-      {activeView==="replay"    && <FlowReplay hasFeature={features.smartMoney} token={token} />}
+      {activeView==="orb"       && <ORBDashboard getToken={getToken} tier={tier} />}
+      {activeView==="replay"    && <FlowReplay hasFeature={features.smartMoney} getToken={getToken} />}
     </div>
   );
 }
