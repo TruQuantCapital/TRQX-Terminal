@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
 import TradingViewChart from "../components/TradingViewChart";
-
+import { useAuth } from "../hooks/useAuth";
+import { isMarketOpen } from "../components/Cards";
 
 const API = "https://trqx-flow-scanner-production.up.railway.app";
+
+function useMarketOpen() {
+  const [open, setOpen] = useState(isMarketOpen);
+  useEffect(() => {
+    const i = setInterval(() => setOpen(isMarketOpen()), 60_000);
+    return () => clearInterval(i);
+  }, []);
+  return open;
+}
 
 function fmtPrem(v) {
   const n = Number(v);
@@ -19,30 +29,37 @@ function scoreClass(score) {
 
 export default function TradePlanPage() {
   const [ticker, setTicker] = useState(() => {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("ticker") || "";
-});
+    const params = new URLSearchParams(window.location.search);
+    return params.get("ticker") || "";
+  });
   const [data, setData] = useState(null);
+  const { getToken } = useAuth();
+  const open = useMarketOpen();
 
   const query = ticker.trim().toUpperCase();
 
   useEffect(() => {
-    if (!query) {
+    // Engine is gated to live sessions — no fetches while the market is closed.
+    if (!query || !open) {
       setData(null);
       return;
     }
 
+    let cancelled = false;
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`${API}/api/flow/ticker/${query}`);
-        if (res.ok) setData(await res.json());
+        const tok = (await getToken?.()) || "";
+        const res = await fetch(`${API}/api/flow/ticker/${encodeURIComponent(query)}`, {
+          headers: { Authorization: `Bearer ${tok}` },
+        });
+        if (!cancelled && res.ok) setData(await res.json());
       } catch (err) {
         console.warn("Trade plan fetch failed:", err);
       }
     }, 400);
 
-    return () => clearTimeout(timer);
-  }, [query]);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [query, open]);
 
   const callPremium = data?.callPremium ?? 0;
   const putPremium = data?.putPremium ?? 0;
@@ -98,6 +115,76 @@ export default function TradePlanPage() {
   const dataScore =
     rowCount > 100 ? 10 : rowCount > 50 ? 8 : rowCount > 20 ? 6 : rowCount > 0 ? 4 : 0;
 
+  /* ── Market closed: clear message, no engine output, chart still available ── */
+  if (!open) {
+    return (
+      <main className="pageStack">
+        <section className="pageHeader">
+          <div>
+            <p>TRQX MODULE</p>
+            <h1>Trade Plan</h1>
+            <span>AI-style trade planning based on live options flow.</span>
+          </div>
+        </section>
+
+        <section style={{
+          background: "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))",
+          border: "1px solid rgba(212,175,55,0.35)",
+          borderRadius: 14,
+          padding: "28px 24px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+          gap: 12,
+        }}>
+          <span style={{
+            background: "rgba(212,175,55,0.1)",
+            border: "1px solid rgba(212,175,55,0.4)",
+            color: "#d4af37",
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: 2,
+            padding: "4px 12px",
+            borderRadius: 6,
+          }}>
+            MARKET CLOSED
+          </span>
+          <h2 style={{ color: "#f5f1e8", fontSize: 22, fontWeight: 800, margin: 0 }}>
+            Trade Plan Engine is Offline
+          </h2>
+          <p style={{ color: "#9ca3af", fontSize: 13, lineHeight: 1.7, maxWidth: 520, margin: 0 }}>
+            The Trade Plan Engine grades setups using live institutional options flow,
+            so it only runs during market hours. It will be back at the next market
+            open — 9:30 AM ET. Charts below remain available for weekend review.
+          </p>
+          <input
+            value={ticker}
+            onChange={(e) => setTicker(e.target.value)}
+            placeholder="Pull up a chart: NVDA, CRM, SPY..."
+            style={{
+              marginTop: 8,
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: 10,
+              color: "#fff",
+              padding: "10px 14px",
+              fontSize: 13,
+              fontWeight: 700,
+              outline: "none",
+              width: "100%",
+              maxWidth: 320,
+              textAlign: "center",
+            }}
+          />
+        </section>
+
+        <TradingViewChart symbol={query || "SPY"} />
+      </main>
+    );
+  }
+
+  /* ── Market open: full engine ── */
   return (
     <main className="pageStack">
       <section className="pageHeader">
@@ -195,12 +282,12 @@ export default function TradePlanPage() {
               : "Avoid / wait"}
           </b>
         </div>
-       
+
       </section>
 
-<TradingViewChart symbol={query || "SPY"} />
+      <TradingViewChart symbol={query || "SPY"} />
 
-<section className="trqxScorecard">
+      <section className="trqxScorecard">
         <div className="scorecardHeader">
           <div>
             <small>TRQX SCORECARD</small>
