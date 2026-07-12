@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 const API = "https://trqx-flow-scanner-production.up.railway.app";
 
 const CPI_DATES = [
-  new Date("2026-07-15T08:30:00-05:00"),
+  new Date("2026-07-14T08:30:00-05:00"),
   new Date("2026-08-12T08:30:00-05:00"),
   new Date("2026-09-10T08:30:00-05:00"),
   new Date("2026-10-14T08:30:00-05:00"),
