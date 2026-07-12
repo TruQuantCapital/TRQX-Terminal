@@ -568,47 +568,129 @@ List 2 things that could invalidate the current bias, each starting with a dash.
   );
 }
 
+const SECTOR_ETFS = [
+  ["XLK", "Technology"],
+  ["XLC", "Communication"],
+  ["XLF", "Financials"],
+  ["XLY", "Consumer Disc."],
+  ["XLP", "Consumer Staples"],
+  ["XLI", "Industrials"],
+  ["XLE", "Energy"],
+  ["XLV", "Healthcare"],
+  ["XLU", "Utilities"],
+  ["XLB", "Materials"],
+  ["XLRE", "Real Estate"],
+];
+
 export function BreadthCard() {
-  const sectors = [
-    ["Technology", "+1.25%", 92],
-    ["Communication", "+0.60%", 78],
-    ["Financials", "+0.23%", 52],
-    ["Energy", "-0.12%", 38],
-    ["Healthcare", "-0.32%", 30],
-    ["Utilities", "-0.45%", 24],
-  ];
+  const open = useMarketOpen();
+  const [sectors, setSectors] = useState(null); // null = loading
+
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchBreadth() {
+      const results = await Promise.all(SECTOR_ETFS.map(async ([sym, name]) => {
+        try {
+          const res = await fetch(`${API}/api/quote/${sym}`);
+          if (!res.ok) throw new Error("failed");
+          const d = await res.json();
+          return { sym, name, changePct: d.changePct != null ? Number(d.changePct) : null };
+        } catch {
+          return { sym, name, changePct: null };
+        }
+      }));
+      if (!cancelled) setSectors(results);
+    }
+    fetchBreadth();
+    // 2 min while open; 5 min when closed (sector prices are frozen)
+    const t = setInterval(fetchBreadth, open ? 120_000 : 300_000);
+    return () => { cancelled = true; clearInterval(t); };
+  }, [open]);
+
+  const valid = (sectors || []).filter(s => s.changePct != null);
+  const advancing = valid.filter(s => s.changePct > 0.05).length;
+  const declining = valid.filter(s => s.changePct < -0.05).length;
+  const unchanged = valid.length - advancing - declining;
+  const advPct = valid.length ? Math.round((advancing / valid.length) * 100) : 0;
+  const decPct = valid.length ? Math.round((declining / valid.length) * 100) : 0;
+  const unchPct = Math.max(0, 100 - advPct - decPct);
+
+  const sorted = [...valid].sort((a, b) => b.changePct - a.changePct);
+  const maxAbs = Math.max(0.2, ...valid.map(s => Math.abs(s.changePct)));
+
+  // Donut geometry
+  const R = 40;
+  const C = 2 * Math.PI * R;
+  const advLen = (advPct / 100) * C;
+  const decLen = (decPct / 100) * C;
+  const unchLen = Math.max(0, C - advLen - decLen);
+
   return (
     <section className="card breadth">
-      <div className="cardTitle">Market Breadth</div>
-      <div className="donut"></div>
-      <div className="breadStats">
-        <span><b className="positive">72%</b> Advancing</span>
-        <span><b className="negative">23%</b> Declining</span>
-        <span><b>5%</b> Unchanged</span>
+      <div className="cardTitle" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", flexWrap: "wrap" }}>
+        <span>Market Breadth <span style={{ color: "#9ca3af", fontSize: "10px", fontWeight: 600, letterSpacing: "1px" }}>S&P 500 SECTORS</span></span>
+        {!open && <ClosedChip compact />}
       </div>
-      {/* Market Breadth Summary */}
-      <div style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.2)", borderRadius: 10, padding: "12px 14px", margin: "10px 0" }}>
-        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>WHAT THIS MEANS</div>
-        <div style={{ color: "#d1d5db", fontSize: 12, lineHeight: 1.7 }}>
-          {(() => {
-            const adv = 72;
-            if (adv >= 65) return "Strong broad participation — the majority of stocks are advancing, signaling healthy market internals. This confirms the rally has institutional backing, not just a few mega-caps carrying the index. Favor long setups and momentum plays today.";
-            if (adv >= 50) return "Mixed breadth — more stocks are advancing than declining but conviction is moderate. Stick to high-quality setups with strong flow confirmation. Avoid chasing extended names.";
-            return "Weak breadth — most stocks are declining, signaling broad market weakness. Even if the index looks stable, internals are deteriorating. Reduce position size, tighten stops, and favor defensive names or cash.";
-          })()}
-        </div>
-      </div>
-      <div className="sectorList">
-        {sectors.map((s) => (
-          <div className="sector" key={s[0]}>
-            <span>{s[0]}</span>
-            <div><i style={{ width: `${s[2]}%` }}></i></div>
-            <b className={s[1].startsWith("+") ? "positive" : "negative"}>
-              {s[1]}
-            </b>
+
+      {sectors === null ? (
+        <div style={{ color: "#9ca3af", fontSize: "13px", padding: "16px 0" }}>Loading sector data...</div>
+      ) : valid.length === 0 ? (
+        <div style={{ color: "#9ca3af", fontSize: "13px", padding: "16px 0" }}>Sector data is unavailable right now. It will retry automatically.</div>
+      ) : (
+        <>
+          {/* Live donut: advancing / declining / unchanged sectors */}
+          <div style={{ display: "flex", justifyContent: "center", padding: "6px 0 2px" }}>
+            <svg width="110" height="110" viewBox="0 0 110 110">
+              <g transform="rotate(-90 55 55)">
+                <circle cx="55" cy="55" r={R} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="14" />
+                <circle cx="55" cy="55" r={R} fill="none" stroke="#22c55e" strokeWidth="14"
+                  strokeDasharray={`${advLen} ${C - advLen}`} strokeDashoffset="0" />
+                <circle cx="55" cy="55" r={R} fill="none" stroke="#ef4444" strokeWidth="14"
+                  strokeDasharray={`${decLen} ${C - decLen}`} strokeDashoffset={-advLen} />
+                <circle cx="55" cy="55" r={R} fill="none" stroke="#6b7280" strokeWidth="14"
+                  strokeDasharray={`${unchLen} ${C - unchLen}`} strokeDashoffset={-(advLen + decLen)} />
+              </g>
+              <text x="55" y="52" textAnchor="middle" fontSize="20" fontWeight="800" fill={advPct >= 50 ? "#22c55e" : "#ef4444"} fontFamily="monospace">{advPct}%</text>
+              <text x="55" y="66" textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.4)" fontFamily="monospace" letterSpacing="1">ADVANCING</text>
+            </svg>
           </div>
-        ))}
-      </div>
+
+          <div className="breadStats">
+            <span><b className="positive">{advancing}</b> Advancing</span>
+            <span><b className="negative">{declining}</b> Declining</span>
+            <span><b>{unchanged}</b> Flat</span>
+          </div>
+
+          {/* Market Breadth Summary */}
+          <div style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.2)", borderRadius: 10, padding: "12px 14px", margin: "10px 0" }}>
+            <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2, marginBottom: 6 }}>WHAT THIS MEANS</div>
+            <div style={{ color: "#d1d5db", fontSize: 12, lineHeight: 1.7 }}>
+              {(() => {
+                const closedNote = open ? "" : "Market is closed — breadth reflects the last session. ";
+                if (advPct >= 65) return closedNote + "Strong broad participation — most sectors are advancing, signaling healthy market internals. This suggests moves have institutional backing rather than a few mega-caps carrying the index. Favor long setups and momentum plays.";
+                if (advPct >= 45) return closedNote + "Mixed breadth — sector participation is split and conviction is moderate. Stick to high-quality setups with strong flow confirmation. Avoid chasing extended names.";
+                return closedNote + "Weak breadth — most sectors are declining, signaling broad market weakness. Even if the index looks stable, internals are deteriorating. Reduce position size, tighten stops, and favor defensive names or cash.";
+              })()}
+            </div>
+          </div>
+
+          <div className="sectorList">
+            {sorted.map((s) => {
+              const pos = s.changePct >= 0;
+              const width = Math.min(98, Math.max(5, 50 + (s.changePct / maxAbs) * 45));
+              return (
+                <div className="sector" key={s.sym}>
+                  <span>{s.name}</span>
+                  <div><i style={{ width: `${width}%`, background: pos ? "#22c55e" : "#ef4444" }}></i></div>
+                  <b className={pos ? "positive" : "negative"}>
+                    {pos ? "+" : ""}{s.changePct.toFixed(2)}%
+                  </b>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </section>
   );
 }
