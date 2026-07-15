@@ -31,29 +31,10 @@ import OperationsPage from "./pages/OperationsPage";
 import "./styles.css";
 import "./app.css";
 
-const routeByKey = {
-  dashboard: "/dashboard",
-  operations: "/operations",
-  scanner: "/scanner",
-  options: "/options-flow",
-  dividends: "/dividends",
-  tradeplan: "/trade-plan",
-  "capital-allocator": "/capital-allocator",
-  gamma: "/gamma-ex",
-  calendar: "/economic-calendar",
-  alerts: "/alerts",
-  academy: "/academy",
-  research: "/research",
-  patterns: "/patterns",
-  guide: "/guide",
-  discord: "/discord",
-  news: "/news",
-  settings: "/settings",
-};
-
 const keyByPath = {
   "/": "dashboard",
   "/dashboard": "dashboard",
+  "/operations": "operations",
   "/scanner": "scanner",
   "/options-flow": "options",
   "/trade-plan": "tradeplan",
@@ -98,11 +79,28 @@ function OwnerRoute({ children }) {
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/auth" replace />;
 
-  const isOwner =
-    user.email?.toLowerCase() === OPERATIONS_OWNER_EMAIL.toLowerCase();
+  const signedInEmail = user.email?.trim().toLowerCase();
+  const ownerEmail = OPERATIONS_OWNER_EMAIL.trim().toLowerCase();
+  const isOwner = signedInEmail === ownerEmail;
 
   if (!isOwner) {
-    return <Navigate to="/dashboard" replace />;
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          padding: "40px",
+          background: "#090d13",
+          color: "#ffffff",
+        }}
+      >
+        <h1>Operations Access Denied</h1>
+        <p>Signed-in account:</p>
+        <strong>{user.email || "No email detected"}</strong>
+        <p style={{ marginTop: "20px" }}>
+          Authorized account: {OPERATIONS_OWNER_EMAIL}
+        </p>
+      </div>
+    );
   }
 
   return children;
