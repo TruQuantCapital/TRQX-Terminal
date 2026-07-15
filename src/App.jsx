@@ -81,26 +81,9 @@ function OwnerRoute({ children }) {
 
   const signedInEmail = user.email?.trim().toLowerCase();
   const ownerEmail = OPERATIONS_OWNER_EMAIL.trim().toLowerCase();
-  const isOwner = signedInEmail === ownerEmail;
 
-  if (!isOwner) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          padding: "40px",
-          background: "#090d13",
-          color: "#ffffff",
-        }}
-      >
-        <h1>Operations Access Denied</h1>
-        <p>Signed-in account:</p>
-        <strong>{user.email || "No email detected"}</strong>
-        <p style={{ marginTop: "20px" }}>
-          Authorized account: {OPERATIONS_OWNER_EMAIL}
-        </p>
-      </div>
-    );
+  if (signedInEmail !== ownerEmail) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
