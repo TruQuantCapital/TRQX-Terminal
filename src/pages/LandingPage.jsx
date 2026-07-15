@@ -228,7 +228,40 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+      <section className="landingMentorship">
+        <div className="landingMentorshipCopy">
+          <small>TRQX ELITE MENTORSHIP</small>
 
+          <h2>Learn directly from the founder.</h2>
+
+          <p>
+            Build a disciplined trading process through weekly live coaching,
+            market preparation, trade reviews, risk-management education,
+            trading psychology, and structured accountability.
+          </p>
+
+          <div className="landingMentorshipBenefits">
+            <span>✓ Weekly live coaching</span>
+            <span>✓ Market preparation</span>
+            <span>✓ Trade and chart reviews</span>
+            <span>✓ Private mentorship community</span>
+            <span>✓ Full TRQX Elite access</span>
+            <span>✓ Recorded sessions</span>
+          </div>
+
+          <Link to="/mentorship" className="goldButton">
+            Explore Elite Mentorship
+          </Link>
+        </div>
+
+        <div className="landingMentorshipImage">
+          <img
+            src="/michael-mentorship.png"
+            alt="Michael A. Valerio, Founder of TRQX Capital"
+          />
+        </div>
+      </section>
+      
       <section id="stats" className="statsBar">
         <div><CandlestickChart /><b>$500M+</b><span>Flow Analyzed</span></div>
         <div><BarChart3 /><b>50,000+</b><span>Contracts Tracked</span></div>

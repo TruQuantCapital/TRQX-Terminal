@@ -627,3 +627,167 @@ body {
 .trqxLanding a {
   cursor: pointer;
 }
+/* ─── LANDING PAGE MENTORSHIP SECTION ─────────────────── */
+
+.landingMentorship {
+  margin: 0 44px 46px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+  min-height: 520px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.38);
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at 72% 24%,
+      rgba(212, 175, 55, 0.15),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(12, 12, 14, 0.98),
+      rgba(3, 6, 12, 0.98)
+    );
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.landingMentorshipCopy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 54px 46px;
+}
+
+.landingMentorshipCopy small {
+  color: #d4af37;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.landingMentorshipCopy h2 {
+  margin: 12px 0 16px;
+  max-width: 720px;
+  color: #ffffff;
+  font-size: clamp(38px, 4.5vw, 64px);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.landingMentorshipCopy p {
+  max-width: 720px;
+  margin: 0;
+  color: #c9cdd4;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.landingMentorshipBenefits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px 18px;
+  margin: 26px 0;
+}
+
+.landingMentorshipBenefits span {
+  color: #e0d8c8;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.landingMentorshipCopy .goldButton {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.landingMentorshipImage {
+  position: relative;
+  min-height: 520px;
+  overflow: hidden;
+}
+
+.landingMentorshipImage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(5, 5, 7, 0.92) 0%,
+      rgba(5, 5, 7, 0.28) 34%,
+      transparent 65%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(5, 5, 7, 0.78) 0%,
+      transparent 34%
+    );
+  pointer-events: none;
+}
+
+.landingMentorshipImage img {
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  display: block;
+  object-fit: cover;
+  object-position: center 18%;
+}
+
+@media (max-width: 1000px) {
+  .landingMentorship {
+    grid-template-columns: 1fr;
+  }
+
+  .landingMentorshipImage {
+    min-height: 480px;
+  }
+
+  .landingMentorshipImage img {
+    min-height: 480px;
+  }
+
+  .landingMentorshipImage::before {
+    background:
+      linear-gradient(
+        0deg,
+        rgba(5, 5, 7, 0.88) 0%,
+        transparent 45%
+      );
+  }
+}
+
+@media (max-width: 760px) {
+  .landingMentorship {
+    margin: 0 20px 34px;
+    min-height: auto;
+  }
+
+  .landingMentorshipCopy {
+    padding: 36px 24px;
+  }
+
+  .landingMentorshipCopy h2 {
+    font-size: 38px;
+  }
+
+  .landingMentorshipBenefits {
+    grid-template-columns: 1fr;
+  }
+
+  .landingMentorshipCopy .goldButton {
+    width: 100%;
+  }
+
+  .landingMentorshipImage,
+  .landingMentorshipImage img {
+    min-height: 420px;
+  }
+}
