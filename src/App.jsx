@@ -28,6 +28,7 @@ import Welcome from "./pages/Welcome";
 import ResetPassword from "./pages/ResetPassword";
 import SettingsPage from "./pages/SettingsPage";
 import OperationsPage from "./pages/OperationsPage";
+import MentorshipPage from "./pages/MentorshipPage";
 import "./styles.css";
 import "./app.css";
 
@@ -46,6 +47,7 @@ const routeByKey = {
   research: "/research",
   patterns: "/patterns",
   guide: "/guide",
+  mentorship: "/mentorship",
   discord: "/discord",
   news: "/news",
   settings: "/settings",
@@ -55,6 +57,7 @@ const keyByPath = {
   "/": "dashboard",
   "/dashboard": "dashboard",
   "/operations": "operations",
+  "/mentorship": "mentorship",
   "/scanner": "scanner",
   "/options-flow": "options",
   "/trade-plan": "tradeplan",
@@ -186,7 +189,18 @@ export default function App() {
           <Route path="/news" element={<ProtectedTerminal><NewsPage /></ProtectedTerminal>} />
           <Route path="/patterns" element={<ProtectedTerminal><PatternsPage /></ProtectedTerminal>} />
           <Route path="/academy" element={<ProtectedTerminal><AcademyPage /></ProtectedTerminal>} />
-          <Route path="/guide" element={<ProtectedTerminal><GuidePage /></ProtectedTerminal>} />
+
+<Route
+  path="/mentorship"
+  element={
+    <ProtectedTerminal>
+      <MentorshipPage />
+    </ProtectedTerminal>
+  }
+/>
+
+<Route path="/guide" element={<ProtectedTerminal><GuidePage /></ProtectedTerminal>} />
+<Route path="/pricing" element={<ProtectedTerminal><Pricing /></ProtectedTerminal>} />
           <Route path="/pricing" element={<ProtectedTerminal><Pricing /></ProtectedTerminal>} />
           <Route path="/alerts" element={<ProtectedTerminal><Alerts /></ProtectedTerminal>} />
           <Route path="/reports" element={<ProtectedTerminal><Reports /></ProtectedTerminal>} />

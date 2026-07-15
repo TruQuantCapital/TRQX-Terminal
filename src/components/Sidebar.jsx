@@ -17,6 +17,7 @@ import {
   DollarSign,
   Crown,
   PieChart,
+  Users,
 } from "lucide-react";
 
 export const nav = [
@@ -34,6 +35,7 @@ export const nav = [
   { key: "academy", label: "Academy", icon: GraduationCap, feature: "academy" },
   { key: "patterns", label: "Flash Cards", icon: BookOpen, feature: "flashcards" },
   { key: "guide", label: "How To Use", icon: BookOpen, feature: "guide" },
+  { key: "mentorship", label: "Elite Mentorship", icon: Users,feature: null, },
   { key: "discord", label: "Discord", icon: MessageCircle, feature: null },
   { key: "home", label: "Home", icon: Home, feature: null },
   { key: "settings", label: "Settings", icon: Settings, feature: null },
@@ -49,13 +51,18 @@ const navGroups = [
     keys: ["options", "scanner", "gamma", "tradeplan", "capital-allocator", "alerts"],
   },
   {
-    label: "EDUCATION",
-    keys: ["academy", "patterns", "guide"],
-  },
-  {
-    label: "COMMUNITY & ACCOUNT",
-    keys: ["discord", "home", "settings"],
-  },
+  label: "EDUCATION",
+  keys: ["academy", "patterns", "guide"],
+},
+{
+  label: "MENTORSHIP",
+  keys: ["mentorship"],
+},
+{
+  label: "COMMUNITY & ACCOUNT",
+  keys: ["discord", "home", "settings"],
+},
+  
 ];
 
 function initialsFromEmail(email) {
