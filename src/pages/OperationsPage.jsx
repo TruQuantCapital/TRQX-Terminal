@@ -1,7 +1,76 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const API_BASE_URL =
   import.meta.env.VITE_TRQX_OPERATIONS_API_URL || "http://127.0.0.1:8000";
+
+const defaultWatchlist = [
+  "SPY",
+  "SPX",
+  "QQQ",
+  "IWM",
+  "TSLA",
+  "NVDA",
+  "META",
+];
+
+function todayIsoDate() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset();
+  return new Date(now.getTime() - offset * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+}
+
+function cardStyle(extra = {}) {
+  return {
+    padding: "20px",
+    borderRadius: "15px",
+    border: "1px solid rgba(255,255,255,0.08)",
+    background: "rgba(255,255,255,0.025)",
+    ...extra,
+  };
+}
+
+function labelStyle() {
+  return {
+    display: "block",
+    color: "#94a3b8",
+    fontSize: "12px",
+    fontWeight: 800,
+    letterSpacing: "0.05em",
+    textTransform: "uppercase",
+    marginBottom: "7px",
+  };
+}
+
+function inputStyle() {
+  return {
+    width: "100%",
+    boxSizing: "border-box",
+    borderRadius: "9px",
+    border: "1px solid rgba(255,255,255,0.12)",
+    background: "rgba(4,8,14,0.8)",
+    color: "#f8fafc",
+    padding: "11px 12px",
+    outline: "none",
+  };
+}
+
+function buttonStyle(primary = false) {
+  return {
+    padding: "11px 16px",
+    borderRadius: "9px",
+    border: primary
+      ? "1px solid rgba(212,175,55,0.7)"
+      : "1px solid rgba(255,255,255,0.14)",
+    background: primary
+      ? "linear-gradient(135deg, rgba(212,175,55,0.28), rgba(212,175,55,0.1))"
+      : "rgba(255,255,255,0.05)",
+    color: primary ? "#f4d675" : "#e2e8f0",
+    fontWeight: 900,
+    cursor: "pointer",
+  };
+}
 
 export default function OperationsPage() {
   const [apiStatus, setApiStatus] = useState({
@@ -10,6 +79,73 @@ export default function OperationsPage() {
     message: "Checking TRQX Operations API...",
     version: null,
   });
+
+  const [tradingDay, setTradingDay] = useState(null);
+  const [tickets, setTickets] = useState([]);
+  const [notice, setNotice] = useState("");
+  const [working, setWorking] = useState(false);
+
+  const [dayForm, setDayForm] = useState({
+    trading_date: todayIsoDate(),
+    floor_status: "premarket",
+    market_bias: "pending",
+    market_condition: "Pending premarket review",
+    risk_environment: "Pending premarket review",
+    expected_volatility: "Pending economic-event review",
+    notes: "",
+  });
+
+  const [ticketForm, setTicketForm] = useState({
+    ticker: "SPY",
+    direction: "call",
+    setup: "Premarket level confirmation",
+    entry: "",
+    stop: "",
+    target1: "",
+    target2: "",
+    target3: "",
+    grade: "A",
+    status: "watching",
+    reasoning: "",
+    notes: "",
+  });
+
+  const canCreateTicket = useMemo(
+    () => Boolean(tradingDay?.id),
+    [tradingDay],
+  );
+
+  async function apiRequest(path, options = {}) {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+      ...options,
+    });
+
+    const text = await response.text();
+    let data = null;
+
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = text;
+      }
+    }
+
+    if (!response.ok) {
+      const detail =
+        typeof data === "object" && data?.detail
+          ? data.detail
+          : `Request failed with HTTP ${response.status}`;
+
+      throw new Error(detail);
+    }
+
+    return data;
+  }
 
   async function checkApiHealth() {
     setApiStatus({
@@ -20,30 +156,132 @@ export default function OperationsPage() {
     });
 
     try {
-      const response = await fetch(`${API_BASE_URL}/health`);
-
-      if (!response.ok) {
-        throw new Error(`API returned HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await apiRequest("/health");
 
       setApiStatus({
         loading: false,
         online: data.status === "ok",
-        message:
-          data.status === "ok"
-            ? "TRQX Operations API is online."
-            : "TRQX Operations API returned an unexpected status.",
+        message: "TRQX Operations API is online.",
         version: data.version || null,
       });
     } catch (error) {
       setApiStatus({
         loading: false,
         online: false,
-        message: error instanceof Error ? error.message : "Unable to reach API.",
+        message: error.message || "Unable to reach API.",
         version: null,
       });
+    }
+  }
+
+  async function loadTickets() {
+    if (!tradingDay?.id) {
+      setTickets([]);
+      return;
+    }
+
+    try {
+      const data = await apiRequest(
+        `/trade-tickets?trading_day_id=${encodeURIComponent(tradingDay.id)}`,
+      );
+      setTickets(Array.isArray(data) ? data : []);
+    } catch (error) {
+      setNotice(`Unable to load tickets: ${error.message}`);
+    }
+  }
+
+  async function createTradingDay(event) {
+    event.preventDefault();
+    setWorking(true);
+    setNotice("");
+
+    try {
+      const payload = {
+        ...dayForm,
+        core_watchlist: defaultWatchlist,
+        economic_events: [],
+        notes: dayForm.notes || null,
+      };
+
+      const created = await apiRequest("/trading-days", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      setTradingDay(created);
+      setTickets([]);
+      setNotice(`Trading Day created for ${created.trading_date}.`);
+    } catch (error) {
+      setNotice(`Trading Day creation failed: ${error.message}`);
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  async function createTradeTicket(event) {
+    event.preventDefault();
+
+    if (!tradingDay?.id) {
+      setNotice("Create a Trading Day before creating a Trade Ticket.");
+      return;
+    }
+
+    const targets = [
+      ticketForm.target1,
+      ticketForm.target2,
+      ticketForm.target3,
+    ]
+      .filter((value) => value !== "")
+      .map(Number);
+
+    if (targets.length === 0) {
+      setNotice("Enter at least one target.");
+      return;
+    }
+
+    setWorking(true);
+    setNotice("");
+
+    try {
+      const payload = {
+        trading_day_id: tradingDay.id,
+        ticker: ticketForm.ticker,
+        direction: ticketForm.direction,
+        setup: ticketForm.setup,
+        entry: Number(ticketForm.entry),
+        stop: Number(ticketForm.stop),
+        targets,
+        grade: ticketForm.grade,
+        status: ticketForm.status,
+        reasoning: ticketForm.reasoning
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean),
+        notes: ticketForm.notes || null,
+      };
+
+      const created = await apiRequest("/trade-tickets", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      setTickets((current) => [...current, created]);
+      setNotice(`${created.ticker} Trade Ticket created successfully.`);
+
+      setTicketForm((current) => ({
+        ...current,
+        entry: "",
+        stop: "",
+        target1: "",
+        target2: "",
+        target3: "",
+        reasoning: "",
+        notes: "",
+      }));
+    } catch (error) {
+      setNotice(`Trade Ticket creation failed: ${error.message}`);
+    } finally {
+      setWorking(false);
     }
   }
 
@@ -51,8 +289,12 @@ export default function OperationsPage() {
     checkApiHealth();
   }, []);
 
+  useEffect(() => {
+    loadTickets();
+  }, [tradingDay?.id]);
+
   return (
-    <main style={{ padding: "24px", maxWidth: "1400px", margin: "0 auto" }}>
+    <main style={{ padding: "24px", maxWidth: "1500px", margin: "0 auto" }}>
       <section
         style={{
           border: "1px solid rgba(212,175,55,0.25)",
@@ -80,58 +322,566 @@ export default function OperationsPage() {
         </h1>
 
         <p style={{ color: "#94a3b8", marginTop: 0 }}>
-          Trading-floor control, market publishing and Discord operations.
+          Trading-floor control, trade-ticket management and publishing
+          operations.
         </p>
+
+        {notice && (
+          <div
+            style={{
+              marginTop: "18px",
+              padding: "13px 15px",
+              borderRadius: "10px",
+              border: "1px solid rgba(212,175,55,0.3)",
+              background: "rgba(212,175,55,0.07)",
+              color: "#f4d675",
+            }}
+          >
+            {notice}
+          </div>
+        )}
 
         <div
           style={{
-            marginTop: "24px",
-            padding: "18px",
-            borderRadius: "14px",
-            border: apiStatus.online
-              ? "1px solid rgba(34,197,94,0.4)"
-              : "1px solid rgba(239,68,68,0.4)",
-            background: apiStatus.online
-              ? "rgba(34,197,94,0.08)"
-              : "rgba(239,68,68,0.08)",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "14px",
+            marginTop: "22px",
           }}
         >
-          <div style={{ fontWeight: 800, fontSize: "16px" }}>
-            {apiStatus.loading
-              ? "?? API CHECK IN PROGRESS"
-              : apiStatus.online
-                ? "?? OPERATIONS API ONLINE"
-                : "?? OPERATIONS API OFFLINE"}
-          </div>
-
-          <div style={{ marginTop: "7px", color: "#cbd5e1" }}>
-            {apiStatus.message}
-          </div>
-
-          {apiStatus.version && (
-            <div style={{ marginTop: "5px", color: "#94a3b8" }}>
-              Version {apiStatus.version}
+          <div style={cardStyle()}>
+            <div style={labelStyle()}>Operations API</div>
+            <div style={{ fontWeight: 900 }}>
+              {apiStatus.loading
+                ? "🟡 Checking"
+                : apiStatus.online
+                  ? "🟢 Online"
+                  : "🔴 Offline"}
             </div>
-          )}
+            <div style={{ color: "#94a3b8", marginTop: "6px" }}>
+              {apiStatus.message}
+            </div>
+            {apiStatus.version && (
+              <div style={{ color: "#64748b", marginTop: "5px" }}>
+                Version {apiStatus.version}
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={checkApiHealth}
+              style={{ ...buttonStyle(), marginTop: "13px" }}
+            >
+              Recheck
+            </button>
+          </div>
 
-          <button
-            type="button"
-            onClick={checkApiHealth}
-            disabled={apiStatus.loading}
+          <div style={cardStyle()}>
+            <div style={labelStyle()}>Trading Day</div>
+            <div style={{ fontWeight: 900 }}>
+              {tradingDay ? "🟢 Open" : "⚪ Not opened"}
+            </div>
+            <div style={{ color: "#94a3b8", marginTop: "6px" }}>
+              {tradingDay
+                ? `${tradingDay.trading_date} · ${tradingDay.floor_status}`
+                : "Create today’s operating record below."}
+            </div>
+          </div>
+
+          <div style={cardStyle()}>
+            <div style={labelStyle()}>Trade Desk</div>
+            <div style={{ fontWeight: 900 }}>
+              {tickets.length} ticket{tickets.length === 1 ? "" : "s"}
+            </div>
+            <div style={{ color: "#94a3b8", marginTop: "6px" }}>
+              Current API session
+            </div>
+          </div>
+
+          <div style={cardStyle()}>
+            <div style={labelStyle()}>Discord Floor</div>
+            <div style={{ fontWeight: 900 }}>⚪ Not connected</div>
+            <div style={{ color: "#94a3b8", marginTop: "6px" }}>
+              Discord publishing is the next backend integration.
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "minmax(300px, 0.85fr) minmax(400px, 1.4fr)",
+            gap: "20px",
+            marginTop: "22px",
+          }}
+        >
+          <form onSubmit={createTradingDay} style={cardStyle()}>
+            <div style={{ color: "#d4af37", fontWeight: 900 }}>
+              OPEN TRADING DAY
+            </div>
+
+            <div style={{ marginTop: "16px" }}>
+              <label style={labelStyle()}>Trading Date</label>
+              <input
+                type="date"
+                value={dayForm.trading_date}
+                onChange={(event) =>
+                  setDayForm({
+                    ...dayForm,
+                    trading_date: event.target.value,
+                  })
+                }
+                style={inputStyle()}
+              />
+            </div>
+
+            <div style={{ marginTop: "14px" }}>
+              <label style={labelStyle()}>Market Bias</label>
+              <select
+                value={dayForm.market_bias}
+                onChange={(event) =>
+                  setDayForm({
+                    ...dayForm,
+                    market_bias: event.target.value,
+                  })
+                }
+                style={inputStyle()}
+              >
+                <option value="pending">Pending</option>
+                <option value="bullish">Bullish</option>
+                <option value="bearish">Bearish</option>
+                <option value="neutral">Neutral</option>
+                <option value="mixed">Mixed</option>
+              </select>
+            </div>
+
+            <div style={{ marginTop: "14px" }}>
+              <label style={labelStyle()}>Market Condition</label>
+              <input
+                value={dayForm.market_condition}
+                onChange={(event) =>
+                  setDayForm({
+                    ...dayForm,
+                    market_condition: event.target.value,
+                  })
+                }
+                style={inputStyle()}
+              />
+            </div>
+
+            <div style={{ marginTop: "14px" }}>
+              <label style={labelStyle()}>Risk Environment</label>
+              <input
+                value={dayForm.risk_environment}
+                onChange={(event) =>
+                  setDayForm({
+                    ...dayForm,
+                    risk_environment: event.target.value,
+                  })
+                }
+                style={inputStyle()}
+              />
+            </div>
+
+            <div style={{ marginTop: "14px" }}>
+              <label style={labelStyle()}>Expected Volatility</label>
+              <input
+                value={dayForm.expected_volatility}
+                onChange={(event) =>
+                  setDayForm({
+                    ...dayForm,
+                    expected_volatility: event.target.value,
+                  })
+                }
+                style={inputStyle()}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={working || !apiStatus.online}
+              style={{
+                ...buttonStyle(true),
+                marginTop: "18px",
+                width: "100%",
+                opacity: working || !apiStatus.online ? 0.55 : 1,
+              }}
+            >
+              {working ? "Processing..." : "Create Trading Day"}
+            </button>
+          </form>
+
+          <form onSubmit={createTradeTicket} style={cardStyle()}>
+            <div style={{ color: "#d4af37", fontWeight: 900 }}>
+              TRQX TRADE TICKET
+            </div>
+
+            {!canCreateTicket && (
+              <div
+                style={{
+                  marginTop: "13px",
+                  color: "#fca5a5",
+                  fontSize: "13px",
+                }}
+              >
+                Create a Trading Day before submitting a Trade Ticket.
+              </div>
+            )}
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: "13px",
+                marginTop: "16px",
+              }}
+            >
+              <div>
+                <label style={labelStyle()}>Ticker</label>
+                <input
+                  value={ticketForm.ticker}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      ticker: event.target.value.toUpperCase(),
+                    })
+                  }
+                  style={inputStyle()}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle()}>Direction</label>
+                <select
+                  value={ticketForm.direction}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      direction: event.target.value,
+                    })
+                  }
+                  style={inputStyle()}
+                >
+                  <option value="call">Call</option>
+                  <option value="put">Put</option>
+                  <option value="long">Long</option>
+                  <option value="short">Short</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ marginTop: "13px" }}>
+              <label style={labelStyle()}>Setup</label>
+              <input
+                value={ticketForm.setup}
+                onChange={(event) =>
+                  setTicketForm({
+                    ...ticketForm,
+                    setup: event.target.value,
+                  })
+                }
+                style={inputStyle()}
+              />
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: "13px",
+                marginTop: "13px",
+              }}
+            >
+              <div>
+                <label style={labelStyle()}>Entry</label>
+                <input
+                  type="number"
+                  step="any"
+                  required
+                  value={ticketForm.entry}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      entry: event.target.value,
+                    })
+                  }
+                  style={inputStyle()}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle()}>Stop</label>
+                <input
+                  type="number"
+                  step="any"
+                  required
+                  value={ticketForm.stop}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      stop: event.target.value,
+                    })
+                  }
+                  style={inputStyle()}
+                />
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                gap: "13px",
+                marginTop: "13px",
+              }}
+            >
+              {["target1", "target2", "target3"].map((field, index) => (
+                <div key={field}>
+                  <label style={labelStyle()}>Target {index + 1}</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={ticketForm[field]}
+                    onChange={(event) =>
+                      setTicketForm({
+                        ...ticketForm,
+                        [field]: event.target.value,
+                      })
+                    }
+                    style={inputStyle()}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: "13px",
+                marginTop: "13px",
+              }}
+            >
+              <div>
+                <label style={labelStyle()}>Grade</label>
+                <select
+                  value={ticketForm.grade}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      grade: event.target.value,
+                    })
+                  }
+                  style={inputStyle()}
+                >
+                  <option value="A+">A+</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={labelStyle()}>Status</label>
+                <select
+                  value={ticketForm.status}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      status: event.target.value,
+                    })
+                  }
+                  style={inputStyle()}
+                >
+                  <option value="watching">Watching</option>
+                  <option value="active">Active</option>
+                  <option value="partial">Partial</option>
+                  <option value="breakeven">Breakeven</option>
+                  <option value="closed">Closed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ marginTop: "13px" }}>
+              <label style={labelStyle()}>
+                Reasoning — separate items with commas
+              </label>
+              <input
+                value={ticketForm.reasoning}
+                onChange={(event) =>
+                  setTicketForm({
+                    ...ticketForm,
+                    reasoning: event.target.value,
+                  })
+                }
+                placeholder="VWAP reclaim, ORB break, volume confirmation"
+                style={inputStyle()}
+              />
+            </div>
+
+            <div style={{ marginTop: "13px" }}>
+              <label style={labelStyle()}>Notes</label>
+              <textarea
+                value={ticketForm.notes}
+                onChange={(event) =>
+                  setTicketForm({
+                    ...ticketForm,
+                    notes: event.target.value,
+                  })
+                }
+                rows={3}
+                style={{ ...inputStyle(), resize: "vertical" }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={working || !canCreateTicket || !apiStatus.online}
+              style={{
+                ...buttonStyle(true),
+                marginTop: "18px",
+                width: "100%",
+                opacity:
+                  working || !canCreateTicket || !apiStatus.online ? 0.55 : 1,
+              }}
+            >
+              {working ? "Processing..." : "Create Trade Ticket"}
+            </button>
+          </form>
+        </div>
+
+        <section style={{ ...cardStyle(), marginTop: "22px" }}>
+          <div
             style={{
-              marginTop: "15px",
-              padding: "10px 16px",
-              borderRadius: "9px",
-              border: "1px solid rgba(212,175,55,0.45)",
-              background: "rgba(212,175,55,0.1)",
-              color: "#f4d675",
-              cursor: apiStatus.loading ? "not-allowed" : "pointer",
-              fontWeight: 800,
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "12px",
+              alignItems: "center",
             }}
           >
-            Recheck Connection
-          </button>
-        </div>
+            <div>
+              <div style={{ color: "#d4af37", fontWeight: 900 }}>
+                TODAY’S TRADE DESK
+              </div>
+              <div style={{ color: "#94a3b8", marginTop: "4px" }}>
+                Tickets attached to the active Trading Day.
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={loadTickets}
+              disabled={!tradingDay}
+              style={buttonStyle()}
+            >
+              Refresh Tickets
+            </button>
+          </div>
+
+          {tickets.length === 0 ? (
+            <div
+              style={{
+                marginTop: "18px",
+                padding: "25px",
+                textAlign: "center",
+                color: "#64748b",
+                border: "1px dashed rgba(255,255,255,0.1)",
+                borderRadius: "12px",
+              }}
+            >
+              No Trade Tickets have been created for this Trading Day.
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "14px",
+                marginTop: "18px",
+              }}
+            >
+              {tickets.map((ticket) => (
+                <article key={ticket.id} style={cardStyle()}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          color: "#d4af37",
+                          fontSize: "20px",
+                          fontWeight: 950,
+                        }}
+                      >
+                        {ticket.ticker}
+                      </div>
+                      <div
+                        style={{
+                          color: "#94a3b8",
+                          textTransform: "uppercase",
+                          fontSize: "12px",
+                          marginTop: "3px",
+                        }}
+                      >
+                        {ticket.direction} · {ticket.status}
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        color: "#f4d675",
+                        fontWeight: 900,
+                        fontSize: "18px",
+                      }}
+                    >
+                      {ticket.grade}
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: "15px", color: "#cbd5e1" }}>
+                    {ticket.setup}
+                  </div>
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(2, 1fr)",
+                      gap: "10px",
+                      marginTop: "15px",
+                    }}
+                  >
+                    <div>
+                      <div style={labelStyle()}>Entry</div>
+                      <strong>{ticket.entry}</strong>
+                    </div>
+                    <div>
+                      <div style={labelStyle()}>Stop</div>
+                      <strong>{ticket.stop}</strong>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: "14px" }}>
+                    <div style={labelStyle()}>Targets</div>
+                    <strong>{ticket.targets.join(" · ")}</strong>
+                  </div>
+
+                  {ticket.reasoning?.length > 0 && (
+                    <div style={{ marginTop: "14px" }}>
+                      <div style={labelStyle()}>Reasoning</div>
+                      <div style={{ color: "#cbd5e1" }}>
+                        {ticket.reasoning.join(" • ")}
+                      </div>
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
       </section>
     </main>
   );
