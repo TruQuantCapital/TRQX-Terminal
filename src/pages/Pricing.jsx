@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Pricing() {
+  const navigate = useNavigate();
+
   const FOUNDING_SPOTS = 50;
   const SPOTS_LEFT = 23; // update this manually as spots fill
+  
 
   const PLANS = [
     {
@@ -139,7 +143,46 @@ export default function Pricing() {
                 {plan.badge === "MOST POPULAR" ? "⭐ MOST POPULAR" : "🔥 FOUNDING PRICE"}
               </div>
             )}
+{/* Elite Mentorship */}
+<section className="mentorship-pricing-promo">
+  <div className="mentorship-pricing-copy">
+    <div className="mentorship-pricing-eyebrow">
+      👑 TRQX ELITE MENTORSHIP
+    </div>
 
+    <h2>Technology gives you data. Mentorship gives you structure.</h2>
+
+    <p>
+      Work directly with Michael A. Valerio through live coaching,
+      market preparation, trade reviews, risk-management education,
+      accountability, and private mentorship sessions.
+    </p>
+
+    <div className="mentorship-pricing-benefits">
+      <span>✓ Weekly live coaching</span>
+      <span>✓ Market preparation</span>
+      <span>✓ Trade and chart reviews</span>
+      <span>✓ Private community</span>
+      <span>✓ Full Elite Terminal access</span>
+      <span>✓ Session recordings</span>
+    </div>
+  </div>
+
+  <div className="mentorship-pricing-offer">
+    <small>ELITE MENTORSHIP</small>
+
+    <div>
+      <strong>$299</strong>
+      <span>/month</span>
+    </div>
+
+    <p>Structured coaching for traders committed to improvement.</p>
+
+    <button onClick={() => navigate("/mentorship")}>
+      View Mentorship Program →
+    </button>
+  </div>
+</section>
             {/* Header */}
             <div className="plan-header">
               <div className="plan-name">{plan.name}</div>
@@ -187,6 +230,50 @@ export default function Pricing() {
           </div>
         ))}
       </div>
+      {/* Elite Mentorship Promotion */}
+      <section className="mentorship-pricing-promo">
+        <div className="mentorship-pricing-copy">
+          <div className="mentorship-pricing-eyebrow">
+            👑 TRQX ELITE MENTORSHIP
+          </div>
+
+          <h2>
+            Technology gives you data. Mentorship gives you structure.
+          </h2>
+
+          <p>
+            Work directly with Michael A. Valerio through live coaching,
+            market preparation, trade reviews, risk-management education,
+            accountability, and private mentorship sessions.
+          </p>
+
+          <div className="mentorship-pricing-benefits">
+            <span>✓ Weekly live coaching</span>
+            <span>✓ Market preparation</span>
+            <span>✓ Trade and chart reviews</span>
+            <span>✓ Private community</span>
+            <span>✓ Full Elite Terminal access</span>
+            <span>✓ Session recordings</span>
+          </div>
+        </div>
+
+        <div className="mentorship-pricing-offer">
+          <small>ELITE MENTORSHIP</small>
+
+          <div>
+            <strong>$299</strong>
+            <span>/month</span>
+          </div>
+
+          <p>
+            Structured coaching for traders committed to improvement.
+          </p>
+
+          <button onClick={() => navigate("/mentorship")}>
+            View Mentorship Program →
+          </button>
+        </div>
+      </section>
 
       {/* Features comparison */}
       <div className="pricing-features">
