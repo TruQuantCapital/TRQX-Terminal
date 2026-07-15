@@ -1,4 +1,6 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Crown, ArrowRight } from "lucide-react";
 import MarketBrief from "../components/MarketBrief";
 import OnboardingModal from "../components/OnboardingModal";
 import {
@@ -155,7 +157,9 @@ function MarketScheduleBanner() {
 }
 
 export default function Dashboard() {
-  const [showOnboarding, setShowOnboarding] = React.useState(() => {
+    const navigate = useNavigate();
+
+    const [showOnboarding, setShowOnboarding] = React.useState(() => {
     return !localStorage.getItem("trqx_onboarding_complete");
   });
 
@@ -187,11 +191,88 @@ export default function Dashboard() {
       </div>
 
       {/* ROW 4 — content-sized, it's just 4 quick links */}
-      <div style={{ minWidth: 0 }}>
-        <AcademyCard />
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+  <div style={{ minWidth: 0 }}>
+    <AcademyCard />
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 24,
+      padding: 24,
+      borderRadius: 14,
+      border: "1px solid rgba(212,175,55,.30)",
+      background:
+        "linear-gradient(135deg,#111319 0%,#0a0c10 100%)",
+    }}
+  >
+    <div>
+      <div
+        style={{
+          color: "#d4af37",
+          fontWeight: 800,
+          fontSize: 13,
+          letterSpacing: 1,
+          marginBottom: 8,
+        }}
+      >
+        👑 TRQX ELITE MENTORSHIP
       </div>
 
-      {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
+      <h2
+        style={{
+          margin: 0,
+          color: "#fff",
+          fontSize: 28,
+        }}
+      >
+        Learn Directly From Michael A. Valerio
+      </h2>
+
+      <p
+        style={{
+          marginTop: 12,
+          color: "#a8b0ba",
+          maxWidth: 700,
+          lineHeight: 1.6,
+        }}
+      >
+        Weekly live coaching, market preparation,
+        trade reviews, trading psychology, risk
+        management, and direct mentorship.
+      </p>
+    </div>
+
+    <button
+      onClick={() => navigate("/mentorship")}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "14px 22px",
+        background: "#d4af37",
+        color: "#111",
+        border: "none",
+        borderRadius: 8,
+        cursor: "pointer",
+        fontWeight: 700,
+        whiteSpace: "nowrap",
+      }}
+    >
+      Explore
+      <ArrowRight size={18} />
+    </button>
+  </div>
+
+</div>
+
+{showOnboarding && (
+  <OnboardingModal onClose={() => setShowOnboarding(false)} />
+)}
     </main>
   );
 }
