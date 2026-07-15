@@ -65,7 +65,7 @@ const sessions = [
 
 export default function MentorshipPage() {
   const [showCalendly, setShowCalendly] = useState(false);
-  
+
   const openWhop = () => {
     if (WHOP_MENTORSHIP_URL === "#") {
       alert("Mentorship checkout link will be added soon.");
@@ -102,22 +102,30 @@ export default function MentorshipPage() {
             </p>
 
             <div className="mentorshipHeroActions">
-              <button className="mentorshipPrimaryBtn" onClick={openWhop}>
-                Join Mentorship
-              </button>
+  <button className="mentorshipPrimaryBtn" onClick={openWhop}>
+    Join Mentorship
+  </button>
 
-              <button
-                className="mentorshipSecondaryBtn"
-                onClick={() =>
-                  document
-                    .getElementById("mentorship-program")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                <PlayCircle size={18} />
-                View Program
-              </button>
-            </div>
+  <button
+    className="mentorshipSecondaryBtn"
+    onClick={() => setShowCalendly((current) => !current)}
+  >
+    <CalendarDays size={18} />
+    {showCalendly ? "Close Booking" : "Book a Mentoring Session"}
+  </button>
+
+  <button
+    className="mentorshipSecondaryBtn"
+    onClick={() =>
+      document
+        .getElementById("mentorship-program")
+        ?.scrollIntoView({ behavior: "smooth" })
+    }
+  >
+    <PlayCircle size={18} />
+    View Program
+  </button>
+</div>
 
             <div className="mentorshipTrustRow">
               <span>
@@ -146,7 +154,39 @@ export default function MentorshipPage() {
           </div>
         </div>
       </section>
+      
+{showCalendly && (
+  <section className="mentorshipCalendly">
+    <div className="mentorshipCalendlyHeader">
+      <div>
+        <span>BOOK A SESSION</span>
+        <h2>Schedule a Mentoring Session</h2>
+      </div>
 
+      <button
+        type="button"
+        onClick={() => setShowCalendly(false)}
+      >
+        Close
+      </button>
+    </div>
+
+    <div className="mentorshipCalendlyFrame">
+      <iframe
+        src="https://calendly.com/michaelvalerio/rqx-mentoring-session"
+        width="100%"
+        height="700"
+        frameBorder="0"
+        title="Book a Mentoring Session with Michael Valerio"
+        style={{ display: "block" }}
+      />
+    </div>
+
+    <p className="mentorshipCalendlyNote">
+      Sessions are for TRQX Capital members only. Educational purposes only—not financial advice.
+    </p>
+  </section>
+)}
       <section className="mentorshipFeatures" id="mentorship-program">
         <article>
           <CalendarDays size={30} />
