@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./MentorshipPage.css";
 import {
   CalendarDays,
@@ -64,6 +64,8 @@ const sessions = [
 ];
 
 export default function MentorshipPage() {
+  const [showCalendly, setShowCalendly] = useState(false);
+  
   const openWhop = () => {
     if (WHOP_MENTORSHIP_URL === "#") {
       alert("Mentorship checkout link will be added soon.");
