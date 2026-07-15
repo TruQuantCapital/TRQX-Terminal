@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
@@ -27,11 +27,13 @@ import Reports from "./pages/Reports";
 import Welcome from "./pages/Welcome";
 import ResetPassword from "./pages/ResetPassword";
 import SettingsPage from "./pages/SettingsPage";
+import OperationsPage from "./pages/OperationsPage";
 import "./styles.css";
 import "./app.css";
 
 const routeByKey = {
   dashboard: "/dashboard",
+  operations: "/operations",
   scanner: "/scanner",
   options: "/options-flow",
   dividends: "/dividends",
@@ -70,6 +72,7 @@ const keyByPath = {
   "/reports": "news",
   "/dividends": "dividends",
 };
+const OPERATIONS_OWNER_EMAIL = "michaelvalerio@thetrulies.com";
 
 function LoadingScreen() {
   return (
@@ -79,10 +82,29 @@ function LoadingScreen() {
     </div>
   );
 }
+
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
+
   if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/auth" replace />;
+
+  return children;
+}
+
+function OwnerRoute({ children }) {
+  const { user, loading } = useAuth();
+
+  if (loading) return <LoadingScreen />;
+  if (!user) return <Navigate to="/auth" replace />;
+
+  const isOwner =
+    user.email?.toLowerCase() === OPERATIONS_OWNER_EMAIL.toLowerCase();
+
+  if (!isOwner) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return children;
 }
 
@@ -169,6 +191,16 @@ export default function App() {
           <Route path="/reports" element={<ProtectedTerminal><Reports /></ProtectedTerminal>} />
           <Route path="/discord" element={<DiscordRedirect />} />
           <Route path="/settings" element={<ProtectedTerminal><SettingsPage /></ProtectedTerminal>} />
+          <Route
+  path="/operations"
+  element={
+    <OwnerRoute>
+      <TerminalLayout>
+        <OperationsPage />
+      </TerminalLayout>
+    </OwnerRoute>
+  }
+/>
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
