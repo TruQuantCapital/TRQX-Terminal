@@ -31,6 +31,26 @@ import OperationsPage from "./pages/OperationsPage";
 import "./styles.css";
 import "./app.css";
 
+const routeByKey = {
+  dashboard: "/dashboard",
+  operations: "/operations",
+  scanner: "/scanner",
+  options: "/options-flow",
+  dividends: "/dividends",
+  tradeplan: "/trade-plan",
+  "capital-allocator": "/capital-allocator",
+  gamma: "/gamma-ex",
+  calendar: "/economic-calendar",
+  alerts: "/alerts",
+  academy: "/academy",
+  research: "/research",
+  patterns: "/patterns",
+  guide: "/guide",
+  discord: "/discord",
+  news: "/news",
+  settings: "/settings",
+};
+
 const keyByPath = {
   "/": "dashboard",
   "/dashboard": "dashboard",
