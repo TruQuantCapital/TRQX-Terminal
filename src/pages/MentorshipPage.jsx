@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 
 
-const WHOP_MENTORSHIP_URL = "#";
+const WHOP_MENTORSHIP_URL =
+  "YOUR_FINAL_WHOP_CHECKOUT_URL";
 
 const benefits = [
   "Two weekly live coaching sessions",
@@ -154,7 +155,7 @@ export default function MentorshipPage() {
           </div>
         </div>
       </section>
-      
+
 {showCalendly && (
   <section className="mentorshipCalendly">
     <div className="mentorshipCalendlyHeader">
