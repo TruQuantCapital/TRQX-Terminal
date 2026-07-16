@@ -170,10 +170,9 @@ export default function App() {
   return (
     <AuthProvider>
   <TawkIdentity />
-
   <BrowserRouter>
         <Routes>
-          
+
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
