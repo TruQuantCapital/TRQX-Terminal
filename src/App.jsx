@@ -29,7 +29,6 @@ import ResetPassword from "./pages/ResetPassword";
 import SettingsPage from "./pages/SettingsPage";
 import OperationsPage from "./pages/OperationsPage";
 import MentorshipPage from "./pages/MentorshipPage";
-import TawkIdentity from "./components/TawkIdentity";
 import "./styles.css";
 import "./app.css";
 
