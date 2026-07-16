@@ -82,6 +82,7 @@ export default function OperationsPage() {
 
   const [tradingDay, setTradingDay] = useState(null);
   const [tickets, setTickets] = useState([]);
+  const [premarketLevels, setPremarketLevels] = useState([]);
   const [notice, setNotice] = useState("");
   const [working, setWorking] = useState(false);
 
@@ -95,20 +96,20 @@ export default function OperationsPage() {
     notes: "",
   });
 
-  const [ticketForm, setTicketForm] = useState({
-    ticker: "SPY",
-    direction: "call",
-    setup: "Premarket level confirmation",
-    entry: "",
-    stop: "",
-    target1: "",
-    target2: "",
-    target3: "",
-    grade: "A",
-    status: "watching",
-    reasoning: "",
-    notes: "",
-  });
+  const [levelForm, setLevelForm] = useState({
+  ticker: "SPY",
+  supportLevels: "",
+  resistanceLevels: "",
+  bullishAbove: "",
+  bearishBelow: "",
+  gapFill: "",
+  previousHigh: "",
+  previousLow: "",
+  premarketHigh: "",
+  premarketLow: "",
+  bias: "Neutral",
+  notes: "",
+});
 
   const canCreateTicket = useMemo(
     () => Boolean(tradingDay?.id),
@@ -179,7 +180,106 @@ export default function OperationsPage() {
       setTickets([]);
       return;
     }
+async function loadPremarketLevels() {
+  if (!tradingDay?.id) {
+    setPremarketLevels([]);
+    return;
+  }
 
+  try {
+    const data = await apiRequest(
+      `/premarket-levels?trading_day_id=${encodeURIComponent(
+        tradingDay.id,
+      )}`,
+    );
+
+    setPremarketLevels(Array.isArray(data) ? data : []);
+  } catch (error) {
+    setNotice(`Unable to load Premarket Levels: ${error.message}`);
+  }
+}
+
+function parseLevelList(value) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map(Number)
+    .filter((item) => Number.isFinite(item) && item > 0);
+}
+
+function optionalNumber(value) {
+  if (value === "") return null;
+
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? number : null;
+}
+
+async function createPremarketLevel(event) {
+  event.preventDefault();
+
+  if (!tradingDay?.id) {
+    setNotice("Create a Trading Day before publishing Premarket Levels.");
+    return;
+  }
+
+  const supportLevels = parseLevelList(levelForm.supportLevels);
+  const resistanceLevels = parseLevelList(levelForm.resistanceLevels);
+
+  if (supportLevels.length === 0 && resistanceLevels.length === 0) {
+    setNotice("Enter at least one support or resistance level.");
+    return;
+  }
+
+  setWorking(true);
+  setNotice("");
+
+  try {
+    const payload = {
+      trading_day_id: tradingDay.id,
+      ticker: levelForm.ticker,
+      support_levels: supportLevels,
+      resistance_levels: resistanceLevels,
+      bullish_above: optionalNumber(levelForm.bullishAbove),
+      bearish_below: optionalNumber(levelForm.bearishBelow),
+      gap_fill: optionalNumber(levelForm.gapFill),
+      previous_high: optionalNumber(levelForm.previousHigh),
+      previous_low: optionalNumber(levelForm.previousLow),
+      premarket_high: optionalNumber(levelForm.premarketHigh),
+      premarket_low: optionalNumber(levelForm.premarketLow),
+      bias: levelForm.bias,
+      notes: levelForm.notes || null,
+    };
+
+    const created = await apiRequest("/premarket-levels", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+
+    setPremarketLevels((current) => [...current, created]);
+    setNotice(
+      `${created.ticker} Premarket Levels published successfully.`,
+    );
+
+    setLevelForm((current) => ({
+      ...current,
+      supportLevels: "",
+      resistanceLevels: "",
+      bullishAbove: "",
+      bearishBelow: "",
+      gapFill: "",
+      previousHigh: "",
+      previousLow: "",
+      premarketHigh: "",
+      premarketLow: "",
+      notes: "",
+    }));
+  } catch (error) {
+    setNotice(`Premarket Levels failed: ${error.message}`);
+  } finally {
+    setWorking(false);
+  }
+}
     try {
       const data = await apiRequest(
         `/trade-tickets?trading_day_id=${encodeURIComponent(tradingDay.id)}`,
@@ -210,6 +310,7 @@ export default function OperationsPage() {
 
       setTradingDay(created);
       setTickets([]);
+      setPremarketLevels([]);
       setNotice(`Trading Day created for ${created.trading_date}.`);
     } catch (error) {
       setNotice(`Trading Day creation failed: ${error.message}`);
@@ -292,6 +393,10 @@ export default function OperationsPage() {
   useEffect(() => {
     loadTickets();
   }, [tradingDay?.id]);
+
+  useEffect(() => {
+  loadPremarketLevels();
+}, [tradingDay?.id]);
 
   return (
     <main style={{ padding: "24px", maxWidth: "1500px", margin: "0 auto" }}>
@@ -409,7 +514,8 @@ export default function OperationsPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "minmax(300px, 0.85fr) minmax(400px, 1.4fr)",
+            gridTemplateColumns:
+  "repeat(auto-fit, minmax(360px, 1fr))",
             gap: "20px",
             marginTop: "22px",
           }}
@@ -748,8 +854,390 @@ export default function OperationsPage() {
               {working ? "Processing..." : "Create Trade Ticket"}
             </button>
           </form>
-        </div>
+          <form onSubmit={createPremarketLevel} style={cardStyle()}>
+  <div style={{ color: "#d4af37", fontWeight: 900 }}>
+    PREMARKET LEVELS
+  </div>
 
+  {!tradingDay && (
+    <div
+      style={{
+        marginTop: "13px",
+        color: "#fca5a5",
+        fontSize: "13px",
+      }}
+    >
+      Create a Trading Day before publishing Premarket Levels.
+    </div>
+  )}
+
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+      gap: "13px",
+      marginTop: "16px",
+    }}
+  >
+    <div>
+      <label style={labelStyle()}>Ticker</label>
+      <input
+        value={levelForm.ticker}
+        onChange={(event) =>
+          setLevelForm({
+            ...levelForm,
+            ticker: event.target.value.toUpperCase(),
+          })
+        }
+        style={inputStyle()}
+      />
+    </div>
+
+    <div>
+      <label style={labelStyle()}>Bias</label>
+      <select
+        value={levelForm.bias}
+        onChange={(event) =>
+          setLevelForm({
+            ...levelForm,
+            bias: event.target.value,
+          })
+        }
+        style={inputStyle()}
+      >
+        <option value="Bullish">Bullish</option>
+        <option value="Bearish">Bearish</option>
+        <option value="Neutral">Neutral</option>
+        <option value="Mixed">Mixed</option>
+      </select>
+    </div>
+  </div>
+
+  <div style={{ marginTop: "13px" }}>
+    <label style={labelStyle()}>
+      Support Levels — separate with commas
+    </label>
+    <input
+      value={levelForm.supportLevels}
+      onChange={(event) =>
+        setLevelForm({
+          ...levelForm,
+          supportLevels: event.target.value,
+        })
+      }
+      placeholder="293.80, 293.12, 292.43"
+      style={inputStyle()}
+    />
+  </div>
+
+  <div style={{ marginTop: "13px" }}>
+    <label style={labelStyle()}>
+      Resistance Levels — separate with commas
+    </label>
+    <input
+      value={levelForm.resistanceLevels}
+      onChange={(event) =>
+        setLevelForm({
+          ...levelForm,
+          resistanceLevels: event.target.value,
+        })
+      }
+      placeholder="294.25, 295.00"
+      style={inputStyle()}
+    />
+  </div>
+
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+      gap: "13px",
+      marginTop: "13px",
+    }}
+  >
+    <div>
+      <label style={labelStyle()}>Bullish Above</label>
+      <input
+        type="number"
+        step="any"
+        value={levelForm.bullishAbove}
+        onChange={(event) =>
+          setLevelForm({
+            ...levelForm,
+            bullishAbove: event.target.value,
+          })
+        }
+        style={inputStyle()}
+      />
+    </div>
+
+    <div>
+      <label style={labelStyle()}>Bearish Below</label>
+      <input
+        type="number"
+        step="any"
+        value={levelForm.bearishBelow}
+        onChange={(event) =>
+          setLevelForm({
+            ...levelForm,
+            bearishBelow: event.target.value,
+          })
+        }
+        style={inputStyle()}
+      />
+    </div>
+  </div>
+
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+      gap: "13px",
+      marginTop: "13px",
+    }}
+  >
+    <div>
+      <label style={labelStyle()}>Premarket High</label>
+      <input
+        type="number"
+        step="any"
+        value={levelForm.premarketHigh}
+        onChange={(event) =>
+          setLevelForm({
+            ...levelForm,
+            premarketHigh: event.target.value,
+          })
+        }
+        style={inputStyle()}
+      />
+    </div>
+
+    <div>
+      <label style={labelStyle()}>Premarket Low</label>
+      <input
+        type="number"
+        step="any"
+        value={levelForm.premarketLow}
+        onChange={(event) =>
+          setLevelForm({
+            ...levelForm,
+            premarketLow: event.target.value,
+          })
+        }
+        style={inputStyle()}
+      />
+    </div>
+
+    <div>
+      <label style={labelStyle()}>Gap Fill</label>
+      <input
+        type="number"
+        step="any"
+        value={levelForm.gapFill}
+        onChange={(event) =>
+          setLevelForm({
+            ...levelForm,
+            gapFill: event.target.value,
+          })
+        }
+        style={inputStyle()}
+      />
+    </div>
+  </div>
+
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+      gap: "13px",
+      marginTop: "13px",
+    }}
+  >
+    <div>
+      <label style={labelStyle()}>Previous High</label>
+      <input
+        type="number"
+        step="any"
+        value={levelForm.previousHigh}
+        onChange={(event) =>
+          setLevelForm({
+            ...levelForm,
+            previousHigh: event.target.value,
+          })
+        }
+        style={inputStyle()}
+      />
+    </div>
+
+    <div>
+      <label style={labelStyle()}>Previous Low</label>
+      <input
+        type="number"
+        step="any"
+        value={levelForm.previousLow}
+        onChange={(event) =>
+          setLevelForm({
+            ...levelForm,
+            previousLow: event.target.value,
+          })
+        }
+        style={inputStyle()}
+      />
+    </div>
+  </div>
+
+  <div style={{ marginTop: "13px" }}>
+    <label style={labelStyle()}>Premarket Plan and Notes</label>
+    <textarea
+      value={levelForm.notes}
+      onChange={(event) =>
+        setLevelForm({
+          ...levelForm,
+          notes: event.target.value,
+        })
+      }
+      rows={4}
+      placeholder="Watch for rejection at resistance. Acceptance above the bullish trigger invalidates the bearish plan."
+      style={{ ...inputStyle(), resize: "vertical" }}
+    />
+  </div>
+
+  <button
+    type="submit"
+    disabled={working || !tradingDay || !apiStatus.online}
+    style={{
+      ...buttonStyle(true),
+      marginTop: "18px",
+      width: "100%",
+      opacity:
+        working || !tradingDay || !apiStatus.online ? 0.55 : 1,
+    }}
+  >
+    {working ? "Processing..." : "Publish Premarket Levels"}
+  </button>
+</form>
+        </div>
+<section style={{ ...cardStyle(), marginTop: "22px" }}>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      gap: "12px",
+      alignItems: "center",
+    }}
+  >
+    <div>
+      <div style={{ color: "#d4af37", fontWeight: 900 }}>
+        PUBLISHED PREMARKET LEVELS
+      </div>
+      <div style={{ color: "#94a3b8", marginTop: "4px" }}>
+        Levels attached to the active Trading Day.
+      </div>
+    </div>
+
+    <button
+      type="button"
+      onClick={loadPremarketLevels}
+      disabled={!tradingDay}
+      style={buttonStyle()}
+    >
+      Refresh Levels
+    </button>
+  </div>
+
+  {premarketLevels.length === 0 ? (
+    <div
+      style={{
+        marginTop: "18px",
+        padding: "25px",
+        textAlign: "center",
+        color: "#64748b",
+        border: "1px dashed rgba(255,255,255,0.1)",
+        borderRadius: "12px",
+      }}
+    >
+      No Premarket Levels have been published for this Trading Day.
+    </div>
+  ) : (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(auto-fit, minmax(280px, 1fr))",
+        gap: "14px",
+        marginTop: "18px",
+      }}
+    >
+      {premarketLevels.map((level) => (
+        <article key={level.id} style={cardStyle()}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "12px",
+            }}
+          >
+            <div
+              style={{
+                color: "#d4af37",
+                fontSize: "20px",
+                fontWeight: 950,
+              }}
+            >
+              {level.ticker}
+            </div>
+
+            <strong>{level.bias}</strong>
+          </div>
+
+          <div style={{ marginTop: "14px" }}>
+            <div style={labelStyle()}>Resistance</div>
+            <strong>
+              {level.resistance_levels.length
+                ? level.resistance_levels.join(" | ")
+                : "None"}
+            </strong>
+          </div>
+
+          <div style={{ marginTop: "14px" }}>
+            <div style={labelStyle()}>Support</div>
+            <strong>
+              {level.support_levels.length
+                ? level.support_levels.join(" | ")
+                : "None"}
+            </strong>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: "10px",
+              marginTop: "14px",
+            }}
+          >
+            <div>
+              <div style={labelStyle()}>Bullish Above</div>
+              <strong>{level.bullish_above ?? "N/A"}</strong>
+            </div>
+
+            <div>
+              <div style={labelStyle()}>Bearish Below</div>
+              <strong>{level.bearish_below ?? "N/A"}</strong>
+            </div>
+          </div>
+
+          {level.notes && (
+            <div style={{ marginTop: "14px" }}>
+              <div style={labelStyle()}>Plan</div>
+              <div style={{ color: "#cbd5e1" }}>{level.notes}</div>
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  )}
+</section>
         <section style={{ ...cardStyle(), marginTop: "22px" }}>
           <div
             style={{
