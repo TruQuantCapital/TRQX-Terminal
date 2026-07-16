@@ -18,7 +18,6 @@ import EconomicCalendarPage from "./pages/EconomicCalendarPage";
 import AcademyPage from "./pages/AcademyPage";
 import ResearchPage from "./pages/ResearchPage";
 import PatternsPage from "./pages/PatternsPage";
-import PlaceholderPage from "./pages/PlaceholderPage";
 import Auth from "./pages/Auth";
 import GuidePage from "./pages/GuidePage";
 import Pricing from "./pages/Pricing";
