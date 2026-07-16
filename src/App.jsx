@@ -29,6 +29,7 @@ import ResetPassword from "./pages/ResetPassword";
 import SettingsPage from "./pages/SettingsPage";
 import OperationsPage from "./pages/OperationsPage";
 import MentorshipPage from "./pages/MentorshipPage";
+import TawkIdentity from "./components/TawkIdentity";
 import "./styles.css";
 import "./app.css";
 
@@ -169,53 +170,201 @@ function PublicRoute() {
 export default function App() {
   return (
     <AuthProvider>
+      <TawkIdentity />
+
       <BrowserRouter>
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/research" element={<ProtectedTerminal><ResearchPage /></ProtectedTerminal>} />
-          <Route path="/dividends" element={<ProtectedTerminal><DividendPage /></ProtectedTerminal>} />
-          <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
+
+          <Route
+            path="/research"
+            element={
+              <ProtectedTerminal>
+                <ResearchPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/dividends"
+            element={
+              <ProtectedTerminal>
+                <DividendPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/welcome"
+            element={
+              <ProtectedRoute>
+                <Welcome />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/home" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/" element={<PublicRoute />} />
-          <Route path="/dashboard" element={<ProtectedTerminal><Dashboard /></ProtectedTerminal>} />
-          <Route path="/scanner" element={<ProtectedTerminal><Scanner /></ProtectedTerminal>} />
-          <Route path="/options-flow" element={<ProtectedTerminal><OptionsPage /></ProtectedTerminal>} />
-          <Route path="/trade-plan" element={<ProtectedTerminal><TradePlanPage /></ProtectedTerminal>} />
-          <Route path="/capital-allocator" element={<ProtectedTerminal><CapitalAllocatorPage /></ProtectedTerminal>} />
-          <Route path="/gamma-ex" element={<ProtectedTerminal><GammaPage /></ProtectedTerminal>} />
-          <Route path="/economic-calendar" element={<ProtectedTerminal><EconomicCalendarPage /></ProtectedTerminal>} />
-          <Route path="/news" element={<ProtectedTerminal><NewsPage /></ProtectedTerminal>} />
-          <Route path="/patterns" element={<ProtectedTerminal><PatternsPage /></ProtectedTerminal>} />
-          <Route path="/academy" element={<ProtectedTerminal><AcademyPage /></ProtectedTerminal>} />
 
-<Route
-  path="/mentorship"
-  element={
-    <ProtectedTerminal>
-      <MentorshipPage />
-    </ProtectedTerminal>
-  }
-/>
-
-<Route path="/guide" element={<ProtectedTerminal><GuidePage /></ProtectedTerminal>} />
-<Route path="/pricing" element={<ProtectedTerminal><Pricing /></ProtectedTerminal>} />
-          <Route path="/pricing" element={<ProtectedTerminal><Pricing /></ProtectedTerminal>} />
-          <Route path="/alerts" element={<ProtectedTerminal><Alerts /></ProtectedTerminal>} />
-          <Route path="/reports" element={<ProtectedTerminal><Reports /></ProtectedTerminal>} />
-          <Route path="/discord" element={<DiscordRedirect />} />
-          <Route path="/settings" element={<ProtectedTerminal><SettingsPage /></ProtectedTerminal>} />
           <Route
-  path="/operations"
-  element={
-    <OwnerRoute>
-      <TerminalLayout>
-        <OperationsPage />
-      </TerminalLayout>
-    </OwnerRoute>
-  }
-/>
+            path="/dashboard"
+            element={
+              <ProtectedTerminal>
+                <Dashboard />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/scanner"
+            element={
+              <ProtectedTerminal>
+                <Scanner />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/options-flow"
+            element={
+              <ProtectedTerminal>
+                <OptionsPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/trade-plan"
+            element={
+              <ProtectedTerminal>
+                <TradePlanPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/capital-allocator"
+            element={
+              <ProtectedTerminal>
+                <CapitalAllocatorPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/gamma-ex"
+            element={
+              <ProtectedTerminal>
+                <GammaPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/economic-calendar"
+            element={
+              <ProtectedTerminal>
+                <EconomicCalendarPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/news"
+            element={
+              <ProtectedTerminal>
+                <NewsPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/patterns"
+            element={
+              <ProtectedTerminal>
+                <PatternsPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/academy"
+            element={
+              <ProtectedTerminal>
+                <AcademyPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/mentorship"
+            element={
+              <ProtectedTerminal>
+                <MentorshipPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/guide"
+            element={
+              <ProtectedTerminal>
+                <GuidePage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/pricing"
+            element={
+              <ProtectedTerminal>
+                <Pricing />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/alerts"
+            element={
+              <ProtectedTerminal>
+                <Alerts />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/reports"
+            element={
+              <ProtectedTerminal>
+                <Reports />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route path="/discord" element={<DiscordRedirect />} />
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedTerminal>
+                <SettingsPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/operations"
+            element={
+              <OwnerRoute>
+                <TerminalLayout>
+                  <OperationsPage />
+                </TerminalLayout>
+              </OwnerRoute>
+            }
+          />
+
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
