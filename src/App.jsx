@@ -169,9 +169,7 @@ function PublicRoute() {
 export default function App() {
   return (
     <AuthProvider>
-      <TawkIdentity />
-
-      <BrowserRouter>
+  <BrowserRouter>
         <Routes>
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
