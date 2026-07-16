@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
+import TawkIdentity from "./components/TawkIdentity";
 import TopRibbon from "./components/TopRibbon";
 import MorningCoach from "./components/MorningCoach";
 import TickerTape from "./components/TickerTape";
@@ -168,8 +169,11 @@ function PublicRoute() {
 export default function App() {
   return (
     <AuthProvider>
+  <TawkIdentity />
+
   <BrowserRouter>
         <Routes>
+          
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 

@@ -1,15 +1,13 @@
 import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 
-function nameFromUser(user) {
+function getDisplayName(user) {
   const metadataName =
     user?.user_metadata?.full_name ||
     user?.user_metadata?.name ||
     user?.user_metadata?.display_name;
 
-  if (metadataName) {
-    return metadataName;
-  }
+  if (metadataName) return metadataName;
 
   const emailName = user?.email?.split("@")[0] || "TRQX Member";
 
@@ -24,63 +22,49 @@ export default function TawkIdentity() {
   const { user, tier } = useAuth();
 
   useEffect(() => {
-    if (!user?.email) {
-      return;
-    }
+    if (!user?.email) return;
+
+    let intervalId;
+    let timeoutId;
 
     const identifyVisitor = () => {
-      if (!window.Tawk_API?.setAttributes) {
+      if (typeof window.Tawk_API?.setAttributes !== "function") {
         return false;
       }
 
       const attributes = {
-        name: nameFromUser(user),
+        name: getDisplayName(user),
         email: user.email,
         tier: tier || "free",
-        trqx_user_id: user.id || "",
+        trqx_user_id: String(user.id || ""),
       };
 
       window.Tawk_API.setAttributes(attributes, (error) => {
         if (error) {
-          console.error("[Tawk] Visitor identification failed:", error);
-          return;
+          console.error("[Tawk] setAttributes failed:", error);
+        } else {
+          console.log("[Tawk] Visitor identified:", attributes.name);
         }
-
-        console.log("[Tawk] Visitor identified:", attributes.name);
       });
 
       return true;
     };
 
-    if (identifyVisitor()) {
-      return;
-    }
+    if (identifyVisitor()) return;
 
-    const previousOnLoad = window.Tawk_API?.onLoad;
-
-    window.Tawk_API = window.Tawk_API || {};
-
-    window.Tawk_API.onLoad = function () {
-      if (typeof previousOnLoad === "function") {
-        previousOnLoad();
-      }
-
-      identifyVisitor();
-    };
-
-    const retryInterval = window.setInterval(() => {
+    intervalId = window.setInterval(() => {
       if (identifyVisitor()) {
-        window.clearInterval(retryInterval);
+        window.clearInterval(intervalId);
       }
     }, 1000);
 
-    const timeout = window.setTimeout(() => {
-      window.clearInterval(retryInterval);
+    timeoutId = window.setTimeout(() => {
+      window.clearInterval(intervalId);
     }, 15000);
 
     return () => {
-      window.clearInterval(retryInterval);
-      window.clearTimeout(timeout);
+      window.clearInterval(intervalId);
+      window.clearTimeout(timeoutId);
     };
   }, [user, tier]);
 
