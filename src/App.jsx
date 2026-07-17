@@ -61,6 +61,7 @@ const keyByPath = {
   "/operations": "operations",
   "/mentorship": "mentorship",
   "/scanner": "scanner",
+  "/elite": "elite",
   "/options-flow": "options",
   "/trade-plan": "tradeplan",
   "/capital-allocator": "capital-allocator",
