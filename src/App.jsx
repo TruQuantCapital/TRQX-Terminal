@@ -29,6 +29,7 @@ import ResetPassword from "./pages/ResetPassword";
 import SettingsPage from "./pages/SettingsPage";
 import OperationsPage from "./pages/OperationsPage";
 import MentorshipPage from "./pages/MentorshipPage";
+import EliteCommandCenter from "./pages/EliteCommandCenter";
 import "./styles.css";
 import "./app.css";
 
@@ -48,6 +49,7 @@ const routeByKey = {
   patterns: "/patterns",
   guide: "/guide",
   mentorship: "/mentorship",
+  elite: "/elite",
   discord: "/discord",
   news: "/news",
   settings: "/settings",
@@ -305,6 +307,15 @@ export default function App() {
               </ProtectedTerminal>
             }
           />
+
+          <Route
+  path="/elite"
+  element={
+    <ProtectedTerminal>
+      <EliteCommandCenter />
+    </ProtectedTerminal>
+  }
+/>
 
           <Route
             path="/guide"
