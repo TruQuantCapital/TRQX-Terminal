@@ -16,7 +16,6 @@ import {
   Newspaper,
   BarChart3,
   DollarSign,
-  Crown,
   PieChart,
   Users,
 } from "lucide-react";
@@ -37,6 +36,14 @@ export const nav = [
   { key: "patterns", label: "Flash Cards", icon: BookOpen, feature: "flashcards" },
   { key: "guide", label: "How To Use", icon: BookOpen, feature: "guide" },
   { key: "mentorship", label: "Elite Mentorship", icon: Users,feature: null, },
+  { key: "mentorship", label: "Elite Mentorship", icon: Users, feature: null },
+{
+  key: "elite",
+  label: "Elite Command Center",
+  icon: Crown,
+  feature: null,
+},
+{ key: "discord", label: "Discord", icon: MessageCircle, feature: null },
   { key: "discord", label: "Discord", icon: MessageCircle, feature: null },
   { key: "home", label: "Home", icon: Home, feature: null },
   { key: "settings", label: "Settings", icon: Settings, feature: null },
@@ -57,7 +64,7 @@ const navGroups = [
 },
 {
   label: "MENTORSHIP",
-  keys: ["mentorship"],
+  keys: ["mentorship", "elite"],
 },
 {
   label: "COMMUNITY & ACCOUNT",
@@ -95,6 +102,14 @@ export default function Sidebar({ active, setActive, user, tier, canAccess }) {
   const initials = initialsFromEmail(email);
   const displayName = displayNameFromEmail(email);
   const tierLabel = tier ? (tier.charAt(0).toUpperCase() + tier.slice(1) + " Member") : "Free Member";
+  const normalizedTier = String(tier || "free").toLowerCase();
+
+const isOwner =
+  String(email || "").toLowerCase() ===
+  "michaelvalerio@thetrulies.com";
+
+const hasEliteAccess =
+  normalizedTier === "elite" || isOwner;
 
   return (
     <aside className="sidebar">
@@ -127,8 +142,13 @@ export default function Sidebar({ active, setActive, user, tier, canAccess }) {
               {group.label}
             </div>
             {group.keys.map((key) => {
-              const item = nav.find(n => n.key === key);
-              if (!item) return null;
+              const item = nav.find((n) => n.key === key);
+
+if (!item) return null;
+
+if (item.key === "elite" && !hasEliteAccess) {
+  return null;
+}
               const Icon = item.icon;
               return (
                 <button
