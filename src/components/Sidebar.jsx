@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   Search,
   Activity,
+  Crown,
   Target,
   Waves,
   CalendarDays,
