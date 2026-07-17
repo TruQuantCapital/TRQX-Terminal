@@ -1,175 +1,440 @@
-.elite-page {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding-bottom: 28px;
-  color: #f5f1e8;
+import React, { useEffect, useMemo, useState } from "react";
+import "./EliteCommandCenter.css";
+
+const EASTERN_TIME_ZONE = "America/New_York";
+const COACHING_DAY = 2; // Tuesday: Sunday = 0
+const COACHING_HOUR = 19; // 7:00 PM
+const COACHING_MINUTE = 0;
+
+const DISCORD_URL = "https://discord.gg/jy3ta9qkfH";
+
+function getTimeZoneParts(date, timeZone) {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+    weekday: "short",
+  });
+
+  const parts = formatter.formatToParts(date);
+  const values = {};
+
+  for (const part of parts) {
+    if (part.type !== "literal") {
+      values[part.type] = part.value;
+    }
+  }
+
+  const weekdayMap = {
+    Sun: 0,
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6,
+  };
+
+  return {
+    year: Number(values.year),
+    month: Number(values.month),
+    day: Number(values.day),
+    hour: Number(values.hour),
+    minute: Number(values.minute),
+    second: Number(values.second),
+    weekday: weekdayMap[values.weekday],
+  };
 }
 
-.elite-hero {
-  min-height: 230px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 34px;
-  border: 1px solid rgba(212, 175, 55, 0.32);
-  border-radius: 16px;
-  background:
-    radial-gradient(
-      circle at 80% 20%,
-      rgba(212, 175, 55, 0.14),
-      transparent 30%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(16, 19, 24, 0.98),
-      rgba(5, 7, 10, 0.98)
+function getTimeZoneOffset(date, timeZone) {
+  const parts = getTimeZoneParts(date, timeZone);
+
+  const representedAsUtc = Date.UTC(
+    parts.year,
+    parts.month - 1,
+    parts.day,
+    parts.hour,
+    parts.minute,
+    parts.second
+  );
+
+  return representedAsUtc - date.getTime();
+}
+
+function easternDateTimeToUtc({
+  year,
+  month,
+  day,
+  hour,
+  minute = 0,
+  second = 0,
+}) {
+  const initialUtcGuess = new Date(
+    Date.UTC(year, month - 1, day, hour, minute, second)
+  );
+
+  const firstOffset = getTimeZoneOffset(
+    initialUtcGuess,
+    EASTERN_TIME_ZONE
+  );
+
+  let result = new Date(initialUtcGuess.getTime() - firstOffset);
+
+  const correctedOffset = getTimeZoneOffset(
+    result,
+    EASTERN_TIME_ZONE
+  );
+
+  if (correctedOffset !== firstOffset) {
+    result = new Date(initialUtcGuess.getTime() - correctedOffset);
+  }
+
+  return result;
+}
+
+function getNextCoachingSession(now = new Date()) {
+  const easternNow = getTimeZoneParts(now, EASTERN_TIME_ZONE);
+
+  let daysUntilSession =
+    (COACHING_DAY - easternNow.weekday + 7) % 7;
+
+  const sessionAlreadyPassedToday =
+    daysUntilSession === 0 &&
+    (
+      easternNow.hour > COACHING_HOUR ||
+      (
+        easternNow.hour === COACHING_HOUR &&
+        easternNow.minute >= COACHING_MINUTE
+      )
     );
-  box-shadow:
-    0 22px 60px rgba(0, 0, 0, 0.34),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+
+  if (sessionAlreadyPassedToday) {
+    daysUntilSession = 7;
+  }
+
+  const easternTodayAtNoonUtc = easternDateTimeToUtc({
+    year: easternNow.year,
+    month: easternNow.month,
+    day: easternNow.day,
+    hour: 12,
+  });
+
+  const targetDate = new Date(
+    easternTodayAtNoonUtc.getTime() +
+      daysUntilSession * 24 * 60 * 60 * 1000
+  );
+
+  const targetParts = getTimeZoneParts(
+    targetDate,
+    EASTERN_TIME_ZONE
+  );
+
+  return easternDateTimeToUtc({
+    year: targetParts.year,
+    month: targetParts.month,
+    day: targetParts.day,
+    hour: COACHING_HOUR,
+    minute: COACHING_MINUTE,
+  });
 }
 
-.elite-tag {
-  color: #d4af37;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+function formatCountdown(milliseconds) {
+  const safeMilliseconds = Math.max(0, milliseconds);
+  const totalSeconds = Math.floor(safeMilliseconds / 1000);
+
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return {
+    days,
+    hours,
+    minutes,
+    seconds,
+  };
 }
 
-.elite-hero h1 {
-  margin: 10px 0 8px;
-  color: #ffffff;
-  font-family: var(--font-head, "Rajdhani", sans-serif);
-  font-size: clamp(42px, 5vw, 68px);
-  line-height: 0.95;
-  text-transform: uppercase;
+function getGreeting() {
+  const currentHour = getTimeZoneParts(
+    new Date(),
+    EASTERN_TIME_ZONE
+  ).hour;
+
+  if (currentHour < 12) return "Good morning";
+  if (currentHour < 17) return "Good afternoon";
+  return "Good evening";
 }
 
-.elite-hero p {
-  max-width: 650px;
-  margin: 0;
-  color: #aeb5bf;
-  font-size: 16px;
-  line-height: 1.65;
+function formatSessionDate(date) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: EASTERN_TIME_ZONE,
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+  }).format(date);
 }
 
-.elite-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-}
+export default function EliteCommandCenter() {
+  const nextSession = useMemo(
+    () => getNextCoachingSession(),
+    []
+  );
 
-.elite-card {
-  min-height: 230px;
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-  border: 1px solid rgba(212, 175, 55, 0.16);
-  border-radius: 14px;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(17, 20, 25, 0.97),
-      rgba(8, 10, 13, 0.99)
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, []);
+
+  const millisecondsUntilSession =
+    nextSession.getTime() - now.getTime();
+
+  const countdown = formatCountdown(
+    millisecondsUntilSession
+  );
+
+  const isStartingSoon =
+    millisecondsUntilSession > 0 &&
+    millisecondsUntilSession <= 30 * 60 * 1000;
+
+  const openDiscord = () => {
+    window.open(
+      DISCORD_URL,
+      "_blank",
+      "noopener,noreferrer"
     );
-  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.24);
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
+  };
 
-.elite-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(212, 175, 55, 0.38);
-  box-shadow: 0 22px 46px rgba(0, 0, 0, 0.32);
-}
+  const openMentorship = () => {
+    window.location.href = "/mentorship";
+  };
 
-.elite-card h2 {
-  margin: 0 0 18px;
-  color: #d4af37;
-  font-family: var(--font-head, "Rajdhani", sans-serif);
-  font-size: 17px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
+  return (
+    <main className="elite-page">
+      <section className="elite-hero">
+        <div className="elite-hero-copy">
+          <div className="elite-tag">
+            TRQX ELITE
+          </div>
 
-.elite-card h3 {
-  margin: 0 0 10px;
-  color: #ffffff;
-  font-family: var(--font-head, "Rajdhani", sans-serif);
-  font-size: 27px;
-}
+          <h1>Elite Command Center</h1>
 
-.elite-card p {
-  margin: 0 0 18px;
-  color: #aeb5bf;
-  line-height: 1.65;
-}
+          <p className="elite-welcome">
+            {getGreeting()}. Your market preparation,
+            coaching, education, and community resources
+            are organized here.
+          </p>
 
-.elite-card .goldButton,
-.elite-hero .goldButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-start;
-  min-height: 44px;
-  padding: 0 20px;
-  margin-top: auto;
-  border: 1px solid rgba(255, 225, 120, 0.8);
-  border-radius: 8px;
-  background:
-    linear-gradient(
-      135deg,
-      #b8860b,
-      #ffd766,
-      #d4af37
-    );
-  color: #080808;
-  font-weight: 900;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(212, 175, 55, 0.16);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
+          <div className="elite-mission-strip">
+            <div>
+              <span>Market regime</span>
+              <strong>Risk On</strong>
+            </div>
 
-.elite-card .goldButton:hover,
-.elite-hero .goldButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 30px rgba(212, 175, 55, 0.24);
-}
+            <div>
+              <span>Today&apos;s mission</span>
+              <strong>Wait for confirmation</strong>
+            </div>
 
-@media (max-width: 1100px) {
-  .elite-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
+            <div>
+              <span>Execution standard</span>
+              <strong>Precision over activity</strong>
+            </div>
+          </div>
+        </div>
 
-@media (max-width: 760px) {
-  .elite-hero {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 26px 22px;
-  }
+        <div className="elite-session-panel">
+          <div className="elite-session-header">
+            <span
+              className={
+                isStartingSoon
+                  ? "elite-live-dot starting"
+                  : "elite-live-dot"
+              }
+            />
 
-  .elite-hero .goldButton {
-    width: 100%;
-  }
+            <span>
+              {isStartingSoon
+                ? "Starting soon"
+                : "Next live coaching"}
+            </span>
+          </div>
 
-  .elite-grid {
-    grid-template-columns: 1fr;
-  }
+          <h2>{formatSessionDate(nextSession)}</h2>
 
-  .elite-card {
-    min-height: auto;
-  }
+          <p>7:00 PM Eastern</p>
 
-  .elite-card .goldButton {
-    width: 100%;
-  }
+          <div className="elite-countdown">
+            <div>
+              <strong>{countdown.days}</strong>
+              <span>Days</span>
+            </div>
+
+            <div>
+              <strong>
+                {String(countdown.hours).padStart(2, "0")}
+              </strong>
+              <span>Hours</span>
+            </div>
+
+            <div>
+              <strong>
+                {String(countdown.minutes).padStart(2, "0")}
+              </strong>
+              <span>Minutes</span>
+            </div>
+
+            <div>
+              <strong>
+                {String(countdown.seconds).padStart(2, "0")}
+              </strong>
+              <span>Seconds</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="goldButton"
+            onClick={openDiscord}
+          >
+            Join Live Coaching
+          </button>
+        </div>
+      </section>
+
+      <section className="elite-grid">
+        <article className="elite-card">
+          <h2>Today&apos;s Mission</h2>
+
+          <h3>Trade the confirmation</h3>
+
+          <p>
+            Focus on clean momentum continuation.
+            Avoid forcing entries inside consolidation.
+          </p>
+
+          <button
+            type="button"
+            className="goldButton"
+            onClick={() => {
+              window.location.href = "/";
+            }}
+          >
+            Open Market Brief
+          </button>
+        </article>
+
+        <article className="elite-card">
+          <h2>Next Coaching Session</h2>
+
+          <h3>{formatSessionDate(nextSession)}</h3>
+
+          <p>
+            Live coaching begins at 7:00 PM Eastern.
+            The countdown updates automatically.
+          </p>
+
+          <button
+            type="button"
+            className="goldButton"
+            onClick={openDiscord}
+          >
+            Join Session
+          </button>
+        </article>
+
+        <article className="elite-card">
+          <h2>This Week&apos;s Homework</h2>
+
+          <h3>Market Structure</h3>
+
+          <p>
+            Complete the market-structure lesson and
+            submit one annotated chart review.
+          </p>
+
+          <button
+            type="button"
+            className="goldButton"
+            onClick={() => {
+              window.location.href = "/academy";
+            }}
+          >
+            Open Assignment
+          </button>
+        </article>
+
+        <article className="elite-card">
+          <h2>Book Coaching</h2>
+
+          <h3>One-on-one support</h3>
+
+          <p>
+            Schedule a private coaching session through
+            the mentorship booking calendar.
+          </p>
+
+          <button
+            type="button"
+            className="goldButton"
+            onClick={openMentorship}
+          >
+            Book Session
+          </button>
+        </article>
+
+        <article className="elite-card">
+          <h2>Elite Discord</h2>
+
+          <h3>Trading Floor</h3>
+
+          <p>
+            Continue the discussion with members and
+            access live coaching communication.
+          </p>
+
+          <button
+            type="button"
+            className="goldButton"
+            onClick={openDiscord}
+          >
+            Open Discord
+          </button>
+        </article>
+
+        <article className="elite-card">
+          <h2>Latest Recording</h2>
+
+          <h3>Market Structure Review</h3>
+
+          <p>
+            Review the latest coaching session and
+            reinforce the week&apos;s primary concepts.
+          </p>
+
+          <button
+            type="button"
+            className="goldButton"
+            onClick={() => {
+              window.location.href = "/academy";
+            }}
+          >
+            Open Coaching Vault
+          </button>
+        </article>
+      </section>
+    </main>
+  );
 }
