@@ -457,3 +457,140 @@
     width: 100%;
   }
 }
+/* =========================================================
+   LIVE TRQX DATA
+   ========================================================= */
+
+.elite-live-section {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.elite-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 14px;
+  padding: 0 2px;
+}
+
+.elite-section-heading span {
+  display: block;
+  margin-bottom: 6px;
+  color: #d4af37;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.elite-section-heading h2 {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-head, "Rajdhani", sans-serif);
+  font-size: 28px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.elite-section-heading p {
+  max-width: 520px;
+  margin: 0;
+  color: #828b97;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.elite-live-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 14px;
+}
+
+.elite-live-panel {
+  min-width: 0;
+  height: 430px;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  border: 1px solid rgba(212, 175, 55, 0.17);
+  border-radius: 14px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(212, 175, 55, 0.055),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(17, 20, 25, 0.98),
+      rgba(8, 10, 13, 0.99)
+    );
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+  overflow: hidden;
+}
+
+.elite-live-panel-wide {
+  grid-row: span 2;
+  height: 874px;
+}
+
+.elite-academy-panel {
+  height: 430px;
+}
+
+.elite-panel-label {
+  flex: 0 0 auto;
+  padding: 3px 5px 12px;
+  color: #d4af37;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.elite-widget-scroll {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  border-radius: 10px;
+}
+
+.elite-widget-scroll > * {
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .elite-live-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .elite-live-panel,
+  .elite-live-panel-wide,
+  .elite-academy-panel {
+    grid-row: auto;
+    height: 500px;
+  }
+}
+
+@media (max-width: 760px) {
+  .elite-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .elite-section-heading p {
+    text-align: left;
+  }
+
+  .elite-live-panel,
+  .elite-live-panel-wide,
+  .elite-academy-panel {
+    height: 460px;
+  }
+}

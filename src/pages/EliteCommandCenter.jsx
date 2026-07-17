@@ -1,4 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import MarketBrief from "../components/MarketBrief";
+import {
+  CalendarCard,
+  AcademyCard,
+} from "../components/Cards";
 import "./EliteCommandCenter.css";
 
 const EASTERN_TIME_ZONE = "America/New_York";
@@ -181,6 +187,8 @@ function formatSessionDate(date) {
 }
 
 export default function EliteCommandCenter() {
+  const navigate = useNavigate();
+
   const nextSession = useMemo(
     () => getNextCoachingSession(),
     []
@@ -368,9 +376,7 @@ export default function EliteCommandCenter() {
           <button
             type="button"
             className="goldButton"
-            onClick={() => {
-              window.location.href = "/academy";
-            }}
+            onClick={() => navigate("/academy")}
           >
             Open Assignment
           </button>
@@ -435,6 +441,51 @@ export default function EliteCommandCenter() {
           </button>
         </article>
       </section>
+      <section className="elite-live-section">
+  <div className="elite-section-heading">
+    <div>
+      <span>LIVE INTELLIGENCE</span>
+      <h2>Elite Trading Desk</h2>
+    </div>
+
+    <p>
+      Current market preparation, economic events,
+      and member education progress.
+    </p>
+  </div>
+
+  <div className="elite-live-grid">
+    <div className="elite-live-panel elite-live-panel-wide">
+      <div className="elite-panel-label">
+        DAILY MARKET BRIEF
+      </div>
+
+      <div className="elite-widget-scroll">
+        <MarketBrief />
+      </div>
+    </div>
+
+    <div className="elite-live-panel">
+      <div className="elite-panel-label">
+        ECONOMIC EVENTS
+      </div>
+
+      <div className="elite-widget-scroll">
+        <CalendarCard />
+      </div>
+    </div>
+
+    <div className="elite-live-panel elite-academy-panel">
+      <div className="elite-panel-label">
+        ACADEMY PROGRESS
+      </div>
+
+      <div className="elite-widget-scroll">
+        <AcademyCard />
+      </div>
+    </div>
+  </div>
+</section>
     </main>
   );
 }
