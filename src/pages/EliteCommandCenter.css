@@ -1,11 +1,84 @@
+.elite-page {
+  width: 100%;
+  min-height: 100%;
+  padding: 22px;
+  color: #f5f7fa;
+  box-sizing: border-box;
+}
+
+.elite-page *,
+.elite-page *::before,
+.elite-page *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HERO / COMMAND CENTER HEADER
+   ========================================================= */
+
+.elite-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  gap: 20px;
+  align-items: stretch;
+  width: 100%;
+  padding: 28px;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: 16px;
+  background:
+    radial-gradient(
+      circle at 82% 15%,
+      rgba(212, 175, 55, 0.13),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(18, 21, 27, 0.99),
+      rgba(6, 8, 11, 0.99)
+    );
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.34),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+}
+
 .elite-hero-copy {
-  flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.elite-tag {
+  color: #d4af37;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.elite-hero h1 {
+  margin: 10px 0 10px;
+  color: #ffffff;
+  font-family: var(--font-head, "Rajdhani", sans-serif);
+  font-size: clamp(38px, 4vw, 62px);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
 }
 
 .elite-welcome {
   max-width: 720px;
+  margin: 0;
+  color: #a8b0bc;
+  font-size: 15px;
+  line-height: 1.65;
 }
+
+/* =========================================================
+   MISSION STRIP
+   ========================================================= */
 
 .elite-mission-strip {
   display: grid;
@@ -15,11 +88,12 @@
 }
 
 .elite-mission-strip > div {
+  min-width: 0;
   min-height: 88px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 16px;
+  padding: 15px 16px;
   border: 1px solid rgba(212, 175, 55, 0.14);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.025);
@@ -27,32 +101,38 @@
 
 .elite-mission-strip span {
   margin-bottom: 7px;
-  color: #7f8792;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  color: #768291;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
 .elite-mission-strip strong {
+  overflow-wrap: anywhere;
   color: #f5f1e8;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 800;
   line-height: 1.35;
 }
 
+/* =========================================================
+   LIVE COACHING PANEL
+   ========================================================= */
+
 .elite-session-panel {
-  width: min(100%, 390px);
-  flex: 0 0 390px;
-  padding: 24px;
-  border: 1px solid rgba(212, 175, 55, 0.28);
+  min-width: 0;
+  width: 100%;
+  padding: 23px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
   border-radius: 14px;
   background:
     radial-gradient(
       circle at top right,
-      rgba(212, 175, 55, 0.12),
-      transparent 38%
+      rgba(212, 175, 55, 0.13),
+      transparent 40%
     ),
-    rgba(5, 7, 10, 0.76);
+    rgba(5, 7, 10, 0.82);
   box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.3),
     inset 0 0 0 1px rgba(255, 255, 255, 0.02);
@@ -63,15 +143,16 @@
   align-items: center;
   gap: 9px;
   color: #d4af37;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
 .elite-live-dot {
   width: 9px;
   height: 9px;
+  flex: 0 0 9px;
   border-radius: 999px;
   background: #d4af37;
   box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.1);
@@ -86,29 +167,30 @@
 }
 
 .elite-session-panel h2 {
-  margin: 20px 0 4px;
+  margin: 20px 0 5px;
   color: #ffffff;
   font-family: var(--font-head, "Rajdhani", sans-serif);
-  font-size: 30px;
+  font-size: 29px;
+  font-weight: 800;
   line-height: 1;
 }
 
 .elite-session-panel > p {
   margin: 0;
   color: #8f97a2;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .elite-countdown {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  margin: 24px 0;
+  gap: 7px;
+  margin: 23px 0;
 }
 
 .elite-countdown > div {
   min-width: 0;
-  padding: 13px 6px;
+  padding: 13px 4px;
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 9px;
   background: rgba(255, 255, 255, 0.035);
@@ -119,7 +201,7 @@
   display: block;
   color: #ffffff;
   font-family: var(--font-head, "Rajdhani", sans-serif);
-  font-size: 25px;
+  font-size: 24px;
   line-height: 1;
 }
 
@@ -127,15 +209,144 @@
   display: block;
   margin-top: 7px;
   color: #707985;
-  font-size: 8px;
-  font-weight: 800;
+  font-size: 7px;
+  font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* =========================================================
+   CONTENT GRID
+   ========================================================= */
+
+.elite-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.elite-card {
+  min-width: 0;
+  min-height: 245px;
+  display: flex;
+  flex-direction: column;
+  padding: 22px;
+  border: 1px solid rgba(212, 175, 55, 0.16);
+  border-radius: 14px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(212, 175, 55, 0.055),
+      transparent 40%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(17, 20, 25, 0.98),
+      rgba(8, 10, 13, 0.99)
+    );
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.elite-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212, 175, 55, 0.38);
+  box-shadow:
+    0 22px 46px rgba(0, 0, 0, 0.32),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.elite-card h2 {
+  margin: 0 0 18px;
+  color: #d4af37;
+  font-family: var(--font-head, "Rajdhani", sans-serif);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.elite-card h3 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-family: var(--font-head, "Rajdhani", sans-serif);
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.elite-card p {
+  margin: 0 0 20px;
+  color: #9ca5b1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.elite-page .goldButton {
+  min-height: 43px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  padding: 0 18px;
+  margin-top: auto;
+  border: 1px solid rgba(255, 225, 120, 0.8);
+  border-radius: 8px;
+  background:
+    linear-gradient(
+      135deg,
+      #b8860b 0%,
+      #f1ce4f 48%,
+      #d4af37 100%
+    );
+  color: #080808;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(212, 175, 55, 0.16);
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.elite-page .goldButton:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 16px 30px rgba(212, 175, 55, 0.24);
+}
+
+.elite-page .goldButton:active {
+  transform: translateY(0);
+}
+
+.elite-page .goldButton:focus-visible {
+  outline: 2px solid #f4d35e;
+  outline-offset: 3px;
 }
 
 .elite-session-panel .goldButton {
   width: 100%;
 }
+
+/* =========================================================
+   ANIMATION
+   ========================================================= */
 
 @keyframes elitePulse {
   0%,
@@ -150,19 +361,43 @@
   }
 }
 
-@media (max-width: 1180px) {
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1250px) {
   .elite-hero {
-    align-items: stretch;
-    flex-direction: column;
+    grid-template-columns: minmax(0, 1fr) 350px;
+  }
+
+  .elite-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1020px) {
+  .elite-hero {
+    grid-template-columns: 1fr;
   }
 
   .elite-session-panel {
-    width: 100%;
-    flex-basis: auto;
+    max-width: none;
   }
 }
 
 @media (max-width: 760px) {
+  .elite-page {
+    padding: 14px;
+  }
+
+  .elite-hero {
+    padding: 21px 17px;
+  }
+
+  .elite-hero h1 {
+    font-size: 36px;
+  }
+
   .elite-mission-strip {
     grid-template-columns: 1fr;
   }
@@ -171,19 +406,54 @@
     min-height: auto;
   }
 
+  .elite-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .elite-card {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .elite-page {
+    padding: 10px;
+  }
+
+  .elite-hero {
+    padding: 18px 14px;
+    border-radius: 12px;
+  }
+
+  .elite-hero h1 {
+    font-size: 31px;
+  }
+
   .elite-countdown {
     gap: 5px;
   }
 
+  .elite-countdown > div {
+    padding: 11px 2px;
+  }
+
   .elite-countdown strong {
-    font-size: 21px;
+    font-size: 20px;
   }
 
   .elite-countdown span {
-    font-size: 7px;
+    font-size: 6px;
   }
 
   .elite-session-panel {
-    padding: 20px 16px;
+    padding: 18px 14px;
+  }
+
+  .elite-card {
+    padding: 19px;
+  }
+
+  .elite-page .goldButton {
+    width: 100%;
   }
 }
