@@ -123,8 +123,9 @@ if (data?.user?.id) {
 }
 
 navigate("/welcome");
+}
 
-  async function submit(e) {
+async function submit(e) {
     e.preventDefault();
     setError("");
 
@@ -579,7 +580,8 @@ navigate("/welcome");
           </button>
         </div>
 
-        <div className="auth-footer">Plan It. Trade It. Slay It.</div>
+                <div className="auth-footer">Plan It. Trade It. Slay It.</div>
       </div>
     </div>
   );
+}
