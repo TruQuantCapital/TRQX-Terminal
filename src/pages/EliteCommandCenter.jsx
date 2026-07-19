@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import MarketBriefWidget from "../components/widgets/MarketBriefWidget";
 import EconomicEventsWidget from "../components/widgets/EconomicEventsWidget";
 import AcademyProgressWidget from "../components/widgets/AcademyProgressWidget";
+import CountdownWidget from "../components/widgets/CountdownWidget";
+import MissionWidget from "../components/widgets/MissionWidget";
 import "./EliteCommandCenter.css";
 
 const EASTERN_TIME_ZONE = "America/New_York";
@@ -492,7 +494,7 @@ export default function EliteCommandCenter() {
 
       <div className="elite-widget-scroll">
         <AcademyCard />
-      </div>
+    
     </div>
   </div>
 </section>

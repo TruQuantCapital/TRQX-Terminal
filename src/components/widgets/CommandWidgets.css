@@ -1,0 +1,135 @@
+.trqx-countdown-widget,
+.trqx-mission-widget {
+  height: 100%;
+}
+
+.trqx-countdown-widget .trqx-widget-content,
+.trqx-mission-widget .trqx-widget-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.trqx-countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.trqx-countdown-grid > div {
+  min-width: 0;
+  padding: 15px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  text-align: center;
+}
+
+.trqx-countdown-grid strong {
+  display: block;
+  color: #ffffff;
+  font-family: var(--font-head, "Rajdhani", sans-serif);
+  font-size: 25px;
+  line-height: 1;
+}
+
+.trqx-countdown-grid span {
+  display: block;
+  margin-top: 7px;
+  color: #747e8b;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trqx-widget-gold-button {
+  min-height: 43px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 18px;
+  margin-top: auto;
+  border: 1px solid rgba(255, 225, 120, 0.8);
+  border-radius: 8px;
+  background:
+    linear-gradient(
+      135deg,
+      #b8860b 0%,
+      #f1ce4f 48%,
+      #d4af37 100%
+    );
+  color: #080808;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(212, 175, 55, 0.16);
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.trqx-widget-gold-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 16px 30px rgba(212, 175, 55, 0.24);
+}
+
+.trqx-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  height: 100%;
+}
+
+.trqx-mission-grid article {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 17px;
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(255, 255, 255, 0.015)
+    );
+}
+
+.trqx-mission-grid span {
+  display: block;
+  margin-bottom: 8px;
+  color: #75808d;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.trqx-mission-grid strong {
+  color: #f5f1e8;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+@media (max-width: 760px) {
+  .trqx-mission-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trqx-countdown-grid {
+    gap: 5px;
+  }
+
+  .trqx-countdown-grid strong {
+    font-size: 21px;
+  }
+}
