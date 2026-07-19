@@ -454,49 +454,11 @@ export default function EliteCommandCenter() {
   </div>
 
   <div className="elite-live-grid">
-  <MarketBriefWidget
-    height={874}
-  />
-
-  <EconomicEventsWidget
-    height={430}
-  />
-
-  <AcademyProgressWidget
-    height={430}
-  />
-</div>
-    <div className="elite-live-panel elite-live-panel-wide">
-      <div className="elite-panel-label">
-        DAILY MARKET BRIEF
-      </div>
-
-      <div className="elite-widget-scroll">
-        <MarketBrief />
-      </div>
-    </div>
-
-    <div className="elite-live-panel">
-      <div className="elite-panel-label">
-        ECONOMIC EVENTS
-      </div>
-
-      <div className="elite-widget-scroll">
-        <CalendarCard />
-      </div>
-    </div>
-
-    <div className="elite-live-panel elite-academy-panel">
-      <div className="elite-panel-label">
-        ACADEMY PROGRESS
-      </div>
-
-      <div className="elite-widget-scroll">
-        <AcademyCard />
-    
-    </div>
+    <MarketBriefWidget height={874} />
+    <EconomicEventsWidget height={430} />
+    <AcademyProgressWidget height={430} />
   </div>
 </section>
-    </main>
-  );
+</main>
+);
 }
