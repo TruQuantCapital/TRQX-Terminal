@@ -1,4 +1,5 @@
 ﻿import React from "react";
+import PatternSVG from "./PatternSVG";
 
 const G = "#22c55e";
 const R = "#ef4444";
