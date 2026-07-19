@@ -12,8 +12,12 @@ export default function WidgetLab() {
     <main className="widget-lab">
       <header className="widget-lab__header">
         <div>
-          <p className="widget-lab__eyebrow">TRQX DEVELOPMENT WORKSPACE</p>
+          <p className="widget-lab__eyebrow">
+            TRQX DEVELOPMENT WORKSPACE
+          </p>
+
           <h1>Widget Lab</h1>
+
           <p className="widget-lab__description">
             Test reusable dashboard widgets before deploying them to the live
             trading workspace.

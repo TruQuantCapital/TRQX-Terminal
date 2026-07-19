@@ -351,9 +351,9 @@ export default function App() {
 <Route
   path="/widget-lab"
   element={
-    <OwnerRoute>
+    <ProtectedTerminal>
       <WidgetLab />
-    </OwnerRoute>
+    </ProtectedTerminal>
   }
 />
 
