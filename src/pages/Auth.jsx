@@ -90,36 +90,39 @@ export default function Auth() {
     }
 
     // Create profile record with additional data
-    if (data?.user?.id) {
-      const profileData = {
-        user_id: data.user.id,
-        full_name: fullName,
-        account_size: accountSize,
-        mentorship_interest: mentorshipInterest,
-        mentorship_budget: mentorshipInterest ? monthlyBudget : null,
-        agreed_to_refund: true,
-      };
+if (data?.user?.id) {
+  const profileData = {
+    user_id: data.user.id,
+    full_name: fullName,
+    account_size: accountSize,
+    mentorship_interest: mentorshipInterest,
+    mentorship_budget: mentorshipInterest ? monthlyBudget : null,
+    agreed_to_terms: true,
+    agreed_to_refund: true,
+  };
 
-      console.log("Attempting to insert profile:", profileData);
+  console.log("Attempting to insert profile:", profileData);
 
-      const { error: profileError, data: profileResult } = await supabase
-        .from("profiles")
-        .insert([profileData])
-        .select();
+  const { error: profileError, data: profileResult } = await supabase
+    .from("profiles")
+    .insert([profileData])
+    .select();
 
-      console.log("Profile insert result:", { error: profileError, data: profileResult });
+  console.log("Profile insert result:", {
+    error: profileError,
+    data: profileResult,
+  });
 
-      if (profileError) {
-        console.error("Profile creation error:", profileError);
-        setError(`Profile error: ${profileError.message}`);
-        return;
-      }
-    } else {
-      console.error("No user ID returned from signup:", data);
-    }
-
-    navigate("/welcome");
+  if (profileError) {
+    console.error("Profile creation error:", profileError);
+    setError(`Profile error: ${profileError.message}`);
+    return;
   }
+} else {
+  console.error("No user ID returned from signup:", data);
+}
+
+navigate("/welcome");
 
   async function submit(e) {
     e.preventDefault();
@@ -580,4 +583,3 @@ export default function Auth() {
       </div>
     </div>
   );
-}
