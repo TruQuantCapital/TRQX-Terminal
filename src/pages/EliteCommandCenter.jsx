@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MarketBrief from "../components/MarketBrief";
-import {
-  CalendarCard,
-  AcademyCard,
-} from "../components/Cards";
+import MarketBriefWidget from "../components/widgets/MarketBriefWidget";
+import EconomicEventsWidget from "../components/widgets/EconomicEventsWidget";
+import AcademyProgressWidget from "../components/widgets/AcademyProgressWidget";
 import "./EliteCommandCenter.css";
 
 const EASTERN_TIME_ZONE = "America/New_York";
@@ -455,6 +453,18 @@ export default function EliteCommandCenter() {
   </div>
 
   <div className="elite-live-grid">
+  <MarketBriefWidget
+    height={874}
+  />
+
+  <EconomicEventsWidget
+    height={430}
+  />
+
+  <AcademyProgressWidget
+    height={430}
+  />
+</div>
     <div className="elite-live-panel elite-live-panel-wide">
       <div className="elite-panel-label">
         DAILY MARKET BRIEF

@@ -1,0 +1,113 @@
+.trqx-widget {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(212, 175, 55, 0.17);
+  border-radius: 14px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(212, 175, 55, 0.055),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(17, 20, 25, 0.98),
+      rgba(8, 10, 13, 0.99)
+    );
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+  overflow: hidden;
+}
+
+.trqx-widget-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 20px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.trqx-widget-heading {
+  min-width: 0;
+}
+
+.trqx-widget-eyebrow {
+  display: block;
+  margin-bottom: 6px;
+  color: #d4af37;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.trqx-widget-title {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-head, "Rajdhani", sans-serif);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.trqx-widget-description {
+  max-width: 680px;
+  margin: 8px 0 0;
+  color: #838d99;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.trqx-widget-action {
+  flex: 0 0 auto;
+}
+
+.trqx-widget-content {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  padding: 14px;
+}
+
+.trqx-widget-content-scrollable {
+  overflow: auto;
+}
+
+.trqx-widget-content > * {
+  width: 100%;
+}
+
+.trqx-widget-compact .trqx-widget-header {
+  padding: 14px 16px 12px;
+}
+
+.trqx-widget-compact .trqx-widget-content {
+  padding: 12px;
+}
+
+.trqx-widget-borderless {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+@media (max-width: 760px) {
+  .trqx-widget-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .trqx-widget-action {
+    width: 100%;
+  }
+
+  .trqx-widget-action button,
+  .trqx-widget-action a {
+    width: 100%;
+  }
+}
