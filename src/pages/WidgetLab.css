@@ -16,7 +16,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
-  max-width: 1500px;
+  max-width: 1400px;
   margin: 0 auto 28px;
 }
 
@@ -41,8 +41,14 @@
   line-height: 1.6;
 }
 
-.widget-lab__status {
+.widget-lab__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex-shrink: 0;
+}
+
+.widget-lab__status {
   padding: 8px 14px;
   border: 1px solid rgba(212, 175, 55, 0.45);
   border-radius: 999px;
@@ -54,20 +60,81 @@
   text-transform: uppercase;
 }
 
-.widget-lab__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-  max-width: 1500px;
+.widget-lab__reset {
+  padding: 9px 14px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #141414;
+  color: #f5f5f5;
+  font: inherit;
+  cursor: pointer;
+}
+
+.widget-lab__reset:hover {
+  border-color: #d4af37;
+  color: #d4af37;
+}
+
+.widget-lab__workspace {
+  max-width: 1400px;
   margin: 0 auto;
+  overflow-x: auto;
 }
 
-.widget-lab__item {
-  min-width: 0;
+.widget-lab__grid {
+  position: relative;
+  min-height: 900px;
 }
 
-.widget-lab__item--wide {
-  grid-column: span 2;
+.widget-lab__card {
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 14px;
+  background: #101010;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.widget-lab__drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 42px;
+  padding: 0 14px;
+  border-bottom: 1px solid #242424;
+  background: #151515;
+  color: #d4af37;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: grab;
+  user-select: none;
+}
+
+.widget-lab__drag-handle:active {
+  cursor: grabbing;
+}
+
+.widget-lab__card-content {
+  height: calc(100% - 42px);
+  overflow: auto;
+  padding: 12px;
+}
+
+.react-grid-item.react-grid-placeholder {
+  border: 1px dashed #d4af37;
+  border-radius: 14px;
+  background: rgba(212, 175, 55, 0.12);
+  opacity: 1;
+}
+
+.react-resizable-handle {
+  opacity: 0.8;
+}
+
+.react-resizable-handle::after {
+  border-right-color: #d4af37;
+  border-bottom-color: #d4af37;
 }
 
 @media (max-width: 900px) {
@@ -79,11 +146,8 @@
     flex-direction: column;
   }
 
-  .widget-lab__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .widget-lab__item--wide {
-    grid-column: span 1;
+  .widget-lab__actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }
