@@ -348,6 +348,15 @@ export default function App() {
             }
           />
 
+<Route
+  path="/widget-lab"
+  element={
+    <OwnerRoute>
+      <WidgetLab />
+    </OwnerRoute>
+  }
+/>
+
           <Route
             path="/reports"
             element={
