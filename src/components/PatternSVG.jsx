@@ -874,6 +874,224 @@ const patterns = {
       <Label x={140} y={165} text="Gravestone at resistance = strong sell" color={GOLD} />
     </g>
   ),
+
+  // ════════════════════════════════════════════
+  // EXPANDED TRQX UNIVERSITY PATTERN LIBRARY
+  // ════════════════════════════════════════════
+
+  "dead-cat-bounce": () => (
+    <g>
+      {/* Initial collapse */}
+      <C x={28} t={24} b={48} wt={18} wb={54} color={R} />
+      <C x={52} t={48} b={76} wt={42} wb={82} color={R} />
+      <C x={76} t={76} b={108} wt={70} wb={114} color={R} />
+      <C x={100} t={108} b={138} wt={102} wb={146} color={R} />
+
+      {/* Weak relief bounce */}
+      <C x={130} t={108} b={128} wt={102} wb={134} color={G} />
+      <C x={154} t={90} b={110} wt={84} wb={116} color={G} />
+      <C x={178} t={82} b={98} wt={76} wb={104} color={G} />
+
+      {/* Failure and continuation lower */}
+      <C x={205} t={86} b={116} wt={80} wb={122} color={R} width={16} />
+      <C x={232} t={116} b={148} wt={110} wb={158} color={R} width={16} />
+
+      <line x1={112} y1={78} x2={205} y2={78} stroke={R} strokeWidth="1.5" strokeDasharray="5 3" />
+      <Label x={160} y={70} text="WEAK BOUNCE" color={GOLD} />
+      <Circle x={205} y={101} color={R} />
+      <Arrow x1={220} y1={120} x2={260} y2={164} color={R} width={2.5} />
+      <Label x={140} y={166} text="Collapse · Weak bounce · New lows" color={GOLD} />
+    </g>
+  ),
+
+  "double-top": () => (
+    <g>
+      <L pts={[[22,132],[58,70],[92,118],[130,68],[168,122],[220,150]]} color={R} width={2.5} />
+      <line x1={18} y1={70} x2={178} y2={70} stroke={R} strokeWidth="1.5" strokeDasharray="5 3" />
+      <line x1={18} y1={120} x2={230} y2={120} stroke={GOLD} strokeWidth="1.5" strokeDasharray="5 3" />
+      <Label x={58} y={58} text="TOP 1" color={R} />
+      <Label x={130} y={56} text="TOP 2" color={R} />
+      <Label x={210} y={112} text="NECKLINE" color={GOLD} anchor="end" />
+      <Circle x={168} y={122} color={R} />
+      <Arrow x1={180} y1={128} x2={250} y2={164} color={R} width={2.5} />
+      <Label x={140} y={166} text="Two failed highs · Neckline break" color={GOLD} />
+    </g>
+  ),
+
+  "double-bottom": () => (
+    <g>
+      <L pts={[[22,48],[58,112],[92,62],[130,114],[168,58],[220,25]]} color={G} width={2.5} />
+      <line x1={18} y1={112} x2={178} y2={112} stroke={TEAL} strokeWidth="1.5" strokeDasharray="5 3" />
+      <line x1={18} y1={62} x2={230} y2={62} stroke={GOLD} strokeWidth="1.5" strokeDasharray="5 3" />
+      <Label x={58} y={128} text="BOTTOM 1" color={TEAL} />
+      <Label x={130} y={130} text="BOTTOM 2" color={TEAL} />
+      <Label x={210} y={54} text="NECKLINE" color={GOLD} anchor="end" />
+      <Circle x={168} y={58} color={G} />
+      <Arrow x1={180} y1={52} x2={250} y2={16} color={G} width={2.5} />
+      <Label x={140} y={166} text="Two defended lows · Neckline break" color={GOLD} />
+    </g>
+  ),
+
+  "head-and-shoulders": () => (
+    <g>
+      <L pts={[[18,138],[52,80],[82,120],[118,42],[154,120],[188,80],[222,138]]} color={R} width={2.5} />
+      <line x1={24} y1={120} x2={226} y2={120} stroke={GOLD} strokeWidth="1.5" strokeDasharray="5 3" />
+      <Label x={52} y={68} text="LS" color={R} />
+      <Label x={118} y={30} text="HEAD" color={R} />
+      <Label x={188} y={68} text="RS" color={R} />
+      <Label x={214} y={112} text="NECKLINE" color={GOLD} anchor="end" />
+      <Circle x={222} y={138} color={R} />
+      <Arrow x1={228} y1={140} x2={260} y2={166} color={R} width={2.5} />
+      <Label x={140} y={166} text="Shoulder · Head · Shoulder" color={GOLD} />
+    </g>
+  ),
+
+  "inverse-head-and-shoulders": () => (
+    <g>
+      <L pts={[[18,42],[52,100],[82,60],[118,138],[154,60],[188,100],[222,42]]} color={G} width={2.5} />
+      <line x1={24} y1={60} x2={226} y2={60} stroke={GOLD} strokeWidth="1.5" strokeDasharray="5 3" />
+      <Label x={52} y={116} text="LS" color={G} />
+      <Label x={118} y={154} text="HEAD" color={G} />
+      <Label x={188} y={116} text="RS" color={G} />
+      <Label x={214} y={52} text="NECKLINE" color={GOLD} anchor="end" />
+      <Circle x={222} y={42} color={G} />
+      <Arrow x1={228} y1={38} x2={260} y2={12} color={G} width={2.5} />
+      <Label x={140} y={166} text="Inverse structure · Bullish breakout" color={GOLD} />
+    </g>
+  ),
+
+  "symmetrical-triangle": () => (
+    <g>
+      <L pts={[[18,32],[58,48],[98,62],[138,74],[190,88]]} color={R} width={2} />
+      <L pts={[[18,148],[58,132],[98,118],[138,104],[190,88]]} color={G} width={2} />
+      <C x={48} t={48} b={78} wt={42} wb={84} color={R} />
+      <C x={82} t={92} b={122} wt={86} wb={128} color={G} />
+      <C x={116} t={66} b={92} wt={60} wb={98} color={R} />
+      <C x={150} t={84} b={106} wt={78} wb={112} color={G} />
+      <Circle x={190} y={88} color={GOLD} />
+      <Arrow x1={196} y1={84} x2={258} y2={38} color={G} width={2.5} />
+      <Arrow x1={196} y1={92} x2={258} y2={142} color={R} width={2.5} />
+      <Label x={140} y={166} text="Compression · Trade confirmed break" color={GOLD} />
+    </g>
+  ),
+
+  "rising-wedge": () => (
+    <g>
+      <L pts={[[20,140],[70,112],[120,86],[170,64],[220,48]]} color={G} width={2} />
+      <L pts={[[20,104],[70,84],[120,66],[170,54],[220,48]]} color={R} width={2} />
+      <C x={52} t={92} b={116} wt={86} wb={122} color={G} />
+      <C x={88} t={80} b={102} wt={74} wb={108} color={R} />
+      <C x={124} t={66} b={88} wt={60} wb={94} color={G} />
+      <C x={160} t={56} b={76} wt={50} wb={82} color={R} />
+      <Circle x={210} y={50} color={R} />
+      <Arrow x1={214} y1={56} x2={258} y2={145} color={R} width={2.5} />
+      <Label x={140} y={166} text="Rising prices · Weakening momentum" color={GOLD} />
+    </g>
+  ),
+
+  "falling-wedge": () => (
+    <g>
+      <L pts={[[20,40],[70,68],[120,94],[170,116],[220,132]]} color={R} width={2} />
+      <L pts={[[20,76],[70,96],[120,114],[170,126],[220,132]]} color={G} width={2} />
+      <C x={52} t={56} b={80} wt={50} wb={86} color={R} />
+      <C x={88} t={76} b={98} wt={70} wb={104} color={G} />
+      <C x={124} t={92} b={114} wt={86} wb={120} color={R} />
+      <C x={160} t={106} b={126} wt={100} wb={132} color={G} />
+      <Circle x={210} y={132} color={G} />
+      <Arrow x1={214} y1={126} x2={258} y2={36} color={G} width={2.5} />
+      <Label x={140} y={166} text="Falling prices · Selling pressure fades" color={GOLD} />
+    </g>
+  ),
+
+  "cup-and-handle": () => (
+    <g>
+      <path d="M22 48 C45 48, 45 138, 100 138 C155 138, 155 48, 190 48"
+        fill="none" stroke={G} strokeWidth="2.5" strokeLinecap="round" />
+      <L pts={[[190,48],[208,62],[226,54],[240,48]]} color={GOLD} width={2} />
+      <line x1={18} y1={48} x2={242} y2={48} stroke={R} strokeWidth="1.5" strokeDasharray="5 3" />
+      <Label x={100} y={152} text="CUP" color={G} />
+      <Label x={215} y={72} text="HANDLE" color={GOLD} />
+      <Circle x={240} y={48} color={G} />
+      <Arrow x1={244} y1={44} x2={265} y2={16} color={G} width={2.5} />
+      <Label x={140} y={166} text="Rounded base · Tight handle · Breakout" color={GOLD} />
+    </g>
+  ),
+
+  "three-white-soldiers": () => (
+    <g>
+      <C x={62} t={102} b={138} wt={96} wb={144} color={G} width={18} />
+      <C x={118} t={66} b={108} wt={60} wb={114} color={G} width={18} />
+      <C x={174} t={28} b={72} wt={22} wb={78} color={G} width={18} />
+      <Label x={62} y={152} text="1" color={G} />
+      <Label x={118} y={122} text="2" color={G} />
+      <Label x={174} y={86} text="3" color={G} />
+      <Arrow x1={192} y1={30} x2={252} y2={12} color={G} width={2.5} />
+      <Label x={140} y={166} text="Three strong bullish closes" color={GOLD} />
+    </g>
+  ),
+
+  "three-black-crows": () => (
+    <g>
+      <C x={62} t={28} b={64} wt={22} wb={70} color={R} width={18} />
+      <C x={118} t={60} b={102} wt={54} wb={108} color={R} width={18} />
+      <C x={174} t={98} b={142} wt={92} wb={148} color={R} width={18} />
+      <Label x={62} y={18} text="1" color={R} />
+      <Label x={118} y={50} text="2" color={R} />
+      <Label x={174} y={88} text="3" color={R} />
+      <Arrow x1={192} y1={140} x2={252} y2={164} color={R} width={2.5} />
+      <Label x={140} y={166} text="Three strong bearish closes" color={GOLD} />
+    </g>
+  ),
+
+  "hanging-man": () => (
+    <g>
+      <C x={40} t={118} b={138} wt={112} wb={144} color={G} />
+      <C x={68} t={94} b={114} wt={88} wb={120} color={G} />
+      <C x={96} t={70} b={90} wt={64} wb={96} color={G} />
+      <C x={138} t={54} b={66} wt={50} wb={138} color={R} width={16} />
+      <Zone x1={18} y1={32} x2={262} y2={50} color={R} label="RESISTANCE" />
+      <Circle x={138} y={60} color={R} />
+      <Arrow x1={154} y1={68} x2={240} y2={148} color={R} width={2.5} />
+      <Label x={140} y={166} text="Hammer shape after an uptrend" color={GOLD} />
+    </g>
+  ),
+
+  "inverted-hammer": () => (
+    <g>
+      <C x={40} t={28} b={48} wt={22} wb={54} color={R} />
+      <C x={68} t={48} b={68} wt={42} wb={74} color={R} />
+      <C x={96} t={68} b={88} wt={62} wb={94} color={R} />
+      <C x={138} t={102} b={114} wt={42} wb={118} color={G} width={16} />
+      <Zone x1={18} y1={128} x2={262} y2={148} color={TEAL} label="SUPPORT" />
+      <Circle x={138} y={108} color={G} />
+      <Arrow x1={154} y1={100} x2={240} y2={28} color={G} width={2.5} />
+      <Label x={140} y={166} text="Upper rejection after a downtrend" color={GOLD} />
+    </g>
+  ),
+
+  "piercing-line": () => (
+    <g>
+      <C x={90} t={48} b={112} wt={42} wb={118} color={R} width={20} />
+      <C x={138} t={76} b={122} wt={70} wb={128} color={G} width={20} />
+      <line x1={65} y1={80} x2={165} y2={80} stroke={GOLD} strokeWidth="1.5" strokeDasharray="5 3" />
+      <Label x={205} y={74} text="50% MIDPOINT" color={GOLD} anchor="end" />
+      <Circle x={138} y={98} color={G} />
+      <Arrow x1={154} y1={76} x2={240} y2={28} color={G} width={2.5} />
+      <Label x={140} y={166} text="Bull closes above prior midpoint" color={GOLD} />
+    </g>
+  ),
+
+  "dark-cloud-cover": () => (
+    <g>
+      <C x={90} t={62} b={126} wt={56} wb={132} color={G} width={20} />
+      <C x={138} t={52} b={98} wt={46} wb={104} color={R} width={20} />
+      <line x1={65} y1={94} x2={165} y2={94} stroke={GOLD} strokeWidth="1.5" strokeDasharray="5 3" />
+      <Label x={205} y={88} text="50% MIDPOINT" color={GOLD} anchor="end" />
+      <Circle x={138} y={75} color={R} />
+      <Arrow x1={154} y1={98} x2={240} y2={150} color={R} width={2.5} />
+      <Label x={140} y={166} text="Bear closes below prior midpoint" color={GOLD} />
+    </g>
+  ),
 };
 
 export default function PatternSVG({ patternId }) {
