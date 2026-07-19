@@ -82,8 +82,7 @@ export default function Auth() {
 
     // Sign up with Supabase
     const { error: signUpError, data } = await signUp(email, pass);
-    setLoading(false);
-
+    
     if (signUpError) {
       setError(signUpError.message);
       return;
@@ -91,15 +90,18 @@ export default function Auth() {
 
    // Create profile record with additional data
 if (data?.user?.id) {
-  const profileData = {
-    user_id: data.user.id,
-    full_name: fullName,
-    account_size: accountSize,
-    mentorship_interest: mentorshipInterest,
-    mentorship_budget: mentorshipInterest ? monthlyBudget : null,
-    agreed_to_terms: true,
-    agreed_to_refund: true,
-  };
+ const profileData = {
+  user_id: data.user.id,
+  email: email.trim().toLowerCase(),
+  full_name: fullName.trim(),
+  account_size: accountSize,
+  mentorship_interest: mentorshipInterest,
+  mentorship_budget: mentorshipInterest
+    ? monthlyBudget.trim()
+    : null,
+  agreed_to_terms: true,
+  agreed_to_refund: true,
+};
 
   console.log("Attempting to insert profile:", profileData);
 
@@ -117,14 +119,17 @@ if (data?.user?.id) {
   });
 
   if (profileError) {
-    console.error("Profile creation error:", profileError);
-    setError(`Profile error: ${profileError.message}`);
-    return;
-  }
+  console.error("Profile creation error:", profileError);
+  setLoading(false);
+  setError(
+    "Your account was created, but your profile information could not be saved."
+  );
+  return;
+}
 } else {
   console.error("No user ID returned from signup:", data);
 }
-
+setLoading(false);
 navigate("/welcome");
 }
 
