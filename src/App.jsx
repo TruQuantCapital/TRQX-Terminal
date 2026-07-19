@@ -30,6 +30,7 @@ import SettingsPage from "./pages/SettingsPage";
 import OperationsPage from "./pages/OperationsPage";
 import MentorshipPage from "./pages/MentorshipPage";
 import EliteCommandCenter from "./pages/EliteCommandCenter";
+import WidgetLab from "./pages/WidgetLab";
 import "./styles.css";
 import "./app.css";
 
@@ -209,6 +210,8 @@ export default function App() {
           <Route path="/home" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/" element={<PublicRoute />} />
+          <Route path="/widget-lab" element={<WidgetLab />} />
+
 
           <Route
             path="/dashboard"
