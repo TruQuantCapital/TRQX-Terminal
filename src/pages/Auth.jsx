@@ -91,22 +91,34 @@ export default function Auth() {
 
     // Create profile record with additional data
     if (data?.user?.id) {
-      const { error: profileError } = await supabase
+      const profileData = {
+        user_id: data.user.id,
+        full_name: fullName,
+        account_size: accountSize,
+        mentorship_interest: mentorshipInterest,
+        mentorship_budget: mentorshipInterest ? monthlyBudget : null,
+        agreed_to_refund: true,
+      };
+
+      console.log("Attempting to insert profile:", profileData);
+
+      // Wait a brief moment for user to be fully created in db
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const { error: profileError, data: profileResult } = await supabase
         .from("profiles")
-        .insert({
-          user_id: data.user.id,
-          full_name: fullName,
-          account_size: accountSize,
-          mentorship_interest: mentorshipInterest,
-          mentorship_budget: mentorshipInterest ? monthlyBudget : null,
-          agreed_to_terms: true,
-          agreed_to_refund: true,
-        });
+        .insert([profileData]);
+
+      console.log("Profile insert result:", { error: profileError, data: profileResult });
 
       if (profileError) {
         console.error("Profile creation error:", profileError);
-        // Don't fail signup, but log it
+        // Don't fail signup, just log it
+      } else {
+        console.log("Profile created successfully");
       }
+    } else {
+      console.error("No user ID returned from signup:", data);
     }
 
     navigate("/welcome");
