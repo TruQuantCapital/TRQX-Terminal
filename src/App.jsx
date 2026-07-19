@@ -210,7 +210,7 @@ export default function App() {
           <Route path="/home" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/" element={<PublicRoute />} />
-          <Route path="/widget-lab" element={<WidgetLab />} />
+          
 
 
           <Route
