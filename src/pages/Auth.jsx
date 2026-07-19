@@ -91,22 +91,31 @@ export default function Auth() {
 
     // Create profile record with additional data
     if (data?.user?.id) {
-      const { error: profileError } = await supabase
+      const profileData = {
+        user_id: data.user.id,
+        full_name: fullName,
+        account_size: accountSize,
+        mentorship_interest: mentorshipInterest,
+        mentorship_budget: mentorshipInterest ? monthlyBudget : null,
+        agreed_to_refund: true,
+      };
+
+      console.log("Attempting to insert profile:", profileData);
+
+      const { error: profileError, data: profileResult } = await supabase
         .from("profiles")
-        .insert({
-          user_id: data.user.id,
-          full_name: fullName,
-          account_size: accountSize,
-          mentorship_interest: mentorshipInterest,
-          mentorship_budget: mentorshipInterest ? monthlyBudget : null,
-          agreed_to_terms: true,
-          agreed_to_refund: true,
-        });
+        .insert([profileData])
+        .select();
+
+      console.log("Profile insert result:", { error: profileError, data: profileResult });
 
       if (profileError) {
         console.error("Profile creation error:", profileError);
-        // Don't fail signup, but log it
+        setError(`Profile error: ${profileError.message}`);
+        return;
       }
+    } else {
+      console.error("No user ID returned from signup:", data);
     }
 
     navigate("/welcome");
@@ -136,7 +145,7 @@ export default function Auth() {
       return;
     }
 
-    navigate("/scanner");
+    navigate("/dashboard");
   }
 
   return (
@@ -161,7 +170,7 @@ export default function Auth() {
         {/* Headline & Tagline */}
         <div className="auth-headline">
           {mode === "login"
-            ? "Welcome Back"
+            ? ""
             : mode === "reset"
               ? "Reset Password"
               : "Create Your Account"}
@@ -301,12 +310,13 @@ export default function Auth() {
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "right 12px center",
                     paddingRight: "36px",
+                    color: "#c9c9c9",
                   }}
                 >
-                  <option value="">Select your account size...</option>
-                  <option value="small">Small ($0 - $500)</option>
-                  <option value="intermediate">Intermediate ($500 - $1,500)</option>
-                  <option value="larger">Larger ($2,500 - $10,000+)</option>
+                  <option value="" style={{ color: "#333" }}>Select your account size...</option>
+                  <option value="small" style={{ color: "#333" }}>Small ($0 - $500)</option>
+                  <option value="intermediate" style={{ color: "#333" }}>Intermediate ($500 - $1,500)</option>
+                  <option value="larger" style={{ color: "#333" }}>Larger ($2,500 - $10,000+)</option>
                 </select>
               </div>
 
@@ -533,7 +543,7 @@ export default function Auth() {
               : mode === "reset"
                 ? "Send Reset Link →"
                 : mode === "login"
-                  ? "Enter The Scanner →"
+                  ? "Enter TRQX Command Center →"
                   : "Create Account →"}
           </button>
         </form>
