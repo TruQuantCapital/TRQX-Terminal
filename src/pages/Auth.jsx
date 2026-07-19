@@ -89,7 +89,7 @@ export default function Auth() {
       return;
     }
 
-    // Create profile record with additional data
+   // Create profile record with additional data
 if (data?.user?.id) {
   const profileData = {
     user_id: data.user.id,
@@ -102,6 +102,9 @@ if (data?.user?.id) {
   };
 
   console.log("Attempting to insert profile:", profileData);
+
+  // Wait briefly for the authenticated user to be available in the database.
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   const { error: profileError, data: profileResult } = await supabase
     .from("profiles")
