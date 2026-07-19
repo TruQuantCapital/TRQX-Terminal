@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import MarketBriefWidget from "../components/widgets/MarketBriefWidget";
 import EconomicEventsWidget from "../components/widgets/EconomicEventsWidget";
 import AcademyProgressWidget from "../components/widgets/AcademyProgressWidget";
+import { AICoachWidget } from "../components/widgets";
 
 import "./EliteCommandCenter.css";
 
@@ -440,6 +441,9 @@ export default function EliteCommandCenter() {
           </button>
         </article>
       </section>
+      <section style={{ marginTop: "24px" }}>
+  <AICoachWidget height={430} />
+</section>
       <section className="elite-live-section">
   <div className="elite-section-heading">
     <div>

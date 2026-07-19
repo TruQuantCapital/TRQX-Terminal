@@ -1,0 +1,157 @@
+.trqx-ai-coach-widget {
+  height: 100%;
+}
+
+.trqx-ai-coach-widget .trqx-widget-content {
+  display: flex;
+  min-height: 0;
+}
+
+.trqx-ai-coach-action {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  border-radius: 7px;
+  background: rgba(212, 175, 55, 0.08);
+  color: #e6c65c;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.trqx-ai-coach-action:hover {
+  background: rgba(212, 175, 55, 0.15);
+}
+
+.trqx-ai-coach-layout {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: 14px;
+}
+
+.trqx-ai-coach-summary,
+.trqx-ai-coach-metrics article {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.trqx-ai-coach-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px;
+}
+
+.trqx-ai-coach-regime,
+.trqx-ai-coach-focus {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.trqx-ai-coach-regime span,
+.trqx-ai-coach-focus span,
+.trqx-ai-coach-confidence-heading span,
+.trqx-ai-coach-metrics span {
+  color: #7d8793;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.trqx-ai-coach-regime strong {
+  color: #f4d45e;
+  font-size: 25px;
+  line-height: 1;
+}
+
+.trqx-ai-coach-focus p {
+  margin: 0;
+  color: #eef1f5;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.trqx-ai-coach-confidence {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.trqx-ai-coach-confidence-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trqx-ai-coach-confidence-heading strong {
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.trqx-ai-coach-confidence-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.trqx-ai-coach-confidence-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #d4af37;
+  transition: width 0.35s ease;
+}
+
+.trqx-ai-coach-confidence-fill.high {
+  background: #3dbb74;
+}
+
+.trqx-ai-coach-confidence-fill.medium {
+  background: #d4af37;
+}
+
+.trqx-ai-coach-confidence-fill.low {
+  background: #d95b5b;
+}
+
+.trqx-ai-coach-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.trqx-ai-coach-metrics article {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+}
+
+.trqx-ai-coach-metrics strong {
+  color: #f2f4f7;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .trqx-ai-coach-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .trqx-ai-coach-metrics {
+    grid-template-columns: 1fr;
+  }
+}
