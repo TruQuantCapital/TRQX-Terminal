@@ -83,12 +83,86 @@ const LESSON_FLASHCARDS = {
   ],
 
   "Candlestick Mastery": [
-    { front: "What does a doji candle indicate?", back: "Indecision — buyers and sellers are equally matched, often signaling a potential reversal or pause." },
-    { front: "What is a hammer candlestick?", back: "A bullish reversal candle with a small body and long lower wick — shows buyers rejected lower prices." },
-    { front: "What is a shooting star?", back: "A bearish reversal candle with a small body and long upper wick — shows sellers rejected higher prices." },
-    { front: "What is a bullish engulfing pattern?", back: "A two-candle pattern where a large bullish candle completely engulfs the prior bearish candle — strong buy signal." },
-    { front: "What is an evening star?", back: "A three-candle bearish reversal pattern: large bullish candle, small indecision candle, large bearish candle." },
-  ],
+  {
+    id: "hammer",
+    front: "Identify this candlestick pattern.",
+    back: "Hammer",
+    patternId: "hammer",
+    category: "Bullish Reversal",
+    difficulty: "Beginner",
+    priority: true,
+    hint: "Look for a long lower wick and a small body near the top.",
+    meaning: "Sellers drove price lower before buyers completely rejected the move.",
+    context: "Most reliable after a downtrend or liquidity sweep into support.",
+    confirmation: "Bullish candle closes above the Hammer high.",
+    invalidation: "Price closes below the Hammer low.",
+    tags: ["Hammer", "Support", "Reversal"]
+  },
+
+  {
+    id: "shooting-star",
+    front: "Identify this candlestick pattern.",
+    back: "Shooting Star",
+    patternId: "shooting-star",
+    category: "Bearish Reversal",
+    difficulty: "Beginner",
+    priority: true,
+    hint: "Look for the long upper wick.",
+    meaning: "Buyers lost control after pushing price higher.",
+    context: "Appears near resistance after an uptrend.",
+    confirmation: "Bearish candle closes below the Shooting Star.",
+    invalidation: "Price breaks above the wick high.",
+    tags: ["Resistance", "Bearish", "Reversal"]
+  },
+
+  {
+    id: "bullish-engulfing",
+    front: "Identify this candlestick pattern.",
+    back: "Bullish Engulfing",
+    patternId: "bullish-engulfing",
+    category: "Bullish Reversal",
+    difficulty: "Intermediate",
+    priority: true,
+    hint: "The green candle completely engulfs the previous red candle.",
+    meaning: "Buyers overwhelmed sellers.",
+    context: "Best after a decline into support.",
+    confirmation: "Continuation above the engulfing candle.",
+    invalidation: "Loss of the engulfing candle low.",
+    tags: ["Momentum", "Demand", "Bullish"]
+  },
+
+  {
+    id: "evening-star",
+    front: "Identify this candlestick pattern.",
+    back: "Evening Star",
+    patternId: "evening-star",
+    category: "Bearish Reversal",
+    difficulty: "Intermediate",
+    priority: true,
+    hint: "Three-candle reversal pattern.",
+    meaning: "Momentum shifts from buyers to sellers.",
+    context: "Occurs after extended rallies.",
+    confirmation: "Third candle closes below Candle 1 midpoint.",
+    invalidation: "Price makes new highs.",
+    tags: ["Bearish", "Trend Reversal"]
+  },
+
+  {
+    id: "standard-doji",
+    front: "What candlestick represents market indecision?",
+    back: "Standard Doji",
+    patternId: "standard-doji",
+    category: "Neutral",
+    difficulty: "Beginner",
+    priority: false,
+    hint: "Open and close are nearly identical.",
+    meaning: "Neither buyers nor sellers are in control.",
+    context: "Often appears before major moves.",
+    confirmation: "Wait for the next candle.",
+    invalidation: "None by itself.",
+    tags: ["Doji", "Indecision"]
+  }
+],
 
   "Market Sessions": [
     { front: "What are the three main trading sessions?", back: "Asian session (Tokyo), London session, and New York session." },

@@ -241,7 +241,7 @@ const patterns = {
       <Label x={142} y={12} text="Shooting Star" color={R} />
 
       {/* Resistance zone */}
-      <Zone x1={18} y1={18} x2={262} y2={32} color={RED} label="SUPPLY ZONE" />
+      <Zone x1={18} y1={18} x2={262} y2={32} color={R} label="SUPPLY ZONE" />
 
       {/* Entry circle */}
       <Circle x={142} y={84} color={R} />
