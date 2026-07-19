@@ -1,5 +1,6 @@
 import React from "react";
 import WidgetShell from "./WidgetShell";
+import MissionWidget from "../components/widgets/MissionWidget";
 import "./CommandWidgets.css";
 
 export default function MissionWidget({
