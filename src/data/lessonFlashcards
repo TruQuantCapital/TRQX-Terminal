@@ -118,7 +118,7 @@ const LESSON_FLASHCARDS = {
   {
     id: "bullish-engulfing",
     front: "Identify this candlestick pattern.",
-    back: "Bullish Engulfing",
+    back: "Bullish Engulfing",pp
     patternId: "bullish-engulfing",
     category: "Bullish Reversal",
     difficulty: "Intermediate",
