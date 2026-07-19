@@ -879,15 +879,35 @@ const patterns = {
 
 export default function PatternSVG({ patternId }) {
   const draw = patterns[patternId];
+
   if (!draw) return null;
+
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" aria-hidden="true">
-      <rect width={W} height={H} fill="rgba(4,10,20,0.95)" rx="12" />
-      {/* Grid lines */}
-      {[0.25, 0.5, 0.75].map(f => (
-        <line key={f} x1={18} y1={H * f} x2={W - 18} y2={H * f}
-          stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      width="100%"
+      height="100%"
+      aria-hidden="true"
+    >
+      <rect
+        width={W}
+        height={H}
+        fill="rgba(4,10,20,0.95)"
+        rx="12"
+      />
+
+      {[0.25, 0.5, 0.75].map((f) => (
+        <line
+          key={f}
+          x1={18}
+          y1={H * f}
+          x2={W - 18}
+          y2={H * f}
+          stroke="rgba(255,255,255,0.04)"
+          strokeWidth="1"
+        />
       ))}
+
       {draw()}
     </svg>
   );
