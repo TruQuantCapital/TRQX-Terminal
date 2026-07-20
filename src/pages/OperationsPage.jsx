@@ -110,24 +110,21 @@ export default function OperationsPage() {
   bias: "Neutral",
   notes: "",
 });
-const [ticketForm, setTicketForm] = useState({
-  ticker: "SPY",
-  direction: "call",
-  setup: "",
 
-  entry: "",
-  stop: "",
-
-  target1: "",
-  target2: "",
-  target3: "",
-
-  grade: "A",
-  status: "watching",
-
-  reasoning: "",
-  notes: "",
-});
+  const [ticketForm, setTicketForm] = useState({
+    ticker: "SPY",
+    direction: "call",
+    setup: "",
+    entry: "",
+    stop: "",
+    target1: "",
+    target2: "",
+    target3: "",
+    grade: "A",
+    status: "watching",
+    reasoning: "",
+    notes: "",
+  });
 
   const canCreateTicket = useMemo(
     () => Boolean(tradingDay?.id),
@@ -198,106 +195,7 @@ const [ticketForm, setTicketForm] = useState({
       setTickets([]);
       return;
     }
-async function loadPremarketLevels() {
-  if (!tradingDay?.id) {
-    setPremarketLevels([]);
-    return;
-  }
 
-  try {
-    const data = await apiRequest(
-      `/premarket-levels?trading_day_id=${encodeURIComponent(
-        tradingDay.id,
-      )}`,
-    );
-
-    setPremarketLevels(Array.isArray(data) ? data : []);
-  } catch (error) {
-    setNotice(`Unable to load Premarket Levels: ${error.message}`);
-  }
-}
-
-function parseLevelList(value) {
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .map(Number)
-    .filter((item) => Number.isFinite(item) && item > 0);
-}
-
-function optionalNumber(value) {
-  if (value === "") return null;
-
-  const number = Number(value);
-  return Number.isFinite(number) && number > 0 ? number : null;
-}
-
-async function createPremarketLevel(event) {
-  event.preventDefault();
-
-  if (!tradingDay?.id) {
-    setNotice("Create a Trading Day before publishing Premarket Levels.");
-    return;
-  }
-
-  const supportLevels = parseLevelList(levelForm.supportLevels);
-  const resistanceLevels = parseLevelList(levelForm.resistanceLevels);
-
-  if (supportLevels.length === 0 && resistanceLevels.length === 0) {
-    setNotice("Enter at least one support or resistance level.");
-    return;
-  }
-
-  setWorking(true);
-  setNotice("");
-
-  try {
-    const payload = {
-      trading_day_id: tradingDay.id,
-      ticker: levelForm.ticker,
-      support_levels: supportLevels,
-      resistance_levels: resistanceLevels,
-      bullish_above: optionalNumber(levelForm.bullishAbove),
-      bearish_below: optionalNumber(levelForm.bearishBelow),
-      gap_fill: optionalNumber(levelForm.gapFill),
-      previous_high: optionalNumber(levelForm.previousHigh),
-      previous_low: optionalNumber(levelForm.previousLow),
-      premarket_high: optionalNumber(levelForm.premarketHigh),
-      premarket_low: optionalNumber(levelForm.premarketLow),
-      bias: levelForm.bias,
-      notes: levelForm.notes || null,
-    };
-
-    const created = await apiRequest("/premarket-levels", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-
-    setPremarketLevels((current) => [...current, created]);
-    setNotice(
-      `${created.ticker} Premarket Levels published successfully.`,
-    );
-
-    setLevelForm((current) => ({
-      ...current,
-      supportLevels: "",
-      resistanceLevels: "",
-      bullishAbove: "",
-      bearishBelow: "",
-      gapFill: "",
-      previousHigh: "",
-      previousLow: "",
-      premarketHigh: "",
-      premarketLow: "",
-      notes: "",
-    }));
-  } catch (error) {
-    setNotice(`Premarket Levels failed: ${error.message}`);
-  } finally {
-    setWorking(false);
-  }
-}
     try {
       const data = await apiRequest(
         `/trade-tickets?trading_day_id=${encodeURIComponent(tradingDay.id)}`,
@@ -305,6 +203,107 @@ async function createPremarketLevel(event) {
       setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
       setNotice(`Unable to load tickets: ${error.message}`);
+    }
+  }
+
+  async function loadPremarketLevels() {
+    if (!tradingDay?.id) {
+      setPremarketLevels([]);
+      return;
+    }
+
+    try {
+      const data = await apiRequest(
+        `/premarket-levels?trading_day_id=${encodeURIComponent(
+          tradingDay.id,
+        )}`,
+      );
+
+      setPremarketLevels(Array.isArray(data) ? data : []);
+    } catch (error) {
+      setNotice(`Unable to load Premarket Levels: ${error.message}`);
+    }
+  }
+
+  function parseLevelList(value) {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .map(Number)
+      .filter((item) => Number.isFinite(item) && item > 0);
+  }
+
+  function optionalNumber(value) {
+    if (value === "") return null;
+
+    const number = Number(value);
+    return Number.isFinite(number) && number > 0 ? number : null;
+  }
+
+  async function createPremarketLevel(event) {
+    event.preventDefault();
+
+    if (!tradingDay?.id) {
+      setNotice("Create a Trading Day before publishing Premarket Levels.");
+      return;
+    }
+
+    const supportLevels = parseLevelList(levelForm.supportLevels);
+    const resistanceLevels = parseLevelList(levelForm.resistanceLevels);
+
+    if (supportLevels.length === 0 && resistanceLevels.length === 0) {
+      setNotice("Enter at least one support or resistance level.");
+      return;
+    }
+
+    setWorking(true);
+    setNotice("");
+
+    try {
+      const payload = {
+        trading_day_id: tradingDay.id,
+        ticker: levelForm.ticker,
+        support_levels: supportLevels,
+        resistance_levels: resistanceLevels,
+        bullish_above: optionalNumber(levelForm.bullishAbove),
+        bearish_below: optionalNumber(levelForm.bearishBelow),
+        gap_fill: optionalNumber(levelForm.gapFill),
+        previous_high: optionalNumber(levelForm.previousHigh),
+        previous_low: optionalNumber(levelForm.previousLow),
+        premarket_high: optionalNumber(levelForm.premarketHigh),
+        premarket_low: optionalNumber(levelForm.premarketLow),
+        bias: levelForm.bias,
+        notes: levelForm.notes || null,
+      };
+
+      const created = await apiRequest("/premarket-levels", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      setPremarketLevels((current) => [...current, created]);
+      setNotice(
+        `${created.ticker} Premarket Levels published successfully.`,
+      );
+
+      setLevelForm((current) => ({
+        ...current,
+        supportLevels: "",
+        resistanceLevels: "",
+        bullishAbove: "",
+        bearishBelow: "",
+        gapFill: "",
+        previousHigh: "",
+        previousLow: "",
+        premarketHigh: "",
+        premarketLow: "",
+        notes: "",
+      }));
+    } catch (error) {
+      setNotice(`Premarket Levels failed: ${error.message}`);
+    } finally {
+      setWorking(false);
     }
   }
 
