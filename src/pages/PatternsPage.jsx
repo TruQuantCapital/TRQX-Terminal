@@ -1,7 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
-import PatternAcademy from "../components/PatternAcademy/PatternAcademy";
-
-const GOLD = "#d4af37";
+﻿const GOLD = "#d4af37";
 const TEAL = "#26a69a";
 const RED = "#ef5350";
 const PURPLE = "#a78bfa";

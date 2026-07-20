@@ -31,6 +31,7 @@ import OperationsPage from "./pages/OperationsPage";
 import MentorshipPage from "./pages/MentorshipPage";
 import EliteCommandCenter from "./pages/EliteCommandCenter";
 import WidgetLab from "./pages/WidgetLab";
+import PatternAcademyV2 from "./academy/v2/PatternAcademyV2";
 import "./styles.css";
 import "./app.css";
 
@@ -72,6 +73,7 @@ const keyByPath = {
   "/academy": "academy",
   "/research": "research",
   "/patterns": "patterns",
+  "/pattern-engine-v2": "patterns",
   "/guide": "guide",
   "/discord": "discord",
   "/news": "news",
@@ -388,6 +390,16 @@ export default function App() {
             }
           />
 
+<Route
+  path="/pattern-engine-v2"
+  element={
+    <OwnerRoute>
+      <TerminalLayout>
+        <PatternAcademyV2 />
+      </TerminalLayout>
+    </OwnerRoute>
+  }
+/>
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
