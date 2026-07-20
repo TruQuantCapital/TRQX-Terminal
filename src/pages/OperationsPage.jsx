@@ -110,6 +110,24 @@ export default function OperationsPage() {
   bias: "Neutral",
   notes: "",
 });
+const [ticketForm, setTicketForm] = useState({
+  ticker: "SPY",
+  direction: "call",
+  setup: "",
+
+  entry: "",
+  stop: "",
+
+  target1: "",
+  target2: "",
+  target3: "",
+
+  grade: "A",
+  status: "watching",
+
+  reasoning: "",
+  notes: "",
+});
 
   const canCreateTicket = useMemo(
     () => Boolean(tradingDay?.id),
