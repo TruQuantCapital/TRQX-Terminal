@@ -190,6 +190,32 @@ export default function OperationsPage() {
     }
   }
 
+  async function loadTodayTradingDay() {
+    try {
+      const data = await apiRequest("/trading-days");
+      const tradingDays = Array.isArray(data) ? data : [];
+      const today = todayIsoDate();
+
+      const todaysTradingDays = tradingDays.filter(
+        (item) => item.trading_date === today,
+      );
+
+      const activeTradingDay =
+        todaysTradingDays.length > 0
+          ? todaysTradingDays[todaysTradingDays.length - 1]
+          : null;
+
+      setTradingDay(activeTradingDay);
+
+      if (!activeTradingDay) {
+        setTickets([]);
+        setPremarketLevels([]);
+      }
+    } catch (error) {
+      setNotice(`Unable to load today's Trading Day: ${error.message}`);
+    }
+  }
+
   async function loadTickets() {
     if (!tradingDay?.id) {
       setTickets([]);
@@ -405,6 +431,7 @@ export default function OperationsPage() {
 
   useEffect(() => {
     checkApiHealth();
+    loadTodayTradingDay();
   }, []);
 
   useEffect(() => {
