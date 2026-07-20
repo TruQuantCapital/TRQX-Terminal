@@ -1,8 +1,5 @@
-﻿import PatternAcademyV2 from "../academy/v2/PatternAcademyV2";
-
-export default function PatternsPage() {
-  return <PatternAcademyV2 />;
-}
+﻿import React, { useState, useEffect, useRef } from "react";
+import PatternAcademy from "../components/PatternAcademy/PatternAcademy";
 
 const GOLD = "#d4af37";
 const TEAL = "#26a69a";
