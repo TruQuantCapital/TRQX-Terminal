@@ -19,7 +19,19 @@ const MAJOR_EVENTS = [
   { name: "GDP", date: new Date("2026-09-30T08:30:00-04:00") },
 ].sort((a, b) => a.date.getTime() - b.date.getTime());
 
-const SYMBOLS = ["SPY", "QQQ", "IWM", "NVDA"];
+// All 53 tracked tickers — used to find the highest mover
+const ALL_TICKERS = [
+  "SPY", "QQQ", "IWM", "NVDA", "AAPL", "MSFT", "TSLA", "AMZN",
+  "META", "GOOGL", "AMD", "COIN", "JPM", "GLD", "PLTR", "NFLX",
+  "UBER", "BA", "XOM", "VIX", "C", "PFE", "JNJ", "KO", "T",
+  "PG", "MCD", "NKE", "MMM", "CAT", "INTC", "MU", "AVGO",
+  "CRWD", "SNOW", "DDOG", "OKTA", "CYBR", "ZM", "NET", "DASH",
+  "RBLX", "MSTR", "RIOT", "MARA", "SQQQ", "TQQQ", "SQQQ", "EWZ",
+  "EEM", "GDX", "GDXJ", "SLV", "DBC"
+];
+
+// Fixed first three tickers
+const FIXED_TICKERS = ["SPY", "QQQ", "IWM"];
 const LIVE_WINDOW_MS = 30 * 60 * 1000;
 
 function getNextMajorEvent() {
@@ -115,7 +127,7 @@ function fmtPrem(value) {
 
 export default function TopRibbon() {
   const [tiles, setTiles] = useState(
-    SYMBOLS.map((symbol) => ({
+    FIXED_TICKERS.concat("—").map((symbol) => ({
       symbol,
       price: "—",
       change: "—",
@@ -127,6 +139,7 @@ export default function TopRibbon() {
   const [lastUpdate, setLastUpdate] = useState(null);
   const [countdown, setCountdown] = useState("—");
   const [eventLabel, setEventLabel] = useState("Loading...");
+  const [dynamicTicker, setDynamicTicker] = useState("—"); // Track which ticker is the 4th
 
   // Major economic-event countdown
   useEffect(() => {
@@ -155,50 +168,104 @@ export default function TopRibbon() {
     return () => clearInterval(intervalId);
   }, []);
 
+  /**
+   * Fetch all tickers, find the one with highest % move (absolute value),
+   * then fetch quotes for the final display (fixed 3 + dynamic 1)
+   */
   async function fetchTiles() {
-    const results = await Promise.all(
-      SYMBOLS.map(async (symbol) => {
-        try {
-          const response = await fetch(`${API}/api/quote/${symbol}`);
+    try {
+      // Step 1: Fetch all tickers to find the highest mover
+      const allResults = await Promise.allSettled(
+        ALL_TICKERS.map(async (symbol) => {
+          try {
+            const response = await fetch(`${API}/api/quote/${symbol}`);
+            if (!response.ok) throw new Error("Quote failed");
+            const data = await response.json();
+            const changePct = data.changePct ?? data.change_percent ?? 0;
+            return { symbol, changePct: Number(changePct) };
+          } catch {
+            return { symbol, changePct: 0 };
+          }
+        })
+      );
 
-          if (!response.ok) throw new Error("Quote request failed");
+      // Step 2: Find ticker with highest absolute % change
+      let topMover = null;
+      let maxAbsChange = 0;
 
-          const data = await response.json();
-          const price = data.price ?? data.last ?? null;
-          const changePct = data.changePct ?? data.change_percent ?? null;
+      for (const result of allResults) {
+        if (result.status === "fulfilled") {
+          const absChange = Math.abs(result.value.changePct);
+          if (absChange > maxAbsChange) {
+            maxAbsChange = absChange;
+            topMover = result.value.symbol;
+          }
+        }
+      }
 
-          if (!price || Number(price) === 0) {
-            throw new Error("Quote response did not include a valid price");
+      // Step 3: Build final symbol list (fixed 3 + dynamic 1)
+      const symbolsToDisplay = FIXED_TICKERS.concat(topMover || "—");
+      setDynamicTicker(topMover || "—");
+
+      // Step 4: Fetch quotes for display
+      const displayResults = await Promise.all(
+        symbolsToDisplay.map(async (symbol) => {
+          if (symbol === "—") {
+            return { symbol: "—", price: "—", change: "—", trend: "flat", stale: true };
           }
 
-          const trend =
-            Number(changePct) > 0
-              ? "up"
-              : Number(changePct) < 0
-                ? "down"
-                : "flat";
+          try {
+            const response = await fetch(`${API}/api/quote/${symbol}`);
 
-          return {
-            symbol,
-            price: fmt(price),
-            change: fmtPct(changePct),
-            trend,
-            stale: false,
-          };
-        } catch {
-          return {
-            symbol,
-            price: "—",
-            change: "—",
-            trend: "flat",
-            stale: true,
-          };
-        }
-      })
-    );
+            if (!response.ok) throw new Error("Quote request failed");
 
-    setTiles(results);
-    setLastUpdate(new Date());
+            const data = await response.json();
+            const price = data.price ?? data.last ?? null;
+            const changePct = data.changePct ?? data.change_percent ?? null;
+
+            if (!price || Number(price) === 0) {
+              throw new Error("No valid price");
+            }
+
+            const trend =
+              Number(changePct) > 0
+                ? "up"
+                : Number(changePct) < 0
+                  ? "down"
+                  : "flat";
+
+            return {
+              symbol,
+              price: fmt(price),
+              change: fmtPct(changePct),
+              trend,
+              stale: false,
+            };
+          } catch {
+            return {
+              symbol,
+              price: "—",
+              change: "—",
+              trend: "flat",
+              stale: true,
+            };
+          }
+        })
+      );
+
+      setTiles(displayResults);
+      setLastUpdate(new Date());
+    } catch {
+      setTiles(
+        FIXED_TICKERS.concat("—").map((symbol) => ({
+          symbol,
+          price: "—",
+          change: "—",
+          trend: "flat",
+          stale: true,
+        }))
+      );
+    }
   }
 
   async function fetchFlowStats() {
@@ -218,7 +285,7 @@ export default function TopRibbon() {
     fetchTiles();
     fetchFlowStats();
 
-    const quotesIntervalId = setInterval(fetchTiles, 30_000);
+    const quotesIntervalId = setInterval(fetchTiles, 60_000); // Refresh every 60 seconds
     const flowIntervalId = setInterval(fetchFlowStats, 15_000);
 
     return () => {
@@ -236,12 +303,13 @@ export default function TopRibbon() {
 
   return (
     <header className="top">
-      {/* Stock tiles */}
+      {/* Stock tiles — SPY, QQQ, IWM + dynamic 4th */}
       {tiles.map((market) => (
         <div
           className="ticker"
           key={market.symbol}
           style={market.stale ? { opacity: 0.45 } : undefined}
+          title={market.symbol === dynamicTicker ? "Daily highest mover" : undefined}
         >
           <div className="tickerText">
             <b>{market.symbol}</b>
