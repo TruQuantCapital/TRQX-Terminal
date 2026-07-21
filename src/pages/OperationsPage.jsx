@@ -114,6 +114,8 @@ export default function OperationsPage() {
   const [ticketForm, setTicketForm] = useState({
     ticker: "SPY",
     direction: "call",
+    timeframe: "5m",
+    session: "market_open",
     setup: "",
     entry: "",
     stop: "",
@@ -130,6 +132,78 @@ export default function OperationsPage() {
     () => Boolean(tradingDay?.id),
     [tradingDay],
   );
+
+  const tradeMetrics = useMemo(() => {
+    const entry = Number(ticketForm.entry);
+    const stop = Number(ticketForm.stop);
+    const isBullish =
+      ticketForm.direction === "call" || ticketForm.direction === "long";
+
+    if (
+      !Number.isFinite(entry) ||
+      !Number.isFinite(stop) ||
+      entry <= 0 ||
+      stop <= 0
+    ) {
+      return {
+        valid: false,
+        message: "Enter an entry and stop to calculate risk.",
+        risk: null,
+        stopPercent: null,
+        targets: [],
+      };
+    }
+
+    const risk = isBullish ? entry - stop : stop - entry;
+
+    if (risk <= 0) {
+      return {
+        valid: false,
+        message: isBullish
+          ? "CALL/LONG stops must be below entry."
+          : "PUT/SHORT stops must be above entry.",
+        risk: null,
+        stopPercent: null,
+        targets: [],
+      };
+    }
+
+    const targets = [
+      ticketForm.target1,
+      ticketForm.target2,
+      ticketForm.target3,
+    ].map((value, index) => {
+      const price = Number(value);
+
+      if (!Number.isFinite(price) || price <= 0) {
+        return {
+          label: `TP${index + 1}`,
+          price: null,
+          reward: null,
+          rr: null,
+          valid: false,
+        };
+      }
+
+      const reward = isBullish ? price - entry : entry - price;
+
+      return {
+        label: `TP${index + 1}`,
+        price,
+        reward,
+        rr: reward > 0 ? reward / risk : null,
+        valid: reward > 0,
+      };
+    });
+
+    return {
+      valid: true,
+      message: null,
+      risk,
+      stopPercent: (risk / entry) * 100,
+      targets,
+    };
+  }, [ticketForm]);
 
   async function apiRequest(path, options = {}) {
     const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -391,6 +465,8 @@ export default function OperationsPage() {
         trading_day_id: tradingDay.id,
         ticker: ticketForm.ticker,
         direction: ticketForm.direction,
+        timeframe: ticketForm.timeframe,
+        session: ticketForm.session,
         setup: ticketForm.setup,
         entry: Number(ticketForm.entry),
         stop: Number(ticketForm.stop),
@@ -719,6 +795,57 @@ export default function OperationsPage() {
               </div>
             </div>
 
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: "13px",
+                marginTop: "13px",
+              }}
+            >
+              <div>
+                <label style={labelStyle()}>Timeframe</label>
+                <select
+                  value={ticketForm.timeframe}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      timeframe: event.target.value,
+                    })
+                  }
+                  style={inputStyle()}
+                >
+                  <option value="1m">1 Minute</option>
+                  <option value="5m">5 Minute</option>
+                  <option value="15m">15 Minute</option>
+                  <option value="30m">30 Minute</option>
+                  <option value="1h">1 Hour</option>
+                  <option value="1d">Daily</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={labelStyle()}>Session</label>
+                <select
+                  value={ticketForm.session}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      session: event.target.value,
+                    })
+                  }
+                  style={inputStyle()}
+                >
+                  <option value="premarket">Premarket</option>
+                  <option value="market_open">Market Open</option>
+                  <option value="morning">Morning</option>
+                  <option value="midday">Midday</option>
+                  <option value="power_hour">Power Hour</option>
+                  <option value="after_hours">After Hours</option>
+                </select>
+              </div>
+            </div>
+
             <div style={{ marginTop: "13px" }}>
               <label style={labelStyle()}>Setup</label>
               <input
@@ -802,6 +929,68 @@ export default function OperationsPage() {
                 </div>
               ))}
             </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+                gap: "10px",
+                marginTop: "13px",
+              }}
+            >
+              <div style={cardStyle({ padding: "12px" })}>
+                <div style={labelStyle()}>Risk</div>
+                <strong>
+                  {tradeMetrics.valid
+                    ? `$${tradeMetrics.risk.toFixed(2)}`
+                    : "—"}
+                </strong>
+              </div>
+
+              <div style={cardStyle({ padding: "12px" })}>
+                <div style={labelStyle()}>Stop Distance</div>
+                <strong>
+                  {tradeMetrics.valid
+                    ? `${tradeMetrics.stopPercent.toFixed(2)}%`
+                    : "—"}
+                </strong>
+              </div>
+
+              {[0, 1, 2].map((index) => {
+                const target = tradeMetrics.targets[index];
+                const validTarget = target?.valid;
+
+                return (
+                  <div key={index} style={cardStyle({ padding: "12px" })}>
+                    <div style={labelStyle()}>TP{index + 1} R:R</div>
+                    <strong
+                      style={{
+                        color:
+                          validTarget && target.rr >= 2
+                            ? "#86efac"
+                            : validTarget
+                              ? "#f4d675"
+                              : "#fca5a5",
+                      }}
+                    >
+                      {validTarget ? `${target.rr.toFixed(2)}R` : "—"}
+                    </strong>
+                  </div>
+                );
+              })}
+            </div>
+
+            {!tradeMetrics.valid && (
+              <div
+                style={{
+                  marginTop: "10px",
+                  color: "#fca5a5",
+                  fontSize: "13px",
+                }}
+              >
+                {tradeMetrics.message}
+              </div>
+            )}
 
             <div
               style={{
@@ -1360,7 +1549,21 @@ export default function OperationsPage() {
                         }}
                       >
                         {ticket.direction} · {ticket.status}
+                        {ticket.timeframe ? ` · ${ticket.timeframe}` : ""}
+                        {ticket.session ? ` · ${ticket.session}` : ""}
                       </div>
+
+                      {ticket.trade_id && (
+                        <div
+                          style={{
+                            color: "#64748b",
+                            fontSize: "11px",
+                            marginTop: "5px",
+                          }}
+                        >
+                          {ticket.trade_id}
+                        </div>
+                      )}
                     </div>
 
                     <div
@@ -1400,6 +1603,17 @@ export default function OperationsPage() {
                     <div style={labelStyle()}>Targets</div>
                     <strong>{ticket.targets.join(" · ")}</strong>
                   </div>
+
+                  {ticket.target_rrs?.length > 0 && (
+                    <div style={{ marginTop: "14px" }}>
+                      <div style={labelStyle()}>Risk / Reward</div>
+                      <strong>
+                        {ticket.target_rrs
+                          .map((rr, index) => `TP${index + 1} ${Number(rr).toFixed(2)}R`)
+                          .join(" · ")}
+                      </strong>
+                    </div>
+                  )}
 
                   {ticket.reasoning?.length > 0 && (
                     <div style={{ marginTop: "14px" }}>
