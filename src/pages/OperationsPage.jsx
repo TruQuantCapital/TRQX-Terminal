@@ -881,6 +881,8 @@ export default function OperationsPage() {
                   <option value="15m">15 Minute</option>
                   <option value="30m">30 Minute</option>
                   <option value="1h">1 Hour</option>
+                  <option value="2h">2 Hour</option>
+                  <option value="4h">4 Hour</option>
                   <option value="1d">Daily</option>
                 </select>
               </div>
