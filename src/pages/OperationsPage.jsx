@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 const API_BASE_URL =
   import.meta.env.VITE_TRQX_OPERATIONS_API_URL || "http://127.0.0.1:8000";
@@ -85,6 +85,10 @@ export default function OperationsPage() {
   const [premarketLevels, setPremarketLevels] = useState([]);
   const [notice, setNotice] = useState("");
   const [working, setWorking] = useState(false);
+
+  const [chartImageDataUrl, setChartImageDataUrl] = useState("");
+  const [chartImageName, setChartImageName] = useState("");
+  const chartInputRef = useRef(null);
 
   const [dayForm, setDayForm] = useState({
     trading_date: todayIsoDate(),
@@ -436,6 +440,60 @@ export default function OperationsPage() {
     }
   }
 
+  function clearChartImage() {
+    setChartImageDataUrl("");
+    setChartImageName("");
+
+    if (chartInputRef.current) {
+      chartInputRef.current.value = "";
+    }
+  }
+
+  function processChartImage(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setNotice("The chart attachment must be an image.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setNotice("The chart image must be 5 MB or smaller.");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setChartImageDataUrl(String(reader.result || ""));
+      setChartImageName(file.name || "Pasted chart screenshot");
+      setNotice("Chart screenshot attached.");
+    };
+
+    reader.onerror = () => {
+      setNotice("Unable to read the selected chart image.");
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  function handleChartPaste(event) {
+    const clipboardItems = Array.from(event.clipboardData?.items || []);
+    const imageItem = clipboardItems.find((item) =>
+      item.type.startsWith("image/"),
+    );
+
+    if (!imageItem) return;
+
+    event.preventDefault();
+    processChartImage(imageItem.getAsFile());
+  }
+
+  function handleChartDrop(event) {
+    event.preventDefault();
+    processChartImage(event.dataTransfer?.files?.[0]);
+  }
+
   async function createTradeTicket(event) {
     event.preventDefault();
 
@@ -478,6 +536,7 @@ export default function OperationsPage() {
           .map((item) => item.trim())
           .filter(Boolean),
         notes: ticketForm.notes || null,
+        chart_image_url: chartImageDataUrl || null,
       };
 
       const created = await apiRequest("/trade-tickets", {
@@ -498,6 +557,8 @@ export default function OperationsPage() {
         reasoning: "",
         notes: "",
       }));
+
+      clearChartImage();
     } catch (error) {
       setNotice(`Trade Ticket creation failed: ${error.message}`);
     } finally {
@@ -1073,6 +1134,112 @@ export default function OperationsPage() {
               />
             </div>
 
+            <div style={{ marginTop: "16px" }}>
+              <label style={labelStyle()}>Chart Screenshot</label>
+
+              <div
+                tabIndex={0}
+                onPaste={handleChartPaste}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={handleChartDrop}
+                onClick={() => chartInputRef.current?.click()}
+                style={{
+                  minHeight: chartImageDataUrl ? "220px" : "140px",
+                  borderRadius: "12px",
+                  border: "1px dashed rgba(212,175,55,0.5)",
+                  background: "rgba(212,175,55,0.04)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  outline: "none",
+                }}
+              >
+                {chartImageDataUrl ? (
+                  <img
+                    src={chartImageDataUrl}
+                    alt="Trade chart preview"
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      maxHeight: "460px",
+                      objectFit: "contain",
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      padding: "24px",
+                      textAlign: "center",
+                      color: "#94a3b8",
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: "#f4d675",
+                        fontWeight: 900,
+                        fontSize: "15px",
+                      }}
+                    >
+                      Click here, then press Ctrl+V
+                    </div>
+                    <div style={{ marginTop: "7px" }}>
+                      You can also drag and drop a screenshot.
+                    </div>
+                    <div style={{ marginTop: "5px", fontSize: "12px" }}>
+                      Clicking opens the file selector as a fallback.
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <input
+                ref={chartInputRef}
+                type="file"
+                accept="image/*"
+                onChange={(event) =>
+                  processChartImage(event.target.files?.[0])
+                }
+                style={{ display: "none" }}
+              />
+
+              {chartImageDataUrl && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: "12px",
+                    alignItems: "center",
+                    marginTop: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      color: "#94a3b8",
+                      fontSize: "12px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {chartImageName}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      clearChartImage();
+                    }}
+                    style={buttonStyle()}
+                  >
+                    Remove Screenshot
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button
               type="submit"
               disabled={working || !canCreateTicket || !apiStatus.online}
@@ -1612,6 +1779,32 @@ export default function OperationsPage() {
                           .map((rr, index) => `TP${index + 1} ${Number(rr).toFixed(2)}R`)
                           .join(" · ")}
                       </strong>
+                    </div>
+                  )}
+
+                  {ticket.chart_image_url && (
+                    <div style={{ marginTop: "14px" }}>
+                      <div style={labelStyle()}>Chart Screenshot</div>
+                      <a
+                        href={ticket.chart_image_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ display: "block" }}
+                      >
+                        <img
+                          src={ticket.chart_image_url}
+                          alt={`${ticket.ticker} trade chart`}
+                          style={{
+                            display: "block",
+                            width: "100%",
+                            maxHeight: "260px",
+                            objectFit: "cover",
+                            objectPosition: "top",
+                            borderRadius: "10px",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}
+                        />
+                      </a>
                     </div>
                   )}
 
