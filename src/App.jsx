@@ -28,7 +28,7 @@ import Welcome from "./pages/Welcome";
 import ResetPassword from "./pages/ResetPassword";
 import SettingsPage from "./pages/SettingsPage";
 import OperationsPage from "./pages/OperationsPage";
-import PublishingPage from "./pages/PublishingPage";
+import PublishingPage from "./features/publishing/PublishingPage";
 import MentorshipPage from "./pages/MentorshipPage";
 import EliteCommandCenter from "./pages/EliteCommandCenter";
 import "./styles.css";
