@@ -1227,20 +1227,7 @@ function sendPremarketLevelToPublishing(level) {
               />
             </div>
 
-            <div style={{ marginTop: "16px" }}>
-  <button
-    type="button"
-    onClick={() => sendTradeTicketToPublishing(ticket)}
-    style={{
-      ...buttonStyle(true),
-      width: "100%",
-    }}
-  >
-    <Send size={16} />
-    Send to Publishing
-  </button>
-</div>
-
+            
             <div style={{ marginTop: "13px" }}>
               <label style={labelStyle()}>Notes</label>
               <textarea
