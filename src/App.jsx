@@ -382,9 +382,11 @@ export default function App() {
           <Route
   path="/publishing"
   element={
-    <ProtectedTerminal>
-      <PublishingPage />
-    </ProtectedTerminal>
+    <OwnerRoute>
+      <TerminalLayout>
+        <PublishingPage />
+      </TerminalLayout>
+    </OwnerRoute>
   }
 />
 
