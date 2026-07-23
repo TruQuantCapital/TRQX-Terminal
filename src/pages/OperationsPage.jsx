@@ -1948,14 +1948,32 @@ function sendPremarketLevelToPublishing(level) {
                   )}
 
                   {ticket.reasoning?.length > 0 && (
-                    <div style={{ marginTop: "14px" }}>
-                      <div style={labelStyle()}>Reasoning</div>
-                      <div style={{ color: "#cbd5e1" }}>
-                        {ticket.reasoning.join(" • ")}
-                      </div>
-                    </div>
-                  )}
-                </article>
+  <div style={{ marginTop: "14px" }}>
+    <div style={labelStyle()}>Reasoning</div>
+    <div style={{ color: "#cbd5e1" }}>
+      {ticket.reasoning.join(" • ")}
+    </div>
+  </div>
+)}
+
+<div style={{ marginTop: "16px" }}>
+  <button
+    type="button"
+    onClick={() => sendTradeTicketToPublishing(ticket)}
+    style={{
+      ...buttonStyle(true),
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px",
+    }}
+  >
+    <Send size={16} />
+    Send to Publishing
+  </button>
+</div>
+</article>
               ))}
             </div>
           )}
