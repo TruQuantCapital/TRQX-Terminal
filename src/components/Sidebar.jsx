@@ -18,59 +18,51 @@ import {
   DollarSign,
   PieChart,
   Users,
+  Send,
+  ShieldCheck,
 } from "lucide-react";
 
 export const nav = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, feature: null },
+
   { key: "news", label: "News & Alerts", icon: Newspaper, feature: "news" },
   { key: "calendar", label: "Economic Calendar", icon: CalendarDays, feature: "calendar" },
   { key: "research", label: "Stock Research", icon: BarChart3, feature: "stock_research" },
   { key: "dividends", label: "Dividend Stocks", icon: DollarSign, feature: "stock_research" },
+
   { key: "options", label: "Options Flow", icon: Activity, feature: "options_flow" },
   { key: "scanner", label: "Flow Scanner", icon: Search, feature: "basic_flow" },
   { key: "gamma", label: "GEMX", icon: Waves, feature: "gemx" },
   { key: "tradeplan", label: "Trade Plan", icon: Target, feature: "trade_plan" },
   { key: "capital-allocator", label: "Capital Allocator", icon: PieChart, feature: "trade_plan" },
   { key: "alerts", label: "Alerts", icon: Bell, feature: "alerts" },
+
   { key: "academy", label: "Academy", icon: GraduationCap, feature: "academy" },
   { key: "patterns", label: "Flash Cards", icon: BookOpen, feature: "flashcards" },
   { key: "guide", label: "How To Use", icon: BookOpen, feature: "guide" },
-  { key: "mentorship", label: "Elite Mentorship", icon: Users,feature: null, },
+
   { key: "mentorship", label: "Elite Mentorship", icon: Users, feature: null },
-{
-  key: "elite",
-  label: "Elite Command Center",
-  icon: Crown,
-  feature: null,
-},
-{ key: "discord", label: "Discord", icon: MessageCircle, feature: null },
+  { key: "elite", label: "Elite Command Center", icon: Crown, feature: null },
+
+  {
+    key: "operations",
+    label: "Operations Center",
+    icon: ShieldCheck,
+    feature: null,
+    ownerOnly: true,
+  },
+
+  {
+    key: "publishing",
+    label: "Publishing Center",
+    icon: Send,
+    feature: null,
+    ownerOnly: true,
+  },
+
   { key: "discord", label: "Discord", icon: MessageCircle, feature: null },
   { key: "home", label: "Home", icon: Home, feature: null },
   { key: "settings", label: "Settings", icon: Settings, feature: null },
-];
-
-const navGroups = [
-  {
-    label: "MARKET INTELLIGENCE",
-    keys: ["dashboard", "news", "calendar", "research", "dividends"],
-  },
-  {
-    label: "TRADING TOOLS",
-    keys: ["options", "scanner", "gamma", "tradeplan", "capital-allocator", "alerts"],
-  },
-  {
-  label: "EDUCATION",
-  keys: ["academy", "patterns", "guide"],
-},
-{
-  label: "MENTORSHIP",
-  keys: ["mentorship", "elite"],
-},
-{
-  label: "COMMUNITY & ACCOUNT",
-  keys: ["discord", "home", "settings"],
-},
-  
 ];
 
 function initialsFromEmail(email) {
@@ -146,9 +138,15 @@ const hasEliteAccess =
 
 if (!item) return null;
 
+if (item.ownerOnly && !isOwner) {
+  return null;
+}
+
 if (item.key === "elite" && !hasEliteAccess) {
   return null;
 }
+
+
               const Icon = item.icon;
               return (
                 <button

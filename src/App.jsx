@@ -28,6 +28,7 @@ import Welcome from "./pages/Welcome";
 import ResetPassword from "./pages/ResetPassword";
 import SettingsPage from "./pages/SettingsPage";
 import OperationsPage from "./pages/OperationsPage";
+import PublishingPage from "./pages/PublishingPage";
 import MentorshipPage from "./pages/MentorshipPage";
 import EliteCommandCenter from "./pages/EliteCommandCenter";
 import "./styles.css";
@@ -36,6 +37,7 @@ import "./app.css";
 const routeByKey = {
   dashboard: "/dashboard",
   operations: "/operations",
+  publishing: "/publishing",
   scanner: "/scanner",
   options: "/options-flow",
   dividends: "/dividends",
@@ -59,6 +61,7 @@ const keyByPath = {
   "/": "dashboard",
   "/dashboard": "dashboard",
   "/operations": "operations",
+  "/publishing": "publishing",
   "/mentorship": "mentorship",
   "/scanner": "scanner",
   "/elite": "elite",
@@ -375,6 +378,15 @@ export default function App() {
               </OwnerRoute>
             }
           />
+
+          <Route
+  path="/publishing"
+  element={
+    <ProtectedTerminal>
+      <PublishingPage />
+    </ProtectedTerminal>
+  }
+/>
 
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
