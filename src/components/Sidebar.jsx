@@ -65,6 +65,40 @@ export const nav = [
   { key: "settings", label: "Settings", icon: Settings, feature: null },
 ];
 
+const navGroups = [
+  {
+    label: "MARKET INTELLIGENCE",
+    keys: ["dashboard", "news", "calendar", "research", "dividends"],
+  },
+  {
+    label: "TRADING TOOLS",
+    keys: [
+      "options",
+      "scanner",
+      "gamma",
+      "tradeplan",
+      "capital-allocator",
+      "alerts",
+    ],
+  },
+  {
+    label: "EDUCATION",
+    keys: ["academy", "patterns", "guide"],
+  },
+  {
+    label: "MENTORSHIP",
+    keys: ["mentorship", "elite"],
+  },
+  {
+    label: "OWNER OPERATIONS",
+    keys: ["operations", "publishing"],
+  },
+  {
+    label: "COMMUNITY & ACCOUNT",
+    keys: ["discord", "home", "settings"],
+  },
+];
+
 function initialsFromEmail(email) {
   if (!email) return "?";
   const namePart = email.split("@")[0];
