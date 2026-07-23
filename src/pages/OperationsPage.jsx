@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Send } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL =
   import.meta.env.VITE_TRQX_OPERATIONS_API_URL || "http://127.0.0.1:8000";
@@ -73,6 +75,7 @@ function buttonStyle(primary = false) {
 }
 
 export default function OperationsPage() {
+  const navigate = useNavigate();
   const [apiStatus, setApiStatus] = useState({
     loading: true,
     online: false,
@@ -565,6 +568,109 @@ export default function OperationsPage() {
       setWorking(false);
     }
   }
+
+  function savePublishingDraft(draft) {
+  localStorage.setItem(
+    "trqx-publishing-center-draft-v1",
+    JSON.stringify(draft),
+  );
+
+  navigate("/publishing");
+}
+
+function sendTradeTicketToPublishing(ticket) {
+  const targets = Array.isArray(ticket.targets)
+    ? ticket.targets.join(" · ")
+    : "";
+
+  const reasoning = Array.isArray(ticket.reasoning)
+    ? ticket.reasoning.map((item) => `• ${item}`).join("\n")
+    : "";
+
+  const direction = String(ticket.direction || "").toUpperCase();
+  const status = String(ticket.status || "").toUpperCase();
+
+  const body = [
+    `${ticket.ticker} ${direction}`,
+    ticket.setup || "",
+    "",
+    `Entry: ${ticket.entry}`,
+    `Stop: ${ticket.stop}`,
+    targets ? `Targets: ${targets}` : "",
+    ticket.timeframe ? `Timeframe: ${ticket.timeframe}` : "",
+    ticket.session
+      ? `Session: ${ticket.session.replaceAll("_", " ")}`
+      : "",
+    ticket.grade ? `Grade: ${ticket.grade}` : "",
+    status ? `Status: ${status}` : "",
+    reasoning ? `\nTrade Thesis\n${reasoning}` : "",
+    ticket.notes ? `\nNotes\n${ticket.notes}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  savePublishingDraft({
+    content_type: "trade_ticket",
+    title: `${ticket.ticker} Trade Ticket`,
+    body,
+    ticker: ticket.ticker || "",
+    destinations: ["discord"],
+    image_url: ticket.chart_image_url || "",
+    image_name: ticket.chart_image_url
+      ? `${ticket.ticker}-trade-chart`
+      : "",
+    scheduled_for: "",
+    platform_overrides: {},
+  });
+}
+
+function sendPremarketLevelToPublishing(level) {
+  const resistance = Array.isArray(level.resistance_levels)
+    ? level.resistance_levels.join(" · ")
+    : "None";
+
+  const support = Array.isArray(level.support_levels)
+    ? level.support_levels.join(" · ")
+    : "None";
+
+  const body = [
+    `${level.ticker} Premarket Levels`,
+    "",
+    `Bias: ${level.bias || "Neutral"}`,
+    `Bullish Above: ${level.bullish_above ?? "N/A"}`,
+    `Bearish Below: ${level.bearish_below ?? "N/A"}`,
+    `Resistance: ${resistance}`,
+    `Support: ${support}`,
+    level.premarket_high != null
+      ? `Premarket High: ${level.premarket_high}`
+      : "",
+    level.premarket_low != null
+      ? `Premarket Low: ${level.premarket_low}`
+      : "",
+    level.previous_high != null
+      ? `Previous High: ${level.previous_high}`
+      : "",
+    level.previous_low != null
+      ? `Previous Low: ${level.previous_low}`
+      : "",
+    level.gap_fill != null ? `Gap Fill: ${level.gap_fill}` : "",
+    level.notes ? `\nPlan\n${level.notes}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  savePublishingDraft({
+    content_type: "daily_prep",
+    title: `${level.ticker} Premarket Levels`,
+    body,
+    ticker: level.ticker || "",
+    destinations: ["discord"],
+    image_url: "",
+    image_name: "",
+    scheduled_for: "",
+    platform_overrides: {},
+  });
+}
 
   useEffect(() => {
     checkApiHealth();
@@ -1121,6 +1227,20 @@ export default function OperationsPage() {
               />
             </div>
 
+            <div style={{ marginTop: "16px" }}>
+  <button
+    type="button"
+    onClick={() => sendTradeTicketToPublishing(ticket)}
+    style={{
+      ...buttonStyle(true),
+      width: "100%",
+    }}
+  >
+    <Send size={16} />
+    Send to Publishing
+  </button>
+</div>
+
             <div style={{ marginTop: "13px" }}>
               <label style={labelStyle()}>Notes</label>
               <textarea
@@ -1635,6 +1755,23 @@ export default function OperationsPage() {
               <div style={{ color: "#cbd5e1" }}>{level.notes}</div>
             </div>
           )}
+          <div style={{ marginTop: "16px" }}>
+  <button
+    type="button"
+    onClick={() => sendPremarketLevelToPublishing(level)}
+    style={{
+      ...buttonStyle(true),
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px",
+    }}
+  >
+    <Send size={16} />
+    Send to Publishing
+  </button>
+</div>
         </article>
       ))}
     </div>
