@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const API_BASE_URL =
-  import.meta.env.VITE_TRQX_OPERATIONS_API_URL || "http://127.0.0.1:8000";
+import { useAuth } from "../hooks/useAuth";
+import { createOperationsApi } from "../api/operationsApi";
 
 const defaultWatchlist = [
   "SPY",
@@ -76,6 +75,11 @@ function buttonStyle(primary = false) {
 
 export default function OperationsPage() {
   const navigate = useNavigate();
+  const { getToken } = useAuth();
+  const operationsApi = useMemo(
+    () => createOperationsApi(getToken),
+    [getToken],
+  );
   const [apiStatus, setApiStatus] = useState({
     loading: true,
     online: false,
@@ -212,38 +216,6 @@ export default function OperationsPage() {
     };
   }, [ticketForm]);
 
-  async function apiRequest(path, options = {}) {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
-      ...options,
-    });
-
-    const text = await response.text();
-    let data = null;
-
-    if (text) {
-      try {
-        data = JSON.parse(text);
-      } catch {
-        data = text;
-      }
-    }
-
-    if (!response.ok) {
-      const detail =
-        typeof data === "object" && data?.detail
-          ? data.detail
-          : `Request failed with HTTP ${response.status}`;
-
-      throw new Error(detail);
-    }
-
-    return data;
-  }
-
   async function checkApiHealth() {
     setApiStatus({
       loading: true,
@@ -253,7 +225,7 @@ export default function OperationsPage() {
     });
 
     try {
-      const data = await apiRequest("/health");
+      const data = await operationsApi.getHealth();
 
       setApiStatus({
         loading: false,
@@ -273,7 +245,7 @@ export default function OperationsPage() {
 
   async function loadTodayTradingDay() {
     try {
-      const data = await apiRequest("/trading-days");
+      const data = await operationsApi.getTradingDays();
       const tradingDays = Array.isArray(data) ? data : [];
       const today = todayIsoDate();
 
@@ -304,9 +276,7 @@ export default function OperationsPage() {
     }
 
     try {
-      const data = await apiRequest(
-        `/trade-tickets?trading_day_id=${encodeURIComponent(tradingDay.id)}`,
-      );
+      const data = await operationsApi.getTradeTickets(tradingDay.id);
       setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
       setNotice(`Unable to load tickets: ${error.message}`);
@@ -320,11 +290,7 @@ export default function OperationsPage() {
     }
 
     try {
-      const data = await apiRequest(
-        `/premarket-levels?trading_day_id=${encodeURIComponent(
-          tradingDay.id,
-        )}`,
-      );
+      const data = await operationsApi.getPremarketLevels(tradingDay.id);
 
       setPremarketLevels(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -384,10 +350,7 @@ export default function OperationsPage() {
         notes: levelForm.notes || null,
       };
 
-      const created = await apiRequest("/premarket-levels", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+      const created = await operationsApi.createPremarketLevel(payload);
 
       setPremarketLevels((current) => [...current, created]);
       setNotice(
@@ -427,10 +390,7 @@ export default function OperationsPage() {
         notes: dayForm.notes || null,
       };
 
-      const created = await apiRequest("/trading-days", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+      const created = await operationsApi.createTradingDay(payload);
 
       setTradingDay(created);
       setTickets([]);
@@ -542,10 +502,7 @@ export default function OperationsPage() {
         chart_image_url: chartImageDataUrl || null,
       };
 
-      const created = await apiRequest("/trade-tickets", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+      const created = await operationsApi.createTradeTicket(payload);
 
       setTickets((current) => [...current, created]);
       setNotice(`${created.ticker} Trade Ticket created successfully.`);
