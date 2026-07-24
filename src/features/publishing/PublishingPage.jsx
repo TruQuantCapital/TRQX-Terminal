@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { createOperationsApi } from "../../api/operationsApi";
 import {
   CalendarClock,
   CheckCircle2,
@@ -11,9 +13,6 @@ import {
   Send,
   XCircle,
 } from "lucide-react";
-
-const API_BASE_URL =
-  import.meta.env.VITE_TRQX_OPERATIONS_API_URL || "http://127.0.0.1:8000";
 
 const DRAFT_STORAGE_KEY = "trqx-publishing-center-draft-v1";
 
@@ -124,6 +123,11 @@ function destinationLabel(value) {
 }
 
 export default function PublishingPage() {
+  const { getToken } = useAuth();
+  const operationsApi = useMemo(
+    () => createOperationsApi(getToken),
+    [getToken],
+  );
   const [activeTab, setActiveTab] = useState("composer");
   const [form, setForm] = useState(blankForm);
   const [history, setHistory] = useState([]);
@@ -141,41 +145,11 @@ export default function PublishingPage() {
   const previewBody =
     form.platform_overrides[selectedPreview] || form.body || "Your post preview will appear here.";
 
-  async function apiRequest(path, options = {}) {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
-      ...options,
-    });
-
-    const text = await response.text();
-    let data = null;
-
-    if (text) {
-      try {
-        data = JSON.parse(text);
-      } catch {
-        data = text;
-      }
-    }
-
-    if (!response.ok) {
-      const detail =
-        typeof data === "object" && data?.detail
-          ? JSON.stringify(data.detail)
-          : `Request failed with HTTP ${response.status}`;
-      throw new Error(detail);
-    }
-
-    return data;
-  }
 
   async function loadHistory() {
     setLoadingHistory(true);
     try {
-      const data = await apiRequest("/api/publishing");
+      const data = await operationsApi.getPublishingHistory();
       setHistory(Array.isArray(data) ? data : []);
     } catch (error) {
       setNotice(`Unable to load publishing history: ${error.message}`);
@@ -296,10 +270,9 @@ export default function PublishingPage() {
           : null,
       };
 
-      const created = await apiRequest("/api/publishing", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+      const created = await operationsApi.createPublishingRequest(
+        payload,
+      );
 
       setHistory((current) => [created, ...current.filter((item) => item.id !== created.id)]);
       localStorage.removeItem(DRAFT_STORAGE_KEY);
