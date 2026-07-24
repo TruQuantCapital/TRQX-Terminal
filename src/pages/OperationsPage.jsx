@@ -91,7 +91,9 @@ export default function OperationsPage() {
   const [tickets, setTickets] = useState([]);
   const [premarketLevels, setPremarketLevels] = useState([]);
   const [notice, setNotice] = useState("");
-  const [working, setWorking] = useState(false);
+  const [workingTradingDay, setWorkingTradingDay] = useState(false);
+  const [workingTradeTicket, setWorkingTradeTicket] = useState(false);
+  const [workingPremarket, setWorkingPremarket] = useState(false);
 
   const [chartImageDataUrl, setChartImageDataUrl] = useState("");
   const [chartImageName, setChartImageName] = useState("");
@@ -330,7 +332,7 @@ export default function OperationsPage() {
       return;
     }
 
-    setWorking(true);
+    setWorkingPremarket(true);
     setNotice("");
 
     try {
@@ -373,13 +375,13 @@ export default function OperationsPage() {
     } catch (error) {
       setNotice(`Premarket Levels failed: ${error.message}`);
     } finally {
-      setWorking(false);
+      setWorkingPremarket(false);
     }
   }
 
   async function createTradingDay(event) {
     event.preventDefault();
-    setWorking(true);
+    setWorkingTradingDay(true);
     setNotice("");
 
     try {
@@ -399,7 +401,7 @@ export default function OperationsPage() {
     } catch (error) {
       setNotice(`Trading Day creation failed: ${error.message}`);
     } finally {
-      setWorking(false);
+      setWorkingTradingDay(false);
     }
   }
 
@@ -478,7 +480,7 @@ export default function OperationsPage() {
       return;
     }
 
-    setWorking(true);
+    setWorkingTradeTicket(true);
     setNotice("");
 
     try {
@@ -522,7 +524,7 @@ export default function OperationsPage() {
     } catch (error) {
       setNotice(`Trade Ticket creation failed: ${error.message}`);
     } finally {
-      setWorking(false);
+      setWorkingTradeTicket(false);
     }
   }
 
@@ -848,15 +850,15 @@ function sendPremarketLevelToPublishing(level) {
 
             <button
               type="submit"
-              disabled={working || !apiStatus.online}
+              disabled={workingTradingDay || !apiStatus.online}
               style={{
                 ...buttonStyle(true),
                 marginTop: "18px",
                 width: "100%",
-                opacity: working || !apiStatus.online ? 0.55 : 1,
+                opacity: workingTradingDay || !apiStatus.online ? 0.55 : 1,
               }}
             >
-              {working ? "Processing..." : "Create Trading Day"}
+              {workingTradingDay ? "Processing..." : "Create Trading Day"}
             </button>
           </form>
 
@@ -1308,16 +1310,16 @@ function sendPremarketLevelToPublishing(level) {
 
             <button
               type="submit"
-              disabled={working || !canCreateTicket || !apiStatus.online}
+              disabled={workingTradeTicket || !canCreateTicket || !apiStatus.online}
               style={{
                 ...buttonStyle(true),
                 marginTop: "18px",
                 width: "100%",
                 opacity:
-                  working || !canCreateTicket || !apiStatus.online ? 0.55 : 1,
+                  workingTradeTicket || !canCreateTicket || !apiStatus.online ? 0.55 : 1,
               }}
             >
-              {working ? "Processing..." : "Create Trade Ticket"}
+              {workingTradeTicket ? "Processing..." : "Create Trade Ticket"}
             </button>
           </form>
           <form onSubmit={createPremarketLevel} style={cardStyle()}>
@@ -1570,16 +1572,16 @@ function sendPremarketLevelToPublishing(level) {
 
   <button
     type="submit"
-    disabled={working || !tradingDay || !apiStatus.online}
+    disabled={workingPremarket || !tradingDay || !apiStatus.online}
     style={{
       ...buttonStyle(true),
       marginTop: "18px",
       width: "100%",
       opacity:
-        working || !tradingDay || !apiStatus.online ? 0.55 : 1,
+        workingPremarket || !tradingDay || !apiStatus.online ? 0.55 : 1,
     }}
   >
-    {working ? "Processing..." : "Publish Premarket Levels"}
+    {workingPremarket ? "Processing..." : "Publish Premarket Levels"}
   </button>
 </form>
         </div>
