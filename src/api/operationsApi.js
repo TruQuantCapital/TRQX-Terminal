@@ -1,9 +1,10 @@
-const DEFAULT_API_BASE_URL = "http://127.0.0.1:8000";
+const DEFAULT_API_BASE_URL =
+  "https://web-production-7fb554.up.railway.app/api";
 
-export const OPERATIONS_API_BASE_URL = (
-  import.meta.env.VITE_TRQX_OPERATIONS_API_URL || DEFAULT_API_BASE_URL
+const API_BASE_URL = (
+  import.meta.env.VITE_TRQX_OPERATIONS_API_URL ||
+  DEFAULT_API_BASE_URL
 ).replace(/\/+$/, "");
-
 const STATUS_MESSAGES = {
   400: "The request was invalid.",
   401: "Your session has expired. Sign in again.",
