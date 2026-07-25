@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { createOperationsApi } from "../../api/operationsApi";
+﻿import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "../../../hooks/useAuth.jsx";
+import { createOperationsApi } from "../../../api/operationsApi";
 import {
   CalendarClock,
   CheckCircle2,
@@ -337,7 +337,7 @@ export default function PublishingPage() {
                     </select>
                   </div>
                   <div>
-                    <label style={labelStyle()}>Ticker — optional</label>
+                    <label style={labelStyle()}>Ticker â€” optional</label>
                     <input value={form.ticker} maxLength={12} onChange={(event) => updateForm("ticker", event.target.value.toUpperCase())} placeholder="SPY" style={inputStyle()} />
                   </div>
                 </div>
@@ -386,7 +386,7 @@ export default function PublishingPage() {
                 </div>
 
                 <div style={{ marginTop: "16px" }}>
-                  <label style={labelStyle()}>Schedule — optional</label>
+                  <label style={labelStyle()}>Schedule â€” optional</label>
                   <input type="datetime-local" value={form.scheduled_for} onChange={(event) => updateForm("scheduled_for", event.target.value)} style={inputStyle()} />
                 </div>
               </section>
@@ -476,7 +476,7 @@ export default function PublishingPage() {
                       <div>
                         <div style={{ color: "#f4d675", fontWeight: 950, fontSize: "18px" }}>{item.title}</div>
                         <div style={{ color: "#94a3b8", fontSize: "12px", marginTop: "4px", textTransform: "uppercase" }}>
-                          {item.content_type?.replaceAll("_", " ")} {item.ticker ? `· $${item.ticker}` : ""}
+                          {item.content_type?.replaceAll("_", " ")} {item.ticker ? `Â· $${item.ticker}` : ""}
                         </div>
                       </div>
                       <div style={{ color: statusColor(item.status), fontWeight: 900, textTransform: "uppercase" }}>{item.status}</div>
@@ -484,8 +484,8 @@ export default function PublishingPage() {
 
                     <div style={{ color: "#cbd5e1", whiteSpace: "pre-wrap", marginTop: "14px" }}>{item.body}</div>
                     <div style={{ color: "#64748b", fontSize: "12px", marginTop: "12px" }}>
-                      Created {item.created_at ? new Date(item.created_at).toLocaleString() : "—"}
-                      {item.scheduled_for ? ` · Scheduled ${new Date(item.scheduled_for).toLocaleString()}` : ""}
+                      Created {item.created_at ? new Date(item.created_at).toLocaleString() : "â€”"}
+                      {item.scheduled_for ? ` Â· Scheduled ${new Date(item.scheduled_for).toLocaleString()}` : ""}
                     </div>
 
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", marginTop: "14px" }}>

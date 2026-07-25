@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { createOperationsApi } from "../api/operationsApi";
-import MarketPlanCard from "../features/operations/components/MarketPlanCard";
+import MarketPlanCard from "../components/MarketPlanCard.jsx";
 
 
 function todayIsoDate() {
@@ -496,11 +496,11 @@ export default function OperationsPage() {
 
 function sendTradeTicketToPublishing(ticket) {
   const targets = Array.isArray(ticket.targets)
-    ? ticket.targets.join(" · ")
+    ? ticket.targets.join(" Â· ")
     : "";
 
   const reasoning = Array.isArray(ticket.reasoning)
-    ? ticket.reasoning.map((item) => `• ${item}`).join("\n")
+    ? ticket.reasoning.map((item) => `â€¢ ${item}`).join("\n")
     : "";
 
   const direction = String(ticket.direction || "").toUpperCase();
@@ -542,11 +542,11 @@ function sendTradeTicketToPublishing(ticket) {
 
 function sendPremarketLevelToPublishing(level) {
   const resistance = Array.isArray(level.resistance_levels)
-    ? level.resistance_levels.join(" · ")
+    ? level.resistance_levels.join(" Â· ")
     : "None";
 
   const support = Array.isArray(level.support_levels)
-    ? level.support_levels.join(" · ")
+    ? level.support_levels.join(" Â· ")
     : "None";
 
   const body = [
@@ -661,10 +661,10 @@ function sendPremarketLevelToPublishing(level) {
             <div style={labelStyle()}>Operations API</div>
             <div style={{ fontWeight: 900 }}>
               {apiStatus.loading
-                ? "🟡 Checking"
+                ? "ðŸŸ¡ Checking"
                 : apiStatus.online
-                  ? "🟢 Online"
-                  : "🔴 Offline"}
+                  ? "ðŸŸ¢ Online"
+                  : "ðŸ”´ Offline"}
             </div>
             <div style={{ color: "#94a3b8", marginTop: "6px" }}>
               {apiStatus.message}
@@ -686,12 +686,12 @@ function sendPremarketLevelToPublishing(level) {
           <div style={cardStyle()}>
             <div style={labelStyle()}>Market Plan</div>
             <div style={{ fontWeight: 900 }}>
-              {tradingDay ? "🟢 Open" : "⚪ Not opened"}
+              {tradingDay ? "ðŸŸ¢ Open" : "âšª Not opened"}
             </div>
             <div style={{ color: "#94a3b8", marginTop: "6px" }}>
               {tradingDay
-                ? `${tradingDay.trading_date} · ${tradingDay.floor_status}`
-                : "Create today’s operating record below."}
+                ? `${tradingDay.trading_date} Â· ${tradingDay.floor_status}`
+                : "Create todayâ€™s operating record below."}
             </div>
           </div>
 
@@ -707,7 +707,7 @@ function sendPremarketLevelToPublishing(level) {
 
           <div style={cardStyle()}>
             <div style={labelStyle()}>Discord Floor</div>
-            <div style={{ fontWeight: 900 }}>⚪ Not connected</div>
+            <div style={{ fontWeight: 900 }}>âšª Not connected</div>
             <div style={{ color: "#94a3b8", marginTop: "6px" }}>
               Discord publishing is the next backend integration.
             </div>
@@ -944,7 +944,7 @@ function sendPremarketLevelToPublishing(level) {
                 <strong>
                   {tradeMetrics.valid
                     ? `$${tradeMetrics.risk.toFixed(2)}`
-                    : "—"}
+                    : "â€”"}
                 </strong>
               </div>
 
@@ -953,7 +953,7 @@ function sendPremarketLevelToPublishing(level) {
                 <strong>
                   {tradeMetrics.valid
                     ? `${tradeMetrics.stopPercent.toFixed(2)}%`
-                    : "—"}
+                    : "â€”"}
                 </strong>
               </div>
 
@@ -974,7 +974,7 @@ function sendPremarketLevelToPublishing(level) {
                               : "#fca5a5",
                       }}
                     >
-                      {validTarget ? `${target.rr.toFixed(2)}R` : "—"}
+                      {validTarget ? `${target.rr.toFixed(2)}R` : "â€”"}
                     </strong>
                   </div>
                 );
@@ -1044,7 +1044,7 @@ function sendPremarketLevelToPublishing(level) {
 
             <div style={{ marginTop: "13px" }}>
               <label style={labelStyle()}>
-                Reasoning — separate items with commas
+                Reasoning â€” separate items with commas
               </label>
               <input
                 value={ticketForm.reasoning}
@@ -1256,7 +1256,7 @@ function sendPremarketLevelToPublishing(level) {
 
   <div style={{ marginTop: "13px" }}>
     <label style={labelStyle()}>
-      Support Levels — separate with commas
+      Support Levels â€” separate with commas
     </label>
     <input
       value={levelForm.supportLevels}
@@ -1273,7 +1273,7 @@ function sendPremarketLevelToPublishing(level) {
 
   <div style={{ marginTop: "13px" }}>
     <label style={labelStyle()}>
-      Resistance Levels — separate with commas
+      Resistance Levels â€” separate with commas
     </label>
     <input
       value={levelForm.resistanceLevels}
@@ -1607,7 +1607,7 @@ function sendPremarketLevelToPublishing(level) {
           >
             <div>
               <div style={{ color: "#d4af37", fontWeight: 900 }}>
-                TODAY’S TRADE DESK
+                TODAYâ€™S TRADE DESK
               </div>
               <div style={{ color: "#94a3b8", marginTop: "4px" }}>
                 Tickets attached to the active Market Plan.
@@ -1673,9 +1673,9 @@ function sendPremarketLevelToPublishing(level) {
                           marginTop: "3px",
                         }}
                       >
-                        {ticket.direction} · {ticket.status}
-                        {ticket.timeframe ? ` · ${ticket.timeframe}` : ""}
-                        {ticket.session ? ` · ${ticket.session}` : ""}
+                        {ticket.direction} Â· {ticket.status}
+                        {ticket.timeframe ? ` Â· ${ticket.timeframe}` : ""}
+                        {ticket.session ? ` Â· ${ticket.session}` : ""}
                       </div>
 
                       {ticket.trade_id && (
@@ -1726,7 +1726,7 @@ function sendPremarketLevelToPublishing(level) {
 
                   <div style={{ marginTop: "14px" }}>
                     <div style={labelStyle()}>Targets</div>
-                    <strong>{ticket.targets.join(" · ")}</strong>
+                    <strong>{ticket.targets.join(" Â· ")}</strong>
                   </div>
 
                   {ticket.target_rrs?.length > 0 && (
@@ -1735,7 +1735,7 @@ function sendPremarketLevelToPublishing(level) {
                       <strong>
                         {ticket.target_rrs
                           .map((rr, index) => `TP${index + 1} ${Number(rr).toFixed(2)}R`)
-                          .join(" · ")}
+                          .join(" Â· ")}
                       </strong>
                     </div>
                   )}
@@ -1770,7 +1770,7 @@ function sendPremarketLevelToPublishing(level) {
   <div style={{ marginTop: "14px" }}>
     <div style={labelStyle()}>Reasoning</div>
     <div style={{ color: "#cbd5e1" }}>
-      {ticket.reasoning.join(" • ")}
+      {ticket.reasoning.join(" â€¢ ")}
     </div>
   </div>
 )}
@@ -1801,3 +1801,4 @@ function sendPremarketLevelToPublishing(level) {
     </main>
   );
 }
+
