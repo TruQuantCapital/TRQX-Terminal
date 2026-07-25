@@ -3,7 +3,7 @@ import { Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { createOperationsApi } from "../api/operationsApi";
-import MarketPlanCard from "./MarketPlanCard.jsx";
+import MarketPlanCard from "../features/operations/components/MarketPlanCard.jsx";
 
 
 function todayIsoDate() {
@@ -1801,5 +1801,6 @@ function sendPremarketLevelToPublishing(level) {
     </main>
   );
 }
+
 
 
