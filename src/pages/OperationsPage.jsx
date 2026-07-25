@@ -3,16 +3,8 @@ import { Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { createOperationsApi } from "../api/operationsApi";
+import MarketPlanCard from "../features/operations/components/MarketPlanCard";
 
-const defaultWatchlist = [
-  "SPY",
-  "SPX",
-  "QQQ",
-  "IWM",
-  "TSLA",
-  "NVDA",
-  "META",
-];
 
 function todayIsoDate() {
   const now = new Date();
@@ -91,7 +83,6 @@ export default function OperationsPage() {
   const [tickets, setTickets] = useState([]);
   const [premarketLevels, setPremarketLevels] = useState([]);
   const [notice, setNotice] = useState("");
-  const [workingTradingDay, setWorkingTradingDay] = useState(false);
   const [workingTradeTicket, setWorkingTradeTicket] = useState(false);
   const [workingPremarket, setWorkingPremarket] = useState(false);
 
@@ -99,15 +90,6 @@ export default function OperationsPage() {
   const [chartImageName, setChartImageName] = useState("");
   const chartInputRef = useRef(null);
 
-  const [dayForm, setDayForm] = useState({
-    trading_date: todayIsoDate(),
-    floor_status: "premarket",
-    market_bias: "pending",
-    market_condition: "Pending premarket review",
-    risk_environment: "Pending premarket review",
-    expected_volatility: "Pending economic-event review",
-    notes: "",
-  });
 
   const [levelForm, setLevelForm] = useState({
   ticker: "SPY",
@@ -267,7 +249,7 @@ export default function OperationsPage() {
         setPremarketLevels([]);
       }
     } catch (error) {
-      setNotice(`Unable to load today's Trading Day: ${error.message}`);
+      setNotice(`Unable to load today's Market Plan: ${error.message}`);
     }
   }
 
@@ -320,7 +302,7 @@ export default function OperationsPage() {
     event.preventDefault();
 
     if (!tradingDay?.id) {
-      setNotice("Create a Trading Day before publishing Premarket Levels.");
+      setNotice("Create a Market Plan before publishing Premarket Levels.");
       return;
     }
 
@@ -379,31 +361,6 @@ export default function OperationsPage() {
     }
   }
 
-  async function createTradingDay(event) {
-    event.preventDefault();
-    setWorkingTradingDay(true);
-    setNotice("");
-
-    try {
-      const payload = {
-        ...dayForm,
-        core_watchlist: defaultWatchlist,
-        economic_events: [],
-        notes: dayForm.notes || null,
-      };
-
-      const created = await operationsApi.createTradingDay(payload);
-
-      setTradingDay(created);
-      setTickets([]);
-      setPremarketLevels([]);
-      setNotice(`Trading Day created for ${created.trading_date}.`);
-    } catch (error) {
-      setNotice(`Trading Day creation failed: ${error.message}`);
-    } finally {
-      setWorkingTradingDay(false);
-    }
-  }
 
   function clearChartImage() {
     setChartImageDataUrl("");
@@ -463,7 +420,7 @@ export default function OperationsPage() {
     event.preventDefault();
 
     if (!tradingDay?.id) {
-      setNotice("Create a Trading Day before creating a Trade Ticket.");
+      setNotice("Create a Market Plan before creating a Trade Ticket.");
       return;
     }
 
@@ -727,7 +684,7 @@ function sendPremarketLevelToPublishing(level) {
           </div>
 
           <div style={cardStyle()}>
-            <div style={labelStyle()}>Trading Day</div>
+            <div style={labelStyle()}>Market Plan</div>
             <div style={{ fontWeight: 900 }}>
               {tradingDay ? "🟢 Open" : "⚪ Not opened"}
             </div>
@@ -766,101 +723,17 @@ function sendPremarketLevelToPublishing(level) {
             marginTop: "22px",
           }}
         >
-          <form onSubmit={createTradingDay} style={cardStyle()}>
-            <div style={{ color: "#d4af37", fontWeight: 900 }}>
-              OPEN TRADING DAY
-            </div>
-
-            <div style={{ marginTop: "16px" }}>
-              <label style={labelStyle()}>Trading Date</label>
-              <input
-                type="date"
-                value={dayForm.trading_date}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    trading_date: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              />
-            </div>
-
-            <div style={{ marginTop: "14px" }}>
-              <label style={labelStyle()}>Market Bias</label>
-              <select
-                value={dayForm.market_bias}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    market_bias: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              >
-                <option value="pending">Pending</option>
-                <option value="bullish">Bullish</option>
-                <option value="bearish">Bearish</option>
-                <option value="neutral">Neutral</option>
-                <option value="mixed">Mixed</option>
-              </select>
-            </div>
-
-            <div style={{ marginTop: "14px" }}>
-              <label style={labelStyle()}>Market Condition</label>
-              <input
-                value={dayForm.market_condition}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    market_condition: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              />
-            </div>
-
-            <div style={{ marginTop: "14px" }}>
-              <label style={labelStyle()}>Risk Environment</label>
-              <input
-                value={dayForm.risk_environment}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    risk_environment: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              />
-            </div>
-
-            <div style={{ marginTop: "14px" }}>
-              <label style={labelStyle()}>Expected Volatility</label>
-              <input
-                value={dayForm.expected_volatility}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    expected_volatility: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={workingTradingDay || !apiStatus.online}
-              style={{
-                ...buttonStyle(true),
-                marginTop: "18px",
-                width: "100%",
-                opacity: workingTradingDay || !apiStatus.online ? 0.55 : 1,
-              }}
-            >
-              {workingTradingDay ? "Processing..." : "Create Trading Day"}
-            </button>
-          </form>
+          <MarketPlanCard
+            apiOnline={apiStatus.online}
+            existingMarketPlan={tradingDay}
+            operationsApi={operationsApi}
+            onCreated={(created) => {
+              setTradingDay(created);
+              setTickets([]);
+              setPremarketLevels([]);
+            }}
+            setNotice={setNotice}
+          />
 
           <form onSubmit={createTradeTicket} style={cardStyle()}>
             <div style={{ color: "#d4af37", fontWeight: 900 }}>
@@ -875,7 +748,7 @@ function sendPremarketLevelToPublishing(level) {
                   fontSize: "13px",
                 }}
               >
-                Create a Trading Day before submitting a Trade Ticket.
+                Create a Market Plan before submitting a Trade Ticket.
               </div>
             )}
 
@@ -1335,7 +1208,7 @@ function sendPremarketLevelToPublishing(level) {
         fontSize: "13px",
       }}
     >
-      Create a Trading Day before publishing Premarket Levels.
+      Create a Market Plan before publishing Premarket Levels.
     </div>
   )}
 
@@ -1599,7 +1472,7 @@ function sendPremarketLevelToPublishing(level) {
         PUBLISHED PREMARKET LEVELS
       </div>
       <div style={{ color: "#94a3b8", marginTop: "4px" }}>
-        Levels attached to the active Trading Day.
+        Levels attached to the active Market Plan.
       </div>
     </div>
 
@@ -1624,7 +1497,7 @@ function sendPremarketLevelToPublishing(level) {
         borderRadius: "12px",
       }}
     >
-      No Premarket Levels have been published for this Trading Day.
+      No Premarket Levels have been published for this Market Plan.
     </div>
   ) : (
     <div
@@ -1737,7 +1610,7 @@ function sendPremarketLevelToPublishing(level) {
                 TODAY’S TRADE DESK
               </div>
               <div style={{ color: "#94a3b8", marginTop: "4px" }}>
-                Tickets attached to the active Trading Day.
+                Tickets attached to the active Market Plan.
               </div>
             </div>
 
@@ -1762,7 +1635,7 @@ function sendPremarketLevelToPublishing(level) {
                 borderRadius: "12px",
               }}
             >
-              No Trade Tickets have been created for this Trading Day.
+              No Trade Tickets have been created for this Market Plan.
             </div>
           ) : (
             <div
