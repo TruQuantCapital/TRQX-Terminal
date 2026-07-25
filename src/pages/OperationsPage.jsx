@@ -90,6 +90,12 @@ export default function OperationsPage() {
   const [chartImageName, setChartImageName] = useState("");
   const chartInputRef = useRef(null);
 
+  const [premarketChartImageDataUrl, setPremarketChartImageDataUrl] =
+    useState("");
+  const [premarketChartImageName, setPremarketChartImageName] =
+    useState("");
+  const premarketChartInputRef = useRef(null);
+
 
   const [levelForm, setLevelForm] = useState({
   ticker: "SPY",
@@ -332,6 +338,7 @@ export default function OperationsPage() {
         premarket_low: optionalNumber(levelForm.premarketLow),
         bias: levelForm.bias,
         notes: levelForm.notes || null,
+        chart_image_url: premarketChartImageDataUrl || null,
       };
 
       const created = await operationsApi.createPremarketLevel(payload);
@@ -354,6 +361,8 @@ export default function OperationsPage() {
         premarketLow: "",
         notes: "",
       }));
+
+      clearPremarketChartImage();
     } catch (error) {
       setNotice(`Premarket Levels failed: ${error.message}`);
     } finally {
@@ -369,6 +378,62 @@ export default function OperationsPage() {
     if (chartInputRef.current) {
       chartInputRef.current.value = "";
     }
+  }
+
+  function clearPremarketChartImage() {
+    setPremarketChartImageDataUrl("");
+    setPremarketChartImageName("");
+
+    if (premarketChartInputRef.current) {
+      premarketChartInputRef.current.value = "";
+    }
+  }
+
+  function processPremarketChartImage(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setNotice("The Premarket Levels chart attachment must be an image.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setNotice("The Premarket Levels chart image must be 5 MB or smaller.");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setPremarketChartImageDataUrl(String(reader.result || ""));
+      setPremarketChartImageName(
+        file.name || "Pasted Premarket Levels chart screenshot",
+      );
+      setNotice("Premarket Levels chart screenshot attached.");
+    };
+
+    reader.onerror = () => {
+      setNotice("Unable to read the Premarket Levels chart image.");
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  function handlePremarketChartPaste(event) {
+    const clipboardItems = Array.from(event.clipboardData?.items || []);
+    const imageItem = clipboardItems.find((item) =>
+      item.type.startsWith("image/"),
+    );
+
+    if (!imageItem) return;
+
+    event.preventDefault();
+    processPremarketChartImage(imageItem.getAsFile());
+  }
+
+  function handlePremarketChartDrop(event) {
+    event.preventDefault();
+    processPremarketChartImage(event.dataTransfer?.files?.[0]);
   }
 
   function processChartImage(file) {
@@ -581,8 +646,10 @@ function sendPremarketLevelToPublishing(level) {
     body,
     ticker: level.ticker || "",
     destinations: ["discord"],
-    image_url: "",
-    image_name: "",
+    image_url: level.chart_image_url || "",
+    image_name: level.chart_image_url
+      ? `${level.ticker}-premarket-levels-chart`
+      : "",
     scheduled_for: "",
     platform_overrides: {},
   });
@@ -1443,6 +1510,112 @@ function sendPremarketLevelToPublishing(level) {
     />
   </div>
 
+  <div style={{ marginTop: "16px" }}>
+    <label style={labelStyle()}>Chart Screenshot</label>
+
+    <div
+      tabIndex={0}
+      onPaste={handlePremarketChartPaste}
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={handlePremarketChartDrop}
+      onClick={() => premarketChartInputRef.current?.click()}
+      style={{
+        minHeight: premarketChartImageDataUrl ? "220px" : "140px",
+        borderRadius: "12px",
+        border: "1px dashed rgba(212,175,55,0.5)",
+        background: "rgba(212,175,55,0.04)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        cursor: "pointer",
+        outline: "none",
+      }}
+    >
+      {premarketChartImageDataUrl ? (
+        <img
+          src={premarketChartImageDataUrl}
+          alt="Premarket Levels chart preview"
+          style={{
+            display: "block",
+            width: "100%",
+            maxHeight: "460px",
+            objectFit: "contain",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            padding: "24px",
+            textAlign: "center",
+            color: "#94a3b8",
+          }}
+        >
+          <div
+            style={{
+              color: "#f4d675",
+              fontWeight: 900,
+              fontSize: "15px",
+            }}
+          >
+            Click here, then press Ctrl+V
+          </div>
+          <div style={{ marginTop: "7px" }}>
+            You can also drag and drop a screenshot.
+          </div>
+          <div style={{ marginTop: "5px", fontSize: "12px" }}>
+            Clicking opens the file selector as a fallback.
+          </div>
+        </div>
+      )}
+    </div>
+
+    <input
+      ref={premarketChartInputRef}
+      type="file"
+      accept="image/*"
+      onChange={(event) =>
+        processPremarketChartImage(event.target.files?.[0])
+      }
+      style={{ display: "none" }}
+    />
+
+    {premarketChartImageDataUrl && (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: "12px",
+          alignItems: "center",
+          marginTop: "10px",
+        }}
+      >
+        <div
+          style={{
+            color: "#94a3b8",
+            fontSize: "12px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {premarketChartImageName}
+        </div>
+
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            clearPremarketChartImage();
+          }}
+          style={buttonStyle()}
+        >
+          Remove Screenshot
+        </button>
+      </div>
+    )}
+  </div>
+
   <button
     type="submit"
     disabled={workingPremarket || !tradingDay || !apiStatus.online}
@@ -1572,6 +1745,32 @@ function sendPremarketLevelToPublishing(level) {
             <div style={{ marginTop: "14px" }}>
               <div style={labelStyle()}>Plan</div>
               <div style={{ color: "#cbd5e1" }}>{level.notes}</div>
+            </div>
+          )}
+
+          {level.chart_image_url && (
+            <div style={{ marginTop: "14px" }}>
+              <div style={labelStyle()}>Chart Screenshot</div>
+              <a
+                href={level.chart_image_url}
+                target="_blank"
+                rel="noreferrer"
+                style={{ display: "block" }}
+              >
+                <img
+                  src={level.chart_image_url}
+                  alt={`${level.ticker} Premarket Levels chart`}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    maxHeight: "260px",
+                    objectFit: "cover",
+                    objectPosition: "top",
+                    borderRadius: "10px",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                  }}
+                />
+              </a>
             </div>
           )}
           <div style={{ marginTop: "16px" }}>
@@ -1801,6 +2000,5 @@ function sendPremarketLevelToPublishing(level) {
     </main>
   );
 }
-
 
 
