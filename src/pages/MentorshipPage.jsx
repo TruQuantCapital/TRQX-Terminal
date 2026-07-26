@@ -11,20 +11,8 @@ import {
   Users,
 } from "lucide-react";
 
-
-const openWhop = () => {
-  if (!WHOP_MENTORSHIP_URL) {
-    console.error("Missing VITE_WHOP_MENTORSHIP_URL");
-    alert("Mentorship checkout is temporarily unavailable.");
-    return;
-  }
-
-  window.open(
-    WHOP_MENTORSHIP_URL,
-    "_blank",
-    "noopener,noreferrer"
-  );
-};
+const WHOP_MENTORSHIP_URL =
+  import.meta.env.VITE_WHOP_MENTORSHIP_URL;
 
 const benefits = [
   "Two weekly live coaching sessions",
@@ -77,16 +65,6 @@ const sessions = [
 
 export default function MentorshipPage() {
   
-
-  const openWhop = () => {
-    if (WHOP_MENTORSHIP_URL === "#") {
-      alert("Mentorship checkout link will be added soon.");
-      return;
-    }
-
-    window.open(WHOP_MENTORSHIP_URL, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <main className="mentorshipPage">
       <section className="mentorshipHero">
