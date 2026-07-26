@@ -1,9 +1,10 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { createOperationsApi } from "../api/operationsApi";
 import MarketPlanCard from "../features/operations/components/MarketPlanCard.jsx";
+import OperationsCommandCenter from "../features/operations/components/OperationsCommandCenter.jsx";
 
 
 function todayIsoDate() {
@@ -716,6 +717,19 @@ function sendPremarketLevelToPublishing(level) {
           </div>
         )}
 
+        <OperationsCommandCenter
+          apiStatus={apiStatus}
+          tradingDay={tradingDay}
+          tickets={tickets}
+          premarketLevels={premarketLevels}
+          onRefresh={async () => {
+            setNotice("");
+            await checkApiHealth();
+            await loadTodayTradingDay();
+          }}
+          onOpenPublishing={() => navigate("/publishing")}
+        />
+
         <div
           style={{
             display: "grid",
@@ -790,6 +804,7 @@ function sendPremarketLevelToPublishing(level) {
             marginTop: "22px",
           }}
         >
+          <div id="operations-market-plan">
           <MarketPlanCard
             apiOnline={apiStatus.online}
             existingMarketPlan={tradingDay}
@@ -801,8 +816,9 @@ function sendPremarketLevelToPublishing(level) {
             }}
             setNotice={setNotice}
           />
+          </div>
 
-          <form onSubmit={createTradeTicket} style={cardStyle()}>
+          <form id="operations-trade-ticket-form" onSubmit={createTradeTicket} style={cardStyle()}>
             <div style={{ color: "#d4af37", fontWeight: 900 }}>
               TRQX TRADE TICKET
             </div>
@@ -1262,7 +1278,7 @@ function sendPremarketLevelToPublishing(level) {
               {workingTradeTicket ? "Processing..." : "Create Trade Ticket"}
             </button>
           </form>
-          <form onSubmit={createPremarketLevel} style={cardStyle()}>
+          <form id="operations-premarket-form" onSubmit={createPremarketLevel} style={cardStyle()}>
   <div style={{ color: "#d4af37", fontWeight: 900 }}>
     PREMARKET LEVELS
   </div>
