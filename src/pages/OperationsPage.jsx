@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import { createOperationsApi } from "../api/operationsApi";
 import MarketPlanCard from "../features/operations/components/MarketPlanCard.jsx";
 import OperationsCommandCenter from "../features/operations/components/OperationsCommandCenter.jsx";
+import LiveTradeManager from "../features/operations/components/LiveTradeManager.jsx";
 
 
 function todayIsoDate() {
@@ -271,6 +272,24 @@ export default function OperationsPage() {
       setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
       setNotice(`Unable to load tickets: ${error.message}`);
+    }
+  }
+
+  async function updateTradeTicket(ticketId, payload) {
+    setNotice("");
+
+    try {
+      const updated = await operationsApi.updateTradeTicket(ticketId, payload);
+      setTickets((current) =>
+        current.map((ticket) =>
+          ticket.id === ticketId ? updated : ticket,
+        ),
+      );
+      setNotice(`${updated.ticker} updated to ${String(updated.status).replaceAll("_", " ")}.`);
+      return updated;
+    } catch (error) {
+      setNotice(`Trade update failed: ${error.message}`);
+      throw error;
     }
   }
 
@@ -560,13 +579,19 @@ export default function OperationsPage() {
   navigate("/publishing");
 }
 
+function formatSession(value) {
+  return String(value || "")
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
 function sendTradeTicketToPublishing(ticket) {
   const targets = Array.isArray(ticket.targets)
-    ? ticket.targets.join(" · ")
+    ? ticket.targets.join(", " )
     : "";
 
   const reasoning = Array.isArray(ticket.reasoning)
-    ? ticket.reasoning.map((item) => `• ${item}`).join("\n")
+    ? ticket.reasoning.map((item) => `- ${item}`).join("\n")
     : "";
 
   const direction = String(ticket.direction || "").toUpperCase();
@@ -574,19 +599,17 @@ function sendTradeTicketToPublishing(ticket) {
 
   const body = [
     `${ticket.ticker} ${direction}`,
-    ticket.setup || "",
+    ticket.setup ? `Setup: ${ticket.setup}` : "",
     "",
     `Entry: ${ticket.entry}`,
     `Stop: ${ticket.stop}`,
     targets ? `Targets: ${targets}` : "",
     ticket.timeframe ? `Timeframe: ${ticket.timeframe}` : "",
-    ticket.session
-      ? `Session: ${ticket.session.replaceAll("_", " ")}`
-      : "",
+    ticket.session ? `Session: ${formatSession(ticket.session)}` : "",
     ticket.grade ? `Grade: ${ticket.grade}` : "",
     status ? `Status: ${status}` : "",
-    reasoning ? `\nTrade Thesis\n${reasoning}` : "",
-    ticket.notes ? `\nNotes\n${ticket.notes}` : "",
+    reasoning ? `\nTRADE THESIS\n${reasoning}` : "",
+    ticket.notes ? `\nNOTES\n${ticket.notes}` : "",
   ]
     .filter(Boolean)
     .join("\n");
@@ -608,19 +631,18 @@ function sendTradeTicketToPublishing(ticket) {
 
 function sendPremarketLevelToPublishing(level) {
   const resistance = Array.isArray(level.resistance_levels)
-    ? level.resistance_levels.join(" · ")
+    ? level.resistance_levels.join(", ")
     : "None";
 
   const support = Array.isArray(level.support_levels)
-    ? level.support_levels.join(" · ")
+    ? level.support_levels.join(", ")
     : "None";
 
   const body = [
-    `${level.ticker} Premarket Levels`,
-    "",
     `Bias: ${level.bias || "Neutral"}`,
     `Bullish Above: ${level.bullish_above ?? "N/A"}`,
     `Bearish Below: ${level.bearish_below ?? "N/A"}`,
+    "",
     `Resistance: ${resistance}`,
     `Support: ${support}`,
     level.premarket_high != null
@@ -636,7 +658,7 @@ function sendPremarketLevelToPublishing(level) {
       ? `Previous Low: ${level.previous_low}`
       : "",
     level.gap_fill != null ? `Gap Fill: ${level.gap_fill}` : "",
-    level.notes ? `\nPlan\n${level.notes}` : "",
+    level.notes ? `\nPLAN\n${level.notes}` : "",
   ]
     .filter(Boolean)
     .join("\n");
@@ -728,6 +750,13 @@ function sendPremarketLevelToPublishing(level) {
             await loadTodayTradingDay();
           }}
           onOpenPublishing={() => navigate("/publishing")}
+        />
+
+        <LiveTradeManager
+          tickets={tickets}
+          onUpdate={updateTradeTicket}
+          onRefresh={loadTickets}
+          disabled={!apiStatus.online || !tradingDay?.id}
         />
 
         <div
