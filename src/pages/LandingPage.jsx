@@ -1,17 +1,42 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Activity, ArrowRight, BarChart3, BookOpen, Bot, CalendarDays,
-  Check, Clock3, Crosshair, Gauge, GraduationCap, Layers3,
-  MessageCircle, MonitorPlay, Radar, ShieldCheck, Sparkles,
-  Target, TrendingUp, Users, Video, Zap
+  Activity, ArrowRight, BarChart3, BookOpen, Bot, CalendarDays, Check,
+  Clock3, Crosshair, Gauge, GraduationCap, Layers3, MessageCircle,
+  MonitorPlay, Radar, ShieldCheck, Sparkles, Target, TrendingUp, Users,
+  Video, Zap
 } from "lucide-react";
 import "./LandingPage.css";
 
+const MARKET_API_URL = import.meta.env.VITE_MARKET_API_URL || "";
 const DISCORD_CHECKOUT = import.meta.env.VITE_WHOP_DISCORD_URL || "https://whop.com/tqpx-tru-quant-enterprise/";
 const STARTER_CHECKOUT = import.meta.env.VITE_WHOP_STARTER_URL || "https://whop.com/tqpx-tru-quant-enterprise/trqx-capital-terminal-starter";
 const PRO_CHECKOUT = import.meta.env.VITE_WHOP_PRO_URL || "https://whop.com/tqpx-tru-quant-enterprise/trqx-terminal-pro";
 const ELITE_CHECKOUT = import.meta.env.VITE_WHOP_ELITE_URL || "https://whop.com/tqpx-tru-quant-enterprise/trqx-elite";
+
+const fallbackQuotes = [
+  { symbol: "SPY", price: 638.47, change: 0.42, series: [631,632,631.5,633,634.2,633.7,635.4,636,635.6,637.2,638.47] },
+  { symbol: "QQQ", price: 571.24, change: 0.67, series: [563,564.5,564,565.7,566.9,566.1,568.2,569.4,568.8,570.3,571.24] },
+  { symbol: "IWM", price: 224.18, change: -0.31, series: [226.1,225.7,225.9,225.1,224.7,225,224.4,224.8,224.3,224.6,224.18] },
+  { symbol: "VIX", price: 15.72, change: -2.08, series: [16.5,16.3,16.4,16.1,16,16.2,15.9,15.8,15.95,15.7,15.72] },
+  { symbol: "/ES", price: 6421.25, change: 0.39, series: [6386,6392,6388,6401,6405,6400,6410,6414,6409,6418,6421.25] },
+  { symbol: "/NQ", price: 23384.5, change: 0.61, series: [23105,23144,23130,23192,23218,23196,23250,23288,23262,23335,23384.5] },
+  { symbol: "/YM", price: 45082, change: 0.21, series: [44910,44935,44920,44980,45002,44988,45020,45038,45011,45064,45082] },
+  { symbol: "/RTY", price: 2258.6, change: -0.18, series: [2266,2263,2264,2260,2258,2261,2257,2259,2256,2259,2258.6] },
+  { symbol: "DXY", price: 97.46, change: -0.14, series: [97.8,97.7,97.72,97.63,97.58,97.61,97.53,97.5,97.55,97.48,97.46] },
+  { symbol: "NVDA", price: 176.75, change: 1.28, series: [171.8,172.5,172.1,173.4,174.1,173.7,174.8,175.2,174.9,176.1,176.75] },
+  { symbol: "TSLA", price: 316.06, change: -1.12, series: [322,320.7,321.2,319.5,318.7,319.1,317.8,318.4,317.1,316.7,316.06] },
+  { symbol: "AMD", price: 168.92, change: 2.03, series: [163.2,164,163.7,165.1,165.8,165.3,166.4,167.1,166.8,168,168.92] },
+  { symbol: "AAPL", price: 213.88, change: 0.55, series: [211.4,211.8,211.5,212.2,212.7,212.4,213,213.3,213.1,213.6,213.88] },
+  { symbol: "META", price: 704.31, change: 1.07, series: [694,696,695,699,700,698,702,703,701,704,704.31] },
+];
+
+const fallbackFlow = [
+  { ticker: "NVDA", contract: "180C · 08/01", premium: "$2.48M", bias: "BULLISH", time: "10:21" },
+  { ticker: "SPY", contract: "640C · 07/28", premium: "$1.96M", bias: "BULLISH", time: "10:18" },
+  { ticker: "TSLA", contract: "310P · 08/01", premium: "$1.41M", bias: "BEARISH", time: "10:13" },
+  { ticker: "AMD", contract: "170C · 08/08", premium: "$987K", bias: "BULLISH", time: "10:08" },
+];
 
 const plans = [
   { name: "TRQX Trading Floor", label: "Discord Membership", price: "$45.99", url: DISCORD_CHECKOUT, features: ["Full Discord access", "Daily market preparation", "Live trade discussions", "Education and chart reviews", "Cancel anytime"] },
@@ -21,31 +46,105 @@ const plans = [
   { name: "TRQX Mentorship", label: "Direct Education", price: "$189", path: "/mentorship", mentorship: true, features: ["Two live 1-hour reviews weekly", "Entries, exits and trade management", "5m through weekly analysis", "TradingView, indicators and EMAs", "Open Q&A and accountability"] },
 ];
 
-function MarketCard({ symbol, price, change, negative }) {
-  return <div className="lp-market-card"><span>{symbol}</span><b>{price}</b><small className={negative ? "down" : "up"}>{change}</small><div className={`lp-spark ${negative ? "red" : "green"}`}><i/><i/><i/><i/><i/><i/></div></div>;
+function normalizePayload(payload) {
+  const quotes = Array.isArray(payload?.quotes) ? payload.quotes : Array.isArray(payload) ? payload : [];
+  if (!quotes.length) throw new Error("Market API returned no quotes");
+  return {
+    quotes: quotes.map((q) => ({
+      symbol: String(q.symbol || q.ticker || "").toUpperCase(),
+      price: Number(q.price ?? q.last ?? q.close),
+      change: Number(q.changePercent ?? q.change ?? q.percentChange ?? 0),
+      series: Array.isArray(q.series || q.history) ? (q.series || q.history).map(Number).filter(Number.isFinite) : [],
+    })).filter((q) => q.symbol && Number.isFinite(q.price)),
+    flow: Array.isArray(payload?.flow) ? payload.flow : fallbackFlow,
+    breadth: payload?.breadth,
+    gamma: payload?.gamma,
+  };
 }
 
-function TerminalPreview() {
+function useMarketIntelligence() {
+  const [state, setState] = useState({ quotes: fallbackQuotes, flow: fallbackFlow, source: "DEMO DATA", updatedAt: new Date(), loading: Boolean(MARKET_API_URL) });
+
+  useEffect(() => {
+    if (!MARKET_API_URL) return;
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const response = await fetch(MARKET_API_URL, { headers: { Accept: "application/json" } });
+        if (!response.ok) throw new Error(`Market API failed: ${response.status}`);
+        const normalized = normalizePayload(await response.json());
+        if (!cancelled) setState({ ...normalized, source: "LIVE", updatedAt: new Date(), loading: false });
+      } catch (error) {
+        console.warn("TRQX landing market feed fallback:", error);
+        if (!cancelled) setState({ quotes: fallbackQuotes, flow: fallbackFlow, source: "DEMO DATA", updatedAt: new Date(), loading: false });
+      }
+    };
+    load();
+    const interval = window.setInterval(load, 60000);
+    return () => { cancelled = true; window.clearInterval(interval); };
+  }, []);
+
+  return state;
+}
+
+function formatPrice(value) {
+  return new Intl.NumberFormat("en-US", { minimumFractionDigits: value >= 1000 ? 2 : 2, maximumFractionDigits: 2 }).format(value);
+}
+
+function Sparkline({ values = [], positive = true, compact = false }) {
+  const safe = values.length > 1 ? values : [0, 1];
+  const min = Math.min(...safe); const max = Math.max(...safe); const span = max - min || 1;
+  const points = safe.map((v, i) => `${(i / (safe.length - 1)) * 100},${42 - ((v - min) / span) * 36}`).join(" ");
+  const area = `0,44 ${points} 100,44`;
+  return <svg className={`lp-real-spark ${compact ? "compact" : ""}`} viewBox="0 0 100 46" preserveAspectRatio="none" aria-hidden="true">
+    <defs><linearGradient id={`spark-${positive}-${compact}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="currentColor" stopOpacity=".28"/><stop offset="1" stopColor="currentColor" stopOpacity="0"/></linearGradient></defs>
+    <polygon points={area} fill={`url(#spark-${positive}-${compact})`} />
+    <polyline points={points} fill="none" vectorEffect="non-scaling-stroke" />
+  </svg>;
+}
+
+function CandleChart({ positive = true }) {
+  const candles = positive
+    ? [[128,132,126,130],[130,134,129,133],[133,135,130,131],[131,138,130,136],[136,140,134,139],[139,143,137,141],[141,147,140,146],[146,149,143,145],[145,152,144,151],[151,156,149,154]]
+    : [[154,156,150,152],[152,154,148,149],[149,151,145,147],[147,150,143,145],[145,147,140,142],[142,145,138,140],[140,143,136,138],[138,141,134,136],[136,139,132,134],[134,136,129,131]];
+  const high = Math.max(...candles.map(c => c[1])); const low = Math.min(...candles.map(c => c[2]));
+  const y = (v) => 92 - ((v - low) / (high - low || 1)) * 78;
+  return <svg className="lp-candle-chart" viewBox="0 0 240 100" preserveAspectRatio="none" aria-label="Illustrative candlestick chart">
+    {[20,40,60,80].map(n => <line key={n} x1="0" y1={n} x2="240" y2={n} className="grid"/>)}
+    {candles.map((c, i) => { const [o,h,l,cl] = c; const up = cl >= o; const x = 12 + i * 23; return <g key={i} className={up ? "candle-up" : "candle-down"}><line x1={x} y1={y(h)} x2={x} y2={y(l)}/><rect x={x-5} y={Math.min(y(o),y(cl))} width="10" height={Math.max(2,Math.abs(y(o)-y(cl)))} rx="1"/></g>; })}
+  </svg>;
+}
+
+function MarketCard({ quote }) {
+  const positive = quote.change >= 0;
+  return <article className="lp-market-card">
+    <div className="lp-market-symbol"><span>{quote.symbol}</span><i className={positive ? "up" : "down"}>{positive ? "▲" : "▼"} {Math.abs(quote.change).toFixed(2)}%</i></div>
+    <b>{quote.symbol.startsWith("/") || quote.symbol === "VIX" || quote.symbol === "DXY" ? "" : "$"}{formatPrice(quote.price)}</b>
+    <Sparkline values={quote.series} positive={positive}/>
+  </article>;
+}
+
+function TerminalPreview({ market }) {
+  const cards = ["SPY", "QQQ", "IWM", "VIX"].map(symbol => market.quotes.find(q => q.symbol === symbol)).filter(Boolean);
   return <div className="lp-terminal-shell">
-    <div className="lp-terminal-top"><div><span className="lp-terminal-mark">TQ</span><b>TRQX TERMINAL</b></div><div className="lp-window-dots"><i/><i/><i/></div></div>
+    <div className="lp-terminal-top"><div><span className="lp-terminal-mark">TQ</span><b>TRQX INTELLIGENCE TERMINAL</b></div><div className="lp-window-dots"><i/><i/><i/></div></div>
     <div className="lp-terminal-body">
-      <aside className="lp-mini-sidebar">{[Activity, Radar, Gauge, CalendarDays, Bot].map((Icon, i)=><Icon key={i} size={17}/>)}</aside>
+      <aside className="lp-mini-sidebar">{[Activity, Radar, Gauge, CalendarDays, Bot].map((Icon, i)=><Icon key={i} size={19}/>)}</aside>
       <div className="lp-terminal-main">
-        <div className="lp-preview-title"><span>Market Overview</span><em>LIVE</em></div>
-        <div className="lp-market-grid"><MarketCard symbol="SPY" price="$534.21" change="+0.72%"/><MarketCard symbol="QQQ" price="$459.78" change="+0.72%"/><MarketCard symbol="IWM" price="$200.45" change="+0.72%"/><MarketCard symbol="VIX" price="13.62" change="-2.11%" negative/></div>
+        <div className="lp-preview-title"><span>Cross-Asset Market Overview</span><em className={market.source === "LIVE" ? "live" : "demo"}>{market.source}</em></div>
+        <div className="lp-market-grid">{cards.map(q => <MarketCard key={q.symbol} quote={q}/>)}</div>
         <div className="lp-terminal-lower">
-          <div className="lp-flow-panel"><div className="lp-panel-head">Today's Flow <span>View All</span></div>{[["SPY","CALL SWEEP","$2.4M"],["NVDA","CALL SWEEP","$1.8M"],["AAPL","CALL SWEEP","$1.2M"],["TSLA","PUT SWEEP","$950K"]].map((r,i)=><div className="lp-flow-row" key={i}><b>{r[0]}</b><span className={i===3?"down":"up"}>{r[1]}</span><em>{r[2]}</em></div>)}</div>
-          <div className="lp-gamma-panel"><div className="lp-panel-head">SPY Options Flow</div><div className="lp-bubble-chart">{Array.from({length:28}).map((_,i)=><i key={i} style={{left:`${8+(i%7)*13}%`,top:`${12+Math.floor(i/7)*21}%`,width:`${8+(i%5)*3}px`,height:`${8+(i%5)*3}px`}}/>)}</div></div>
+          <div className="lp-flow-panel"><div className="lp-panel-head"><span>Institutional Flow</span><small>PREMIUM · CONTRACT · TIME</small></div>{market.flow.slice(0,4).map((r,i)=><div className="lp-flow-row" key={`${r.ticker}-${i}`}><b>{r.ticker}</b><span><strong className={String(r.bias).includes("BEAR") ? "down" : "up"}>{r.bias}</strong><small>{r.contract}</small></span><em>{r.premium}<small>{r.time}</small></em></div>)}</div>
+          <div className="lp-positioning-panel"><div className="lp-panel-head"><span>Dealer Positioning</span><small>SPY · INTRADAY</small></div><div className="lp-positioning-meta"><b>LONG GAMMA</b><span>Volatility suppression above flip</span></div><CandleChart positive/><div className="lp-level-strip"><span>PUT WALL <b>630</b></span><span>GAMMA FLIP <b>635</b></span><span>CALL WALL <b>645</b></span></div></div>
         </div>
-        <div className="lp-terminal-bottom"><div><b>Economic Calendar</b><span>08:30 AM · CPI Release</span></div><div><b>Dealer Positioning</b><span className="up">LONG GAMMA</span></div><div><b>AI Market Read</b><span>Risk-on, selective momentum</span></div></div>
+        <div className="lp-terminal-bottom"><div><small>NEXT CATALYST</small><b>GDP · 8:30 AM ET</b></div><div><small>MARKET BREADTH</small><b className="up">68% ADVANCING</b></div><div><small>AI MARKET READ</small><b>Risk-on · selective momentum</b></div></div>
       </div>
-      <div className="lp-gamma-ring"><span>GAMMA</span><b>72%</b><small>LONG</small></div>
     </div>
   </div>;
 }
 
 function WorkflowCard({ number, icon: Icon, title, time, children, footer }) {
-  return <article className="lp-workflow-card"><div className="lp-workflow-heading"><span>{number}</span><Icon size={20}/><div><h3>{title}</h3><p>{time}</p></div></div><div className="lp-workflow-content">{children}</div><small>{footer}</small></article>;
+  return <article className="lp-workflow-card"><div className="lp-workflow-heading"><span>{number}</span><Icon size={22}/><div><h3>{title}</h3><p>{time}</p></div></div><div className="lp-workflow-content">{children}</div><small>{footer}</small></article>;
 }
 
 const academyTracks = [
@@ -57,46 +156,37 @@ const academyTracks = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const market = useMarketIntelligence();
   const go = (path) => navigate(path);
   const checkout = (url) => window.open(url, "_blank", "noopener,noreferrer");
   const openPlan = (plan) => plan.path ? go(plan.path) : checkout(plan.url);
+  const updated = useMemo(() => market.updatedAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit", timeZone: "America/New_York" }), [market.updatedAt]);
 
   return <div className="trqx-landing">
-    <header className="lp-nav"><button className="lp-brand" onClick={()=>go("/home")}><strong>TRQ<span>X</span></strong><small>TERMINAL</small></button><nav><a href="#terminal">Terminal</a><a href="#discord">Trading Floor</a><a href="#academy">Academy</a><a href="#pricing">Pricing</a><a href="#about">About</a></nav><div className="lp-nav-actions"><button className="lp-login" onClick={()=>go("/auth")}>Login</button><button className="lp-gold-btn" onClick={()=>go("/auth")}>Start Free Trial</button></div></header>
+    <header className="lp-nav"><button className="lp-brand" onClick={()=>go("/home")}><strong>TRQ<span>X</span></strong><small>TERMINAL</small></button><nav><a href="#terminal">Terminal</a><a href="#workflow">Workflow</a><a href="#academy">Academy</a><a href="#pricing">Pricing</a><a href="#about">About</a></nav><div className="lp-nav-actions"><button className="lp-login" onClick={()=>go("/auth")}>Login</button><button className="lp-gold-btn" onClick={()=>go("/auth")}>Start Free Trial</button></div></header>
 
     <main>
-      <section className="lp-hero" id="terminal">
-        <div className="lp-grid-bg"/><div className="lp-orbit lp-orbit-one"/><div className="lp-orbit lp-orbit-two"/>
-        <div className="lp-hero-copy"><div className="lp-live-pill"><i/> LIVE MARKET STATUS <b>MARKET OPEN</b></div><h1>THE TRADING<br/><span>OPERATING SYSTEM</span></h1><h2>Read the Market. Build the Plan.<br/>Execute with Precision. Review Every Decision.</h2><p>TRQX combines institutional options flow, gamma intelligence, market preparation, education, and a complete execution workflow in one professional environment.</p><div className="lp-hero-actions"><button className="lp-primary" onClick={()=>go("/auth")}>ENTER THE TERMINAL <ArrowRight size={18}/></button><button className="lp-secondary" onClick={()=>go("/discord-membership")}>JOIN THE TRADING FLOOR <small>$45.99 / MONTH</small></button></div><div className="lp-trust-row"><div><Zap/><span><b>REAL-TIME DATA</b>As it happens</span></div><div><BarChart3/><span><b>INSTITUTIONAL GRADE</b>Built for serious traders</span></div><div><ShieldCheck/><span><b>SECURE & PRIVATE</b>Your data is protected</span></div><div><Target/><span><b>BUILT FOR TRADERS</b>By traders, for traders</span></div></div></div>
-        <TerminalPreview/>
-      </section>
+      <section className="lp-hero" id="terminal"><div className="lp-grid-bg"/><div className="lp-hero-copy"><div className="lp-live-pill"><i className={market.source === "LIVE" ? "" : "demo"}/><span>MARKET INTELLIGENCE</span><b>{market.loading ? "CONNECTING" : market.source}</b><small>Updated {updated} ET</small></div><h1>THE TRADING<br/><span>OPERATING SYSTEM</span></h1><h2>Read the market. Build the plan.<br/>Execute with precision.</h2><p>TRQX combines options flow, gamma intelligence, market preparation, education, and disciplined execution tools in one professional environment.</p><div className="lp-hero-actions"><button className="lp-primary" onClick={()=>go("/auth")}>ENTER THE TERMINAL <ArrowRight size={19}/></button><button className="lp-secondary" onClick={()=>go("/mentorship")}>EXPLORE MENTORSHIP <small>$189 / MONTH</small></button></div><div className="lp-trust-row"><div><Zap/><span><b>MARKET INTELLIGENCE</b>One consolidated view</span></div><div><BarChart3/><span><b>PROFESSIONAL WORKFLOW</b>Built for serious traders</span></div><div><ShieldCheck/><span><b>SECURE & PRIVATE</b>Your data is protected</span></div><div><Target/><span><b>PROCESS FIRST</b>Precision over prediction</span></div></div></div><TerminalPreview market={market}/></section>
 
-      <div className="lp-tape"><span>TRADING INTELLIGENCE LIVE</span>{[["SPY","534.21","+0.72%"],["QQQ","459.78","+0.72%"],["IWM","200.45","+0.72%"],["VIX","13.62","-2.11%"],["/ES","5342.00","+0.68%"],["/NQ","18745.25","+0.71%"]].map((x,i)=><b key={x[0]}>{x[0]} {x[1]} <em className={i===3?"down":"up"}>{x[2]}</em></b>)}</div>
+      <div className="lp-tape"><div className="lp-tape-status"><span>TRADING INTELLIGENCE</span><b className={market.source === "LIVE" ? "live" : "demo"}>{market.source}</b></div><div className="lp-tape-track">{[...market.quotes, ...market.quotes].map((q,i)=><strong key={`${q.symbol}-${i}`}><span>{q.symbol}</span>{q.symbol.startsWith("/") || q.symbol === "VIX" || q.symbol === "DXY" ? "" : "$"}{formatPrice(q.price)} <em className={q.change >= 0 ? "up" : "down"}>{q.change >= 0 ? "+" : ""}{q.change.toFixed(2)}%</em></strong>)}</div></div>
 
-      <section className="lp-section" id="workflow"><div className="lp-section-head"><span>A COMPLETE WORKFLOW</span><h2>A DAY INSIDE TRQX</h2><p>From premarket preparation to post-market review.</p></div><div className="lp-workflow-grid">
-        <WorkflowCard number="1" icon={Clock3} title="Premarket Preparation" time="7:45 AM – 9:30 AM" footer="Build the plan. Know your levels. Enter prepared."><ul><li><CalendarDays/>Economic Calendar</li><li><Bot/>AI Market Brief</li><li><Radar/>Options Flow Scanner</li><li><Gauge/>Gamma Dashboard</li><li><Layers3/>Premarket Levels</li></ul><div className="lp-mini-chart"><div className="lp-levels"><span>Resistance <b>$542.50</b></span><span>$541.20</span><span>$539.80</span><span className="up">Support <b>$537.10</b></span></div><svg viewBox="0 0 240 120"><polyline points="0,102 25,96 45,100 70,84 92,88 115,63 138,69 162,42 184,50 210,25 240,12"/></svg></div></WorkflowCard>
-        <WorkflowCard number="2" icon={Crosshair} title="Live Execution" time="9:30 AM – 4:00 PM" footer="Execute with precision. Manage with discipline."><div className="lp-trade-chart"><div className="lp-trade-ticket"><b>SPY · LONG CALL</b><span>Entry $540.25</span><span>Stop $539.00</span><span>Risk 1.25R</span></div><svg viewBox="0 0 330 170"><polyline points="0,150 35,144 55,130 78,136 98,110 120,117 145,83 170,92 195,66 218,70 246,38 275,44 300,22 330,28"/></svg><i className="tp tp1">TP1 +3R</i><i className="tp be">BE MOVE</i><i className="tp tp2">TP2 +5R</i><i className="stop">STOP</i></div></WorkflowCard>
-        <WorkflowCard number="3" icon={BookOpen} title="Post Market Review" time="4:00 PM – After Close" footer="Review every decision. Get better every day."><ul><li><Activity/>Trade Replay</li><li><BookOpen/>Journal & Notes</li><li><TrendingUp/>Performance Analytics</li><li><Target/>Win Rate & R-Multiples</li><li><Sparkles/>Lessons Learned</li></ul><div className="lp-performance"><span>Total Trades <b>7</b></span><span>Win Rate <b>71%</b></span><span>Total R <b className="up">+9.25R</b></span><span>Profit Factor <b className="up">2.45</b></span></div></WorkflowCard>
+      <section className="lp-section" id="workflow"><div className="lp-section-head"><span>A COMPLETE WORKFLOW</span><h2>FROM MARKET NOISE TO A DEFINED PLAN</h2><p>Detect opportunity, validate the setup, execute risk, and review every decision.</p></div><div className="lp-workflow-grid">
+        <WorkflowCard number="01" icon={Radar} title="Detect" time="Premarket intelligence" footer="Know where attention and liquidity are moving."><ul><li><CalendarDays/>Economic catalysts and earnings</li><li><Bot/>AI market regime brief</li><li><Radar/>Relative volume and top movers</li><li><Gauge/>Gamma walls and dealer position</li></ul><div className="lp-workflow-chart"><CandleChart positive/><div><span>Resistance <b>$645.00</b></span><span>Gamma flip <b>$635.00</b></span><span>Support <b>$630.00</b></span></div></div></WorkflowCard>
+        <WorkflowCard number="02" icon={Crosshair} title="Validate & Execute" time="Live market workflow" footer="Define the trade before placing the trade."><div className="lp-execution-card"><div><small>NVDA · BULLISH CONTINUATION</small><b>Entry $176.40</b><span>Invalidation $174.90</span></div><CandleChart positive/><div className="lp-risk-grid"><span>RISK <b>$150</b></span><span>TP1 <b>1.5R</b></span><span>TP2 <b>3.0R</b></span></div></div></WorkflowCard>
+        <WorkflowCard number="03" icon={BookOpen} title="Review & Improve" time="After-market process" footer="Turn each decision into usable feedback."><ul><li><Activity/>Trade replay and annotations</li><li><BookOpen/>Journal, thesis, and mistakes</li><li><TrendingUp/>Win rate and R-multiple analytics</li><li><Sparkles/>AI-assisted lessons learned</li></ul><div className="lp-performance"><span>Execution Score <b>86</b></span><span>Win Rate <b>71%</b></span><span>Total R <b className="up">+9.25R</b></span><span>Plan Adherence <b>92%</b></span></div></WorkflowCard>
       </div></section>
 
-      <section className="lp-discord" id="discord"><div className="lp-discord-copy"><span>THE TRQX</span><h2>TRADING FLOOR</h2><h3>A COMMUNITY OF SERIOUS TRADERS BUILDING CONSISTENT RESULTS.</h3><p>Daily preparation, live trade discussions, education, chart reviews, and accountability. We do not just talk about trading. We execute the process together.</p><button className="lp-primary" onClick={()=>go("/discord-membership")}><MessageCircle/> EXPLORE THE DISCORD</button><small>$45.99 / MONTH · CANCEL ANYTIME</small></div><div className="lp-discord-window"><aside><b>TRQX TRADING FLOOR</b><span>MARKET PREP</span><p># daily-plan</p><p># premarket-levels</p><p># economic-calendar</p><p># market-news</p><span>LIVE FLOOR</span><p className="active"># live-trades</p><p># trade-management</p><p># alerts</p><span>LEARN & GROW</span><p># chart-reviews</p><p># academy</p><p># psychology</p></aside><div className="lp-chat"><div className="lp-chat-head"># live-trades <span>342 online</span></div><article><b>TRQX Alerts <small>9:31 AM</small></b><p>SPY CALL $40</p><span>Stop: $39.00 · Targets: $43.25 / $45.50 / $48.00</span><div className="lp-chat-chart"><svg viewBox="0 0 500 130"><polyline points="0,105 45,95 80,103 115,82 150,88 190,60 230,72 270,43 320,52 360,31 410,38 455,18 500,25"/></svg></div></article><article><b>Floor Manager <small>9:42 AM</small></b><p className="up">TP1 HIT · +3R locked</p></article><article><b>TRQX Alerts <small>9:51 AM</small></b><p>Move stop to breakeven.</p></article></div><aside className="lp-members"><b>ONLINE NOW — 342</b>{["TRQX Founder","Floor Manager","AlphaTrader","ChartKing","DisciplineWins","LevelUp","PatiencePays"].map((x,i)=><p key={x}><i className={i<2?"gold":"green"}/>{x}</p>)}</aside></div></section>
+      <section className="lp-value"><div><span>ONE OPERATING SYSTEM</span><h2>Stop stitching together five disconnected tools.</h2><p>TRQX organizes preparation, options intelligence, market structure, execution planning, education, and review into one repeatable process.</p></div><div className="lp-value-grid">{[[Radar,"SCAN","Find momentum, flow, and catalysts."],[Gauge,"POSITION","Read gamma walls and dealer pressure."],[Crosshair,"PLAN","Define entry, invalidation, targets, and size."],[BookOpen,"REVIEW","Track execution quality and improve."]].map(([Icon,t,p])=><article key={t}><Icon/><b>{t}</b><p>{p}</p></article>)}</div><button className="lp-primary" onClick={()=>go("/auth")}>SEE THE TERMINAL <ArrowRight size={18}/></button></section>
 
-      <section className="lp-section lp-academy" id="academy">
-        <div className="lp-section-head"><span>LEARN THE PROCESS</span><h2>TRQX ACADEMY</h2><p>A structured learning path—not a random library of disconnected videos.</p></div>
-        <div className="lp-academy-stage"><div className="lp-academy-copy"><div className="lp-academy-badge"><GraduationCap/> BEGINNER TO ADVANCED</div><h3>Build the trader before chasing the trade.</h3><p>Study chart structure, execution, TradingView, indicators, risk management, and psychology. Lessons are supported by flash cards, drills, quizzes, and practical chart review.</p><button className="lp-primary" onClick={()=>go("/auth")}>ENTER THE ACADEMY <ArrowRight size={17}/></button></div><div className="lp-course-grid">{academyTracks.map((track, i)=><article key={track.title}><div className="lp-course-number">0{i+1}</div><small>{track.tag}</small><h3>{track.title}</h3><p>{track.text}</p><div className="lp-course-progress"><i style={{width:`${track.progress}%`}}/></div><span>{track.progress}% curriculum preview</span></article>)}</div></div>
-      </section>
+      <section className="lp-section lp-academy" id="academy"><div className="lp-section-head"><span>LEARN THE PROCESS</span><h2>TRQX ACADEMY</h2><p>A structured learning path—not a random library of disconnected videos.</p></div><div className="lp-academy-stage"><div className="lp-academy-copy"><div className="lp-academy-badge"><GraduationCap/> BEGINNER TO ADVANCED</div><h3>Build the trader before chasing the trade.</h3><p>Study chart structure, execution, TradingView, indicators, risk management, and psychology through lessons, flash cards, drills, quizzes, and chart review.</p><button className="lp-primary" onClick={()=>go("/auth")}>ENTER THE ACADEMY <ArrowRight size={17}/></button></div><div className="lp-course-grid">{academyTracks.map((track,i)=><article key={track.title}><div className="lp-course-number">0{i+1}</div><small>{track.tag}</small><h3>{track.title}</h3><p>{track.text}</p><div className="lp-course-progress"><i style={{width:`${track.progress}%`}}/></div><span>{track.progress}% curriculum preview</span></article>)}</div></div></section>
 
-      <section className="lp-mentorship" id="mentorship"><div className="lp-mentorship-glow"/><div className="lp-mentor-copy"><span>DIRECT EDUCATION</span><h2>TRQX MENTORSHIP</h2><h3>Learn to read the chart—not depend on someone else's call.</h3><p>Work directly with Michael through two live one-hour chart-review sessions each week. Bring your charts, previous trades, setups, and questions.</p><div className="lp-mentor-points"><span><Video/>2 live chart reviews every week</span><span><Crosshair/>Entries, exits, stops and invalidation</span><span><Layers3/>5-minute through weekly timeframes</span><span><MonitorPlay/>TradingView layouts and workflow</span><span><TrendingUp/>Indicators, EMAs and trend structure</span><span><MessageCircle/>Open Q&A and accountability</span></div></div><article className="lp-mentor-offer"><small>FOUNDING MENTORSHIP RATE</small><div className="lp-price">$189<span>/month</span></div><p>Approximately eight live educational sessions per month.</p><ul><li><Check/>Two 1-hour sessions weekly</li><li><Check/>Member-submitted chart reviews</li><li><Check/>Multi-timeframe education</li><li><Check/>Questions submitted before sessions</li><li><Check/>Cancel anytime</li></ul><button className="lp-primary" onClick={()=>go("/mentorship")}>VIEW MENTORSHIP <ArrowRight size={17}/></button><span>Educational only. No trade signals or guarantees.</span></article></section>
+      <section className="lp-mentorship" id="mentorship"><div className="lp-mentor-copy"><span>DIRECT EDUCATION</span><h2>TRQX MENTORSHIP</h2><h3>Learn to read the chart—not depend on someone else's call.</h3><p>Work directly with Michael through two live one-hour chart-review sessions each week. Bring your charts, previous trades, setups, and questions.</p><div className="lp-mentor-points"><span><Video/>2 live reviews every week</span><span><Crosshair/>Entries, exits, stops, invalidation</span><span><Layers3/>5-minute through weekly charts</span><span><MonitorPlay/>TradingView workflow</span><span><TrendingUp/>Indicators and trend structure</span><span><MessageCircle/>Open Q&A and accountability</span></div></div><article className="lp-mentor-offer"><small>FOUNDING MENTORSHIP RATE</small><div className="lp-price">$189<span>/month</span></div><p>Approximately eight live educational sessions per month.</p><ul><li><Check/>Two 1-hour sessions weekly</li><li><Check/>Member-submitted chart reviews</li><li><Check/>Multi-timeframe education</li><li><Check/>Questions submitted before sessions</li><li><Check/>Cancel anytime</li></ul><button className="lp-primary" onClick={()=>go("/mentorship")}>VIEW MENTORSHIP <ArrowRight size={17}/></button><span>Educational only. No trade signals or guarantees.</span></article></section>
 
       <section className="lp-about" id="about"><div className="lp-about-statement"><span>WHY TRQX EXISTS</span><h2>MOST TRADERS DO NOT NEED ANOTHER INDICATOR.</h2><p>They need structure, preparation, risk management, accountability, and a repeatable process. TRQX brings those pieces into one operating system built around disciplined decision-making.</p><div className="lp-process-line"><span>PREPARE</span><i/><span>ANALYZE</span><i/><span>EXECUTE</span><i/><span>REVIEW</span><i/><span>IMPROVE</span></div></div><article className="lp-founder-card"><div className="lp-founder-monogram">MV</div><small>MEET THE FOUNDER</small><h3>Michael A. Valerio</h3><p>Technologist, trader, educator, and builder of the TRQX ecosystem.</p><blockquote>“I AM THE ALGO means the trader develops the discipline to become the system.”</blockquote><button onClick={()=>go("/mentorship")}>LEARN WITH MICHAEL <ArrowRight size={15}/></button></article></section>
 
-      <section className="lp-section lp-pricing" id="pricing"><div className="lp-section-head"><span>CHOOSE YOUR EDGE</span><h2>POWERFUL TOOLS. CLEAR PURPOSE.</h2><p>Software, community, and direct education—each offer has a distinct role.</p></div><div className="lp-pricing-grid">{plans.map(plan=><article key={plan.name} className={`${plan.popular?"popular":""} ${plan.mentorship?"mentorship-plan":""}`}>{plan.popular&&<em>MOST POPULAR</em>}{plan.mentorship&&<em>DIRECT ACCESS</em>}<small>{plan.label}</small><h3>{plan.name}</h3><div className="lp-price">{plan.price}<span>/mo</span></div><ul>{plan.features.map(f=><li key={f}><Check/>{f}</li>)}</ul><button onClick={()=>openPlan(plan)}>{plan.mentorship?"VIEW MENTORSHIP":plan.name.includes("Floor")?"JOIN THE FLOOR":"START NOW"}</button></article>)}</div></section>
-
-      <section className="lp-why" id="why"><div className="lp-why-intro"><span>WHY TRADERS</span><h2>USE TRQX</h2><p>Structure, intelligence, discipline, education, and accountability—combined in one operating system.</p></div>{[[Users,"PROFESSIONAL PROCESS","A structured workflow from preparation through review."],[Radar,"REAL INTELLIGENCE","Institutional data translated into decisions."],[Target,"DISCIPLINE & ACCOUNTABILITY","Stay consistent with a process and community."],[GraduationCap,"EDUCATION THAT WORKS","Learn, practice, apply, and improve."],[TrendingUp,"FOCUS ON RESULTS","Execute the plan and let the edge compound."]].map(([Icon,t,d])=><div className="lp-why-item" key={t}><Icon/><b>{t}</b><p>{d}</p></div>)}<blockquote>“TRQX is not just a tool. It is the operating system for serious traders.”<span>— TRQX Founder</span></blockquote></section>
-
-      <section className="lp-stats"><div><Users/><span><b>342</b>Members Online</span></div><div><Crosshair/><span><b>14</b>Trades Today</span></div><div><TrendingUp/><span><b>+18.25R</b>Total R Today</span></div><div><BookOpen/><span><b>7</b>Market Plans Published</span></div><div className="lp-next-event"><small>NEXT EVENT</small><b>CPI Release</b><span>08:30 AM ET</span></div><div className="lp-countdown"><b>02</b><i>:</i><b>14</b><i>:</i><b>37</b></div></section>
+      <section className="lp-section lp-pricing" id="pricing"><div className="lp-section-head"><span>CHOOSE YOUR EDGE</span><h2>START WITH THE LEVEL THAT FITS YOUR PROCESS.</h2><p>Software, community, and direct education each have a distinct purpose.</p></div><div className="lp-pricing-grid">{plans.map(plan=><article key={plan.name} className={`${plan.popular?"popular":""} ${plan.mentorship?"mentorship-plan":""}`}>{plan.popular&&<em>MOST POPULAR</em>}{plan.mentorship&&<em>DIRECT ACCESS</em>}<small>{plan.label}</small><h3>{plan.name}</h3><div className="lp-price">{plan.price}<span>/mo</span></div><ul>{plan.features.map(f=><li key={f}><Check/>{f}</li>)}</ul><button onClick={()=>openPlan(plan)}>{plan.mentorship?"VIEW MENTORSHIP":plan.name.includes("Floor")?"JOIN THE FLOOR":"START NOW"}</button></article>)}</div></section>
     </main>
 
-    <footer className="lp-footer"><div className="lp-footer-brand"><strong>TRQ<span>X</span></strong><small>I AM THE ALGO</small><p>Educational content and tools only. No financial advice. Trading involves risk.</p></div><div><b>QUICK LINKS</b><a href="#terminal">Terminal</a><a href="#pricing">Pricing</a><a href="#academy">Academy</a><a href="#discord">Trading Floor</a><a href="#about">About</a></div><div><b>STAY CONNECTED</b><div className="lp-socials"><button aria-label="Discord"><MessageCircle/></button><button aria-label="Community"><Users/></button><button aria-label="Market activity"><Activity/></button></div><p>© 2026 TRQX Capital. All rights reserved.</p></div></footer>
+    <footer className="lp-footer"><div className="lp-footer-brand"><strong>TRQ<span>X</span></strong><small>I AM THE ALGO</small><p>Educational content and tools only. No financial advice. Trading involves risk.</p></div><div><b>QUICK LINKS</b><a href="#terminal">Terminal</a><a href="#workflow">Workflow</a><a href="#pricing">Pricing</a><a href="#academy">Academy</a><a href="#about">About</a></div><div><b>STAY CONNECTED</b><div className="lp-socials"><button aria-label="Discord"><MessageCircle/></button><button aria-label="Community"><Users/></button><button aria-label="Market activity"><Activity/></button></div><p>© 2026 TRQX Capital. All rights reserved.</p></div></footer>
   </div>;
 }
