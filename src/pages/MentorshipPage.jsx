@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./MentorshipPage.css";
 import {
   CalendarDays,
@@ -12,8 +12,19 @@ import {
 } from "lucide-react";
 
 
-const WHOP_MENTORSHIP_URL =
-  "YOUR_FINAL_WHOP_CHECKOUT_URL";
+const openWhop = () => {
+  if (!WHOP_MENTORSHIP_URL) {
+    console.error("Missing VITE_WHOP_MENTORSHIP_URL");
+    alert("Mentorship checkout is temporarily unavailable.");
+    return;
+  }
+
+  window.open(
+    WHOP_MENTORSHIP_URL,
+    "_blank",
+    "noopener,noreferrer"
+  );
+};
 
 const benefits = [
   "Two weekly live coaching sessions",
@@ -65,7 +76,7 @@ const sessions = [
 ];
 
 export default function MentorshipPage() {
-  const [showCalendly, setShowCalendly] = useState(false);
+  
 
   const openWhop = () => {
     if (WHOP_MENTORSHIP_URL === "#") {
@@ -107,13 +118,7 @@ export default function MentorshipPage() {
     Join Mentorship
   </button>
 
-  <button
-    className="mentorshipSecondaryBtn"
-    onClick={() => setShowCalendly((current) => !current)}
-  >
-    <CalendarDays size={18} />
-    {showCalendly ? "Close Booking" : "Book a Mentoring Session"}
-  </button>
+  
 
   <button
     className="mentorshipSecondaryBtn"
@@ -156,38 +161,6 @@ export default function MentorshipPage() {
         </div>
       </section>
 
-{showCalendly && (
-  <section className="mentorshipCalendly">
-    <div className="mentorshipCalendlyHeader">
-      <div>
-        <span>BOOK A SESSION</span>
-        <h2>Schedule a Mentoring Session</h2>
-      </div>
-
-      <button
-        type="button"
-        onClick={() => setShowCalendly(false)}
-      >
-        Close
-      </button>
-    </div>
-
-    <div className="mentorshipCalendlyFrame">
-      <iframe
-        src="https://calendly.com/michaelvalerio/rqx-mentoring-session"
-        width="100%"
-        height="700"
-        frameBorder="0"
-        title="Book a Mentoring Session with Michael Valerio"
-        style={{ display: "block" }}
-      />
-    </div>
-
-    <p className="mentorshipCalendlyNote">
-      Sessions are for TRQX Capital members only. Educational purposes only—not financial advice.
-    </p>
-  </section>
-)}
       <section className="mentorshipFeatures" id="mentorship-program">
         <article>
           <CalendarDays size={30} />
@@ -256,7 +229,7 @@ export default function MentorshipPage() {
           <span>ELITE MENTORSHIP</span>
 
           <div className="mentorshipPrice">
-            <strong>$299</strong>
+            <strong>$189</strong>
             <small>/month</small>
           </div>
 
