@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
+import CandlestickChart from "./CandlestickChart";
 import "./PatternAcademy.css";
 
 const PATTERNS = [
@@ -213,19 +213,7 @@ export default function PatternAcademy() {
 
       <div className="pa-ch">
         <h3>📊 Pattern Visualization</h3>
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={p.data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.1)" />
-            <XAxis dataKey="time" stroke="#8b98ad" />
-            <YAxis stroke="#8b98ad" domain={['dataMin - 5', 'dataMax + 5']} />
-            <Tooltip contentStyle={{ background: 'rgba(7,16,27,.9)', border: '1px solid #d4af37', borderRadius: '8px' }} labelStyle={{ color: '#d4af37' }} />
-            {p.zones.map((zone, i) => (
-              <ReferenceLine key={i} y={zone.value} stroke={zone.color} strokeDasharray="5 5" label={{ value: zone.name, fill: zone.color, fontSize: 12 }} />
-            ))}
-            <Bar dataKey="high" fill="#22c55e" opacity={0.6} />
-            <Bar dataKey="close" fill="#60a5fa" opacity={0.8} />
-          </BarChart>
-        </ResponsiveContainer>
+        <CandlestickChart data={p.data} />
       </div>
 
       <div className="pa-f">
