@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth.jsx";
 import { createOperationsApi } from "../../../api/operationsApi";
 import {
@@ -11,6 +11,7 @@ import {
   RotateCcw,
   Save,
   Send,
+  Sparkles,
   XCircle,
 } from "lucide-react";
 
@@ -241,6 +242,54 @@ export default function PublishingPage() {
     setNotice("Composer reset.");
   }
 
+  async function generateSocialPackage() {
+    if (!form.body.trim()) {
+      setNotice("Write the master post before generating platform versions.");
+      return;
+    }
+
+    if (typeof operationsApi.rewritePublishingContent !== "function") {
+      setNotice("The Operations API rewrite endpoint is not available yet.");
+      return;
+    }
+
+    setWorking(true);
+    setNotice("");
+
+    try {
+      const response = await operationsApi.rewritePublishingContent({
+        title: form.title.trim(),
+        body: form.body.trim(),
+        content_type: form.content_type,
+        ticker: form.ticker.trim().toUpperCase() || null,
+        destinations: form.destinations,
+      });
+
+      const overrides =
+        response?.platform_overrides ||
+        response?.overrides ||
+        response?.content ||
+        {};
+
+      if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) {
+        throw new Error("The rewrite response did not include platform-specific content.");
+      }
+
+      setForm((current) => ({
+        ...current,
+        platform_overrides: {
+          ...current.platform_overrides,
+          ...overrides,
+        },
+      }));
+      setNotice("Platform-specific versions generated.");
+    } catch (error) {
+      setNotice(`AI generation failed: ${error.message}`);
+    } finally {
+      setWorking(false);
+    }
+  }
+
   async function publish(event) {
     event.preventDefault();
 
@@ -303,9 +352,9 @@ export default function PublishingPage() {
         <div style={{ color: "#d4af37", fontSize: "12px", fontWeight: 900, letterSpacing: "0.18em" }}>
           OWNER ADMINISTRATION
         </div>
-        <h1 style={{ margin: "8px 0 4px", fontSize: "32px" }}>TRQX Publishing Center</h1>
+        <h1 style={{ margin: "8px 0 4px", fontSize: "32px" }}>TRQX Media Center</h1>
         <p style={{ color: "#94a3b8", marginTop: 0 }}>
-          Create once, preview by platform, schedule and distribute through the TRQX publishing engine.
+          Create once, generate platform-specific versions, schedule and distribute through the TRQX publishing engine.
         </p>
 
         {notice && (
@@ -337,7 +386,7 @@ export default function PublishingPage() {
                     </select>
                   </div>
                   <div>
-                    <label style={labelStyle()}>Ticker â€” optional</label>
+                    <label style={labelStyle()}>Ticker — optional</label>
                     <input value={form.ticker} maxLength={12} onChange={(event) => updateForm("ticker", event.target.value.toUpperCase())} placeholder="SPY" style={inputStyle()} />
                   </div>
                 </div>
@@ -386,7 +435,7 @@ export default function PublishingPage() {
                 </div>
 
                 <div style={{ marginTop: "16px" }}>
-                  <label style={labelStyle()}>Schedule â€” optional</label>
+                  <label style={labelStyle()}>Schedule — optional</label>
                   <input type="datetime-local" value={form.scheduled_for} onChange={(event) => updateForm("scheduled_for", event.target.value)} style={inputStyle()} />
                 </div>
               </section>
@@ -448,6 +497,7 @@ export default function PublishingPage() {
             <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", flexWrap: "wrap", marginTop: "20px" }}>
               <button type="button" onClick={resetComposer} style={buttonStyle()}><RotateCcw size={17} /> Reset</button>
               <button type="button" onClick={saveDraft} style={buttonStyle()}><Save size={17} /> Save Draft</button>
+              <button type="button" onClick={generateSocialPackage} disabled={working} style={{ ...buttonStyle(), opacity: working ? 0.55 : 1 }}><Sparkles size={17} /> Generate Social Package</button>
               <button type="submit" disabled={working} style={{ ...buttonStyle(true), opacity: working ? 0.55 : 1 }}>
                 {form.scheduled_for ? <CalendarClock size={17} /> : <Send size={17} />}
                 {working ? "Processing..." : form.scheduled_for ? "Schedule Publish" : "Publish Now"}
@@ -476,7 +526,7 @@ export default function PublishingPage() {
                       <div>
                         <div style={{ color: "#f4d675", fontWeight: 950, fontSize: "18px" }}>{item.title}</div>
                         <div style={{ color: "#94a3b8", fontSize: "12px", marginTop: "4px", textTransform: "uppercase" }}>
-                          {item.content_type?.replaceAll("_", " ")} {item.ticker ? `Â· $${item.ticker}` : ""}
+                          {item.content_type?.replaceAll("_", " ")} {item.ticker ? `· $${item.ticker}` : ""}
                         </div>
                       </div>
                       <div style={{ color: statusColor(item.status), fontWeight: 900, textTransform: "uppercase" }}>{item.status}</div>
@@ -484,8 +534,8 @@ export default function PublishingPage() {
 
                     <div style={{ color: "#cbd5e1", whiteSpace: "pre-wrap", marginTop: "14px" }}>{item.body}</div>
                     <div style={{ color: "#64748b", fontSize: "12px", marginTop: "12px" }}>
-                      Created {item.created_at ? new Date(item.created_at).toLocaleString() : "â€”"}
-                      {item.scheduled_for ? ` Â· Scheduled ${new Date(item.scheduled_for).toLocaleString()}` : ""}
+                      Created {item.created_at ? new Date(item.created_at).toLocaleString() : "—"}
+                      {item.scheduled_for ? ` · Scheduled ${new Date(item.scheduled_for).toLocaleString()}` : ""}
                     </div>
 
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", marginTop: "14px" }}>

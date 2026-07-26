@@ -49,13 +49,9 @@ async function readResponseBody(response) {
 function extractErrorMessage(payload, fallback) {
   if (!payload) return fallback;
 
-  if (typeof payload === "string") {
-    return payload;
-  }
+  if (typeof payload === "string") return payload;
 
-  if (typeof payload.detail === "string") {
-    return payload.detail;
-  }
+  if (typeof payload.detail === "string") return payload.detail;
 
   if (Array.isArray(payload.detail)) {
     return payload.detail
@@ -63,13 +59,9 @@ function extractErrorMessage(payload, fallback) {
       .join("; ");
   }
 
-  if (typeof payload.message === "string") {
-    return payload.message;
-  }
+  if (typeof payload.message === "string") return payload.message;
 
-  if (typeof payload.error === "string") {
-    return payload.error;
-  }
+  if (typeof payload.error === "string") return payload.error;
 
   return fallback;
 }
@@ -199,12 +191,53 @@ export function createPublishingService(getToken, options = {}) {
     });
   }
 
+  /*
+   * Future OAuth / Social API Methods
+   */
+
+  function getSocialConnections() {
+    return request("/social/connections", {
+      method: "GET",
+    });
+  }
+
+  function connectPlatform(platform) {
+    return request(`/social/connect/${platform}`, {
+      method: "POST",
+    });
+  }
+
+  function disconnectPlatform(platform) {
+    return request(`/social/disconnect/${platform}`, {
+      method: "DELETE",
+    });
+  }
+
+  function getPublishingAnalytics() {
+    return request("/publishing/analytics", {
+      method: "GET",
+    });
+  }
+
+  function getPublishingCalendar() {
+    return request("/publishing/calendar", {
+      method: "GET",
+    });
+  }
+
   return {
     getPublishingHistory,
     getPublishingRequest,
     getSupportedDestinations,
     rewritePublishingContent,
     createPublishingRequest,
+
+    // Phase 2+
+    getSocialConnections,
+    connectPlatform,
+    disconnectPlatform,
+    getPublishingAnalytics,
+    getPublishingCalendar,
   };
 }
 
