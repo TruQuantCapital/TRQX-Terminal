@@ -182,7 +182,7 @@ export function createOperationsApi(getToken) {
       });
     },
 
-    getPublishingHistory() {
+        getPublishingHistory() {
       return apiRequest("/api/publishing");
     },
 
@@ -191,6 +191,17 @@ export function createOperationsApi(getToken) {
         method: "POST",
         body: payload,
       });
+    },
+
+    rewritePublishingContent(payload) {
+      return apiRequest("/api/publishing/rewrite", {
+        method: "POST",
+        body: payload,
+      });
+    },
+
+    getPublishingDestinations() {
+      return apiRequest("/api/publishing/destinations");
     },
   };
 }
