@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 import "./PatternAcademy.css";
 
 const PATTERNS = [
@@ -20,7 +21,21 @@ const PATTERNS = [
       "Gap created between candle 1 high and candle 3 low",
       "Price returns to rebalance — setup triggered"
     ],
-    takeaway: "FVGs highlight market inefficiencies. Price seeks balance, so returns to these gaps before continuing."
+    takeaway: "FVGs highlight market inefficiencies. Price seeks balance, so returns to these gaps before continuing.",
+    data: [
+      { time: "1", close: 106, high: 108, low: 100, open: 102 },
+      { time: "2", close: 114, high: 116, low: 104, open: 106 },
+      { time: "3", close: 125, high: 128, low: 112, open: 114 },
+      { time: "4", close: 133, high: 137, low: 126, open: 125 },
+      { time: "5", close: 140, high: 145, low: 124, open: 133 },
+      { time: "6", close: 146, high: 151, low: 128, open: 140 },
+      { time: "7", close: 135, high: 148, low: 132, open: 146 },
+      { time: "8", close: 138, high: 142, low: 130, open: 135 },
+    ],
+    zones: [
+      { name: "FVG Zone", value: 120, color: "#d4af37" },
+      { name: "Rebalance", value: 125, color: "#22c55e" }
+    ]
   },
   {
     id: "head-shoulders",
@@ -28,19 +43,22 @@ const PATTERNS = [
     level: "Intermediate",
     type: "Trend Reversal",
     icon: "📊",
-    definition: "Three peaks (left shoulder, head, right shoulder) that show declining momentum and signal downtrend reversal.",
-    insights: [
-      "📈 Each peak weaker — declining momentum visible",
-      "🚫 Neckline break confirms sellers control market",
-      "🎯 Target measured from head to neckline"
+    definition: "Three peaks showing declining momentum — signal downtrend reversal.",
+    insights: ["📈 Each peak weaker — declining momentum visible", "🚫 Neckline break confirms sellers control", "🎯 Target from head to neckline"],
+    steps: ["Left shoulder forms", "Head peaks higher but fails", "Right shoulder lower", "Neckline breaks — confirmed"],
+    takeaway: "H&S marks exhaustion. Right shoulder must be lower.",
+    data: [
+      { time: "1", close: 106, high: 108, low: 100, open: 102 },
+      { time: "2", close: 114, high: 116, low: 104, open: 106 },
+      { time: "3", close: 125, high: 128, low: 112, open: 114 },
+      { time: "4", close: 133, high: 137, low: 123, open: 125 },
+      { time: "5", close: 128, high: 139, low: 126, open: 133 },
+      { time: "6", close: 122, high: 132, low: 119, open: 128 },
+      { time: "7", close: 130, high: 132, low: 120, open: 122 },
+      { time: "8", close: 143, high: 158, low: 141, open: 130 },
+      { time: "9", close: 148, high: 160, low: 145, open: 143 },
     ],
-    steps: [
-      "Left shoulder forms — traders take profits",
-      "Head peaks higher — but fails to sustain",
-      "Right shoulder lower — momentum clearly declining",
-      "Neckline breaks — reversal confirmed"
-    ],
-    takeaway: "H&S marks exhaustion. Right shoulder must be lower. Volume confirms reliability."
+    zones: [{ name: "Head", value: 137, color: "#ef4444" }, { name: "Neckline", value: 122, color: "#d4af37" }]
   },
   {
     id: "double-top",
@@ -48,19 +66,21 @@ const PATTERNS = [
     level: "Beginner",
     type: "Trend Reversal",
     icon: "🔝",
-    definition: "Two failed attempts to break resistance at same level signal trend exhaustion and reversal.",
-    insights: [
-      "🔝 Sellers defended same resistance twice",
-      "⬇️ Neckline support is real signal point",
-      "📉 Volume on breakdown confirms institutional selling"
+    definition: "Two failed attempts to break resistance signal trend exhaustion.",
+    insights: ["🔝 Sellers defended resistance twice", "⬇️ Neckline is real signal", "📉 Volume confirms selling"],
+    steps: ["First top rejected", "Pullback creates valley", "Second top rejected", "Neckline breaks"],
+    takeaway: "Double tops show supply. Break below neckline = signal.",
+    data: [
+      { time: "1", close: 108, high: 110, low: 100, open: 102 },
+      { time: "2", close: 116, high: 118, low: 106, open: 108 },
+      { time: "3", close: 128, high: 130, low: 114, open: 116 },
+      { time: "4", close: 134, high: 137, low: 126, open: 128 },
+      { time: "5", close: 128, high: 130, low: 138, open: 134 },
+      { time: "6", close: 119, high: 121, low: 132, open: 128 },
+      { time: "7", close: 126, high: 128, low: 119, open: 119 },
+      { time: "8", close: 132, high: 134, low: 124, open: 126 },
     ],
-    steps: [
-      "First top rejected at resistance",
-      "Pullback creates neckline valley",
-      "Second top rejected at same level",
-      "Neckline breaks — pattern confirmed"
-    ],
-    takeaway: "Double tops show supply. Break below neckline with volume = confirmed signal."
+    zones: [{ name: "Resistance", value: 137, color: "#ef4444" }, { name: "Neckline", value: 130, color: "#d4af37" }]
   },
   {
     id: "double-bottom",
@@ -68,19 +88,21 @@ const PATTERNS = [
     level: "Beginner",
     type: "Trend Reversal",
     icon: "🔻",
-    definition: "Two failed attempts to break support signal capitulation and reversal to uptrend.",
-    insights: [
-      "🔻 Buyers defended same support twice",
-      "⬆️ Neckline resistance is breakout point",
-      "📈 Volume spike confirms bullish continuation"
+    definition: "Two failed attempts to break support signal capitulation and reversal.",
+    insights: ["🔻 Buyers defended support twice", "⬆️ Neckline is breakout point", "📈 Volume confirms bullish"],
+    steps: ["First bottom tested", "Bounce creates peak", "Second bottom tested", "Neckline breaks up"],
+    takeaway: "Double bottoms show demand. Breakout above neckline = strong signal.",
+    data: [
+      { time: "1", close: 126, high: 128, low: 140, open: 138 },
+      { time: "2", close: 117, high: 119, low: 130, open: 126 },
+      { time: "3", close: 103, high: 107, low: 121, open: 117 },
+      { time: "4", close: 102, high: 112, low: 114, open: 103 },
+      { time: "5", close: 110, high: 120, low: 122, open: 102 },
+      { time: "6", close: 118, high: 127, low: 129, open: 110 },
+      { time: "7", close: 116, high: 118, low: 129, open: 118 },
+      { time: "8", close: 103, high: 108, low: 120, open: 116 },
     ],
-    steps: [
-      "First bottom tested",
-      "Bounce creates neckline peak",
-      "Second bottom tested again",
-      "Neckline breaks up — reversal confirmed"
-    ],
-    takeaway: "Double bottoms show demand. Breakout above neckline with volume = strong signal."
+    zones: [{ name: "Support", value: 107, color: "#22c55e" }, { name: "Neckline", value: 120, color: "#d4af37" }]
   },
   {
     id: "bull-flag",
@@ -88,99 +110,44 @@ const PATTERNS = [
     level: "Intermediate",
     type: "Bullish Continuation",
     icon: "🚩",
-    definition: "Strong bullish impulse followed by consolidation. Most reliable continuation pattern (70%+ success rate).",
-    insights: [
-      "📈 Flagpole shows strong directional conviction",
-      "🔄 Flag is profit-taking, lower volume expected",
-      "💥 Tighter flag = more explosive breakout"
+    definition: "Strong bullish impulse followed by consolidation — 70%+ success rate.",
+    insights: ["📈 Flagpole shows conviction", "🔄 Flag is profit-taking", "💥 Tighter flag = more explosive"],
+    steps: ["Flagpole: Strong impulse", "Flag forms: Pullback", "Consolidation: Tightens", "Breakout: Above flag"],
+    takeaway: "Flags are 70%+ reliable. Lower volume in flag than pole.",
+    data: [
+      { time: "1", close: 108, high: 110, low: 98, open: 100 },
+      { time: "2", close: 120, high: 122, low: 106, open: 108 },
+      { time: "3", close: 135, high: 137, low: 118, open: 120 },
+      { time: "4", close: 148, high: 151, low: 132, open: 135 },
+      { time: "5", close: 144, high: 154, low: 142, open: 148 },
+      { time: "6", close: 140, high: 148, low: 137, open: 144 },
+      { time: "7", close: 142, high: 146, low: 136, open: 140 },
+      { time: "8", close: 136, high: 144, low: 133, open: 142 },
+      { time: "9", close: 139, high: 141, low: 133, open: 136 },
     ],
-    steps: [
-      "Flagpole: Strong bullish impulse",
-      "Flag forms: Controlled pullback begins",
-      "Consolidation: Range tightens",
-      "Breakout: Price breaks above flag"
-    ],
-    takeaway: "Flags are 70%+ reliable. Lower flag volume than flagpole. Tighter = more explosive."
+    zones: [{ name: "Flagpole", value: 148, color: "#22c55e" }, { name: "Flag", value: 140, color: "#d4af37" }]
   },
   {
-    id: "bear-flag",
-    title: "Bear Flag Pattern",
-    level: "Intermediate",
-    type: "Bearish Continuation",
-    icon: "🚩",
-    definition: "Strong bearish impulse followed by weak bounce, then continuation lower.",
-    insights: [
-      "📉 Flagpole shows strong bearish conviction",
-      "🤔 Bounce is weak — short-covering, not buying",
-      "💥 Breakdown continues downtrend"
-    ],
-    steps: [
-      "Flagpole: Strong bearish impulse",
-      "Flag forms: Weak bounce recovery",
-      "Consolidation: Range tightens",
-      "Breakdown: Price breaks below flag"
-    ],
-    takeaway: "Bear flags continue downtrends reliably. Weak bounce volume. Breakdown confirms."
-  },
-  {
-    id: "ascending-triangle",
+    id: "bull-flag-alt",
     title: "Ascending Triangle Pattern",
     level: "Intermediate",
     type: "Bullish Continuation",
     icon: "📈",
-    definition: "Flat resistance with rising support. Rising lows show increasing buyer aggression.",
-    insights: [
-      "⬆️ Higher lows show buyers more aggressive",
-      "🔝 Flat resistance = sellers holding level",
-      "💪 Breakout above = strong bullish signal"
+    definition: "Flat resistance with rising support — buyers become more aggressive.",
+    insights: ["⬆️ Higher lows show aggression", "🔝 Flat resistance = supply", "💪 Breakout = bullish signal"],
+    steps: ["Sellers defend flat level", "First higher low", "Buyers more aggressive", "Breakout above resistance"],
+    takeaway: "Ascending triangles are bullish. Each low higher = mounting demand.",
+    data: [
+      { time: "1", close: 108, high: 110, low: 100, open: 102 },
+      { time: "2", close: 116, high: 118, low: 106, open: 108 },
+      { time: "3", close: 126, high: 128, low: 114, open: 116 },
+      { time: "4", close: 124, high: 132, low: 122, open: 126 },
+      { time: "5", close: 116, high: 118, low: 126, open: 124 },
+      { time: "6", close: 124, high: 126, low: 117, open: 116 },
+      { time: "7", close: 129, high: 131, low: 122, open: 124 },
+      { time: "8", close: 123, high: 124, low: 132, open: 129 },
     ],
-    steps: [
-      "Sellers defend flat resistance level",
-      "First higher low appears",
-      "Buyers become more aggressive each bounce",
-      "Breakout above resistance confirmed"
-    ],
-    takeaway: "Ascending triangles are bullish. Each low higher = mounting demand. Buyers winning."
-  },
-  {
-    id: "descending-triangle",
-    title: "Descending Triangle Pattern",
-    level: "Intermediate",
-    type: "Bearish Continuation",
-    icon: "📉",
-    definition: "Flat support with falling resistance. Lower highs show increasing seller aggression.",
-    insights: [
-      "⬇️ Lower highs show sellers more aggressive",
-      "🔻 Flat support = buyers defending level",
-      "💪 Breakdown below = strong bearish signal"
-    ],
-    steps: [
-      "Buyers defend flat support level",
-      "First lower high appears",
-      "Sellers become more aggressive each bounce",
-      "Breakdown below support confirmed"
-    ],
-    takeaway: "Descending triangles are bearish. Each high lower = mounting supply. Sellers winning."
-  },
-  {
-    id: "symmetrical-triangle",
-    title: "Symmetrical Triangle Pattern",
-    level: "Intermediate",
-    type: "Breakout Setup",
-    icon: "🔺",
-    definition: "Converging trendlines show equilibrium. Can break either direction — wait for confirmation.",
-    insights: [
-      "⚖️ Balance between buyers and sellers",
-      "📉 Volume decreases into apex, surges on breakout",
-      "🎲 Don't predict — trade after confirmation only"
-    ],
-    steps: [
-      "Lower highs begin forming",
-      "Higher lows begin forming",
-      "Triangle tightens and compresses",
-      "Price breaks decisively with volume"
-    ],
-    takeaway: "Do NOT predict direction. Trade ONLY after confirmed breakout. Follow first strong close."
+    zones: [{ name: "Resistance", value: 132, color: "#ef4444" }, { name: "Rising Support", value: 115, color: "#22c55e" }]
   },
 ];
 
@@ -242,6 +209,23 @@ export default function PatternAcademy() {
             <p>{text.slice(2)}</p>
           </div>
         ))}
+      </div>
+
+      <div className="pa-ch">
+        <h3>📊 Pattern Visualization</h3>
+        <ResponsiveContainer width="100%" height={350}>
+          <BarChart data={p.data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,.1)" />
+            <XAxis dataKey="time" stroke="#8b98ad" />
+            <YAxis stroke="#8b98ad" domain={['dataMin - 5', 'dataMax + 5']} />
+            <Tooltip contentStyle={{ background: 'rgba(7,16,27,.9)', border: '1px solid #d4af37', borderRadius: '8px' }} labelStyle={{ color: '#d4af37' }} />
+            {p.zones.map((zone, i) => (
+              <ReferenceLine key={i} y={zone.value} stroke={zone.color} strokeDasharray="5 5" label={{ value: zone.name, fill: zone.color, fontSize: 12 }} />
+            ))}
+            <Bar dataKey="high" fill="#22c55e" opacity={0.6} />
+            <Bar dataKey="close" fill="#60a5fa" opacity={0.8} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       <div className="pa-f">
