@@ -3149,4 +3149,3 @@ export const courseLevels = [
   ], // end lessons
 }, // end Level 3
 ];
-
