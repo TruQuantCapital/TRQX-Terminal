@@ -1,0 +1,20 @@
+TRQX HOMEPAGE V2 INSTALL
+
+Replace:
+  src/pages/LandingPage.jsx
+  src/pages/LandingPage.css
+  src/App.jsx
+
+Add:
+  src/pages/DiscordMembershipPage.jsx
+
+Optional environment variables:
+  Copy values from .env.example into your deployed Vite environment.
+
+The Discord and All Access checkout URLs intentionally use placeholders until the final Whop product URLs are supplied.
+
+Test routes:
+  /home
+  /discord-membership
+  /auth
+  /pricing

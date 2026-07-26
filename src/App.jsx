@@ -11,6 +11,7 @@ import Scanner from "./pages/Scanner";
 import DividendPage from "./pages/DividendPage";
 import GammaPage from "./pages/GammaPage";
 import LandingPage from "./pages/LandingPage";
+import DiscordMembershipPage from "./pages/DiscordMembershipPage";
 import NewsPage from "./pages/NewsPage";
 import OptionsPage from "./pages/OptionsPage";
 import TradePlanPage from "./pages/TradePlanPage";
@@ -357,6 +358,7 @@ export default function App() {
             }
           />
 
+          <Route path="/discord-membership" element={<DiscordMembershipPage />} />
           <Route path="/discord" element={<DiscordRedirect />} />
 
           <Route

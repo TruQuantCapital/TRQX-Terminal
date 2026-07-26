@@ -1,0 +1,9 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Check, MessageCircle, ShieldCheck, Users, Zap } from "lucide-react";
+import "./LandingPage.css";
+const CHECKOUT = import.meta.env.VITE_WHOP_DISCORD_URL || "https://whop.com/tqpx-tru-quant-enterprise/";
+export default function DiscordMembershipPage(){
+ const navigate=useNavigate();
+ return <div className="trqx-landing lp-membership-page"><header className="lp-nav"><button className="lp-brand" onClick={()=>navigate('/home')}><strong>TRQ<span>X</span></strong><small>TRADING FLOOR</small></button><button className="lp-login" onClick={()=>navigate('/home')}><ArrowLeft size={16}/> Back Home</button></header><main className="lp-membership-hero"><div><span className="lp-live-pill"><i/> COMMUNITY ACCESS</span><h1>JOIN THE TRQX<br/><span>TRADING FLOOR</span></h1><p>A structured trading community built around market preparation, execution, education, chart review, and accountability.</p><div className="lp-membership-benefits">{["Daily market plans and premarket levels","Live trading-floor discussions","Trade management updates","Chart reviews and education","Beginner support and accountability","Instant Discord access through Whop"].map(x=><span key={x}><Check/>{x}</span>)}</div></div><article className="lp-checkout-card"><MessageCircle size={38}/><small>TRQX TRADING FLOOR</small><div className="lp-price">$45.99<span>/month</span></div><p>Secure subscription management and automatic access through Whop.</p><ul><li><Zap/>Instant access</li><li><ShieldCheck/>Secure checkout</li><li><Users/>Professional community</li><li><Check/>Cancel anytime</li></ul><button className="lp-primary" onClick={()=>window.open(CHECKOUT,'_blank','noopener,noreferrer')}>CONTINUE TO WHOP <ArrowLeft className="lp-arrow-right"/></button><small>No long-term contract.</small></article></main></div>
+}
