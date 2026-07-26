@@ -9,7 +9,7 @@ import {
 import "./LandingPage.css";
 
 const MARKET_API_URL = import.meta.env.VITE_MARKET_API_URL || "";
-const DISCORD_CHECKOUT = import.meta.env.VITE_WHOP_DISCORD_URL || "https://whop.com/tqpx-tru-quant-enterprise/";
+const DISCORD_CHECKOUT = import.meta.env.VITE_WHOP_DISCORD_ACCESS_URL || import.meta.env.VITE_WHOP_DISCORD_URL || "https://whop.com/tqpx-tru-quant-enterprise/";
 const STARTER_CHECKOUT = import.meta.env.VITE_WHOP_STARTER_URL || "https://whop.com/tqpx-tru-quant-enterprise/trqx-capital-terminal-starter";
 const PRO_CHECKOUT = import.meta.env.VITE_WHOP_PRO_URL || "https://whop.com/tqpx-tru-quant-enterprise/trqx-terminal-pro";
 const ELITE_CHECKOUT = import.meta.env.VITE_WHOP_ELITE_URL || "https://whop.com/tqpx-tru-quant-enterprise/trqx-elite";
@@ -39,7 +39,7 @@ const fallbackFlow = [
 ];
 
 const plans = [
-  { name: "TRQX Trading Floor", label: "Discord Membership", price: "$45.99", url: DISCORD_CHECKOUT, features: ["Full Discord access", "Daily market preparation", "Live trade discussions", "Education and chart reviews", "Cancel anytime"] },
+  { name: "Discord Access", label: "Discord Only", price: "$45.99", url: DISCORD_CHECKOUT, features: ["Full Discord access", "Daily market preparation", "Live trade discussions", "Education and chart reviews", "Cancel anytime"] },
   { name: "Terminal Starter", label: "Core Intelligence", price: "$49", url: STARTER_CHECKOUT, features: ["TRQX Academy", "Flash cards and drills", "AI stock research", "Dividend intelligence", "News and calendar"] },
   { name: "Terminal Pro", label: "Advanced Intelligence", price: "$79", url: PRO_CHECKOUT, popular: true, features: ["Everything in Starter", "Options flow scanner", "GEMX gamma dashboard", "Trade plan builder", "AI market intelligence"] },
   { name: "Terminal Elite", label: "Complete Terminal", price: "$149", url: ELITE_CHECKOUT, features: ["Everything in Pro", "Capital Allocator", "Smart money tracker", "Flow replay", "Priority support"] },
@@ -184,7 +184,7 @@ export default function LandingPage() {
 
       <section className="lp-about" id="about"><div className="lp-about-statement"><span>WHY TRQX EXISTS</span><h2>MOST TRADERS DO NOT NEED ANOTHER INDICATOR.</h2><p>They need structure, preparation, risk management, accountability, and a repeatable process. TRQX brings those pieces into one operating system built around disciplined decision-making.</p><div className="lp-process-line"><span>PREPARE</span><i/><span>ANALYZE</span><i/><span>EXECUTE</span><i/><span>REVIEW</span><i/><span>IMPROVE</span></div></div><article className="lp-founder-card"><div className="lp-founder-monogram">MV</div><small>MEET THE FOUNDER</small><h3>Michael A. Valerio</h3><p>Technologist, trader, educator, and builder of the TRQX ecosystem.</p><blockquote>“I AM THE ALGO means the trader develops the discipline to become the system.”</blockquote><button onClick={()=>go("/mentorship")}>LEARN WITH MICHAEL <ArrowRight size={15}/></button></article></section>
 
-      <section className="lp-section lp-pricing" id="pricing"><div className="lp-section-head"><span>CHOOSE YOUR EDGE</span><h2>START WITH THE LEVEL THAT FITS YOUR PROCESS.</h2><p>Software, community, and direct education each have a distinct purpose.</p></div><div className="lp-pricing-grid">{plans.map(plan=><article key={plan.name} className={`${plan.popular?"popular":""} ${plan.mentorship?"mentorship-plan":""}`}>{plan.popular&&<em>MOST POPULAR</em>}{plan.mentorship&&<em>DIRECT ACCESS</em>}<small>{plan.label}</small><h3>{plan.name}</h3><div className="lp-price">{plan.price}<span>/mo</span></div><ul>{plan.features.map(f=><li key={f}><Check/>{f}</li>)}</ul><button onClick={()=>openPlan(plan)}>{plan.mentorship?"VIEW MENTORSHIP":plan.name.includes("Floor")?"JOIN THE FLOOR":"START NOW"}</button></article>)}</div></section>
+      <section className="lp-section lp-pricing" id="pricing"><div className="lp-section-head"><span>CHOOSE YOUR EDGE</span><h2>START WITH THE LEVEL THAT FITS YOUR PROCESS.</h2><p>Software, community, and direct education each have a distinct purpose.</p></div><div className="lp-pricing-grid">{plans.map(plan=><article key={plan.name} className={`${plan.popular?"popular":""} ${plan.mentorship?"mentorship-plan":""}`}>{plan.popular&&<em>MOST POPULAR</em>}{plan.mentorship&&<em>DIRECT ACCESS</em>}<small>{plan.label}</small><h3>{plan.name}</h3><div className="lp-price">{plan.price}<span>/mo</span></div><ul>{plan.features.map(f=><li key={f}><Check/>{f}</li>)}</ul><button onClick={()=>openPlan(plan)}>{plan.mentorship?"VIEW MENTORSHIP":plan.name === "Discord Access" ? "GET DISCORD ACCESS" : "START NOW"}</button></article>)}</div></section>
     </main>
 
     <footer className="lp-footer"><div className="lp-footer-brand"><strong>TRQ<span>X</span></strong><small>I AM THE ALGO</small><p>Educational content and tools only. No financial advice. Trading involves risk.</p></div><div><b>QUICK LINKS</b><a href="#terminal">Terminal</a><a href="#workflow">Workflow</a><a href="#pricing">Pricing</a><a href="#academy">Academy</a><a href="#about">About</a></div><div><b>STAY CONNECTED</b><div className="lp-socials"><button aria-label="Discord"><MessageCircle/></button><button aria-label="Community"><Users/></button><button aria-label="Market activity"><Activity/></button></div><p>© 2026 TRQX Capital. All rights reserved.</p></div></footer>
