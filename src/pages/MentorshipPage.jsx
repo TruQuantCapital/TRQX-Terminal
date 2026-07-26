@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 
 const WHOP_MENTORSHIP_URL =
-  import.meta.env.VITE_WHOP_MENTORSHIP_URL;
+  import.meta.env.VITE_WHOP_MENTORSHIP_URL ||
+  "https://whop.com/tqpx-tru-quant-enterprise/trqx-elite-mentorship/";
 
 const benefits = [
   "Two weekly live coaching sessions",
@@ -64,7 +65,23 @@ const sessions = [
 ];
 
 export default function MentorshipPage() {
-  
+  const openWhop = () => {
+    window.open(
+      WHOP_MENTORSHIP_URL,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  const scrollToProgram = () => {
+    document
+      .getElementById("mentorship-program")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  };
+
   return (
     <main className="mentorshipPage">
       <section className="mentorshipHero">
@@ -92,24 +109,23 @@ export default function MentorshipPage() {
             </p>
 
             <div className="mentorshipHeroActions">
-  <button className="mentorshipPrimaryBtn" onClick={openWhop}>
-    Join Mentorship
-  </button>
+              <button
+                type="button"
+                className="mentorshipPrimaryBtn"
+                onClick={openWhop}
+              >
+                Join Mentorship
+              </button>
 
-  
-
-  <button
-    className="mentorshipSecondaryBtn"
-    onClick={() =>
-      document
-        .getElementById("mentorship-program")
-        ?.scrollIntoView({ behavior: "smooth" })
-    }
-  >
-    <PlayCircle size={18} />
-    View Program
-  </button>
-</div>
+              <button
+                type="button"
+                className="mentorshipSecondaryBtn"
+                onClick={scrollToProgram}
+              >
+                <PlayCircle size={18} />
+                View Program
+              </button>
+            </div>
 
             <div className="mentorshipTrustRow">
               <span>
@@ -139,29 +155,44 @@ export default function MentorshipPage() {
         </div>
       </section>
 
-      <section className="mentorshipFeatures" id="mentorship-program">
+      <section
+        className="mentorshipFeatures"
+        id="mentorship-program"
+      >
         <article>
           <CalendarDays size={30} />
           <h3>Weekly Live Coaching</h3>
-          <p>Structured sessions focused on preparation, execution, and review.</p>
+          <p>
+            Structured sessions focused on preparation, execution,
+            and review.
+          </p>
         </article>
 
         <article>
           <Target size={30} />
           <h3>Market Preparation</h3>
-          <p>Build a plan around market structure, flow, catalysts, and risk.</p>
+          <p>
+            Build a plan around market structure, flow, catalysts,
+            and risk.
+          </p>
         </article>
 
         <article>
           <Users size={30} />
           <h3>Private Community</h3>
-          <p>Learn alongside serious traders committed to disciplined growth.</p>
+          <p>
+            Learn alongside serious traders committed to disciplined
+            growth.
+          </p>
         </article>
 
         <article>
           <Crown size={30} />
           <h3>Elite Access</h3>
-          <p>Use the TRQX Terminal, Academy, Gamma, flow, and research tools.</p>
+          <p>
+            Use the TRQX Terminal, Academy, Gamma, flow, and research
+            tools.
+          </p>
         </article>
       </section>
 
@@ -174,7 +205,10 @@ export default function MentorshipPage() {
 
           <div className="mentorshipSessionGrid">
             {sessions.map((session) => (
-              <article className="mentorshipSessionCard" key={session.day}>
+              <article
+                className="mentorshipSessionCard"
+                key={session.day}
+              >
                 <span>{session.day}</span>
                 <small>{session.time}</small>
                 <h3>{session.title}</h3>
@@ -196,7 +230,10 @@ export default function MentorshipPage() {
 
             <div>
               <strong>Cannot attend live?</strong>
-              <p>Sessions are recorded and available to mentorship members.</p>
+              <p>
+                Sessions are recorded and available to mentorship
+                members.
+              </p>
             </div>
           </div>
         </div>
@@ -212,8 +249,8 @@ export default function MentorshipPage() {
           </div>
 
           <p>
-            Direct coaching, structured accountability, and full access to the
-            TRQX educational ecosystem.
+            Direct coaching, structured accountability, and full
+            access to the TRQX educational ecosystem.
           </p>
 
           <ul>
@@ -225,7 +262,12 @@ export default function MentorshipPage() {
             ))}
           </ul>
 
-          <button onClick={openWhop}>Join Elite Mentorship</button>
+          <button
+            type="button"
+            onClick={openWhop}
+          >
+            Join Elite Mentorship
+          </button>
 
           <small>Secure checkout powered by Whop</small>
         </aside>
@@ -247,8 +289,9 @@ export default function MentorshipPage() {
             <h3>Founder of TRQX Capital</h3>
 
             <p>
-              Michael brings together leadership, technical discipline, market
-              education, and a structured approach to trading development.
+              Michael brings together leadership, technical
+              discipline, market education, and a structured approach
+              to trading development.
             </p>
 
             <ul>
@@ -268,11 +311,16 @@ export default function MentorshipPage() {
         <h2>Build a repeatable trading process.</h2>
 
         <p>
-          Stop trading without structure. Learn how to prepare, execute, manage
-          risk, and review every decision.
+          Stop trading without structure. Learn how to prepare,
+          execute, manage risk, and review every decision.
         </p>
 
-        <button onClick={openWhop}>Apply for Mentorship</button>
+        <button
+          type="button"
+          onClick={openWhop}
+        >
+          Join Elite Mentorship
+        </button>
       </section>
     </main>
   );
