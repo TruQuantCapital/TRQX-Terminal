@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth.jsx";
 import { createOperationsApi } from "../../../api/operationsApi";
 import {
@@ -32,7 +32,7 @@ const DESTINATIONS = [
   ["discord", "Discord", true],
   ["website", "Website", false],
   ["facebook", "Facebook", false],
-  ["x", "X", false],
+  ["x", "X", true],
   ["linkedin", "LinkedIn", false],
   ["instagram", "Instagram", false],
   ["threads", "Threads", false],
@@ -134,7 +134,8 @@ export default function PublishingPage() {
   const [history, setHistory] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState("discord");
   const [notice, setNotice] = useState("");
-  const [working, setWorking] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const imageInputRef = useRef(null);
 
@@ -253,7 +254,7 @@ export default function PublishingPage() {
       return;
     }
 
-    setWorking(true);
+    setGenerating(true);
     setNotice("");
 
     try {
@@ -286,7 +287,7 @@ export default function PublishingPage() {
     } catch (error) {
       setNotice(`AI generation failed: ${error.message}`);
     } finally {
-      setWorking(false);
+      setGenerating(false);
     }
   }
 
@@ -303,7 +304,7 @@ export default function PublishingPage() {
       return;
     }
 
-    setWorking(true);
+    setPublishing(true);
     setNotice("");
 
     try {
@@ -317,6 +318,7 @@ export default function PublishingPage() {
         scheduled_for: form.scheduled_for
           ? new Date(form.scheduled_for).toISOString()
           : null,
+        platform_overrides: form.platform_overrides,
       };
 
       const created = await operationsApi.createPublishingRequest(
@@ -334,7 +336,7 @@ export default function PublishingPage() {
     } catch (error) {
       setNotice(`Publishing failed: ${error.message}`);
     } finally {
-      setWorking(false);
+      setPublishing(false);
     }
   }
 
@@ -497,10 +499,26 @@ export default function PublishingPage() {
             <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", flexWrap: "wrap", marginTop: "20px" }}>
               <button type="button" onClick={resetComposer} style={buttonStyle()}><RotateCcw size={17} /> Reset</button>
               <button type="button" onClick={saveDraft} style={buttonStyle()}><Save size={17} /> Save Draft</button>
-              <button type="button" onClick={generateSocialPackage} disabled={working} style={{ ...buttonStyle(), opacity: working ? 0.55 : 1 }}><Sparkles size={17} /> Generate Social Package</button>
-              <button type="submit" disabled={working} style={{ ...buttonStyle(true), opacity: working ? 0.55 : 1 }}>
+              <button
+                type="button"
+                onClick={generateSocialPackage}
+                disabled={generating}
+                style={{ ...buttonStyle(), opacity: generating ? 0.55 : 1 }}
+              >
+                <Sparkles size={17} />
+                {generating ? "Generating..." : "Generate Social Package"}
+              </button>
+              <button
+                type="submit"
+                disabled={publishing}
+                style={{ ...buttonStyle(true), opacity: publishing ? 0.55 : 1 }}
+              >
                 {form.scheduled_for ? <CalendarClock size={17} /> : <Send size={17} />}
-                {working ? "Processing..." : form.scheduled_for ? "Schedule Publish" : "Publish Now"}
+                {publishing
+                  ? "Publishing..."
+                  : form.scheduled_for
+                    ? "Schedule Publish"
+                    : "Publish Now"}
               </button>
             </div>
           </form>
