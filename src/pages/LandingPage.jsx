@@ -189,4 +189,4 @@ export default function LandingPage() {
 
     <footer className="lp-footer"><div className="lp-footer-brand"><strong>TRQ<span>X</span></strong><small>I AM THE ALGO</small><p>Educational content and tools only. No financial advice. Trading involves risk.</p></div><div><b>QUICK LINKS</b><a href="#terminal">Terminal</a><a href="#workflow">Workflow</a><a href="#pricing">Pricing</a><a href="#academy">Academy</a><a href="#about">About</a></div><div><b>STAY CONNECTED</b><div className="lp-socials"><button aria-label="Discord"><MessageCircle/></button><button aria-label="Community"><Users/></button><button aria-label="Market activity"><Activity/></button></div><p>© 2026 TRQX Capital. All rights reserved.</p></div></footer>
   </div>;
-}m
+}
