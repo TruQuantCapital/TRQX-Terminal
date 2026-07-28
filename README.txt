@@ -1,20 +1,16 @@
-TRQX EXECUTION DESK V2
+TRQX Academy Dashboard Progress Fix
 
-Replace these two frontend files:
+Replace:
+1. src/components/Cards.jsx with components/Cards.jsx
+2. src/styles.css with styles.css
 
-src/features/operations/components/LiveTradeManager.jsx
-src/features/operations/components/LiveTradeManager.css
+What changed:
+- Removed hardcoded Beginner 75%, Intermediate 45%, Advanced 20% values.
+- Uses the existing useAcademyProgress hook and authenticated Supabase data.
+- Uses the same courseLevels data as AcademyPage.
+- Shows per-user lesson counts and percentage by level.
+- Shows overall percentage and total completed lessons.
+- Identifies the next incomplete lesson from the first unlocked level.
+- Adds responsive 2-column/tablet and 1-column/mobile behavior.
 
-No database migration or backend change is required.
-
-Features:
-- Live underlying quote refresh every 15 seconds using VITE_API_URL /api/quote/:ticker
-- Current R calculation for LONG/CALL and SHORT/PUT tickets
-- Target progress rail
-- Eastern Time market open/close countdown
-- Existing lifecycle controls preserved
-
-Notes:
-- Current R is calculated from the underlying ticker price, entry, and stop.
-- It is not options-contract P/L.
-- Weekend countdown displays Market Closed.
+No database change is included. This expects the existing academy_progress table and RLS policies used by useAcademyProgress.js.

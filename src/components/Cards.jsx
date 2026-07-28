@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { GraduationCap, Waves, Crown, ExternalLink } from "lucide-react";
 import DataTable from "./DataTable";
 import { useAuth } from "../hooks/useAuth";
+import { useAcademyProgress } from "../hooks/useAcademyProgress";
+import { courseLevels } from "../data/courseLevels";
 import {
   economicRows,
   gammaMetrics,
@@ -1048,66 +1050,295 @@ export function NewsCard() {
 
 export function AcademyCard() {
   const navigate = useNavigate();
+  const {
+    completed,
+    loading,
+    levelProgress,
+    isLevelUnlocked,
+  } = useAcademyProgress();
+
+  const totalLessons = courseLevels.reduce(
+    (sum, level) => sum + level.lessons.length,
+    0
+  );
+
+  const totalCompleted = courseLevels.reduce((sum, level) => {
+    const completedSet = completed[level.key];
+    return sum + Math.min(completedSet?.size || 0, level.lessons.length);
+  }, 0);
+
+  const overallProgress = totalLessons
+    ? Math.round((totalCompleted / totalLessons) * 100)
+    : 0;
+
+  const levelColors = {
+    beginner: "#22c55e",
+    intermediate: "#a78bfa",
+    advanced: "#d4af37",
+  };
+
+  const nextLesson = courseLevels.reduce((found, level, levelIndex) => {
+    if (found || !isLevelUnlocked(levelIndex, courseLevels)) return found;
+
+    const completedSet = completed[level.key] || new Set();
+    const lessonIndex = level.lessons.findIndex(
+      (_, index) => !completedSet.has(index)
+    );
+
+    if (lessonIndex === -1) return found;
+
+    return {
+      levelKey: level.key,
+      levelTitle: level.title,
+      lessonIndex,
+      lessonTitle: level.lessons[lessonIndex].title,
+    };
+  }, null);
+
+  const openAcademy = () => {
+    // The Academy page currently opens at the course overview. The card still
+    // identifies the exact next lesson so the user knows where to continue.
+    navigate("/academy");
+  };
+
+  const quickLinks = [
+    {
+      path: "/options-flow",
+      eyebrow: "TRADING TOOLS",
+      title: "⚡ Options Flow",
+      description:
+        "Track institutional call and put sweeps in real time. Learn how to read flow direction and size for trade conviction.",
+      action: "View Options Flow →",
+    },
+    {
+      path: "/scanner",
+      eyebrow: "TRADING TOOLS",
+      title: "🔍 Flow Scanner",
+      description:
+        "Live options flow scanner with TRQX Flow Score. Filter by sweeps, blocks, and unusual activity across all tickers.",
+      action: "View Flow Scanner →",
+    },
+    {
+      path: "/gamma-ex",
+      eyebrow: "TRADING TOOLS",
+      title: "📊 GEMX Dashboard",
+      description:
+        "Gamma exposure levels, call wall, put wall, and gamma flip for SPY and QQQ. Essential for understanding dealer positioning.",
+      action: "View GEMX →",
+    },
+  ];
+
+  const cardStyle = {
+    cursor: "pointer",
+    background:
+      "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))",
+    border: "1px solid rgba(212,175,55,.2)",
+    borderRadius: 14,
+    padding: "18px 20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+    minWidth: 0,
+  };
+
   return (
-    <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 14 }}>
-
-      {/* Options Flow */}
-      <div onClick={() => navigate("/options-flow")} style={{ cursor: "pointer", background: "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))", border: "1px solid rgba(212,175,55,.2)", borderRadius: 14, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
-        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2 }}>TRADING TOOLS</div>
-        <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>⚡ Options Flow</div>
-        <div style={{ color: "#9ca3af", fontSize: 12, lineHeight: 1.6 }}>Track institutional call and put sweeps in real time. Learn how to read flow direction and size for trade conviction.</div>
-        <div style={{ color: "#d4af37", fontSize: 12, fontWeight: 700, marginTop: "auto" }}>View Options Flow →</div>
-      </div>
-
-      {/* Flow Scanner */}
-      <div onClick={() => navigate("/scanner")} style={{ cursor: "pointer", background: "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))", border: "1px solid rgba(212,175,55,.2)", borderRadius: 14, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
-        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2 }}>TRADING TOOLS</div>
-        <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>🔍 Flow Scanner</div>
-        <div style={{ color: "#9ca3af", fontSize: 12, lineHeight: 1.6 }}>Live options flow scanner with TRQX Flow Score. Filter by sweeps, blocks, and unusual activity across all tickers.</div>
-        <div style={{ color: "#d4af37", fontSize: 12, fontWeight: 700, marginTop: "auto" }}>View Flow Scanner →</div>
-      </div>
-
-      {/* GEMX */}
-      <div onClick={() => navigate("/gamma-ex")} style={{ cursor: "pointer", background: "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))", border: "1px solid rgba(212,175,55,.2)", borderRadius: 14, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
-        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2 }}>TRADING TOOLS</div>
-        <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>📊 GEMX Dashboard</div>
-        <div style={{ color: "#9ca3af", fontSize: 12, lineHeight: 1.6 }}>Gamma exposure levels, call wall, put wall, and gamma flip for SPY and QQQ. Essential for understanding dealer positioning.</div>
-        <div style={{ color: "#d4af37", fontSize: 12, fontWeight: 700, marginTop: "auto" }}>View GEMX →</div>
-      </div>
-
-      {/* Academy Progress */}
-      <div onClick={() => navigate("/academy")} style={{ cursor: "pointer", background: "linear-gradient(135deg, rgba(15,23,42,.96), rgba(3,7,18,.98))", border: "1px solid rgba(212,175,55,.2)", borderRadius: 14, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
-        <div style={{ color: "#d4af37", fontSize: 10, fontWeight: 800, letterSpacing: 2 }}>ACADEMY</div>
-        <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>🎓 Your Progress</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9ca3af", marginBottom: 4 }}>
-              <span>Beginner</span><span>75%</span>
-            </div>
-            <div style={{ height: 5, background: "rgba(255,255,255,.08)", borderRadius: 999, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: "75%", background: "#22c55e", borderRadius: 999 }} />
-            </div>
+    <section
+      className="academy-dashboard-grid"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+        gap: 14,
+      }}
+    >
+      {quickLinks.map((item) => (
+        <div
+          key={item.path}
+          onClick={() => navigate(item.path)}
+          style={cardStyle}
+        >
+          <div
+            style={{
+              color: "#d4af37",
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: 2,
+            }}
+          >
+            {item.eyebrow}
           </div>
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9ca3af", marginBottom: 4 }}>
-              <span>Intermediate</span><span>45%</span>
-            </div>
-            <div style={{ height: 5, background: "rgba(255,255,255,.08)", borderRadius: 999, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: "45%", background: "#a78bfa", borderRadius: 999 }} />
-            </div>
+          <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>
+            {item.title}
           </div>
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#9ca3af", marginBottom: 4 }}>
-              <span>Advanced</span><span>20%</span>
-            </div>
-            <div style={{ height: 5, background: "rgba(255,255,255,.08)", borderRadius: 999, overflow: "hidden" }}>
-              <div style={{ height: "100%", width: "20%", background: "#d4af37", borderRadius: 999 }} />
-            </div>
+          <div
+            style={{
+              color: "#9ca3af",
+              fontSize: 12,
+              lineHeight: 1.6,
+            }}
+          >
+            {item.description}
+          </div>
+          <div
+            style={{
+              color: "#d4af37",
+              fontSize: 12,
+              fontWeight: 700,
+              marginTop: "auto",
+            }}
+          >
+            {item.action}
           </div>
         </div>
-        <div style={{ color: "#d4af37", fontSize: 12, fontWeight: 700, marginTop: "auto" }}>Continue Learning →</div>
-      </div>
+      ))}
 
+      <div onClick={openAcademy} style={cardStyle}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              color: "#d4af37",
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: 2,
+            }}
+          >
+            ACADEMY
+          </div>
+          <div
+            style={{
+              color: loading ? "#9ca3af" : "#f5f1e8",
+              fontSize: 12,
+              fontWeight: 800,
+            }}
+          >
+            {loading ? "Loading..." : `${overallProgress}% overall`}
+          </div>
+        </div>
+
+        <div style={{ color: "#f5f1e8", fontSize: 16, fontWeight: 800 }}>
+          🎓 Your Progress
+        </div>
+
+        <div
+          style={{
+            color: "#9ca3af",
+            fontSize: 11,
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 8,
+          }}
+        >
+          <span>{loading ? "Loading lessons..." : `${totalCompleted} of ${totalLessons} lessons completed`}</span>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+          {courseLevels.map((level) => {
+            const progress = levelProgress(level.key, level.lessons.length);
+            const completedCount = Math.min(
+              completed[level.key]?.size || 0,
+              level.lessons.length
+            );
+            const color = levelColors[level.key] || "#d4af37";
+
+            return (
+              <div key={level.key}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 8,
+                    fontSize: 11,
+                    color: "#9ca3af",
+                    marginBottom: 4,
+                  }}
+                >
+                  <span>{level.title}</span>
+                  <span>
+                    {loading
+                      ? "..."
+                      : `${completedCount}/${level.lessons.length} · ${progress}%`}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    height: 6,
+                    background: "rgba(255,255,255,.08)",
+                    borderRadius: 999,
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "100%",
+                      width: loading ? "0%" : `${progress}%`,
+                      background: color,
+                      borderRadius: 999,
+                      transition: "width 300ms ease",
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div
+          style={{
+            marginTop: 2,
+            padding: "9px 10px",
+            borderRadius: 9,
+            border: "1px solid rgba(212,175,55,.18)",
+            background: "rgba(212,175,55,.06)",
+          }}
+        >
+          <div
+            style={{
+              color: "#d4af37",
+              fontSize: 9,
+              fontWeight: 800,
+              letterSpacing: 1.4,
+              marginBottom: 3,
+            }}
+          >
+            {overallProgress === 100 ? "COURSE COMPLETE" : "NEXT LESSON"}
+          </div>
+          <div
+            style={{
+              color: "#f5f1e8",
+              fontSize: 11,
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+            title={nextLesson?.lessonTitle}
+          >
+            {loading
+              ? "Finding your next lesson..."
+              : nextLesson
+              ? `${nextLesson.levelTitle}: ${nextLesson.lessonTitle}`
+              : "All currently available lessons completed"}
+          </div>
+        </div>
+
+        <div
+          style={{
+            color: "#d4af37",
+            fontSize: 12,
+            fontWeight: 700,
+            marginTop: "auto",
+          }}
+        >
+          {overallProgress === 100 ? "Review Academy →" : "Continue Learning →"}
+        </div>
+      </div>
     </section>
   );
 }
+
