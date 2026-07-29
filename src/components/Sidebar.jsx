@@ -10,6 +10,7 @@ import {
   Bell,
   GraduationCap,
   BookOpen,
+  Brain,
   MessageCircle,
   Home,
   Settings,
@@ -38,6 +39,16 @@ export const nav = [
   { key: "alerts", label: "Alerts", icon: Bell, feature: "alerts" },
 
   { key: "academy", label: "Academy", icon: GraduationCap, feature: "academy" },
+  { key: "academy", label: "Academy", icon: GraduationCap, feature: "academy" },
+
+{
+  key: "ai-coach",
+  label: "AI Coach",
+  icon: Brain,
+  feature: "academy",
+},
+
+{ key: "patterns", label: "Flash Cards", icon: BookOpen, feature: "flashcards" },
   { key: "patterns", label: "Flash Cards", icon: BookOpen, feature: "flashcards" },
   { key: "guide", label: "How To Use", icon: BookOpen, feature: "guide" },
 
@@ -82,9 +93,9 @@ const navGroups = [
     ],
   },
   {
-    label: "EDUCATION",
-    keys: ["academy", "patterns", "guide"],
-  },
+  label: "TRQX LEARNING",
+  keys: ["academy", "ai-coach", "patterns", "guide"],
+},
   {
     label: "MENTORSHIP",
     keys: ["mentorship", "elite"],
