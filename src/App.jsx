@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
@@ -86,12 +86,15 @@ const keyByPath = {
   "/reports": "news",
   "/dividends": "dividends",
 };
-const OPERATIONS_OWNER_EMAIL = "michaelvalerio@thetrulies.com";
+const OWNER_EMAILS = [
+  "michaelvalerio@thetrulies.com",
+  "michaelvalerio@taurustechs.com",
+];
 
 function LoadingScreen() {
   return (
     <div className="loading-screen">
-      <div className="loading-logo">⚡</div>
+      <div className="loading-logo">âš¡</div>
       <div className="loading-text">TRQX UNIFIED TERMINAL</div>
     </div>
   );
@@ -113,11 +116,10 @@ function OwnerRoute({ children }) {
   if (!user) return <Navigate to="/auth" replace />;
 
   const signedInEmail = user.email?.trim().toLowerCase();
-  const ownerEmail = OPERATIONS_OWNER_EMAIL.trim().toLowerCase();
 
-  if (signedInEmail !== ownerEmail) {
-    return <Navigate to="/dashboard" replace />;
-  }
+if (!OWNER_EMAILS.includes(signedInEmail)) {
+  return <Navigate to="/dashboard" replace />;
+}
 
   return children;
 }
@@ -145,7 +147,7 @@ function TerminalLayout({ children }) {
           <div className="terminal-userbar">
             <span>{user.email}</span>
             <b>{tier?.toUpperCase?.() || "FREE"}</b>
-            {user.email?.trim().toLowerCase() === OPERATIONS_OWNER_EMAIL && (
+            {OWNER_EMAILS.includes(user.email?.trim().toLowerCase()) && (
               <button onClick={() => navigate("/admin")}>Admin</button>
             )}
             <button onClick={() => navigate("/pricing")}>Plans</button>
@@ -415,3 +417,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+
