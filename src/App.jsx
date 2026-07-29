@@ -33,6 +33,7 @@ import PublishingPage from "./features/operations/publishing/PublishingPage";
 import MentorshipPage from "./pages/MentorshipPage";
 import EliteCommandCenter from "./pages/EliteCommandCenter";
 import AdminPage from "./pages/AdminPage";
+import AICoachPage from "./pages/AICoachPage";
 import "./styles.css";
 import "./app.css";
 
@@ -40,6 +41,7 @@ const routeByKey = {
   dashboard: "/dashboard",
   operations: "/operations",
   admin: "/admin",
+  "ai-coach": "/ai-coach",
   publishing: "/publishing",
   scanner: "/scanner",
   options: "/options-flow",
@@ -65,6 +67,7 @@ const keyByPath = {
   "/dashboard": "dashboard",
   "/operations": "operations",
   "/admin": "admin",
+  "/ai-coach": "ai-coach",
   "/publishing": "publishing",
   "/mentorship": "mentorship",
   "/scanner": "scanner",
@@ -372,6 +375,15 @@ export default function App() {
             element={
               <ProtectedTerminal>
                 <SettingsPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/ai-coach"
+            element={
+              <ProtectedTerminal>
+                <AICoachPage />
               </ProtectedTerminal>
             }
           />

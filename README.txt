@@ -1,27 +1,42 @@
-TRQX ADMIN INTELLIGENCE — PHASE 2
+TRQX AI COACH — PHASE 1 VISUAL PROTOTYPE
 
-This package does four things:
-1. Restricts the frontend owner list to michaelvalerio@thetrulies.com only.
-2. Restricts Supabase admin RPC access to that same single email.
-3. Backfills last activity, current lesson reference, and study streak for existing learners.
-4. Adds lesson-title translation, inactivity metrics, recent activity, and improved student profiles.
+WHAT THIS BUILD DOES
+- Adds a protected /ai-coach page.
+- Reads the signed-in member's Academy progress.
+- Determines beginner/intermediate/advanced learning level.
+- Displays current progress, membership tier, and next lesson.
+- Answers lesson questions using local TRQX Academy content.
+- Handles quick prompts for explanations, quizzes, ORB rules, and next-study guidance.
+- Refuses direct buy/sell calls and redirects the member to the TRQX decision framework.
+- Does not require an external AI API for this first visual prototype.
 
-INSTALL ORDER
-1. Run supabase/trqx_admin_phase2.sql in the Supabase SQL Editor.
-2. Replace src/pages/AdminPage.jsx.
-3. Replace src/styles/admin.css.
-4. Replace src/App.jsx.
-5. Run npm run build.
-6. Commit/push or deploy to Vercel.
-7. Sign out and back in as michaelvalerio@thetrulies.com.
-8. Open /admin and click Refresh.
+FILES
+1. pages/AICoachPage.jsx
+   Copy to src/pages/AICoachPage.jsx
 
-SECURITY CHECK
-After running the SQL, verify:
-select pg_get_functiondef('public.is_trqx_admin()'::regprocedure);
+2. styles/ai-coach.css
+   Copy to src/styles/ai-coach.css
 
-It should contain only:
-michaelvalerio@thetrulies.com
+3. App.jsx
+   Replace src/App.jsx with this version.
 
-NOTE
-The backfill derives last activity and the current lesson reference from the latest completed lesson for older users. It cannot reconstruct historical study minutes that were never recorded, so those remain 0 until new study sessions are tracked.
+INSTALL
+1. Copy the two new files.
+2. Replace App.jsx.
+3. Run:
+   npm run build
+4. Commit and deploy.
+5. Open:
+   https://trqx.thetrulies.com/ai-coach
+
+IMPORTANT
+This phase is a functional rules-and-curriculum prototype. It shows the full user experience and personalization flow without sending Academy content or user data to a third-party model.
+
+NEXT BACKEND PHASE
+After approving the experience, connect the page to your existing secure AI backend. The server should:
+- authenticate the Supabase user,
+- fetch only that user's progress,
+- retrieve relevant TRQX lesson chunks,
+- apply the education-only system policy,
+- call the selected model server-side,
+- return the response without exposing API keys.
