@@ -127,7 +127,7 @@ function SmartSearch({ loading, onSearch }) {
 }
 
 function TVChart({ symbol }) {
-  return <div className="rq-tv"><iframe title={`${symbol} chart`} src={`https://s.tradingview.com/widgetembed/?symbol=${encodeURIComponent(symbol)}&interval=D&hidesidetoolbar=1&hidetoptoolbar=1&theme=dark&style=1&timezone=exchange&withdateranges=1`} allowTransparency /></div>;
+  return <div className="rq-tv"><iframe title={`${symbol} chart`} src={`https://s.tradingview.com/widgetembed/?symbol=${encodeURIComponent(symbol)}&interval=D&hidesidetoolbar=1&hidetoptoolbar=1&theme=dark&style=1&timezone=exchange&withdateranges=1`} /></div>;
 }
 
 function AnalystDonut({ ratings }) {
@@ -268,14 +268,14 @@ function InvestmentChecklist({ profile, ratings }) {
   const analystBuy = (Number(ratings?.strongBuy) || 0) + (Number(ratings?.buy) || 0);
   const analystSell = (Number(ratings?.sell) || 0) + (Number(ratings?.strongSell) || 0);
   const checks = [
-    ["Revenue growing", Number(profile?.revenueGrowthYoy) > 0, percent(profile?.revenueGrowthYoy)],
-    ["Earnings improving", Number(profile?.epsGrowthYoy) > 0, percent(profile?.epsGrowthYoy)],
-    ["Positive profitability", Number(profile?.netMargin) > 0, percent(profile?.netMargin)],
-    ["Manageable debt", Number(profile?.debtEquity) <= 1.5, number(profile?.debtEquity)],
-    ["Healthy liquidity", Number(profile?.currentRatio) >= 1.2, number(profile?.currentRatio)],
-    ["Reasonable valuation", Number(profile?.pe) > 0 && Number(profile?.pe) <= 30, number(profile?.pe)],
+    ["Revenue growing", Number(profile?.revenueGrowthYoy) > 0, pct(profile?.revenueGrowthYoy)],
+    ["Earnings improving", Number(profile?.epsGrowthYoy) > 0, pct(profile?.epsGrowthYoy)],
+    ["Positive profitability", Number(profile?.netMargin) > 0, pct(profile?.netMargin)],
+    ["Manageable debt", Number(profile?.debtEquity) <= 1.5, fmt(profile?.debtEquity)],
+    ["Healthy liquidity", Number(profile?.currentRatio) >= 1.2, fmt(profile?.currentRatio)],
+    ["Reasonable valuation", Number(profile?.pe) > 0 && Number(profile?.pe) <= 30, fmt(profile?.pe)],
     ["Analyst outlook positive", analystBuy > analystSell, `${analystBuy} positive vs ${analystSell} negative`],
-    ["Volatility controlled", Number(profile?.beta) > 0 && Number(profile?.beta) <= 1.5, number(profile?.beta)],
+    ["Volatility controlled", Number(profile?.beta) > 0 && Number(profile?.beta) <= 1.5, fmt(profile?.beta)],
   ];
   const passed = checks.filter(([, ok]) => ok).length;
   return (
@@ -336,17 +336,17 @@ function SpendTimeCard({ assessment, profile }) {
 
 function OpportunityRiskCards({ profile, assessment }) {
   const opportunities = [
-    ["Revenue growth", Number(profile?.revenueGrowthYoy), `${percent(profile?.revenueGrowthYoy)} year over year`],
-    ["Earnings growth", Number(profile?.epsGrowthYoy), `${percent(profile?.epsGrowthYoy)} year over year`],
-    ["Profitability", Number(profile?.netMargin), `${percent(profile?.netMargin)} net margin`],
+    ["Revenue growth", Number(profile?.revenueGrowthYoy), `${pct(profile?.revenueGrowthYoy)} year over year`],
+    ["Earnings growth", Number(profile?.epsGrowthYoy), `${pct(profile?.epsGrowthYoy)} year over year`],
+    ["Profitability", Number(profile?.netMargin), `${pct(profile?.netMargin)} net margin`],
     ["Research quality", Number(assessment?.score), `${Math.round(Number(assessment?.score) || 0)} TRQX score`],
   ].filter(([, value]) => Number.isFinite(value)).sort((a, b) => b[1] - a[1]);
 
   const risks = [
-    ["Valuation", Number(profile?.pe), `${number(profile?.pe)} P/E ratio`],
-    ["Volatility", Number(profile?.beta), `${number(profile?.beta)} beta`],
-    ["Debt", Number(profile?.debtEquity), `${number(profile?.debtEquity)} debt-to-equity`],
-    ["Profitability", Number(profile?.netMargin) < 0 ? Math.abs(Number(profile?.netMargin)) : 0, Number(profile?.netMargin) < 0 ? `${percent(profile?.netMargin)} net margin` : "Currently profitable"],
+    ["Valuation", Number(profile?.pe), `${fmt(profile?.pe)} P/E ratio`],
+    ["Volatility", Number(profile?.beta), `${fmt(profile?.beta)} beta`],
+    ["Debt", Number(profile?.debtEquity), `${fmt(profile?.debtEquity)} debt-to-equity`],
+    ["Profitability", Number(profile?.netMargin) < 0 ? Math.abs(Number(profile?.netMargin)) : 0, Number(profile?.netMargin) < 0 ? `${pct(profile?.netMargin)} net margin` : "Currently profitable"],
   ].filter(([, value]) => Number.isFinite(value)).sort((a, b) => b[1] - a[1]);
 
   const opportunity = opportunities[0] || ["Business potential", 0, "Review company-specific catalysts"];
@@ -372,12 +372,12 @@ function OpportunityRiskCards({ profile, assessment }) {
 
 function ReportCard({ profile }) {
   const rows = [
-    ["Revenue", classifyMetric("revenueGrowth", profile?.revenueGrowthYoy).score],
-    ["Profitability", classifyMetric("netMargin", profile?.netMargin).score],
-    ["Debt", classifyMetric("debtEquity", profile?.debtEquity).score],
-    ["Liquidity", classifyMetric("currentRatio", profile?.currentRatio).score],
-    ["Valuation", classifyMetric("pe", profile?.pe).score],
-    ["Volatility", classifyMetric("beta", profile?.beta).score],
+    ["Revenue", metricState("revenue", profile?.revenueGrowthYoy).score],
+    ["Profitability", metricState("margin", profile?.netMargin).score],
+    ["Debt", metricState("debt", profile?.debtEquity).score],
+    ["Liquidity", metricState("liquidity", profile?.currentRatio).score],
+    ["Valuation", metricState("pe", profile?.pe).score],
+    ["Volatility", metricState("beta", profile?.beta).score],
   ];
   const scored = rows.filter(([, score]) => score > 0);
   const overall = Math.round(scored.reduce((sum, [, score]) => sum + score, 0) / Math.max(1, scored.length));
@@ -475,7 +475,7 @@ export default function ResearchPage() {
         <div className="rq-grid2" style={{marginBottom:18}}><Card><Eyebrow icon={CircleDollarSign}>Financial health snapshot</Eyebrow><HealthBar label="Revenue growth" state={states.revenue}/><HealthBar label="Profitability" state={states.margin}/><HealthBar label="Liquidity" state={states.liquidity}/><HealthBar label="Debt position" state={states.debt}/></Card><Card><Eyebrow icon={Landmark}>Valuation and volatility</Eyebrow><HealthBar label="Valuation" state={states.pe}/><HealthBar label="Price stability" state={states.beta}/><HealthBar label="Earnings trend" state={states.earnings}/><p style={{color:C.muted,fontSize:12,lineHeight:1.6}}>These bars are interpretation aids. They do not predict the stock price.</p></Card></div><div className="rq-grid2" style={{marginBottom:18}}><ConfidencePanel profile={profile} ratings={ratings} news={news} dataQuality={dataQuality}/><Card><Eyebrow icon={Layers3}>Research context</Eyebrow><BulletList items={[`Market session: ${market.label}.`,`Evidence reviewed: ${evidenceTotal} categorized factors.`,`Suggested research horizon: ${timeHorizon}.`,`Investment style: ${styleLabel}.`]}/><div className="rq-callout"><Gauge size={18} color={C.gold}/><span>Use the score to organize research—not to replace judgment, diversification, or review of company filings.</span></div></Card></div>
         <OpportunityRiskCards profile={profile} assessment={assessment}/><div style={{height:18}}/><div className="rq-grid2" style={{marginBottom:18}}><InvestmentChecklist profile={profile} ratings={ratings}/><ReportCard profile={profile}/></div><div className="rq-thesis-grid" style={{marginBottom:18}}><Card><Eyebrow icon={UserRoundCheck}>Investment thesis</Eyebrow><div className="rq-thesis-list">{assessment.positives.map((item)=><div key={item}><CheckCircle2 size={17} color={C.green}/><span>{item}</span></div>)}</div></Card><Card><Eyebrow icon={UserRoundX}>Bear thesis</Eyebrow><div className="rq-thesis-list">{assessment.concerns.map((item)=><div key={item}><AlertTriangle size={17} color={C.amber}/><span>{item}</span></div>)}</div></Card></div><Card><Eyebrow icon={LineChart}>Price performance</Eyebrow><TVChart symbol={symbol}/></Card>
       </> : null}
-
+    
       {activeTab === "Company" ? <div className="rq-grid2"><Card><Eyebrow icon={Building2}>What the company does</Eyebrow><p className="rq-copy">{profile.description || "A verified company description is not currently available."}</p>{profile.weburl ? <a href={profile.weburl} target="_blank" rel="noreferrer" style={{color:C.gold,display:"inline-block",marginTop:18,fontWeight:800}}>Visit company website →</a> : null}</Card><Card><Eyebrow icon={Building2}>Company facts</Eyebrow><BulletList items={[["Chief executive",profile.ceo],["Employees",+profile.employees>0?Number(profile.employees).toLocaleString("en-US"):null],["Founded / IPO date",profile.founded],["Headquarters",profile.headquarter],["Industry",profile.industry],["Exchange",profile.exchange]].map(([l,v]) => `${l}: ${v || "Not reported"}`)}/></Card><Card style={{gridColumn:"1 / -1"}}><Eyebrow icon={GraduationCap}>How to evaluate the business</Eyebrow><div className="rq-metrics"><Metric label="Revenue growth" value={pct(profile.revenueGrowthYoy)} state={states.revenue} explanation="Revenue growth measures whether the company is selling more than it did during the comparable prior period. Growth is useful only when the company can eventually convert those sales into sustainable profit and cash flow."/><Metric label="Gross margin" value={pct(profile.grossMargin)} state={states.gross} explanation="Gross margin shows how much sales revenue remains after direct product or service costs. Higher margins can provide more room to fund operations and profit."/><Metric label="Net margin" value={pct(profile.netMargin)} state={states.margin} explanation="Net margin is the percentage of revenue left as profit after major expenses. A negative value means the company spent more than it earned during the measured period."/></div></Card></div> : null}
 
       {activeTab === "Financial Health" ? <Card><Eyebrow icon={CircleDollarSign}>Financial health explained</Eyebrow><div className="rq-metrics"><Metric label="Revenue growth" value={pct(profile.revenueGrowthYoy)} state={states.revenue} explanation="This compares recent revenue with the prior-year period. Positive growth indicates expansion, but rapid growth can still be unprofitable."/><Metric label="Earnings growth" value={pct(profile.epsGrowthYoy)} state={states.earnings} explanation="Earnings-per-share growth shows whether profit attributable to each share is improving. Share issuance and one-time items can affect it."/><Metric label="Net profit margin" value={pct(profile.netMargin)} state={states.margin} explanation="For every $100 of revenue, this estimates how many dollars remain as profit. A 12% margin represents about $12 of profit per $100 of revenue."/><Metric label="Gross margin" value={pct(profile.grossMargin)} state={states.gross} explanation="Gross margin focuses on product economics before operating costs. Compare it with similar companies because normal margins differ by industry."/><Metric label="Current ratio" value={fmt(profile.currentRatio)} state={states.liquidity} explanation="The current ratio compares assets expected to become cash within one year with bills due within one year. Above 1 generally means current assets exceed current liabilities."/><Metric label="Debt to equity" value={fmt(profile.debtEquity)} state={states.debt} explanation="Debt-to-equity compares borrowed money with shareholder capital. Higher debt can magnify returns and financial stress."/><Metric label="Return on equity" value={pct(profile.roe)} state={{label:+profile.roe>=15?"Efficient":"Review carefully",tone:+profile.roe>=15?"positive":"warning"}} explanation="Return on equity estimates how effectively the company produces profit from shareholder capital. Very high values can also be influenced by heavy debt."/><Metric label="Dividend yield" value={+profile.dividendYield>0?pct(profile.dividendYield):"No dividend"} state={{label:+profile.dividendYield>0?"Income component":"Reinvesting capital",tone:"neutral"}} explanation={+profile.dividendYield>0?"Dividend yield estimates annual cash distributions as a percentage of the current stock price. A high yield is not automatically safe.":"The company does not currently report a dividend yield. Growth companies often retain cash to fund expansion instead of distributing it."}/></div></Card> : null}
