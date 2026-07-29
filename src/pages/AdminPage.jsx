@@ -2,11 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Activity,
   BookOpen,
+  Clock3,
   Flame,
   GraduationCap,
   RefreshCw,
   Search,
   ShieldCheck,
+  UserX,
   Users,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
@@ -51,6 +53,23 @@ function tierClass(tier) {
   return `admin-tier admin-tier-${String(tier || "free").toLowerCase()}`;
 }
 
+function parseLessonRef(value) {
+  if (!value || !String(value).includes(":")) return null;
+  const [levelKey, rawIndex] = String(value).split(":");
+  const lessonIndex = Number(rawIndex);
+  if (!Number.isInteger(lessonIndex)) return null;
+  return { levelKey, lessonIndex };
+}
+
+function lessonTitle(value) {
+  const parsed = parseLessonRef(value);
+  if (!parsed) return value || "Not started";
+
+  const level = courseLevels.find((item) => item.key === parsed.levelKey);
+  const lesson = level?.lessons?.[parsed.lessonIndex];
+  return lesson?.title || `${parsed.levelKey} lesson ${parsed.lessonIndex + 1}`;
+}
+
 function StatCard({ icon: Icon, label, value, detail }) {
   return (
     <article className="admin-stat-card">
@@ -72,6 +91,7 @@ export default function AdminPage() {
 
   const [students, setStudents] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [activity, setActivity] = useState([]);
   const [query, setQuery] = useState("");
   const [tierFilter, setTierFilter] = useState("all");
   const [activityFilter, setActivityFilter] = useState("all");
@@ -86,25 +106,27 @@ export default function AdminPage() {
     setLoading(true);
     setError("");
 
-    const [studentsResult, summaryResult] = await Promise.all([
+    const [studentsResult, summaryResult, activityResult] = await Promise.all([
       supabase.rpc("get_admin_students"),
       supabase.rpc("get_admin_academy_summary"),
+      supabase.rpc("get_admin_activity_feed", { result_limit: 25 }),
     ]);
 
-    if (studentsResult.error || summaryResult.error) {
-      const message =
-        studentsResult.error?.message ||
-        summaryResult.error?.message ||
-        "Unable to load admin data.";
-      setError(message);
+    const firstError =
+      studentsResult.error || summaryResult.error || activityResult.error;
+
+    if (firstError) {
+      setError(firstError.message || "Unable to load admin data.");
       setStudents([]);
       setSummary(null);
+      setActivity([]);
       setLoading(false);
       return;
     }
 
     setStudents(studentsResult.data || []);
     setSummary(summaryResult.data?.[0] || null);
+    setActivity(activityResult.data || []);
     setLoading(false);
   }, []);
 
@@ -122,11 +144,8 @@ export default function AdminPage() {
       { target_user_id: student.user_id }
     );
 
-    if (detailError) {
-      setError(detailError.message);
-    } else {
-      setStudentDetails(data || []);
-    }
+    if (detailError) setError(detailError.message);
+    else setStudentDetails(data || []);
 
     setDetailsLoading(false);
   }
@@ -136,11 +155,12 @@ export default function AdminPage() {
     const now = Date.now();
 
     const rows = students.filter((student) => {
+      const currentTitle = lessonTitle(student.current_lesson);
       const matchesSearch =
         !normalized ||
         String(student.email || "").toLowerCase().includes(normalized) ||
         String(student.full_name || "").toLowerCase().includes(normalized) ||
-        String(student.current_lesson || "").toLowerCase().includes(normalized);
+        currentTitle.toLowerCase().includes(normalized);
 
       const matchesTier =
         tierFilter === "all" ||
@@ -172,7 +192,6 @@ export default function AdminPage() {
       if (sortBy === "email") {
         return String(a.email || "").localeCompare(String(b.email || ""));
       }
-
       return (
         new Date(b.last_activity || 0).getTime() -
         new Date(a.last_activity || 0).getTime()
@@ -180,20 +199,16 @@ export default function AdminPage() {
     });
   }, [students, query, tierFilter, activityFilter, sortBy]);
 
-  const activeToday = Number(summary?.active_today || 0);
-  const totalMembers = Number(summary?.total_members || students.length || 0);
   const averageCompletion = Number(summary?.average_completed_lessons || 0);
-  const lessonsToday = Number(summary?.lessons_completed_today || 0);
 
   return (
     <main className="admin-page">
       <header className="admin-header">
         <div>
           <p>OWNER ACCESS</p>
-          <h1>TRQX Admin Portal</h1>
-          <span>Member engagement, Academy progress, and retention signals.</span>
+          <h1>TRQX Admin Intelligence</h1>
+          <span>Member progress, engagement, inactivity, and recent Academy activity.</span>
         </div>
-
         <button className="admin-refresh" onClick={loadAdminData} disabled={loading}>
           <RefreshCw size={17} className={loading ? "admin-spin" : ""} />
           Refresh
@@ -210,191 +225,128 @@ export default function AdminPage() {
         </div>
       )}
 
-      <section className="admin-stats">
-        <StatCard
-          icon={Users}
-          label="Total Members"
-          value={totalMembers.toLocaleString("en-US")}
-          detail={`${Number(summary?.elite_members || 0)} Elite members`}
-        />
-        <StatCard
-          icon={Activity}
-          label="Active Today"
-          value={activeToday.toLocaleString("en-US")}
-          detail={`${Number(summary?.active_last_7_days || 0)} active in 7 days`}
-        />
-        <StatCard
-          icon={BookOpen}
-          label="Lessons Today"
-          value={lessonsToday.toLocaleString("en-US")}
-          detail="Completed since midnight"
-        />
-        <StatCard
-          icon={GraduationCap}
-          label="Average Progress"
-          value={
-            totalLessons
-              ? `${Math.round((averageCompletion / totalLessons) * 100)}%`
-              : "0%"
-          }
-          detail={`${averageCompletion.toFixed(1)} of ${totalLessons} lessons`}
-        />
+      <section className="admin-stats admin-stats-six">
+        <StatCard icon={Users} label="Total Members" value={Number(summary?.total_members || students.length).toLocaleString("en-US")} detail={`${Number(summary?.elite_members || 0)} Elite members`} />
+        <StatCard icon={Activity} label="Active Today" value={Number(summary?.active_today || 0).toLocaleString("en-US")} detail={`${Number(summary?.active_last_7_days || 0)} active in 7 days`} />
+        <StatCard icon={UserX} label="Inactive 7+ Days" value={Number(summary?.inactive_7_days || 0).toLocaleString("en-US")} detail="Follow-up candidates" />
+        <StatCard icon={Clock3} label="Inactive 30+ Days" value={Number(summary?.inactive_30_days || 0).toLocaleString("en-US")} detail="Retention risk" />
+        <StatCard icon={BookOpen} label="Lessons Today" value={Number(summary?.lessons_completed_today || 0).toLocaleString("en-US")} detail="Completed since midnight" />
+        <StatCard icon={GraduationCap} label="Average Progress" value={totalLessons ? `${Math.round((averageCompletion / totalLessons) * 100)}%` : "0%"} detail={`${averageCompletion.toFixed(1)} of ${totalLessons} lessons`} />
       </section>
 
       <section className="admin-tier-grid">
         {TIER_ORDER.map((tier) => (
           <div key={tier} className="admin-tier-card">
             <span className={tierClass(tier)}>{tier}</span>
-            <strong>
-              {Number(summary?.[`${tier}_members`] || 0).toLocaleString("en-US")}
-            </strong>
+            <strong>{Number(summary?.[`${tier}_members`] || 0).toLocaleString("en-US")}</strong>
             <small>members</small>
           </div>
         ))}
       </section>
 
-      <section className="admin-panel">
-        <div className="admin-panel-heading">
-          <div>
-            <h2>Student Management</h2>
-            <span>{filteredStudents.length} matching members</span>
+      <section className="admin-phase2-grid">
+        <section className="admin-panel">
+          <div className="admin-panel-heading">
+            <div>
+              <h2>Student Management</h2>
+              <span>{filteredStudents.length} matching members</span>
+            </div>
           </div>
-        </div>
 
-        <div className="admin-filters">
-          <label className="admin-search">
-            <Search size={17} />
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search email, name, or lesson..."
-            />
-          </label>
+          <div className="admin-filters">
+            <label className="admin-search">
+              <Search size={17} />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search email, name, or lesson..." />
+            </label>
+            <select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}>
+              <option value="all">All tiers</option>
+              {TIER_ORDER.map((tier) => <option key={tier} value={tier}>{tier.charAt(0).toUpperCase() + tier.slice(1)}</option>)}
+            </select>
+            <select value={activityFilter} onChange={(e) => setActivityFilter(e.target.value)}>
+              <option value="all">All activity</option>
+              <option value="active7">Active within 7 days</option>
+              <option value="inactive7">Inactive over 7 days</option>
+              <option value="inactive30">Inactive over 30 days</option>
+            </select>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="last_activity">Sort: Recent activity</option>
+              <option value="progress">Sort: Progress</option>
+              <option value="streak">Sort: Streak</option>
+              <option value="email">Sort: Email</option>
+            </select>
+          </div>
 
-          <select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}>
-            <option value="all">All tiers</option>
-            {TIER_ORDER.map((tier) => (
-              <option key={tier} value={tier}>
-                {tier.charAt(0).toUpperCase() + tier.slice(1)}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={activityFilter}
-            onChange={(e) => setActivityFilter(e.target.value)}
-          >
-            <option value="all">All activity</option>
-            <option value="active7">Active within 7 days</option>
-            <option value="inactive7">Inactive over 7 days</option>
-            <option value="inactive30">Inactive over 30 days</option>
-          </select>
-
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-            <option value="last_activity">Sort: Recent activity</option>
-            <option value="progress">Sort: Progress</option>
-            <option value="streak">Sort: Streak</option>
-            <option value="email">Sort: Email</option>
-          </select>
-        </div>
-
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Member</th>
-                <th>Tier</th>
-                <th>Progress</th>
-                <th>Current Lesson</th>
-                <th>Last Active</th>
-                <th>Streak</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan="6" className="admin-empty">Loading members...</td></tr>
-              ) : filteredStudents.length === 0 ? (
-                <tr><td colSpan="6" className="admin-empty">No members match the current filters.</td></tr>
-              ) : (
-                filteredStudents.map((student) => {
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead><tr><th>Member</th><th>Tier</th><th>Progress</th><th>Current Lesson</th><th>Last Active</th><th>Streak</th></tr></thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan="6" className="admin-empty">Loading members...</td></tr>
+                ) : filteredStudents.length === 0 ? (
+                  <tr><td colSpan="6" className="admin-empty">No members match the current filters.</td></tr>
+                ) : filteredStudents.map((student) => {
                   const completed = Number(student.completed_lessons || 0);
-                  const percent = totalLessons
-                    ? Math.min(100, Math.round((completed / totalLessons) * 100))
-                    : 0;
-
+                  const percent = totalLessons ? Math.min(100, Math.round((completed / totalLessons) * 100)) : 0;
                   return (
                     <tr key={student.user_id} onClick={() => openStudent(student)}>
-                      <td>
-                        <strong>{student.full_name || "TRQX Member"}</strong>
-                        <span>{student.email || "No email stored"}</span>
-                      </td>
+                      <td><strong>{student.full_name || "TRQX Member"}</strong><span>{student.email || "No email stored"}</span></td>
                       <td><span className={tierClass(student.tier)}>{student.tier || "free"}</span></td>
-                      <td>
-                        <div className="admin-progress-row">
-                          <div><i style={{ width: `${percent}%` }} /></div>
-                          <strong>{percent}%</strong>
-                        </div>
-                        <small>{completed} / {totalLessons} lessons</small>
-                      </td>
-                      <td>{student.current_lesson || "Not started"}</td>
-                      <td title={formatDate(student.last_activity)}>
-                        {relativeDate(student.last_activity)}
-                      </td>
-                      <td>
-                        <span className="admin-streak">
-                          <Flame size={15} /> {Number(student.study_streak || 0)}
-                        </span>
-                      </td>
+                      <td><div className="admin-progress-row"><div><i style={{ width: `${percent}%` }} /></div><strong>{percent}%</strong></div><small>{completed} / {totalLessons} lessons</small></td>
+                      <td>{lessonTitle(student.current_lesson)}</td>
+                      <td title={formatDate(student.last_activity)}>{relativeDate(student.last_activity)}</td>
+                      <td><span className="admin-streak"><Flame size={15} /> {Number(student.study_streak || 0)}</span></td>
                     </tr>
                   );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside className="admin-activity-panel">
+          <div className="admin-panel-heading">
+            <div><h2>Recent Activity</h2><span>Latest Academy completions</span></div>
+          </div>
+          <div className="admin-activity-list">
+            {activity.length === 0 ? (
+              <p className="admin-empty">No recent activity.</p>
+            ) : activity.map((item, index) => (
+              <article key={`${item.user_id}-${item.lesson_ref}-${index}`}>
+                <div className="admin-activity-dot" />
+                <div>
+                  <strong>{item.full_name || item.email || "TRQX Member"}</strong>
+                  <span>Completed {lessonTitle(item.lesson_ref)}</span>
+                  <small>{relativeDate(item.completed_at)}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        </aside>
       </section>
 
       {selectedStudent && (
         <div className="admin-modal-backdrop" onMouseDown={() => setSelectedStudent(null)}>
           <section className="admin-modal" onMouseDown={(event) => event.stopPropagation()}>
             <header>
-              <div>
-                <p>STUDENT PROFILE</p>
-                <h2>{selectedStudent.full_name || selectedStudent.email}</h2>
-                <span>{selectedStudent.email}</span>
-              </div>
+              <div><p>STUDENT PROFILE</p><h2>{selectedStudent.full_name || selectedStudent.email}</h2><span>{selectedStudent.email}</span></div>
               <button onClick={() => setSelectedStudent(null)}>×</button>
             </header>
-
             <div className="admin-modal-summary">
               <div><span>Tier</span><strong className={tierClass(selectedStudent.tier)}>{selectedStudent.tier || "free"}</strong></div>
               <div><span>Completed</span><strong>{selectedStudent.completed_lessons || 0} / {totalLessons}</strong></div>
-              <div><span>Current lesson</span><strong>{selectedStudent.current_lesson || "Not started"}</strong></div>
+              <div><span>Current lesson</span><strong>{lessonTitle(selectedStudent.current_lesson)}</strong></div>
               <div><span>Last active</span><strong>{formatDate(selectedStudent.last_activity)}</strong></div>
               <div><span>Study streak</span><strong>{selectedStudent.study_streak || 0} days</strong></div>
               <div><span>Total minutes</span><strong>{selectedStudent.total_minutes || 0}</strong></div>
             </div>
-
             <div className="admin-detail-list">
               <h3>Lesson Progress</h3>
-              {detailsLoading ? (
-                <p>Loading lesson history...</p>
-              ) : studentDetails.length === 0 ? (
-                <p>No completed lessons have been recorded.</p>
-              ) : (
-                studentDetails.map((row) => (
-                  <article key={row.lesson_id}>
-                    <div>
-                      <strong>{row.lesson_id}</strong>
-                      <span>Completed {formatDate(row.completed_at)}</span>
-                    </div>
-                    <div>
-                      <span>Quiz</span>
-                      <strong>{row.quiz_score == null ? "—" : `${row.quiz_score}%`}</strong>
-                    </div>
-                  </article>
-                ))
-              )}
+              {detailsLoading ? <p>Loading lesson history...</p> : studentDetails.length === 0 ? <p>No completed lessons have been recorded.</p> : studentDetails.map((row) => (
+                <article key={row.lesson_id}>
+                  <div><strong>{lessonTitle(row.lesson_id)}</strong><span>Completed {formatDate(row.completed_at)}</span></div>
+                  <div><span>Quiz</span><strong>{row.quiz_score == null ? "—" : `${row.quiz_score}%`}</strong></div>
+                </article>
+              ))}
             </div>
           </section>
         </div>
