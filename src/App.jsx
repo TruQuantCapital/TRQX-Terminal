@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
@@ -32,12 +32,14 @@ import OperationsPage from "./pages/OperationsPage";
 import PublishingPage from "./features/operations/publishing/PublishingPage";
 import MentorshipPage from "./pages/MentorshipPage";
 import EliteCommandCenter from "./pages/EliteCommandCenter";
+import AdminPage from "./pages/AdminPage";
 import "./styles.css";
 import "./app.css";
 
 const routeByKey = {
   dashboard: "/dashboard",
   operations: "/operations",
+  admin: "/admin",
   publishing: "/publishing",
   scanner: "/scanner",
   options: "/options-flow",
@@ -62,6 +64,7 @@ const keyByPath = {
   "/": "dashboard",
   "/dashboard": "dashboard",
   "/operations": "operations",
+  "/admin": "admin",
   "/publishing": "publishing",
   "/mentorship": "mentorship",
   "/scanner": "scanner",
@@ -142,6 +145,9 @@ function TerminalLayout({ children }) {
           <div className="terminal-userbar">
             <span>{user.email}</span>
             <b>{tier?.toUpperCase?.() || "FREE"}</b>
+            {user.email?.trim().toLowerCase() === OPERATIONS_OWNER_EMAIL && (
+              <button onClick={() => navigate("/admin")}>Admin</button>
+            )}
             <button onClick={() => navigate("/pricing")}>Plans</button>
             <button onClick={signOut}>Sign out</button>
           </div>
@@ -367,6 +373,17 @@ export default function App() {
               <ProtectedTerminal>
                 <SettingsPage />
               </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/admin"
+            element={
+              <OwnerRoute>
+                <TerminalLayout>
+                  <AdminPage />
+                </TerminalLayout>
+              </OwnerRoute>
             }
           />
 

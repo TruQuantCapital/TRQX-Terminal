@@ -1,13 +1,23 @@
-﻿import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Lock } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { courseLevels } from "../data/courseLevels";
 import { useAcademyProgress } from "../hooks/useAcademyProgress";
 import LessonReader from "./LessonReader";
 import "./academyInteractive.css";
 
 export default function AcademyPage() {
-  const { completed, loading, markComplete, levelProgress, isLevelUnlocked } =
-    useAcademyProgress();
+  const {
+    completed,
+    stats,
+    loading,
+    markComplete,
+    recordLessonView,
+    levelProgress,
+    isLevelUnlocked,
+  } = useAcademyProgress();
+
+  const location = useLocation();
 
   const [openLesson, setOpenLesson] = useState(null);
   const [showCalendly, setShowCalendly] = useState(false);
@@ -21,11 +31,25 @@ export default function AcademyPage() {
 
   function openLessonAt(levelKey, lessonIndex) {
     setOpenLesson({ levelKey, lessonIndex });
+    recordLessonView(levelKey, lessonIndex);
   }
 
   function closeLessonReader() {
     setOpenLesson(null);
   }
+  // Open the exact lesson selected by the dashboard Resume button.
+  useEffect(() => {
+    const requested = location.state?.academyResume;
+    if (!requested) return;
+    const levelIndex = courseLevels.findIndex((level) => level.key === requested.levelKey);
+    const level = courseLevels[levelIndex];
+    if (!level || !isLevelUnlocked(levelIndex, courseLevels)) return;
+    const lessonIndex = Math.max(0, Math.min(Number(requested.lessonIndex) || 0, level.lessons.length - 1));
+    setOpenLesson({ levelKey: level.key, lessonIndex });
+    recordLessonView(level.key, lessonIndex);
+    window.history.replaceState({}, document.title);
+  }, [location.state, isLevelUnlocked, recordLessonView]);
+
 
   const activeLevel = openLesson
     ? courseLevels.find((l) => l.key === openLesson.levelKey)
@@ -67,6 +91,31 @@ export default function AcademyPage() {
           <span>Course complete</span>
         </div>
       </section>
+
+      {stats.currentLevelKey && stats.currentLessonIndex != null && (() => {
+        const resumeLevel = courseLevels.find((level) => level.key === stats.currentLevelKey);
+        const resumeLesson = resumeLevel?.lessons?.[stats.currentLessonIndex];
+        if (!resumeLevel || !resumeLesson) return null;
+        return (
+          <section style={{
+            background: "linear-gradient(135deg, rgba(212,175,55,.10), rgba(15,23,42,.96))",
+            border: "1px solid rgba(212,175,55,.28)", borderRadius: 14, padding: 20,
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 18, flexWrap: "wrap",
+          }}>
+            <div>
+              <small style={{ color: "var(--gold)", fontWeight: 800, letterSpacing: 2 }}>CONTINUE LEARNING</small>
+              <h3 style={{ margin: "6px 0 4px" }}>{resumeLesson.title}</h3>
+              <span style={{ color: "var(--text-dim)", fontSize: 13 }}>
+                {resumeLevel.title} · Lesson {stats.currentLessonIndex + 1} of {resumeLevel.lessons.length}
+                {stats.studyStreak > 0 ? ` · ${stats.studyStreak} day streak` : ""}
+              </span>
+            </div>
+            <button className="tradePlanBtn" onClick={() => openLessonAt(resumeLevel.key, stats.currentLessonIndex)}>
+              Resume Lesson →
+            </button>
+          </section>
+        );
+      })()}
 
       <section className="academyGrid">
         {courseLevels.map((level, levelIndex) => {
@@ -260,9 +309,10 @@ export default function AcademyPage() {
           isCompleted={(completed[openLesson.levelKey] || new Set()).has(openLesson.lessonIndex)}
           onClose={closeLessonReader}
           onComplete={(idx) => markComplete(openLesson.levelKey, idx)}
-          onNavigate={(newIndex) =>
-            setOpenLesson({ levelKey: openLesson.levelKey, lessonIndex: newIndex })
-          }
+          onNavigate={(newIndex) => {
+            setOpenLesson({ levelKey: openLesson.levelKey, lessonIndex: newIndex });
+            recordLessonView(openLesson.levelKey, newIndex);
+          }}
         />
       )}
     </main>

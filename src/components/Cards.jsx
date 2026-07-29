@@ -1052,6 +1052,7 @@ export function AcademyCard() {
   const navigate = useNavigate();
   const {
     completed,
+    stats,
     loading,
     levelProgress,
     isLevelUnlocked,
@@ -1077,16 +1078,11 @@ export function AcademyCard() {
     advanced: "#d4af37",
   };
 
-  const nextLesson = courseLevels.reduce((found, level, levelIndex) => {
+  const firstIncompleteLesson = courseLevels.reduce((found, level, levelIndex) => {
     if (found || !isLevelUnlocked(levelIndex, courseLevels)) return found;
-
     const completedSet = completed[level.key] || new Set();
-    const lessonIndex = level.lessons.findIndex(
-      (_, index) => !completedSet.has(index)
-    );
-
+    const lessonIndex = level.lessons.findIndex((_, index) => !completedSet.has(index));
     if (lessonIndex === -1) return found;
-
     return {
       levelKey: level.key,
       levelTitle: level.title,
@@ -1095,10 +1091,30 @@ export function AcademyCard() {
     };
   }, null);
 
+  const savedLevel = courseLevels.find((level) => level.key === stats.currentLevelKey);
+  const savedLesson = savedLevel?.lessons?.[stats.currentLessonIndex];
+  const resumeLesson = savedLesson
+    ? {
+        levelKey: savedLevel.key,
+        levelTitle: savedLevel.title,
+        lessonIndex: stats.currentLessonIndex,
+        lessonTitle: savedLesson.title,
+      }
+    : firstIncompleteLesson;
+
   const openAcademy = () => {
-    // The Academy page currently opens at the course overview. The card still
-    // identifies the exact next lesson so the user knows where to continue.
-    navigate("/academy");
+    if (!resumeLesson) {
+      navigate("/academy");
+      return;
+    }
+    navigate("/academy", {
+      state: {
+        academyResume: {
+          levelKey: resumeLesson.levelKey,
+          lessonIndex: resumeLesson.lessonIndex,
+        },
+      },
+    });
   };
 
   const quickLinks = [
@@ -1238,6 +1254,12 @@ export function AcademyCard() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", color: "#9ca3af", fontSize: 11 }}>
+            <span>🔥 {stats.studyStreak || 0} day streak</span>
+            <span>✓ {totalCompleted} / {totalLessons} lessons</span>
+            {stats.lastActivity && <span>Last active {new Date(stats.lastActivity).toLocaleDateString()}</span>}
+          </div>
+
           {courseLevels.map((level) => {
             const progress = levelProgress(level.key, level.lessons.length);
             const completedCount = Math.min(
@@ -1317,12 +1339,12 @@ export function AcademyCard() {
               overflow: "hidden",
               textOverflow: "ellipsis",
             }}
-            title={nextLesson?.lessonTitle}
+            title={resumeLesson?.lessonTitle}
           >
             {loading
               ? "Finding your next lesson..."
-              : nextLesson
-              ? `${nextLesson.levelTitle}: ${nextLesson.lessonTitle}`
+              : resumeLesson
+              ? `${resumeLesson.levelTitle}: ${resumeLesson.lessonTitle}`
               : "All currently available lessons completed"}
           </div>
         </div>
