@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Sidebar from "./components/Sidebar";
@@ -11,6 +11,7 @@ import Scanner from "./pages/Scanner";
 import DividendPage from "./pages/DividendPage";
 import GammaPage from "./pages/GammaPage";
 import LandingPage from "./pages/LandingPage";
+import DiscordMembershipPage from "./pages/DiscordMembershipPage";
 import NewsPage from "./pages/NewsPage";
 import OptionsPage from "./pages/OptionsPage";
 import TradePlanPage from "./pages/TradePlanPage";
@@ -28,16 +29,20 @@ import Welcome from "./pages/Welcome";
 import ResetPassword from "./pages/ResetPassword";
 import SettingsPage from "./pages/SettingsPage";
 import OperationsPage from "./pages/OperationsPage";
+import PublishingPage from "./features/operations/publishing/PublishingPage";
 import MentorshipPage from "./pages/MentorshipPage";
 import EliteCommandCenter from "./pages/EliteCommandCenter";
-import WidgetLab from "./pages/WidgetLab";
-import PatternAcademyV2 from "./academy/v2/PatternAcademyV2";
+import AdminPage from "./pages/AdminPage";
+import AICoachPage from "./pages/AICoachPage";
 import "./styles.css";
 import "./app.css";
 
 const routeByKey = {
   dashboard: "/dashboard",
   operations: "/operations",
+  admin: "/admin",
+  "ai-coach": "/ai-coach",
+  publishing: "/publishing",
   scanner: "/scanner",
   options: "/options-flow",
   dividends: "/dividends",
@@ -61,6 +66,9 @@ const keyByPath = {
   "/": "dashboard",
   "/dashboard": "dashboard",
   "/operations": "operations",
+  "/admin": "admin",
+  "/ai-coach": "ai-coach",
+  "/publishing": "publishing",
   "/mentorship": "mentorship",
   "/scanner": "scanner",
   "/elite": "elite",
@@ -73,7 +81,6 @@ const keyByPath = {
   "/academy": "academy",
   "/research": "research",
   "/patterns": "patterns",
-  "/pattern-engine-v2": "patterns",
   "/guide": "guide",
   "/discord": "discord",
   "/news": "news",
@@ -141,6 +148,9 @@ function TerminalLayout({ children }) {
           <div className="terminal-userbar">
             <span>{user.email}</span>
             <b>{tier?.toUpperCase?.() || "FREE"}</b>
+            {user.email?.trim().toLowerCase() === OPERATIONS_OWNER_EMAIL && (
+              <button onClick={() => navigate("/admin")}>Admin</button>
+            )}
             <button onClick={() => navigate("/pricing")}>Plans</button>
             <button onClick={signOut}>Sign out</button>
           </div>
@@ -212,8 +222,6 @@ export default function App() {
           <Route path="/home" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/" element={<PublicRoute />} />
-          
-
 
           <Route
             path="/dashboard"
@@ -350,15 +358,6 @@ export default function App() {
             }
           />
 
-<Route
-  path="/widget-lab"
-  element={
-    <ProtectedTerminal>
-      <WidgetLab />
-    </ProtectedTerminal>
-  }
-/>
-
           <Route
             path="/reports"
             element={
@@ -368,6 +367,7 @@ export default function App() {
             }
           />
 
+          <Route path="/discord-membership" element={<DiscordMembershipPage />} />
           <Route path="/discord" element={<DiscordRedirect />} />
 
           <Route
@@ -376,6 +376,26 @@ export default function App() {
               <ProtectedTerminal>
                 <SettingsPage />
               </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/ai-coach"
+            element={
+              <ProtectedTerminal>
+                <AICoachPage />
+              </ProtectedTerminal>
+            }
+          />
+
+          <Route
+            path="/admin"
+            element={
+              <OwnerRoute>
+                <TerminalLayout>
+                  <AdminPage />
+                </TerminalLayout>
+              </OwnerRoute>
             }
           />
 
@@ -390,16 +410,17 @@ export default function App() {
             }
           />
 
-<Route
-  path="/pattern-engine-v2"
+          <Route
+  path="/publishing"
   element={
     <OwnerRoute>
       <TerminalLayout>
-        <PatternAcademyV2 />
+        <PublishingPage />
       </TerminalLayout>
     </OwnerRoute>
   }
 />
+
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>

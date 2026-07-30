@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./MentorshipPage.css";
 import {
   CalendarDays,
@@ -11,9 +11,8 @@ import {
   Users,
 } from "lucide-react";
 
-
 const WHOP_MENTORSHIP_URL =
-  "YOUR_FINAL_WHOP_CHECKOUT_URL";
+  "https://whop.com/tqpx-tru-quant-enterprise/trqx-elite-mentorship/";
 
 const benefits = [
   "Two weekly live coaching sessions",
@@ -65,25 +64,19 @@ const sessions = [
 ];
 
 export default function MentorshipPage() {
-  const [showCalendly, setShowCalendly] = useState(false);
-
-  const openWhop = () => {
-    if (WHOP_MENTORSHIP_URL === "#") {
-      alert("Mentorship checkout link will be added soon.");
-      return;
-    }
-
-    window.open(WHOP_MENTORSHIP_URL, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <main className="mentorshipPage">
       <section className="mentorshipHero">
-        <div className="mentorshipHeroOverlay" />
+        <div
+          className="mentorshipHeroOverlay"
+          aria-hidden="true"
+        />
 
         <div className="mentorshipHeroContent">
           <div className="mentorshipHeroCopy">
-            <span className="mentorshipEyebrow">TRQX ELITE</span>
+            <span className="mentorshipEyebrow">
+              TRQX ELITE
+            </span>
 
             <h1>
               Elite
@@ -98,35 +91,28 @@ export default function MentorshipPage() {
             </h2>
 
             <p>
-              Master the framework disciplined traders use to prepare,
-              execute, manage risk, and review performance.
+              Master the framework disciplined traders use to
+              prepare, execute, manage risk, and review performance.
             </p>
 
             <div className="mentorshipHeroActions">
-  <button className="mentorshipPrimaryBtn" onClick={openWhop}>
-    Join Mentorship
-  </button>
+              <a
+                className="mentorshipPrimaryBtn"
+                href={WHOP_MENTORSHIP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Join Mentorship
+              </a>
 
-  <button
-    className="mentorshipSecondaryBtn"
-    onClick={() => setShowCalendly((current) => !current)}
-  >
-    <CalendarDays size={18} />
-    {showCalendly ? "Close Booking" : "Book a Mentoring Session"}
-  </button>
-
-  <button
-    className="mentorshipSecondaryBtn"
-    onClick={() =>
-      document
-        .getElementById("mentorship-program")
-        ?.scrollIntoView({ behavior: "smooth" })
-    }
-  >
-    <PlayCircle size={18} />
-    View Program
-  </button>
-</div>
+              <a
+                className="mentorshipSecondaryBtn"
+                href="#mentorship-program"
+              >
+                <PlayCircle size={18} />
+                View Program
+              </a>
+            </div>
 
             <div className="mentorshipTrustRow">
               <span>
@@ -156,61 +142,52 @@ export default function MentorshipPage() {
         </div>
       </section>
 
-{showCalendly && (
-  <section className="mentorshipCalendly">
-    <div className="mentorshipCalendlyHeader">
-      <div>
-        <span>BOOK A SESSION</span>
-        <h2>Schedule a Mentoring Session</h2>
-      </div>
-
-      <button
-        type="button"
-        onClick={() => setShowCalendly(false)}
+      <section
+        className="mentorshipFeatures"
+        id="mentorship-program"
       >
-        Close
-      </button>
-    </div>
-
-    <div className="mentorshipCalendlyFrame">
-      <iframe
-        src="https://calendly.com/michaelvalerio/rqx-mentoring-session"
-        width="100%"
-        height="700"
-        frameBorder="0"
-        title="Book a Mentoring Session with Michael Valerio"
-        style={{ display: "block" }}
-      />
-    </div>
-
-    <p className="mentorshipCalendlyNote">
-      Sessions are for TRQX Capital members only. Educational purposes only—not financial advice.
-    </p>
-  </section>
-)}
-      <section className="mentorshipFeatures" id="mentorship-program">
         <article>
           <CalendarDays size={30} />
+
           <h3>Weekly Live Coaching</h3>
-          <p>Structured sessions focused on preparation, execution, and review.</p>
+
+          <p>
+            Structured sessions focused on preparation, execution,
+            and review.
+          </p>
         </article>
 
         <article>
           <Target size={30} />
+
           <h3>Market Preparation</h3>
-          <p>Build a plan around market structure, flow, catalysts, and risk.</p>
+
+          <p>
+            Build a plan around market structure, flow, catalysts,
+            and risk.
+          </p>
         </article>
 
         <article>
           <Users size={30} />
+
           <h3>Private Community</h3>
-          <p>Learn alongside serious traders committed to disciplined growth.</p>
+
+          <p>
+            Learn alongside serious traders committed to disciplined
+            growth.
+          </p>
         </article>
 
         <article>
           <Crown size={30} />
+
           <h3>Elite Access</h3>
-          <p>Use the TRQX Terminal, Academy, Gamma, flow, and research tools.</p>
+
+          <p>
+            Use the TRQX Terminal, Academy, Gamma, flow, and research
+            tools.
+          </p>
         </article>
       </section>
 
@@ -223,16 +200,21 @@ export default function MentorshipPage() {
 
           <div className="mentorshipSessionGrid">
             {sessions.map((session) => (
-              <article className="mentorshipSessionCard" key={session.day}>
+              <article
+                className="mentorshipSessionCard"
+                key={session.day}
+              >
                 <span>{session.day}</span>
+
                 <small>{session.time}</small>
+
                 <h3>{session.title}</h3>
 
                 <ul>
                   {session.points.map((point) => (
-                    <li key={point}>
+                    <li key={`${session.day}-${point}`}>
                       <CheckCircle2 size={16} />
-                      {point}
+                      <span>{point}</span>
                     </li>
                   ))}
                 </ul>
@@ -245,7 +227,11 @@ export default function MentorshipPage() {
 
             <div>
               <strong>Cannot attend live?</strong>
-              <p>Sessions are recorded and available to mentorship members.</p>
+
+              <p>
+                Sessions are recorded and available to active
+                mentorship members.
+              </p>
             </div>
           </div>
         </div>
@@ -256,25 +242,32 @@ export default function MentorshipPage() {
           <span>ELITE MENTORSHIP</span>
 
           <div className="mentorshipPrice">
-            <strong>$299</strong>
+            <strong>$189</strong>
             <small>/month</small>
           </div>
 
           <p>
-            Direct coaching, structured accountability, and full access to the
-            TRQX educational ecosystem.
+            Direct coaching, structured accountability, and full
+            access to the TRQX educational ecosystem.
           </p>
 
           <ul>
             {benefits.map((benefit) => (
               <li key={benefit}>
                 <CheckCircle2 size={16} />
-                {benefit}
+                <span>{benefit}</span>
               </li>
             ))}
           </ul>
 
-          <button onClick={openWhop}>Join Elite Mentorship</button>
+          <a
+            className="mentorshipPricingButton"
+            href={WHOP_MENTORSHIP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Join Elite Mentorship
+          </a>
 
           <small>Secure checkout powered by Whop</small>
         </aside>
@@ -296,8 +289,9 @@ export default function MentorshipPage() {
             <h3>Founder of TRQX Capital</h3>
 
             <p>
-              Michael brings together leadership, technical discipline, market
-              education, and a structured approach to trading development.
+              Michael brings together leadership, technical
+              discipline, market education, and a structured
+              approach to trading development.
             </p>
 
             <ul>
@@ -317,11 +311,18 @@ export default function MentorshipPage() {
         <h2>Build a repeatable trading process.</h2>
 
         <p>
-          Stop trading without structure. Learn how to prepare, execute, manage
-          risk, and review every decision.
+          Stop trading without structure. Learn how to prepare,
+          execute, manage risk, and review every decision.
         </p>
 
-        <button onClick={openWhop}>Apply for Mentorship</button>
+        <a
+          className="mentorshipFinalCtaButton"
+          href={WHOP_MENTORSHIP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Join Elite Mentorship
+        </a>
       </section>
     </main>
   );

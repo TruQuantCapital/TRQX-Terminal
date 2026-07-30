@@ -82,58 +82,49 @@ export default function Auth() {
 
     // Sign up with Supabase
     const { error: signUpError, data } = await signUp(email, pass);
-    
+    setLoading(false);
+
     if (signUpError) {
       setError(signUpError.message);
       return;
     }
 
-   // Create profile record with additional data
-if (data?.user?.id) {
- const profileData = {
-  user_id: data.user.id,
-  email: email.trim().toLowerCase(),
-  full_name: fullName.trim(),
-  account_size: accountSize,
-  mentorship_interest: mentorshipInterest,
-  mentorship_budget: mentorshipInterest
-    ? monthlyBudget.trim()
-    : null,
-  agreed_to_terms: true,
-  agreed_to_refund: true,
-};
+    // Create profile record with additional data
+    if (data?.user?.id) {
+      const profileData = {
+        user_id: data.user.id,
+        full_name: fullName,
+        account_size: accountSize,
+        mentorship_interest: mentorshipInterest,
+        mentorship_budget: mentorshipInterest ? monthlyBudget : null,
+        agreed_to_refund: true,
+      };
 
-  console.log("Attempting to insert profile:", profileData);
+      console.log("Attempting to insert profile:", profileData);
 
-  // Wait briefly for the authenticated user to be available in the database.
-  await new Promise((resolve) => setTimeout(resolve, 500));
+      // Wait a brief moment for user to be fully created in db
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-  const { error: profileError, data: profileResult } = await supabase
-    .from("profiles")
-    .insert([profileData])
-    .select();
+      const { error: profileError, data: profileResult } = await supabase
+        .from("profiles")
+        .insert([profileData]);
 
-  console.log("Profile insert result:", {
-    error: profileError,
-    data: profileResult,
-  });
+      console.log("Profile insert result:", { error: profileError, data: profileResult });
 
-  if (profileError) {
-  console.error("Profile creation error:", profileError);
-  setLoading(false);
-  setError(
-    "Your account was created, but your profile information could not be saved."
-  );
-  return;
-}
-} else {
-  console.error("No user ID returned from signup:", data);
-}
-setLoading(false);
-navigate("/welcome");
-}
+      if (profileError) {
+        console.error("Profile creation error:", profileError);
+        // Don't fail signup, just log it
+      } else {
+        console.log("Profile created successfully");
+      }
+    } else {
+      console.error("No user ID returned from signup:", data);
+    }
 
-async function submit(e) {
+    navigate("/welcome");
+  }
+
+  async function submit(e) {
     e.preventDefault();
     setError("");
 
@@ -588,7 +579,7 @@ async function submit(e) {
           </button>
         </div>
 
-                <div className="auth-footer">Plan It. Trade It. Slay It.</div>
+        <div className="auth-footer">Plan It. Trade It. Slay It.</div>
       </div>
     </div>
   );

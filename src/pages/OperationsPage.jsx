@@ -1,17 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Send } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { createOperationsApi } from "../api/operationsApi";
+import MarketPlanCard from "../features/operations/components/MarketPlanCard.jsx";
+import OperationsCommandCenter from "../features/operations/components/OperationsCommandCenter.jsx";
+import LiveTradeManager from "../features/operations/components/LiveTradeManager.jsx";
 
-const API_BASE_URL =
-  import.meta.env.VITE_TRQX_OPERATIONS_API_URL || "http://127.0.0.1:8000";
-
-const defaultWatchlist = [
-  "SPY",
-  "SPX",
-  "QQQ",
-  "IWM",
-  "TSLA",
-  "NVDA",
-  "META",
-];
 
 function todayIsoDate() {
   const now = new Date();
@@ -73,6 +68,12 @@ function buttonStyle(primary = false) {
 }
 
 export default function OperationsPage() {
+  const navigate = useNavigate();
+  const { getToken } = useAuth();
+  const operationsApi = useMemo(
+    () => createOperationsApi(getToken),
+    [getToken],
+  );
   const [apiStatus, setApiStatus] = useState({
     loading: true,
     online: false,
@@ -84,17 +85,19 @@ export default function OperationsPage() {
   const [tickets, setTickets] = useState([]);
   const [premarketLevels, setPremarketLevels] = useState([]);
   const [notice, setNotice] = useState("");
-  const [working, setWorking] = useState(false);
+  const [workingTradeTicket, setWorkingTradeTicket] = useState(false);
+  const [workingPremarket, setWorkingPremarket] = useState(false);
 
-  const [dayForm, setDayForm] = useState({
-    trading_date: todayIsoDate(),
-    floor_status: "premarket",
-    market_bias: "pending",
-    market_condition: "Pending premarket review",
-    risk_environment: "Pending premarket review",
-    expected_volatility: "Pending economic-event review",
-    notes: "",
-  });
+  const [chartImageDataUrl, setChartImageDataUrl] = useState("");
+  const [chartImageName, setChartImageName] = useState("");
+  const chartInputRef = useRef(null);
+
+  const [premarketChartImageDataUrl, setPremarketChartImageDataUrl] =
+    useState("");
+  const [premarketChartImageName, setPremarketChartImageName] =
+    useState("");
+  const premarketChartInputRef = useRef(null);
+
 
   const [levelForm, setLevelForm] = useState({
   ticker: "SPY",
@@ -111,42 +114,99 @@ export default function OperationsPage() {
   notes: "",
 });
 
+  const [ticketForm, setTicketForm] = useState({
+    ticker: "SPY",
+    direction: "call",
+    timeframe: "5m",
+    session: "market_open",
+    setup: "",
+    entry: "",
+    stop: "",
+    target1: "",
+    target2: "",
+    target3: "",
+    grade: "A",
+    status: "watching",
+    reasoning: "",
+    notes: "",
+  });
+
   const canCreateTicket = useMemo(
     () => Boolean(tradingDay?.id),
     [tradingDay],
   );
 
-  async function apiRequest(path, options = {}) {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
-      ...options,
+  const tradeMetrics = useMemo(() => {
+    const entry = Number(ticketForm.entry);
+    const stop = Number(ticketForm.stop);
+    const isBullish =
+      ticketForm.direction === "call" || ticketForm.direction === "long";
+
+    if (
+      !Number.isFinite(entry) ||
+      !Number.isFinite(stop) ||
+      entry <= 0 ||
+      stop <= 0
+    ) {
+      return {
+        valid: false,
+        message: "Enter an entry and stop to calculate risk.",
+        risk: null,
+        stopPercent: null,
+        targets: [],
+      };
+    }
+
+    const risk = isBullish ? entry - stop : stop - entry;
+
+    if (risk <= 0) {
+      return {
+        valid: false,
+        message: isBullish
+          ? "CALL/LONG stops must be below entry."
+          : "PUT/SHORT stops must be above entry.",
+        risk: null,
+        stopPercent: null,
+        targets: [],
+      };
+    }
+
+    const targets = [
+      ticketForm.target1,
+      ticketForm.target2,
+      ticketForm.target3,
+    ].map((value, index) => {
+      const price = Number(value);
+
+      if (!Number.isFinite(price) || price <= 0) {
+        return {
+          label: `TP${index + 1}`,
+          price: null,
+          reward: null,
+          rr: null,
+          valid: false,
+        };
+      }
+
+      const reward = isBullish ? price - entry : entry - price;
+
+      return {
+        label: `TP${index + 1}`,
+        price,
+        reward,
+        rr: reward > 0 ? reward / risk : null,
+        valid: reward > 0,
+      };
     });
 
-    const text = await response.text();
-    let data = null;
-
-    if (text) {
-      try {
-        data = JSON.parse(text);
-      } catch {
-        data = text;
-      }
-    }
-
-    if (!response.ok) {
-      const detail =
-        typeof data === "object" && data?.detail
-          ? data.detail
-          : `Request failed with HTTP ${response.status}`;
-
-      throw new Error(detail);
-    }
-
-    return data;
-  }
+    return {
+      valid: true,
+      message: null,
+      risk,
+      stopPercent: (risk / entry) * 100,
+      targets,
+    };
+  }, [ticketForm]);
 
   async function checkApiHealth() {
     setApiStatus({
@@ -157,7 +217,7 @@ export default function OperationsPage() {
     });
 
     try {
-      const data = await apiRequest("/health");
+      const data = await operationsApi.getHealth();
 
       setApiStatus({
         loading: false,
@@ -175,155 +235,277 @@ export default function OperationsPage() {
     }
   }
 
+  async function loadTodayTradingDay() {
+    try {
+      const data = await operationsApi.getTradingDays();
+      const tradingDays = Array.isArray(data) ? data : [];
+      const today = todayIsoDate();
+
+      const todaysTradingDays = tradingDays.filter(
+        (item) => item.trading_date === today,
+      );
+
+      const activeTradingDay =
+        todaysTradingDays.length > 0
+          ? todaysTradingDays[todaysTradingDays.length - 1]
+          : null;
+
+      setTradingDay(activeTradingDay);
+
+      if (!activeTradingDay) {
+        setTickets([]);
+        setPremarketLevels([]);
+      }
+    } catch (error) {
+      setNotice(`Unable to load today's Market Plan: ${error.message}`);
+    }
+  }
+
   async function loadTickets() {
     if (!tradingDay?.id) {
       setTickets([]);
       return;
     }
-async function loadPremarketLevels() {
-  if (!tradingDay?.id) {
-    setPremarketLevels([]);
-    return;
-  }
 
-  try {
-    const data = await apiRequest(
-      `/premarket-levels?trading_day_id=${encodeURIComponent(
-        tradingDay.id,
-      )}`,
-    );
-
-    setPremarketLevels(Array.isArray(data) ? data : []);
-  } catch (error) {
-    setNotice(`Unable to load Premarket Levels: ${error.message}`);
-  }
-}
-
-function parseLevelList(value) {
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .map(Number)
-    .filter((item) => Number.isFinite(item) && item > 0);
-}
-
-function optionalNumber(value) {
-  if (value === "") return null;
-
-  const number = Number(value);
-  return Number.isFinite(number) && number > 0 ? number : null;
-}
-
-async function createPremarketLevel(event) {
-  event.preventDefault();
-
-  if (!tradingDay?.id) {
-    setNotice("Create a Trading Day before publishing Premarket Levels.");
-    return;
-  }
-
-  const supportLevels = parseLevelList(levelForm.supportLevels);
-  const resistanceLevels = parseLevelList(levelForm.resistanceLevels);
-
-  if (supportLevels.length === 0 && resistanceLevels.length === 0) {
-    setNotice("Enter at least one support or resistance level.");
-    return;
-  }
-
-  setWorking(true);
-  setNotice("");
-
-  try {
-    const payload = {
-      trading_day_id: tradingDay.id,
-      ticker: levelForm.ticker,
-      support_levels: supportLevels,
-      resistance_levels: resistanceLevels,
-      bullish_above: optionalNumber(levelForm.bullishAbove),
-      bearish_below: optionalNumber(levelForm.bearishBelow),
-      gap_fill: optionalNumber(levelForm.gapFill),
-      previous_high: optionalNumber(levelForm.previousHigh),
-      previous_low: optionalNumber(levelForm.previousLow),
-      premarket_high: optionalNumber(levelForm.premarketHigh),
-      premarket_low: optionalNumber(levelForm.premarketLow),
-      bias: levelForm.bias,
-      notes: levelForm.notes || null,
-    };
-
-    const created = await apiRequest("/premarket-levels", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-
-    setPremarketLevels((current) => [...current, created]);
-    setNotice(
-      `${created.ticker} Premarket Levels published successfully.`,
-    );
-
-    setLevelForm((current) => ({
-      ...current,
-      supportLevels: "",
-      resistanceLevels: "",
-      bullishAbove: "",
-      bearishBelow: "",
-      gapFill: "",
-      previousHigh: "",
-      previousLow: "",
-      premarketHigh: "",
-      premarketLow: "",
-      notes: "",
-    }));
-  } catch (error) {
-    setNotice(`Premarket Levels failed: ${error.message}`);
-  } finally {
-    setWorking(false);
-  }
-}
     try {
-      const data = await apiRequest(
-        `/trade-tickets?trading_day_id=${encodeURIComponent(tradingDay.id)}`,
-      );
+      const data = await operationsApi.getTradeTickets(tradingDay.id);
       setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
       setNotice(`Unable to load tickets: ${error.message}`);
     }
   }
 
-  async function createTradingDay(event) {
+  async function updateTradeTicket(ticketId, payload) {
+    setNotice("");
+
+    try {
+      const updated = await operationsApi.updateTradeTicket(ticketId, payload);
+      setTickets((current) =>
+        current.map((ticket) =>
+          ticket.id === ticketId ? updated : ticket,
+        ),
+      );
+      setNotice(`${updated.ticker} updated to ${String(updated.status).replaceAll("_", " ")}.`);
+      return updated;
+    } catch (error) {
+      setNotice(`Trade update failed: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async function loadPremarketLevels() {
+    if (!tradingDay?.id) {
+      setPremarketLevels([]);
+      return;
+    }
+
+    try {
+      const data = await operationsApi.getPremarketLevels(tradingDay.id);
+
+      setPremarketLevels(Array.isArray(data) ? data : []);
+    } catch (error) {
+      setNotice(`Unable to load Premarket Levels: ${error.message}`);
+    }
+  }
+
+  function parseLevelList(value) {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .map(Number)
+      .filter((item) => Number.isFinite(item) && item > 0);
+  }
+
+  function optionalNumber(value) {
+    if (value === "") return null;
+
+    const number = Number(value);
+    return Number.isFinite(number) && number > 0 ? number : null;
+  }
+
+  async function createPremarketLevel(event) {
     event.preventDefault();
-    setWorking(true);
+
+    if (!tradingDay?.id) {
+      setNotice("Create a Market Plan before publishing Premarket Levels.");
+      return;
+    }
+
+    const supportLevels = parseLevelList(levelForm.supportLevels);
+    const resistanceLevels = parseLevelList(levelForm.resistanceLevels);
+
+    if (supportLevels.length === 0 && resistanceLevels.length === 0) {
+      setNotice("Enter at least one support or resistance level.");
+      return;
+    }
+
+    setWorkingPremarket(true);
     setNotice("");
 
     try {
       const payload = {
-        ...dayForm,
-        core_watchlist: defaultWatchlist,
-        economic_events: [],
-        notes: dayForm.notes || null,
+        trading_day_id: tradingDay.id,
+        ticker: levelForm.ticker,
+        support_levels: supportLevels,
+        resistance_levels: resistanceLevels,
+        bullish_above: optionalNumber(levelForm.bullishAbove),
+        bearish_below: optionalNumber(levelForm.bearishBelow),
+        gap_fill: optionalNumber(levelForm.gapFill),
+        previous_high: optionalNumber(levelForm.previousHigh),
+        previous_low: optionalNumber(levelForm.previousLow),
+        premarket_high: optionalNumber(levelForm.premarketHigh),
+        premarket_low: optionalNumber(levelForm.premarketLow),
+        bias: levelForm.bias,
+        notes: levelForm.notes || null,
+        chart_image_url: premarketChartImageDataUrl || null,
       };
 
-      const created = await apiRequest("/trading-days", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+      const created = await operationsApi.createPremarketLevel(payload);
 
-      setTradingDay(created);
-      setTickets([]);
-      setPremarketLevels([]);
-      setNotice(`Trading Day created for ${created.trading_date}.`);
+      setPremarketLevels((current) => [...current, created]);
+      setNotice(
+        `${created.ticker} Premarket Levels published successfully.`,
+      );
+
+      setLevelForm((current) => ({
+        ...current,
+        supportLevels: "",
+        resistanceLevels: "",
+        bullishAbove: "",
+        bearishBelow: "",
+        gapFill: "",
+        previousHigh: "",
+        previousLow: "",
+        premarketHigh: "",
+        premarketLow: "",
+        notes: "",
+      }));
+
+      clearPremarketChartImage();
     } catch (error) {
-      setNotice(`Trading Day creation failed: ${error.message}`);
+      setNotice(`Premarket Levels failed: ${error.message}`);
     } finally {
-      setWorking(false);
+      setWorkingPremarket(false);
     }
+  }
+
+
+  function clearChartImage() {
+    setChartImageDataUrl("");
+    setChartImageName("");
+
+    if (chartInputRef.current) {
+      chartInputRef.current.value = "";
+    }
+  }
+
+  function clearPremarketChartImage() {
+    setPremarketChartImageDataUrl("");
+    setPremarketChartImageName("");
+
+    if (premarketChartInputRef.current) {
+      premarketChartInputRef.current.value = "";
+    }
+  }
+
+  function processPremarketChartImage(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setNotice("The Premarket Levels chart attachment must be an image.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setNotice("The Premarket Levels chart image must be 5 MB or smaller.");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setPremarketChartImageDataUrl(String(reader.result || ""));
+      setPremarketChartImageName(
+        file.name || "Pasted Premarket Levels chart screenshot",
+      );
+      setNotice("Premarket Levels chart screenshot attached.");
+    };
+
+    reader.onerror = () => {
+      setNotice("Unable to read the Premarket Levels chart image.");
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  function handlePremarketChartPaste(event) {
+    const clipboardItems = Array.from(event.clipboardData?.items || []);
+    const imageItem = clipboardItems.find((item) =>
+      item.type.startsWith("image/"),
+    );
+
+    if (!imageItem) return;
+
+    event.preventDefault();
+    processPremarketChartImage(imageItem.getAsFile());
+  }
+
+  function handlePremarketChartDrop(event) {
+    event.preventDefault();
+    processPremarketChartImage(event.dataTransfer?.files?.[0]);
+  }
+
+  function processChartImage(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setNotice("The chart attachment must be an image.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setNotice("The chart image must be 5 MB or smaller.");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setChartImageDataUrl(String(reader.result || ""));
+      setChartImageName(file.name || "Pasted chart screenshot");
+      setNotice("Chart screenshot attached.");
+    };
+
+    reader.onerror = () => {
+      setNotice("Unable to read the selected chart image.");
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  function handleChartPaste(event) {
+    const clipboardItems = Array.from(event.clipboardData?.items || []);
+    const imageItem = clipboardItems.find((item) =>
+      item.type.startsWith("image/"),
+    );
+
+    if (!imageItem) return;
+
+    event.preventDefault();
+    processChartImage(imageItem.getAsFile());
+  }
+
+  function handleChartDrop(event) {
+    event.preventDefault();
+    processChartImage(event.dataTransfer?.files?.[0]);
   }
 
   async function createTradeTicket(event) {
     event.preventDefault();
 
     if (!tradingDay?.id) {
-      setNotice("Create a Trading Day before creating a Trade Ticket.");
+      setNotice("Create a Market Plan before creating a Trade Ticket.");
       return;
     }
 
@@ -340,7 +522,7 @@ async function createPremarketLevel(event) {
       return;
     }
 
-    setWorking(true);
+    setWorkingTradeTicket(true);
     setNotice("");
 
     try {
@@ -348,6 +530,8 @@ async function createPremarketLevel(event) {
         trading_day_id: tradingDay.id,
         ticker: ticketForm.ticker,
         direction: ticketForm.direction,
+        timeframe: ticketForm.timeframe,
+        session: ticketForm.session,
         setup: ticketForm.setup,
         entry: Number(ticketForm.entry),
         stop: Number(ticketForm.stop),
@@ -359,12 +543,10 @@ async function createPremarketLevel(event) {
           .map((item) => item.trim())
           .filter(Boolean),
         notes: ticketForm.notes || null,
+        chart_image_url: chartImageDataUrl || null,
       };
 
-      const created = await apiRequest("/trade-tickets", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+      const created = await operationsApi.createTradeTicket(payload);
 
       setTickets((current) => [...current, created]);
       setNotice(`${created.ticker} Trade Ticket created successfully.`);
@@ -379,15 +561,126 @@ async function createPremarketLevel(event) {
         reasoning: "",
         notes: "",
       }));
+
+      clearChartImage();
     } catch (error) {
       setNotice(`Trade Ticket creation failed: ${error.message}`);
     } finally {
-      setWorking(false);
+      setWorkingTradeTicket(false);
     }
   }
 
+  function savePublishingDraft(draft) {
+  localStorage.setItem(
+    "trqx-publishing-center-draft-v1",
+    JSON.stringify(draft),
+  );
+
+  navigate("/publishing");
+}
+
+function formatSession(value) {
+  return String(value || "")
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function sendTradeTicketToPublishing(ticket) {
+  const targets = Array.isArray(ticket.targets)
+    ? ticket.targets.join(", " )
+    : "";
+
+  const reasoning = Array.isArray(ticket.reasoning)
+    ? ticket.reasoning.map((item) => `- ${item}`).join("\n")
+    : "";
+
+  const direction = String(ticket.direction || "").toUpperCase();
+  const status = String(ticket.status || "").toUpperCase();
+
+  const body = [
+    `${ticket.ticker} ${direction}`,
+    ticket.setup ? `Setup: ${ticket.setup}` : "",
+    "",
+    `Entry: ${ticket.entry}`,
+    `Stop: ${ticket.stop}`,
+    targets ? `Targets: ${targets}` : "",
+    ticket.timeframe ? `Timeframe: ${ticket.timeframe}` : "",
+    ticket.session ? `Session: ${formatSession(ticket.session)}` : "",
+    ticket.grade ? `Grade: ${ticket.grade}` : "",
+    status ? `Status: ${status}` : "",
+    reasoning ? `\nTRADE THESIS\n${reasoning}` : "",
+    ticket.notes ? `\nNOTES\n${ticket.notes}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  savePublishingDraft({
+    content_type: "trade_ticket",
+    title: `${ticket.ticker} Trade Ticket`,
+    body,
+    ticker: ticket.ticker || "",
+    destinations: ["discord"],
+    image_url: ticket.chart_image_url || "",
+    image_name: ticket.chart_image_url
+      ? `${ticket.ticker}-trade-chart`
+      : "",
+    scheduled_for: "",
+    platform_overrides: {},
+  });
+}
+
+function sendPremarketLevelToPublishing(level) {
+  const resistance = Array.isArray(level.resistance_levels)
+    ? level.resistance_levels.join(", ")
+    : "None";
+
+  const support = Array.isArray(level.support_levels)
+    ? level.support_levels.join(", ")
+    : "None";
+
+  const body = [
+    `Bias: ${level.bias || "Neutral"}`,
+    `Bullish Above: ${level.bullish_above ?? "N/A"}`,
+    `Bearish Below: ${level.bearish_below ?? "N/A"}`,
+    "",
+    `Resistance: ${resistance}`,
+    `Support: ${support}`,
+    level.premarket_high != null
+      ? `Premarket High: ${level.premarket_high}`
+      : "",
+    level.premarket_low != null
+      ? `Premarket Low: ${level.premarket_low}`
+      : "",
+    level.previous_high != null
+      ? `Previous High: ${level.previous_high}`
+      : "",
+    level.previous_low != null
+      ? `Previous Low: ${level.previous_low}`
+      : "",
+    level.gap_fill != null ? `Gap Fill: ${level.gap_fill}` : "",
+    level.notes ? `\nPLAN\n${level.notes}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  savePublishingDraft({
+    content_type: "daily_prep",
+    title: `${level.ticker} Premarket Levels`,
+    body,
+    ticker: level.ticker || "",
+    destinations: ["discord"],
+    image_url: level.chart_image_url || "",
+    image_name: level.chart_image_url
+      ? `${level.ticker}-premarket-levels-chart`
+      : "",
+    scheduled_for: "",
+    platform_overrides: {},
+  });
+}
+
   useEffect(() => {
     checkApiHealth();
+    loadTodayTradingDay();
   }, []);
 
   useEffect(() => {
@@ -446,6 +739,26 @@ async function createPremarketLevel(event) {
           </div>
         )}
 
+        <OperationsCommandCenter
+          apiStatus={apiStatus}
+          tradingDay={tradingDay}
+          tickets={tickets}
+          premarketLevels={premarketLevels}
+          onRefresh={async () => {
+            setNotice("");
+            await checkApiHealth();
+            await loadTodayTradingDay();
+          }}
+          onOpenPublishing={() => navigate("/publishing")}
+        />
+
+        <LiveTradeManager
+          tickets={tickets}
+          onUpdate={updateTradeTicket}
+          onRefresh={loadTickets}
+          disabled={!apiStatus.online || !tradingDay?.id}
+        />
+
         <div
           style={{
             display: "grid",
@@ -481,7 +794,7 @@ async function createPremarketLevel(event) {
           </div>
 
           <div style={cardStyle()}>
-            <div style={labelStyle()}>Trading Day</div>
+            <div style={labelStyle()}>Market Plan</div>
             <div style={{ fontWeight: 900 }}>
               {tradingDay ? "🟢 Open" : "⚪ Not opened"}
             </div>
@@ -520,103 +833,21 @@ async function createPremarketLevel(event) {
             marginTop: "22px",
           }}
         >
-          <form onSubmit={createTradingDay} style={cardStyle()}>
-            <div style={{ color: "#d4af37", fontWeight: 900 }}>
-              OPEN TRADING DAY
-            </div>
+          <div id="operations-market-plan">
+          <MarketPlanCard
+            apiOnline={apiStatus.online}
+            existingMarketPlan={tradingDay}
+            operationsApi={operationsApi}
+            onCreated={(created) => {
+              setTradingDay(created);
+              setTickets([]);
+              setPremarketLevels([]);
+            }}
+            setNotice={setNotice}
+          />
+          </div>
 
-            <div style={{ marginTop: "16px" }}>
-              <label style={labelStyle()}>Trading Date</label>
-              <input
-                type="date"
-                value={dayForm.trading_date}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    trading_date: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              />
-            </div>
-
-            <div style={{ marginTop: "14px" }}>
-              <label style={labelStyle()}>Market Bias</label>
-              <select
-                value={dayForm.market_bias}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    market_bias: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              >
-                <option value="pending">Pending</option>
-                <option value="bullish">Bullish</option>
-                <option value="bearish">Bearish</option>
-                <option value="neutral">Neutral</option>
-                <option value="mixed">Mixed</option>
-              </select>
-            </div>
-
-            <div style={{ marginTop: "14px" }}>
-              <label style={labelStyle()}>Market Condition</label>
-              <input
-                value={dayForm.market_condition}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    market_condition: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              />
-            </div>
-
-            <div style={{ marginTop: "14px" }}>
-              <label style={labelStyle()}>Risk Environment</label>
-              <input
-                value={dayForm.risk_environment}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    risk_environment: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              />
-            </div>
-
-            <div style={{ marginTop: "14px" }}>
-              <label style={labelStyle()}>Expected Volatility</label>
-              <input
-                value={dayForm.expected_volatility}
-                onChange={(event) =>
-                  setDayForm({
-                    ...dayForm,
-                    expected_volatility: event.target.value,
-                  })
-                }
-                style={inputStyle()}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={working || !apiStatus.online}
-              style={{
-                ...buttonStyle(true),
-                marginTop: "18px",
-                width: "100%",
-                opacity: working || !apiStatus.online ? 0.55 : 1,
-              }}
-            >
-              {working ? "Processing..." : "Create Trading Day"}
-            </button>
-          </form>
-
-          <form onSubmit={createTradeTicket} style={cardStyle()}>
+          <form id="operations-trade-ticket-form" onSubmit={createTradeTicket} style={cardStyle()}>
             <div style={{ color: "#d4af37", fontWeight: 900 }}>
               TRQX TRADE TICKET
             </div>
@@ -629,7 +860,7 @@ async function createPremarketLevel(event) {
                   fontSize: "13px",
                 }}
               >
-                Create a Trading Day before submitting a Trade Ticket.
+                Create a Market Plan before submitting a Trade Ticket.
               </div>
             )}
 
@@ -671,6 +902,59 @@ async function createPremarketLevel(event) {
                   <option value="put">Put</option>
                   <option value="long">Long</option>
                   <option value="short">Short</option>
+                </select>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: "13px",
+                marginTop: "13px",
+              }}
+            >
+              <div>
+                <label style={labelStyle()}>Timeframe</label>
+                <select
+                  value={ticketForm.timeframe}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      timeframe: event.target.value,
+                    })
+                  }
+                  style={inputStyle()}
+                >
+                  <option value="1m">1 Minute</option>
+                  <option value="5m">5 Minute</option>
+                  <option value="15m">15 Minute</option>
+                  <option value="30m">30 Minute</option>
+                  <option value="1h">1 Hour</option>
+                  <option value="2h">2 Hour</option>
+                  <option value="4h">4 Hour</option>
+                  <option value="1d">Daily</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={labelStyle()}>Session</label>
+                <select
+                  value={ticketForm.session}
+                  onChange={(event) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      session: event.target.value,
+                    })
+                  }
+                  style={inputStyle()}
+                >
+                  <option value="premarket">Premarket</option>
+                  <option value="market_open">Market Open</option>
+                  <option value="morning">Morning</option>
+                  <option value="midday">Midday</option>
+                  <option value="power_hour">Power Hour</option>
+                  <option value="after_hours">After Hours</option>
                 </select>
               </div>
             </div>
@@ -762,6 +1046,68 @@ async function createPremarketLevel(event) {
             <div
               style={{
                 display: "grid",
+                gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+                gap: "10px",
+                marginTop: "13px",
+              }}
+            >
+              <div style={cardStyle({ padding: "12px" })}>
+                <div style={labelStyle()}>Risk</div>
+                <strong>
+                  {tradeMetrics.valid
+                    ? `$${tradeMetrics.risk.toFixed(2)}`
+                    : "—"}
+                </strong>
+              </div>
+
+              <div style={cardStyle({ padding: "12px" })}>
+                <div style={labelStyle()}>Stop Distance</div>
+                <strong>
+                  {tradeMetrics.valid
+                    ? `${tradeMetrics.stopPercent.toFixed(2)}%`
+                    : "—"}
+                </strong>
+              </div>
+
+              {[0, 1, 2].map((index) => {
+                const target = tradeMetrics.targets[index];
+                const validTarget = target?.valid;
+
+                return (
+                  <div key={index} style={cardStyle({ padding: "12px" })}>
+                    <div style={labelStyle()}>TP{index + 1} R:R</div>
+                    <strong
+                      style={{
+                        color:
+                          validTarget && target.rr >= 2
+                            ? "#86efac"
+                            : validTarget
+                              ? "#f4d675"
+                              : "#fca5a5",
+                      }}
+                    >
+                      {validTarget ? `${target.rr.toFixed(2)}R` : "—"}
+                    </strong>
+                  </div>
+                );
+              })}
+            </div>
+
+            {!tradeMetrics.valid && (
+              <div
+                style={{
+                  marginTop: "10px",
+                  color: "#fca5a5",
+                  fontSize: "13px",
+                }}
+              >
+                {tradeMetrics.message}
+              </div>
+            )}
+
+            <div
+              style={{
+                display: "grid",
                 gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
                 gap: "13px",
                 marginTop: "13px",
@@ -825,6 +1171,7 @@ async function createPremarketLevel(event) {
               />
             </div>
 
+            
             <div style={{ marginTop: "13px" }}>
               <label style={labelStyle()}>Notes</label>
               <textarea
@@ -840,21 +1187,127 @@ async function createPremarketLevel(event) {
               />
             </div>
 
+            <div style={{ marginTop: "16px" }}>
+              <label style={labelStyle()}>Chart Screenshot</label>
+
+              <div
+                tabIndex={0}
+                onPaste={handleChartPaste}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={handleChartDrop}
+                onClick={() => chartInputRef.current?.click()}
+                style={{
+                  minHeight: chartImageDataUrl ? "220px" : "140px",
+                  borderRadius: "12px",
+                  border: "1px dashed rgba(212,175,55,0.5)",
+                  background: "rgba(212,175,55,0.04)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  outline: "none",
+                }}
+              >
+                {chartImageDataUrl ? (
+                  <img
+                    src={chartImageDataUrl}
+                    alt="Trade chart preview"
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      maxHeight: "460px",
+                      objectFit: "contain",
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      padding: "24px",
+                      textAlign: "center",
+                      color: "#94a3b8",
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: "#f4d675",
+                        fontWeight: 900,
+                        fontSize: "15px",
+                      }}
+                    >
+                      Click here, then press Ctrl+V
+                    </div>
+                    <div style={{ marginTop: "7px" }}>
+                      You can also drag and drop a screenshot.
+                    </div>
+                    <div style={{ marginTop: "5px", fontSize: "12px" }}>
+                      Clicking opens the file selector as a fallback.
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <input
+                ref={chartInputRef}
+                type="file"
+                accept="image/*"
+                onChange={(event) =>
+                  processChartImage(event.target.files?.[0])
+                }
+                style={{ display: "none" }}
+              />
+
+              {chartImageDataUrl && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: "12px",
+                    alignItems: "center",
+                    marginTop: "10px",
+                  }}
+                >
+                  <div
+                    style={{
+                      color: "#94a3b8",
+                      fontSize: "12px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {chartImageName}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      clearChartImage();
+                    }}
+                    style={buttonStyle()}
+                  >
+                    Remove Screenshot
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button
               type="submit"
-              disabled={working || !canCreateTicket || !apiStatus.online}
+              disabled={workingTradeTicket || !canCreateTicket || !apiStatus.online}
               style={{
                 ...buttonStyle(true),
                 marginTop: "18px",
                 width: "100%",
                 opacity:
-                  working || !canCreateTicket || !apiStatus.online ? 0.55 : 1,
+                  workingTradeTicket || !canCreateTicket || !apiStatus.online ? 0.55 : 1,
               }}
             >
-              {working ? "Processing..." : "Create Trade Ticket"}
+              {workingTradeTicket ? "Processing..." : "Create Trade Ticket"}
             </button>
           </form>
-          <form onSubmit={createPremarketLevel} style={cardStyle()}>
+          <form id="operations-premarket-form" onSubmit={createPremarketLevel} style={cardStyle()}>
   <div style={{ color: "#d4af37", fontWeight: 900 }}>
     PREMARKET LEVELS
   </div>
@@ -867,7 +1320,7 @@ async function createPremarketLevel(event) {
         fontSize: "13px",
       }}
     >
-      Create a Trading Day before publishing Premarket Levels.
+      Create a Market Plan before publishing Premarket Levels.
     </div>
   )}
 
@@ -1102,18 +1555,124 @@ async function createPremarketLevel(event) {
     />
   </div>
 
+  <div style={{ marginTop: "16px" }}>
+    <label style={labelStyle()}>Chart Screenshot</label>
+
+    <div
+      tabIndex={0}
+      onPaste={handlePremarketChartPaste}
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={handlePremarketChartDrop}
+      onClick={() => premarketChartInputRef.current?.click()}
+      style={{
+        minHeight: premarketChartImageDataUrl ? "220px" : "140px",
+        borderRadius: "12px",
+        border: "1px dashed rgba(212,175,55,0.5)",
+        background: "rgba(212,175,55,0.04)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        cursor: "pointer",
+        outline: "none",
+      }}
+    >
+      {premarketChartImageDataUrl ? (
+        <img
+          src={premarketChartImageDataUrl}
+          alt="Premarket Levels chart preview"
+          style={{
+            display: "block",
+            width: "100%",
+            maxHeight: "460px",
+            objectFit: "contain",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            padding: "24px",
+            textAlign: "center",
+            color: "#94a3b8",
+          }}
+        >
+          <div
+            style={{
+              color: "#f4d675",
+              fontWeight: 900,
+              fontSize: "15px",
+            }}
+          >
+            Click here, then press Ctrl+V
+          </div>
+          <div style={{ marginTop: "7px" }}>
+            You can also drag and drop a screenshot.
+          </div>
+          <div style={{ marginTop: "5px", fontSize: "12px" }}>
+            Clicking opens the file selector as a fallback.
+          </div>
+        </div>
+      )}
+    </div>
+
+    <input
+      ref={premarketChartInputRef}
+      type="file"
+      accept="image/*"
+      onChange={(event) =>
+        processPremarketChartImage(event.target.files?.[0])
+      }
+      style={{ display: "none" }}
+    />
+
+    {premarketChartImageDataUrl && (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: "12px",
+          alignItems: "center",
+          marginTop: "10px",
+        }}
+      >
+        <div
+          style={{
+            color: "#94a3b8",
+            fontSize: "12px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {premarketChartImageName}
+        </div>
+
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            clearPremarketChartImage();
+          }}
+          style={buttonStyle()}
+        >
+          Remove Screenshot
+        </button>
+      </div>
+    )}
+  </div>
+
   <button
     type="submit"
-    disabled={working || !tradingDay || !apiStatus.online}
+    disabled={workingPremarket || !tradingDay || !apiStatus.online}
     style={{
       ...buttonStyle(true),
       marginTop: "18px",
       width: "100%",
       opacity:
-        working || !tradingDay || !apiStatus.online ? 0.55 : 1,
+        workingPremarket || !tradingDay || !apiStatus.online ? 0.55 : 1,
     }}
   >
-    {working ? "Processing..." : "Publish Premarket Levels"}
+    {workingPremarket ? "Processing..." : "Publish Premarket Levels"}
   </button>
 </form>
         </div>
@@ -1131,7 +1690,7 @@ async function createPremarketLevel(event) {
         PUBLISHED PREMARKET LEVELS
       </div>
       <div style={{ color: "#94a3b8", marginTop: "4px" }}>
-        Levels attached to the active Trading Day.
+        Levels attached to the active Market Plan.
       </div>
     </div>
 
@@ -1156,7 +1715,7 @@ async function createPremarketLevel(event) {
         borderRadius: "12px",
       }}
     >
-      No Premarket Levels have been published for this Trading Day.
+      No Premarket Levels have been published for this Market Plan.
     </div>
   ) : (
     <div
@@ -1233,6 +1792,49 @@ async function createPremarketLevel(event) {
               <div style={{ color: "#cbd5e1" }}>{level.notes}</div>
             </div>
           )}
+
+          {level.chart_image_url && (
+            <div style={{ marginTop: "14px" }}>
+              <div style={labelStyle()}>Chart Screenshot</div>
+              <a
+                href={level.chart_image_url}
+                target="_blank"
+                rel="noreferrer"
+                style={{ display: "block" }}
+              >
+                <img
+                  src={level.chart_image_url}
+                  alt={`${level.ticker} Premarket Levels chart`}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    maxHeight: "260px",
+                    objectFit: "cover",
+                    objectPosition: "top",
+                    borderRadius: "10px",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                  }}
+                />
+              </a>
+            </div>
+          )}
+          <div style={{ marginTop: "16px" }}>
+  <button
+    type="button"
+    onClick={() => sendPremarketLevelToPublishing(level)}
+    style={{
+      ...buttonStyle(true),
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px",
+    }}
+  >
+    <Send size={16} />
+    Send to Publishing
+  </button>
+</div>
         </article>
       ))}
     </div>
@@ -1252,7 +1854,7 @@ async function createPremarketLevel(event) {
                 TODAY’S TRADE DESK
               </div>
               <div style={{ color: "#94a3b8", marginTop: "4px" }}>
-                Tickets attached to the active Trading Day.
+                Tickets attached to the active Market Plan.
               </div>
             </div>
 
@@ -1277,7 +1879,7 @@ async function createPremarketLevel(event) {
                 borderRadius: "12px",
               }}
             >
-              No Trade Tickets have been created for this Trading Day.
+              No Trade Tickets have been created for this Market Plan.
             </div>
           ) : (
             <div
@@ -1316,7 +1918,21 @@ async function createPremarketLevel(event) {
                         }}
                       >
                         {ticket.direction} · {ticket.status}
+                        {ticket.timeframe ? ` · ${ticket.timeframe}` : ""}
+                        {ticket.session ? ` · ${ticket.session}` : ""}
                       </div>
+
+                      {ticket.trade_id && (
+                        <div
+                          style={{
+                            color: "#64748b",
+                            fontSize: "11px",
+                            marginTop: "5px",
+                          }}
+                        >
+                          {ticket.trade_id}
+                        </div>
+                      )}
                     </div>
 
                     <div
@@ -1357,15 +1973,70 @@ async function createPremarketLevel(event) {
                     <strong>{ticket.targets.join(" · ")}</strong>
                   </div>
 
-                  {ticket.reasoning?.length > 0 && (
+                  {ticket.target_rrs?.length > 0 && (
                     <div style={{ marginTop: "14px" }}>
-                      <div style={labelStyle()}>Reasoning</div>
-                      <div style={{ color: "#cbd5e1" }}>
-                        {ticket.reasoning.join(" • ")}
-                      </div>
+                      <div style={labelStyle()}>Risk / Reward</div>
+                      <strong>
+                        {ticket.target_rrs
+                          .map((rr, index) => `TP${index + 1} ${Number(rr).toFixed(2)}R`)
+                          .join(" · ")}
+                      </strong>
                     </div>
                   )}
-                </article>
+
+                  {ticket.chart_image_url && (
+                    <div style={{ marginTop: "14px" }}>
+                      <div style={labelStyle()}>Chart Screenshot</div>
+                      <a
+                        href={ticket.chart_image_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ display: "block" }}
+                      >
+                        <img
+                          src={ticket.chart_image_url}
+                          alt={`${ticket.ticker} trade chart`}
+                          style={{
+                            display: "block",
+                            width: "100%",
+                            maxHeight: "260px",
+                            objectFit: "cover",
+                            objectPosition: "top",
+                            borderRadius: "10px",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}
+                        />
+                      </a>
+                    </div>
+                  )}
+
+                  {ticket.reasoning?.length > 0 && (
+  <div style={{ marginTop: "14px" }}>
+    <div style={labelStyle()}>Reasoning</div>
+    <div style={{ color: "#cbd5e1" }}>
+      {ticket.reasoning.join(" • ")}
+    </div>
+  </div>
+)}
+
+<div style={{ marginTop: "16px" }}>
+  <button
+    type="button"
+    onClick={() => sendTradeTicketToPublishing(ticket)}
+    style={{
+      ...buttonStyle(true),
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px",
+    }}
+  >
+    <Send size={16} />
+    Send to Publishing
+  </button>
+</div>
+</article>
               ))}
             </div>
           )}

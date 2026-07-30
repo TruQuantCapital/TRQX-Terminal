@@ -1890,3 +1890,15 @@ a { display: block; color: var(--blue); text-align: center; padding-top: 10px; c
 #root {
   zoom: 1.1;
 }
+/* Dashboard quick links + per-user Academy progress */
+@media (max-width: 1100px) {
+  .academy-dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .academy-dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

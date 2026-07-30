@@ -636,3 +636,26 @@
     min-height: 760px;
   }
 }
+.mentorshipPrimaryBtn,
+.mentorshipSecondaryBtn,
+.mentorshipPricingButton,
+.mentorshipFinalCtaButton {
+  text-decoration: none;
+}
+
+.mentorshipPrimaryBtn,
+.mentorshipPricingButton,
+.mentorshipFinalCtaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mentorshipSecondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
