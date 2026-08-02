@@ -1,0 +1,61 @@
+﻿TRQX BUILD AND GIT SNAPSHOT
+Generated: 08/02/2026 11:06:38
+
+CURRENT BRANCH
+backup/academy-v1
+
+GIT STATUS
+ M .gitignore
+ D src.zip
+ M src/App.jsx
+ D src/academy/v2/PatternAcademyV2.jsx
+ D src/academy/v2/README.md
+ D src/academy/v2/engine/ChartPrimitives.jsx
+ D src/academy/v2/engine/DropTarget.jsx
+ D src/academy/v2/engine/PatternRenderer.jsx
+ D src/academy/v2/engine/constants.js
+ D src/academy/v2/engine/geometry.js
+ D src/academy/v2/engine/validator.js
+ D src/academy/v2/patternAcademyV2.css
+ D src/academy/v2/patterns/bullPennant.js
+ D src/academy/v2/patterns/index.js
+ M src/components/FlashCards.jsx
+ M src/components/PatternAcademy/PatternAcademy.jsx
+ D src/components/widgets/CountdownWidget.jsx
+ M src/data/courseLevels.js
+ D src/features/operations/publishing/publishingStyles.js
+ M src/lib/supabase.js
+ M src/pages/LessonQuiz.jsx
+?? .env.backup
+?? Clean-TRQXProject.ps1
+?? Create-Sprint06B-Diagnostics.ps1
+?? Create-Sprint07A-Part1-Contracts-v2.ps1
+?? Create-Sprint07A-Part2-SessionEngine.ps1
+?? Create-Sprint07A-Part3-TradeBuilder.ps1
+?? Create-Sprint07A-Part4-TradeGrader.ps1
+?? Create-Sprint07A-Part5-Certification.ps1
+?? Create-Sprint07A-Part6-Journal.ps1
+?? Create-Sprint07B-Part1-StorageRefactor-v2.ps1
+?? Create-Sprint07B-Part1-StorageRefactor.ps1
+?? Create-TRQXDocumentationBaseline.ps1
+?? Repair-TRQXScenarioPack.ps1
+?? candlestick-mastery-review.txt
+?? docs/
+?? project_tree.txt
+?? src/components/PatternAcademy/RecognitionQuiz.jsx
+?? src/components/academy/
+?? src/data/academyLessons/
+?? src/data/courseLevels.before-candlestick-preview.js
+?? src/lib/supabase.js.backup
+?? src/pages/CandlestickMasteryPage.jsx
+?? src/pages/TrqxEngineTestPage.jsx
+?? src/trqxEngine/
+
+NODE VERSION
+v26.5.0
+
+NPM VERSION
+11.17.0
+
+BUILD STATUS
+PASS

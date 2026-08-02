@@ -1,0 +1,188 @@
+﻿.trqx-replay-player {
+  display: grid;
+  gap: 16px;
+}
+
+.trqx-replay-player__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.trqx-replay-player__header small {
+  color: #d4af37;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
+
+.trqx-replay-player__header h2 {
+  margin: 5px 0 3px;
+  color: #ffffff;
+}
+
+.trqx-replay-player__header p {
+  margin: 0;
+  color: #8d96a8;
+}
+
+.trqx-replay-player__shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.trqx-replay-player__shortcuts span {
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: #949dad;
+  font-size: 11px;
+}
+
+.trqx-replay-progress {
+  padding: 13px 15px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.trqx-replay-progress__copy {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 9px;
+  color: #aab1be;
+  font-size: 12px;
+}
+
+.trqx-replay-progress__copy strong {
+  color: #d4af37;
+}
+
+.trqx-replay-progress__track {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #181e28;
+}
+
+.trqx-replay-progress__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a17b14, #f4d35e);
+  transition: width 180ms ease;
+}
+
+.trqx-replay-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 12px;
+  background: #0c1119;
+}
+
+.trqx-replay-controls__transport,
+.trqx-replay-controls__speed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trqx-replay-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  border: 1px solid #303744;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: #141a24;
+  color: #edf0f5;
+  cursor: pointer;
+}
+
+.trqx-replay-controls button:hover:not(:disabled) {
+  border-color: #d4af37;
+}
+
+.trqx-replay-controls button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.trqx-replay-controls__play {
+  min-width: 104px;
+  border-color: #d4af37 !important;
+  background: #d4af37 !important;
+  color: #090b10 !important;
+  font-weight: 900;
+}
+
+.trqx-replay-controls__speed > span {
+  margin-right: 3px;
+  color: #8992a3;
+  font-size: 12px;
+}
+
+.trqx-replay-controls__speed button.active {
+  border-color: #d4af37;
+  color: #d4af37;
+}
+
+.trqx-replay-timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+  gap: 7px;
+}
+
+.trqx-replay-timeline__step {
+  position: relative;
+  min-height: 35px;
+  border: 1px solid #252c37;
+  border-radius: 7px;
+  background: #0c1119;
+  color: #596273;
+  cursor: pointer;
+}
+
+.trqx-replay-timeline__step.visible {
+  border-color: rgba(212, 175, 55, 0.42);
+  color: #d4af37;
+}
+
+.trqx-replay-timeline__step.current {
+  border-color: #f4d35e;
+  background: rgba(244, 211, 94, 0.12);
+  color: #ffffff;
+}
+
+.trqx-replay-error {
+  padding: 20px;
+  border: 1px solid #ef4444;
+  border-radius: 10px;
+  color: #ef4444;
+}
+
+@media (max-width: 760px) {
+  .trqx-replay-player__header,
+  .trqx-replay-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .trqx-replay-player__shortcuts {
+    justify-content: flex-start;
+  }
+
+  .trqx-replay-controls__transport,
+  .trqx-replay-controls__speed {
+    flex-wrap: wrap;
+  }
+}

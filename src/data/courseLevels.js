@@ -33,6 +33,15 @@ import { lesson12Drills } from "./lesson12Drills";
 import { lesson13Drills } from "./lesson13Drills";
 import { lesson14Drills } from "./lesson14Drills";
 
+import candlestickAnatomyLesson from "./academyLessons/candlestickAnatomyLesson";
+import hammerLesson from "./academyLessons/hammerLesson";
+import shootingStarLesson from "./academyLessons/shootingStarLesson";
+import dojiLesson from "./academyLessons/dojiLesson";
+import bullishEngulfingLesson from "./academyLessons/bullishEngulfingLesson";
+import bearishEngulfingLesson from "./academyLessons/bearishEngulfingLesson";
+import morningStarLesson from "./academyLessons/morningStarLesson";
+import eveningStarLesson from "./academyLessons/eveningStarLesson";
+
 export const courseLevels = [
   {
     key: "beginner",
@@ -1518,6 +1527,16 @@ export const courseLevels = [
           quiz: lesson10Quiz,
           drills: lesson10Drills,
         },
+
+        candlestickAnatomyLesson,
+        hammerLesson,
+        shootingStarLesson,
+        dojiLesson,
+        bullishEngulfingLesson,
+        bearishEngulfingLesson,
+        morningStarLesson,
+        eveningStarLesson,
+
     ],
   },
   {
@@ -3407,4 +3426,5 @@ export const courseLevels = [
   ],
 }, // end Level 4
 ];
+
 

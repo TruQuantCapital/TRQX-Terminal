@@ -1,0 +1,154 @@
+﻿.trqx-coach {
+  position: sticky;
+  top: 18px;
+  display: grid;
+  gap: 15px;
+  align-self: start;
+  padding: 18px;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20, 25, 35, 0.98),
+      rgba(8, 11, 17, 0.98)
+    );
+}
+
+.trqx-coach__header {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.trqx-coach__icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.36);
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.08);
+  color: #d4af37;
+}
+
+.trqx-coach__header small {
+  color: #d4af37;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.trqx-coach__header h3 {
+  margin: 3px 0 0;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.trqx-coach__feedback {
+  padding: 14px;
+  border-radius: 11px;
+}
+
+.trqx-coach__feedback.positive {
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.trqx-coach__feedback.warning {
+  border: 1px solid rgba(244, 211, 94, 0.42);
+  background: rgba(244, 211, 94, 0.07);
+}
+
+.trqx-coach__feedback.negative {
+  border: 1px solid rgba(239, 68, 68, 0.42);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.trqx-coach__feedback.neutral {
+  border: 1px solid #303845;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.trqx-coach__feedback-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+}
+
+.trqx-coach__feedback p {
+  color: #c4cad4;
+  line-height: 1.55;
+}
+
+.trqx-coach__rule {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  color: #d4af37;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.trqx-coach__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+}
+
+.trqx-coach__stats div {
+  display: grid;
+  gap: 3px;
+  padding: 11px;
+  border: 1px solid #282f3a;
+  border-radius: 9px;
+  background: #0e141d;
+}
+
+.trqx-coach__stats span {
+  color: #818b9c;
+  font-size: 11px;
+}
+
+.trqx-coach__stats strong {
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.trqx-coach__achievements h4 {
+  margin: 0 0 9px;
+  color: #ffffff;
+}
+
+.trqx-coach__achievements > p {
+  color: #7f8999;
+  font-size: 12px;
+}
+
+.trqx-coach__achievements article {
+  display: flex;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid #222a35;
+  color: #d4af37;
+}
+
+.trqx-coach__achievements article:last-child {
+  border-bottom: 0;
+}
+
+.trqx-coach__achievements article div {
+  display: grid;
+  gap: 2px;
+}
+
+.trqx-coach__achievements strong {
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.trqx-coach__achievements span {
+  color: #818b9c;
+  font-size: 11px;
+}

@@ -1,0 +1,218 @@
+﻿.trqx-decision-quiz,
+.trqx-trade-plan-quiz {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  border-radius: 14px;
+  background: #0b1018;
+}
+
+.trqx-decision-quiz__header,
+.trqx-trade-plan-quiz__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.trqx-decision-quiz__header small,
+.trqx-trade-plan-quiz__header small {
+  color: #d4af37;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
+
+.trqx-decision-quiz__header h3,
+.trqx-trade-plan-quiz__header h3 {
+  margin: 6px 0 4px;
+  color: #ffffff;
+}
+
+.trqx-decision-quiz__header p,
+.trqx-trade-plan-quiz__header p {
+  margin: 0;
+  color: #8f98a9;
+}
+
+.trqx-decision-quiz__stats {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.trqx-decision-quiz__stats span {
+  border: 1px solid #2d3542;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #8992a2;
+  font-size: 12px;
+}
+
+.trqx-decision-quiz__stats b {
+  margin-left: 5px;
+  color: #d4af37;
+}
+
+.trqx-decision-buttons {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(145px, 1fr));
+  gap: 10px;
+}
+
+.trqx-decision-buttons button {
+  display: grid;
+  gap: 4px;
+  min-height: 72px;
+  padding: 12px;
+  border: 1px solid #2c3441;
+  border-radius: 10px;
+  background: #121822;
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.trqx-decision-buttons button:hover:not(:disabled),
+.trqx-decision-buttons button.selected {
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.trqx-decision-buttons small {
+  color: #8e97a7;
+}
+
+.trqx-quiz-primary {
+  width: fit-content;
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 18px;
+  background: #d4af37;
+  color: #080b10;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.trqx-quiz-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.trqx-quiz-feedback {
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.trqx-quiz-feedback.correct {
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.trqx-quiz-feedback.incorrect {
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.trqx-quiz-feedback__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trqx-quiz-feedback p {
+  color: #cbd1db;
+}
+
+.trqx-quiz-feedback__details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.trqx-quiz-feedback__details span {
+  color: #9099a9;
+}
+
+.trqx-quiz-feedback__details b {
+  margin-left: 6px;
+  color: #ffffff;
+}
+
+.trqx-trade-plan-quiz {
+  margin-top: 8px;
+}
+
+.trqx-trade-plan-fields {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.trqx-price-field {
+  display: grid;
+  gap: 6px;
+}
+
+.trqx-price-field span {
+  color: #d4af37;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.trqx-price-field input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #303846;
+  border-radius: 8px;
+  padding: 11px 12px;
+  background: #101620;
+  color: #ffffff;
+}
+
+.trqx-trade-plan-result {
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.trqx-trade-plan-result.passed {
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.trqx-trade-plan-result.failed {
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.trqx-trade-plan-result h4 {
+  margin-top: 0;
+  color: #ffffff;
+}
+
+.trqx-trade-plan-result__grid {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.trqx-trade-plan-result__grid span {
+  color: #9099a9;
+}
+
+.trqx-trade-plan-result__grid b {
+  margin-left: 7px;
+  color: #ffffff;
+}
+
+@media (max-width: 720px) {
+  .trqx-decision-quiz__header {
+    flex-direction: column;
+  }
+
+  .trqx-trade-plan-fields {
+    grid-template-columns: 1fr;
+  }
+}

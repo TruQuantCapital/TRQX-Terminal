@@ -30,8 +30,10 @@ import ResetPassword from "./pages/ResetPassword";
 import SettingsPage from "./pages/SettingsPage";
 import OperationsPage from "./pages/OperationsPage";
 import PublishingPage from "./features/operations/publishing/PublishingPage";
+import CandlestickMasteryPage from "./pages/CandlestickMasteryPage";
 import MentorshipPage from "./pages/MentorshipPage";
 import EliteCommandCenter from "./pages/EliteCommandCenter";
+import TrqxEngineTestPage from "./pages/TrqxEngineTestPage";
 import AdminPage from "./pages/AdminPage";
 import AICoachPage from "./pages/AICoachPage";
 import "./styles.css";
@@ -303,7 +305,14 @@ export default function App() {
               </ProtectedTerminal>
             }
           />
-
+<Route
+  path="/engine-test"
+  element={
+    <ProtectedTerminal>
+      <TrqxEngineTestPage />
+    </ProtectedTerminal>
+  }
+/>
           <Route
             path="/academy"
             element={
@@ -427,3 +436,7 @@ export default function App() {
     </AuthProvider>
   );
 }
+<Route
+  path="/academy/mastery"
+  element={<CandlestickMasteryPage />}
+/>
